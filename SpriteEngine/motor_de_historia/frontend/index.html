@@ -1681,40 +1681,42 @@
              downloadAnchorNode.click();
              downloadAnchorNode.remove();
         }
-    </script>
+    <\/script>
 </body>
 
 </html>
-`;
+            `;
 
-const newWindow = window.open();
-newWindow.document.write(htmlContent);
-newWindow.document.close();
-}
+            const newWindow = window.open();
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
 
-// --- MAIN FORGE HANDLERS ---
-async function handleForjarAlma(event) {
-event.preventDefault();
+        // --- MAIN FORGE HANDLERS ---
+        async function handleForjarAlma(event) {
+            event.preventDefault();
 
-// Check tokens
-if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
-    form=document.getElementById('formPersonaje'); const formData=new FormData(form); const params=new
-    URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
-    response=await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
+            // Check tokens
+            if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
+            form = document.getElementById('formPersonaje'); const formData = new FormData(form); const params = new
+                URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
+            response = await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
     servidor'); let personaje=await response.json(); // CHECK IF RPG MODE IS ACTIVE // We assume "rol_jugador" or
     similar option triggers this. // For now, let's treat "player" role or specific selection logic. // Assuming the
     user selects "Jugador de Rol" in a dropdown we haven't seen explicitly yet, // but we can infer or force it for
     testing. // Let's check if the 'uso' field (if we had one) or just apply it universally // if the resulting text
     implies deep stats needed. // FOR THIS UPDATE: We will apply RPG Engine if the user selected a Class (Role)
-    !='Civilian/None' const isRPGMode=true; // Force ON for demonstration as requested if (isRPGMode) { const
-    formDataObj=new FormData(form); personaje=rpgEngine.process(personaje, formDataObj);
-    showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
-    hideLoading(); } catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
-                // Refund token on error
-                setTokens(getTokens() + 1);
-            }
+    != 'Civilian/None' const isRPGMode = true; // Force ON for demonstration as requested if (isRPGMode) { const
+            formDataObj = new FormData(form); personaje = rpgEngine.process(personaje, formDataObj);
+            showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
+            hideLoading();
+        } catch (error) {
+            hideLoading(); alert('Error al forjar: ' + error.message);
+            // Refund token on error
+            setTokens(getTokens() + 1);
+        }
 
-            return false;
+        return false;
         }
 
         async function handleForjarConstelacion(event) {
@@ -1723,26 +1725,33 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
 
             // Check tokens (constellation costs 2)
             if (getTokens() < 2) {
-                showPayPalModal(' constelacion'); return false; } // Use tokens setTokens(getTokens() - 2); // Get form
-    data const form=document.getElementById('formConstelacion'); const formData=new FormData(form); const params=new
-    URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try { const response=await
-    fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
-    constelacion=await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
-    catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
-                // Refund tokens on error
-                setTokens(getTokens() + 2);
-            }
+                showPayPalModal(' constelacion'); return false;
+            } // Use tokens setTokens(getTokens() - 2); // Get form
+    data const form = document.getElementById('formConstelacion'); const formData = new FormData(form); const params = new
+                URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try {
+                    const response = await
+                        fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
+                            constelacion = await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
+    catch (error) {
+                        hideLoading(); alert('Error al forjar: ' + error.message);
+                        // Refund tokens on error
+                        setTokens(getTokens() + 2);
+                    }
 
-            return false;
-        }
+                    return false;
+                }
 
         // --- DEMO HANDLER ---
         function openDemo(name) {
-            const lang = document.getElementById(' inputLangPersonaje').value || 'es' ;
-    window.open(`/demo_${name}.html?lang=${lang}`, '_blank' ); } // --- HTML GENERATORS --- function
-    showPersonajeHTML(p) { const lang=document.getElementById('inputLangPersonaje').value || 'es' ; const
-    html=generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
-    win.document.write(html); win.document.close(); } function generatePersonajeHTML(p, lang) { return `<!DOCTYPE html>
+                const lang = document.getElementById(' inputLangPersonaje').value || 'es';
+                window.open(`/demo_${name}.html?lang=${lang}`, '_blank');
+            } // --- HTML GENERATORS --- function
+            showPersonajeHTML(p) {
+                const lang = document.getElementById('inputLangPersonaje').value || 'es'; const
+                    html = generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
+                win.document.write(html); win.document.close();
+            } function generatePersonajeHTML(p, lang) {
+                return `<!DOCTYPE html>
     <html lang="${lang}">
 
     <head>
@@ -1949,20 +1958,20 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </body>
 
     </html>`;
-    }
+            }
 
-    function showConstelacionHTML(c) {
-    const lang = document.getElementById('inputLangConstelacion').value || 'es';
-    // For constellation, redirect to the dedicated page or generate inline
-    const html = generateConstelacionHTML(c, lang);
-    const win = window.open('', '_blank');
-    win.document.write(html);
-    win.document.close();
-    }
+            function showConstelacionHTML(c) {
+                const lang = document.getElementById('inputLangConstelacion').value || 'es';
+                // For constellation, redirect to the dedicated page or generate inline
+                const html = generateConstelacionHTML(c, lang);
+                const win = window.open('', '_blank');
+                win.document.write(html);
+                win.document.close();
+            }
 
-    function generateConstelacionHTML(c, lang) {
-    const personajes = c.personajes || c.characters || [];
-    const personajesHTML = personajes.map((p, i) => `
+            function generateConstelacionHTML(c, lang) {
+                const personajes = c.personajes || c.characters || [];
+                const personajesHTML = personajes.map((p, i) => `
     <div class="character-card">
         <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
         <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
@@ -1970,7 +1979,7 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </div>
     `).join('');
 
-    return `
+                return `
     <!DOCTYPE html>
     <html lang="${lang}">
 
@@ -2051,17 +2060,17 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </body>
 
     </html>`;
-    }
+            }
 
-    // --- INIT ---
-    window.addEventListener('load', () => {
-    updateTokenDisplay();
-    // Give 3 free tokens for new users
-    if (localStorage.getItem('soulforge_tokens') === null) {
-    setTokens(3);
-    }
-    });
+            // --- INIT ---
+            window.addEventListener('load', () => {
+                updateTokenDisplay();
+                // Give 3 free tokens for new users
+                if (localStorage.getItem('soulforge_tokens') === null) {
+                    setTokens(3);
+                }
+            });
     </script>
-    </body>
+</body>
 
-    </html>
+</html>
