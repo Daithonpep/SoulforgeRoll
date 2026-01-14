@@ -940,6 +940,7 @@
                 "label_nombre_placeholder": "Ex: Kael Shadowgreen (empty = random)",
                 "label_mundo": "World / Setting",
                 "label_tono": "Moral Tone",
+                "label_clase": "Class / Job",
                 "btn_forjar_alma": "Forge Soul",
                 "card_constelacion_title": "🌌 Forge Constellation",
                 "card_constelacion_desc": "Generate a group of interconnected characters with relationships, conflicts, and shared history.",
@@ -989,6 +990,7 @@
                 "label_nombre_placeholder": "例：カエル（空欄＝ランダム）",
                 "label_mundo": "世界設定",
                 "label_tono": "道徳的なトーン",
+                "label_clase": "クラス / 職業",
                 "btn_forjar_alma": "魂を鍛造",
                 "card_constelacion_title": "🌌 星座を鍛造する",
                 "card_constelacion_desc": "関係、対立、共有された歴史を持つ相互接続されたキャラクターのグループを生成します。",
@@ -1038,6 +1040,7 @@
                 "label_nombre_placeholder": "Ej: Kael Sombraverde (vacío = aleatorio)",
                 "label_mundo": "Mundo / Ambientación",
                 "label_tono": "Tono Moral",
+                "label_clase": "Clase / Trabajo",
                 "btn_forjar_alma": "Forjar Alma",
                 "card_constelacion_title": "🌌 Forjar Constelación",
                 "card_constelacion_desc": "Genera un grupo de personajes interconectados con relaciones, conflictos y una historia compartida.",
@@ -1436,6 +1439,13 @@
 
                 const age = parseInt(formData.get('edad')) || 25;
                 const moralTone = formData.get('tono') || 'gritty';
+                const userClass = formData.get('clase'); // New Field
+
+                // Override role/class if user specified one
+                if (userClass) {
+                    characterData.clase = userClass; // We save it as 'clase'
+                    // Also update 'rol' for display consistency if needed, or keep separate
+                }
 
                 // 2. Age Modifiers
                 let ageTraits = [];
@@ -1655,7 +1665,7 @@
             <div class="tension-label">SOUL TENSION: ${p.mechanics.soul_tension}%</div>
 
             <h1>${p.nombre}</h1>
-            <div class="meta-line">${p.raza} ${p.rol} · ${p.edad} Años · ${p.tono}</div>
+            <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
 
             <p>${p.resumen}</p>
 
