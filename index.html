@@ -608,6 +608,28 @@
                         </select>
                     </div>
 
+                    <!-- NEW CLASS SELECTOR -->
+                    <div class="form-group">
+                        <label data-i18n="label_clase">CLASS / JOB</label>
+                        <select name="clase" id="claseSelect">
+                            <option value="">-- Random / Surprise --</option>
+                            <option value="Guerrero">Warrior / Guerrero</option>
+                            <option value="Mago">Mage / Mago</option>
+                            <option value="Picaro">Rogue / Pícaro</option>
+                            <option value="Clerigo">Cleric / Clérigo</option>
+                            <option value="Paladin">Paladin / Paladín</option>
+                            <option value="Barbaro">Barbarian / Bárbaro</option>
+                            <option value="Bardo">Bard / Bardo</option>
+                            <option value="Druida">Druid / Druida</option>
+                            <option value="Monje">Monk / Monje</option>
+                            <option value="Artificiero">Artificer / Artificiero</option>
+                            <option value="Cazador">Ranger / Cazador</option>
+                            <option value="Brujo">Warlock / Brujo</option>
+                            <option value="Hechicero">Sorcerer / Hechicero</option>
+                            <option value="Necromancer">Necromancer / Nigromante</option>
+                        </select>
+                    </div>
+
                     <div class="form-group" id="razaGroup" style="display: none;">
                         <label>Raza (D&D)</label>
                         <select name="raza">
@@ -1471,13 +1493,16 @@
                     characterData.purity_bonus = "Sintonía Fina (Ventaja en Perspicacia)";
                 }
 
-                // 4. Procedural Life History (Timeline)
-                const timeline = this.generateTimeline(age, moralTone);
+                // 5. Soul Resonance (Procedural Perks)
+                const perks = this.generateSoulPerks(characterData, stats);
 
-                // 5. Meta-Tagging based on Text Analysis (Simulated)
+                // 6. Narrative Depth (Origin, Turning Point, Light)
+                const narrative = this.generateNarrativeFlow(characterData, age, moralTone);
+
+                // 7. Meta-Tagging
                 const tags = this.generateTags(characterData);
 
-                // Construct Enhanced RPG JSON
+                // Construct Enhanced RPG JSON (Final Structure)
                 return {
                     ...characterData,
                     isRPG: true,
@@ -1489,29 +1514,99 @@
                             current_stage: "Mentira",
                             conflict: characterData.psicologia.mentira,
                             resolution: characterData.psicologia.verdad,
-                            progress: 10 // 0 to 100
-                        }
+                            progress: 10
+                        },
+                        soul_perks: perks
                     },
+                    narrative_arc: narrative,
                     timeline: timeline,
                     meta_tags: tags
                 };
             }
 
+            generateNarrativeFlow(data, age, tone) {
+                // Procedural Narrative Generation based on Role/Class
+                const role = data.clase || data.rol || "Aventurero";
+
+                // 1. ORIGINS
+                let origins = [
+                    "Creció escuchando historias de héroes caídos, soñando con superar sus leyendas.",
+                    "Su infancia estuvo marcada por la disciplina férrea de un mentor que ya no está.",
+                    "Nacido en la pobreza, aprendió que la única ley real es la fuerza de voluntad."
+                ];
+                if (role.match(/Mago|Hechicero/i)) origins = ["La magia se manifestó temprano, un don peligroso que casi consume su hogar.", "Estudió en las torres de marfil hasta que descubrió una verdad prohibida."];
+                else if (role.match(/Picaro|Crimen/i)) origins = ["Las calles fueron su escuela; las sombras, su única familia.", "Huyó de una familia noble para encontrar libertad en el barro."];
+
+                // 2. TURNING POINT
+                let turningPoints = [
+                    "Todo cambió la noche que la luna se tornó roja y las bestias hablaron.",
+                    "Una traición inesperada le enseñó a nunca dar la espalda, ni siquiera a un amigo.",
+                    "Encontró un artefacto antiguo que le susurró su verdadero nombre."
+                ];
+
+                // 3. MOMENT OF LIGHT (The Anchor)
+                let lights = [
+                    "Aún conserva la flauta de madera que talló su padre; su sonido le trae paz en las guardias frías.",
+                    "Recuerda la sonrisa de alguien a quien salvó sin pedir nada a cambio. Esa memoria es su escudo.",
+                    "Hay un jardín secreto en su mente, un lugar de calma absoluta al que va cuando el mundo arde."
+                ];
+
+                const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+                return {
+                    origin: pick(origins),
+                    turning_point: pick(turningPoints),
+                    moment_of_light: pick(lights)
+                };
+            }
+
+            generateSoulPerks(data, stats) {
+                const perks = [];
+
+                // Perk 1: Class/Role Based
+                let rolePerk = { name: "Golpe Básico", type: "COMBAT", trigger: "Ataque", effect: "Daño normal.", flavor: "Técnica estándar." };
+                const role = data.clase || data.rol || "Aventurero";
+
+                if (role.match(/Guerrero|Barbaro|Paladin/i)) {
+                    rolePerk = { name: "Furia Vindictiva", type: "COMBAT", trigger: "Recibir Daño", effect: "Próximo ataque tiene Ventaja.", flavor: "El dolor solo alimenta su determinación." };
+                } else if (role.match(/Mago|Hechicero|Brujo/i)) {
+                    rolePerk = { name: "Eco Arcano", type: "MAGIC", trigger: "Lanzar Hechizo", effect: "Recupera 1 espacio de conjuro con 5-6 en 1d6.", flavor: "La magia residual se aferra a su alma." };
+                } else if (role.match(/Picaro|Cazador/i)) {
+                    rolePerk = { name: "Sombra Oportuna", type: "STEALTH", trigger: "Ocultarse", effect: "+5 al sigilo si está herido.", flavor: "Sabe desaparecer cuando la muerte acecha." };
+                }
+                perks.push(rolePerk);
+
+                // Perk 2: High Stat Based
+                let statPerk = { name: "Voluntad de Hierro", type: "PASIVA", trigger: "Siempre", effect: "+1 HP por nivel.", flavor: "Duro de matar." };
+                if (stats.STR >= 15) statPerk = { name: "Rompehuesos", type: "COMBAT", trigger: "Crítico", effect: "El enemigo cae derribado.", flavor: "Su fuerza es imparable." };
+                else if (stats.INT >= 15) statPerk = { name: "Mente Analítica", type: "PASIVA", trigger: "Investigación", effect: "Detecta mentiras automáticamente.", flavor: "Ve los patrones donde otros ven caos." };
+                else if (stats.CHA >= 15) statPerk = { name: "Aura de Mando", type: "SOCIAL", trigger: "Persuasión", effect: "Los aliados ganan inmunidad al miedo.", flavor: "Su voz inspira valor." };
+                perks.push(statPerk);
+
+                // Perk 3: Flaw/Psychology Based
+                perks.push({
+                    name: "Cicatriz Psíquica",
+                    type: "RASGO",
+                    trigger: "Situación de Stress",
+                    effect: "Desventaja si revive su trauma.",
+                    flavor: `Su pasado (${data.psicologia.herida || "oscuro"}) aún lo persigue.`
+                });
+
+                return perks;
+            }
+
             generateTimeline(age, tone) {
                 const events = [];
-                // Generate a simpler timeline for now
-                const origin = { year: "Origen", event: "Nacimiento bajo una estrella auspiciosa.", scar: null };
+                const origin = { year: "Año 0", event: "Nacimiento bajo un presagio incierto.", scar: null };
                 events.push(origin);
-
-                if (age > 15) events.push({ year: "Juventud", event: "Primera pérdida significativa.", scar: "Cicatriz emocional: Desconfianza" });
-                if (age > 30) events.push({ year: "Adultez", event: "Gran conflicto armado o social.", scar: "Cicatriz física: Cojera leve" });
-
+                if (age > 15) events.push({ year: `Año ${Math.floor(age / 2)}`, event: "Una pérdida define su carácter.", scar: "Cicatriz Emocional: Desconfianza" });
+                if (age > 25) events.push({ year: "Actualidad", event: "Busca un propósito mayor en este mundo roto.", scar: null });
                 return events;
             }
 
             generateTags(data) {
                 const tags = ["npc_compatible"];
-                if (data.rol && (data.rol.includes("Paladin") || data.rol.includes("Clerigo"))) tags.push("divine_caster");
+                if (data.clase) tags.push(data.clase.toLowerCase());
                 return tags;
             }
         }
@@ -1519,215 +1614,221 @@
         const rpgEngine = new SoulRPGEngine();
 
         function showRPGCharacterHTML(p) {
-            // RPG SHEET DESIGN GENERATOR
+            // PREMIUM RPG SHEET GENERATOR (Aric V3 Standard)
             const jsonString = encodeURIComponent(JSON.stringify(p, null, 2));
-            const tensionColor = p.mechanics.soul_tension > 50 ? '#ff4444' : '#ffd700';
 
-            // Build Stats HTML
+            // Icons Map (SVG Paths)
+            const icons = {
+                STR: 'M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z M18,6 L6,18 L8,20 L15,13 L19,9 L22,6 L18,6 Z',
+                DEX: 'M12,2 L12,22 M2,12 L22,12 M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z',
+                CON: 'M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z',
+                INT: 'M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 C12,22 21,16.55 21,11 C21,6.03 16.97,2 12,2 Z M12,18 C9,18 9,16 9,14 C9,12 11,12 11,10 C11,9 12,9 12,9 C12,9 13,9 13,10 C13,12 15,12 15,14 C15,16 15,18 12,18 Z',
+                WIS: 'M12,6 C13.66,6 15,7.34 15,9 C15,10.66 13.66,12 12,12 C10.34,12 9,10.66 9,9 C9,7.34 10.34,6 12,6 Z',
+                CHA: 'M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z'
+            };
+
+            // Build Stats HTML (Medallions)
             let statsHTML = '';
             for (let [key, val] of Object.entries(p.rpg_stats)) {
+                let mod = Math.floor((val - 10) / 2);
+                let modStr = (mod >= 0) ? `+${mod}` : `${mod}`;
+                let modColor = (mod >= 0) ? '#8a0b0b' : '#444';
+
                 statsHTML += `
-                    <div class="stat-box">
-                        <div class="stat-icon">${rpgEngine.statIcons[key]}</div>
-                        <div class="stat-val">${val}</div>
-                        <div class="stat-label">${key}</div>
+                    <div class="stat-medallion">
+                        <svg class="stat-icon" viewBox="0 0 24 24"><path d="${icons[key] || icons.STR}"/></svg>
+                        <span class="stat-value-big">${val}</span>
+                        <span class="stat-name-tiny">${key}</span>
+                        <div class="stat-mod-seal" style="background:${modColor}">${modStr}</div>
                     </div>
                 `;
             }
 
-            // Build Timeline HTML
+            // Build Perks HTML
+            let perksHTML = '';
+            if (p.mechanics && p.mechanics.soul_perks) {
+                p.mechanics.soul_perks.forEach(k => {
+                    let tagClass = k.type === 'COMBAT' ? 'tag-combat' : 'tag-passive';
+                    perksHTML += `
+                        <div class="soul-perk">
+                            <div class="perk-header">
+                                <span class="perk-name">${k.name}</span>
+                                <span class="mech-tag ${tagClass}">${k.type}</span>
+                            </div>
+                            <div class="mech-row"><span class="mech-label">Gatillo:</span><span>${k.trigger}</span></div>
+                            <div class="mech-row"><span class="mech-label">Efecto:</span><span>${k.effect}</span></div>
+                            <div class="mech-narrative">"${k.flavor}"</div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Build Timeline HTML with DM Tags if possible
             let timelineHTML = '';
             p.timeline.forEach(t => {
                 timelineHTML += `
-                    <div class="timeline-event">
-                        <div class="event-year">${t.year}</div>
-                        <div class="event-desc">${t.event}</div>
-                        ${t.scar ? `<div class="event-scar">🤕 ${t.scar}</div>` : ''}
+                    <div class="timeline-item">
+                        <div class="timeline-year">${t.year}</div>
+                        <div class="timeline-content">${t.event}</div>
+                        ${t.scar ? `<span class="timeline-scar">🤕 ${t.scar}</span>` : ''}
                     </div>
                 `;
             });
+
+            // Quotes derived from psychology
+            const quote = `"${p.psicologia.mentira || "El mundo es cruel, pero yo lo soy más."}"`;
 
             const htmlContent = `
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>${p.nombre} - RPG Sheet</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>${p.nombre} - Ficha RPG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #1a1a20; --paper: #e3dac9; --ink: #2b2b2b; --gold: #c5a059; --blood: #8a0b0b; }
-        body { background: var(--bg); font-family: 'Crimson Text', serif; margin:0; padding: 20px; display:flex; justify-content:center; }
+        :root {
+            --bg-dark: #0a0a0f; --panel-dark: #111; --paper: #e3dac9;
+            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            --ink: #1a1a1a; --gold: #c5a059; --gold-bright: #ffd700; --blood: #8a0b0b; --accent: #5d4037;
+            --tag-conflict: #8a3b3b; --tag-combat: #3b5b8a; --tag-roleplay: #8a3b86;
+        }
+        body { background-color: var(--bg-dark); margin:0; padding:40px 20px; font-family:'Crimson Text',serif; display:flex; justify-content:center; min-height:100vh; }
+        .rpg-sheet { width:100%; max-width:1100px; background:var(--paper); background-image:var(--paper-texture); box-shadow:0 0 80px rgba(0,0,0,0.9); display:grid; grid-template-columns:340px 1fr; border-radius:4px; overflow:hidden; }
         
-        .sheet-container {
-            width: 1000px;
-            background: var(--paper);
-            color: var(--ink);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* SIDE PANEL (Interactive) */
-        .side-panel {
-            background: #111;
-            color: #ccc;
-            padding: 20px;
-            border-right: 5px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .avatar-frame {
-            width: 200px; height: 200px;
-            border: 3px solid var(--gold);
-            border-radius: 50%;
-            margin: 0 auto;
-            background: #222;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 4rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .stat-box {
-            background: #222; border: 1px solid #444;
-            padding: 10px; text-align: center; border-radius: 5px;
-        }
-        .stat-val { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold); }
-        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: #888; }
-        .stat-icon { font-size: 1.2rem; margin-bottom: 5px; }
-
-        /* MAIN CONTENT */
-        .main-content { padding: 40px; position: relative; }
+        /* SIDEBAR */
+        .sidebar { background:var(--panel-dark); color:#ccc; padding:30px 25px; border-right:4px solid var(--gold); display:flex; flex-direction:column; gap:30px; }
+        .avatar-container { width:200px; height:200px; margin:0 auto; border-radius:50%; border:3px solid var(--gold); box-shadow:0 0 25px rgba(197,160,89,0.4); overflow:hidden; background:#000; position:relative; }
+        .avatar-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; color:#333; }
         
-        /* SOUL TENSION METER */
-        .tension-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: #333;
-        }
-        .tension-bar {
-            height: 100%; background: ${tensionColor}; width: ${p.mechanics.soul_tension}%;
-            transition: width 1s;
-        }
-        .tension-label {
-            position: absolute; top: 15px; right: 20px; font-family: 'Cinzel'; font-size: 0.8rem; color: var(--blood);
-        }
+        /* STATS */
+        .stats-container { display:grid; grid-template-columns:1fr 1fr; gap:15px 10px; justify-items:center; }
+        .stat-medallion { position:relative; width:90px; height:100px; background:linear-gradient(135deg,#222,#111); border:2px solid #444; border-radius:8px; display:flex; flex-direction:column; align-items:center; padding-top:10px; transition:transform 0.2s; }
+        .stat-medallion:hover { border-color:var(--gold); transform:scale(1.05); }
+        .stat-icon { width:24px; height:24px; fill:var(--gold); margin-bottom:5px; }
+        .stat-value-big { font-family:'Cinzel'; font-size:1.8rem; color:#fff; font-weight:700; line-height:1; }
+        .stat-name-tiny { font-size:0.65rem; text-transform:uppercase; color:#888; letter-spacing:1px; }
+        .stat-mod-seal { position:absolute; bottom:-8px; background:var(--blood); color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel'; font-weight:bold; font-size:0.9rem; border:2px solid #222; }
 
-        h1 { font-family: 'Cinzel'; font-size: 3rem; margin: 0; color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
-        .meta-line { font-style: italic; color: #555; margin-bottom: 30px; font-size: 1.1rem; }
+        /* PERKS */
+        .resonance-section { border-top:1px solid #444; padding-top:20px; }
+        .resonance-title { font-family:'Cinzel'; color:var(--gold); text-align:center; margin-bottom:15px; font-size:1.1rem; }
+        .soul-perk { background:rgba(255,255,255,0.05); border-left:3px solid var(--gold); padding:10px; margin-bottom:12px; font-size:0.85rem; }
+        .perk-header { display:flex; justify-content:space-between; margin-bottom:5px; }
+        .perk-name { color:var(--gold-bright); font-weight:bold; }
+        .mech-tag { font-size:0.6rem; padding:2px 5px; border-radius:3px; font-weight:bold; letter-spacing:0.5px; background:#444; color:#ccc; }
+        .tag-combat { background:rgba(59,91,138,0.3); color:#8ab0ff; border:1px solid #3b5b8a; }
+        .mech-row { display:flex; gap:5px; color:#ccc; margin-bottom:2px; }
+        .mech-label { color:#888; font-weight:bold; min-width:50px; }
+        .mech-narrative { font-style:italic; color:#888; border-top:1px solid #333; margin-top:4px; padding-top:2px; }
 
-        .section-title {
-            font-family: 'Cinzel'; font-size: 1.5rem; color: var(--blood); margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #ccc;
-        }
-
-        .tag { background: #d4c5a9; padding: 2px 8px; border-radius: 4px; font-size: 0.9rem; border: 1px solid #bba; display: inline-block; margin: 2px; }
-
-        .timeline-event {
-            border-left: 2px solid var(--gold); padding-left: 15px; margin-bottom: 15px;
-        }
-        .event-year { font-weight: bold; font-family: 'Cinzel'; color: #444; }
-        .event-scar { color: var(--blood); font-weight: bold; font-size: 0.9rem; margin-top: 5px; }
-
-        .moral-matrix {
-            background: rgba(0,0,0,0.05); padding: 20px; border-radius: 8px; border: 1px dashed #aaa;
-        }
-
-        .btn-download {
-            position: absolute; bottom: 20px; right: 20px;
-            background: var(--blood); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-family: 'Cinzel';
-        }
+        /* MAIN */
+        .main-content { padding:50px 60px; position:relative; }
+        .char-header { border-bottom:3px double var(--accent); padding-bottom:20px; margin-bottom:30px; }
+        h1 { font-family:'Cinzel'; font-size:3.5rem; color:var(--ink); margin:0; line-height:1; }
+        .sub-header { font-family:'Metamorphous'; font-size:1.2rem; color:var(--blood); margin-top:10px; font-style:italic; }
+        
+        .quote-box { border-left:4px solid var(--accent); background:rgba(93,64,55,0.05); padding:15px 20px; margin:25px 0; font-family:'Cinzel'; font-size:1.1rem; color:#444; font-style:italic; text-align:center; }
+        
+        h2 { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); border-bottom:1px solid #bbb; margin-top:35px; }
+        p { font-size:1.15rem; line-height:1.7; text-align:justify; color:#222; margin-bottom:15px; }
+        
+        .dm-tag { display:inline-block; font-size:0.7rem; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:bold; text-transform:uppercase; background:#eee; color:#555; border:1px solid #ccc; }
+        .dm-conflict { background:#ffebee; color:#c62828; border-color:#ef9a9a; }
+        
+        .matrix-box { background:rgba(0,0,0,0.03); border:2px solid var(--accent); padding:25px; margin:30px 0; }
+        .matrix-row { display:flex; margin-bottom:10px; }
+        .matrix-label { font-weight:bold; color:var(--blood); width:130px; font-variant:small-caps; }
+        
+        .soul-meter-container { position:absolute; top:0; left:0; width:100%; height:8px; background:#dcd0c0; }
+        .soul-meter-bar { height:100%; background:linear-gradient(90deg,#333,var(--blood)); width:${p.mechanics.soul_tension}%; }
+        
+        .download-btn { position:absolute; bottom:40px; right:60px; background:var(--ink); color:var(--paper); border:none; padding:15px 30px; font-family:'Cinzel'; font-size:1rem; cursor:pointer; }
+        
+        @media (max-width:900px) { .rpg-sheet{grid-template-columns:1fr;} .sidebar{flex-direction:row; flex-wrap:wrap; justify-content:center;} }
     </style>
 </head>
 <body>
-    <div class="sheet-container">
-        <!-- SIDE PANEL -->
-        <div class="side-panel">
-            <div class="avatar-frame">👤</div>
-            <div class="stats-grid">
+    <div class="rpg-sheet">
+        <div class="sidebar">
+            <div class="avatar-container">
+                <div class="avatar-placeholder">👤</div>
+            </div>
+            <div class="stats-container">
                 ${statsHTML}
             </div>
-            <div style="margin-top:20px;">
-                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">BEHAVIORAL TAGS</div>
-                ${p.meta_tags.map(t => `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
+            <div class="resonance-section">
+                <div class="resonance-title">✨ RESONANCIA DEL ALMA</div>
+                ${perksHTML}
             </div>
         </div>
-
-        <!-- MAIN CONTENT -->
+        
         <div class="main-content">
-            <div class="tension-container">
-                <div class="tension-bar"></div>
+            <div class="soul-meter-container"><div class="soul-meter-bar"></div></div>
+            
+            <div class="char-header">
+                <h1>${p.nombre}</h1>
+                <div class="sub-header">${p.clase || p.rol} · ${p.raza || "Humano"} · ${p.edad} Años</div>
             </div>
-            <div class="tension-label">SOUL TENSION: ${p.mechanics.soul_tension}%</div>
+            
+            <div class="quote-box">${quote}</div>
+            
+            <h2>Historia del Alma</h2>
+            
+            <p><strong>📜 Los Inicios:</strong> ${p.narrative_arc ? p.narrative_arc.origin : p.resumen}</p>
+            
+            <p><strong>⚡ El Punto de Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : "Un evento desconocido lo empujó a la aventura."}</p>
+            
+            <p style="border-left: 3px solid #d4af37; padding-left: 10px; font-style: italic; background: rgba(212, 175, 55, 0.1); padding: 5px 10px;">
+                <strong>✨ Momento de Luz:</strong> ${p.narrative_arc ? p.narrative_arc.moment_of_light : "Conserva la esperanza en tiempos oscuros."}
+            </p>
 
-            <h1>${p.nombre}</h1>
-            <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
-
-            <p>${p.resumen}</p>
-
-            <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
-            <div class="moral-matrix">
-                <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
-                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
-                <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
-                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
-                    <div style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;"></div>
-                </div>
-                <p style="text-align:right; font-size:0.8rem;">Progreso de Redención: ${p.mechanics.moral_matrix.progress}%</p>
+            <div class="matrix-box">
+                <div class="matrix-row"><span class="matrix-label">La Mentira</span><span>${p.mechanics.moral_matrix.conflict}</span></div>
+                <div class="matrix-row"><span class="matrix-label">La Verdad</span><span>${p.mechanics.moral_matrix.resolution}</span></div>
             </div>
-
-            <div class="section-title">📜 Línea de Vida & Cicatrices</div>
+            
+            <h2>Línea de Vida</h2>
             ${timelineHTML}
-
-            <a href="#" onclick='downloadJSON()' class="btn-download">💾 Download RPG JSON</a>
+            
+            <button class="download-btn" onclick='downloadJSON()'>📥 Descargar JSON</button>
         </div>
     </div>
-
     <script>
         function downloadJSON() {
              const dataStr = "data:text/json;charset=utf-8," + decodeURIComponent("${jsonString}");
-             const downloadAnchorNode = document.createElement('a');
-             downloadAnchorNode.setAttribute("href", dataStr);
-             downloadAnchorNode.setAttribute("download", "${p.nombre}_RPG_Sheet.json");
-             document.body.appendChild(downloadAnchorNode);
-             downloadAnchorNode.click();
-             downloadAnchorNode.remove();
+             const a = document.createElement('a');
+             a.href = dataStr; a.download = "${p.nombre}_Ficha_RPG.json";
+             document.body.appendChild(a); a.click(); a.remove();
         }
-    <\/script>
+    </script>
 </body>
 
 </html>
-            `;
+`;
 
-            const newWindow = window.open();
-            newWindow.document.write(htmlContent);
-            newWindow.document.close();
-        }
+const newWindow = window.open();
+newWindow.document.write(htmlContent);
+newWindow.document.close();
+}
 
-        // --- MAIN FORGE HANDLERS ---
-        async function handleForjarAlma(event) {
-            event.preventDefault();
+// --- MAIN FORGE HANDLERS ---
+async function handleForjarAlma(event) {
+event.preventDefault();
 
-            // Check tokens
-            if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
-            form = document.getElementById('formPersonaje'); const formData = new FormData(form); const params = new
-                URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
-            response = await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
+// Check tokens
+if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
+    form=document.getElementById('formPersonaje'); const formData=new FormData(form); const params=new
+    URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
+    response=await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
     servidor'); let personaje=await response.json(); // CHECK IF RPG MODE IS ACTIVE // We assume "rol_jugador" or
     similar option triggers this. // For now, let's treat "player" role or specific selection logic. // Assuming the
     user selects "Jugador de Rol" in a dropdown we haven't seen explicitly yet, // but we can infer or force it for
     testing. // Let's check if the 'uso' field (if we had one) or just apply it universally // if the resulting text
     implies deep stats needed. // FOR THIS UPDATE: We will apply RPG Engine if the user selected a Class (Role)
-    != 'Civilian/None' const isRPGMode = true; // Force ON for demonstration as requested if (isRPGMode) { const
-            formDataObj = new FormData(form); personaje = rpgEngine.process(personaje, formDataObj);
-            showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
-            hideLoading();
-        } catch (error) {
-            hideLoading(); alert('Error al forjar: ' + error.message);
+    !='Civilian/None' const isRPGMode=true; // Force ON for demonstration as requested if (isRPGMode) { const
+    formDataObj=new FormData(form); personaje=rpgEngine.process(personaje, formDataObj);
+    showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
+    hideLoading(); } catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
             // Refund token on error
             setTokens(getTokens() + 1);
         }
@@ -1741,15 +1842,12 @@
 
             // Check tokens (constellation costs 2)
             if (getTokens() < 2) {
-                showPayPalModal(' constelacion'); return false;
-            } // Use tokens setTokens(getTokens() - 2); // Get form
-    data const form = document.getElementById('formConstelacion'); const formData = new FormData(form); const params = new
-                URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try {
-                    const response = await
-                        fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
-                            constelacion = await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
-    catch (error) {
-                        hideLoading(); alert('Error al forjar: ' + error.message);
+                showPayPalModal(' constelacion'); return false; } // Use tokens setTokens(getTokens() - 2); // Get form
+    data const form=document.getElementById('formConstelacion'); const formData=new FormData(form); const params=new
+    URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try { const response=await
+    fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
+    constelacion=await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
+    catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
                         // Refund tokens on error
                         setTokens(getTokens() + 2);
                     }
@@ -1759,15 +1857,11 @@
 
         // --- DEMO HANDLER ---
         function openDemo(name) {
-                const lang = document.getElementById(' inputLangPersonaje').value || 'es';
-                window.open(`/demo_${name}.html?lang=${lang}`, '_blank');
-            } // --- HTML GENERATORS --- function
-            showPersonajeHTML(p) {
-                const lang = document.getElementById('inputLangPersonaje').value || 'es'; const
-                    html = generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
-                win.document.write(html); win.document.close();
-            } function generatePersonajeHTML(p, lang) {
-                return `<!DOCTYPE html>
+                const lang = document.getElementById(' inputLangPersonaje').value || 'es' ;
+    window.open(`/demo_${name}.html?lang=${lang}`, '_blank' ); } // --- HTML GENERATORS --- function
+    showPersonajeHTML(p) { const lang=document.getElementById('inputLangPersonaje').value || 'es' ; const
+    html=generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
+    win.document.write(html); win.document.close(); } function generatePersonajeHTML(p, lang) { return `<!DOCTYPE html>
     <html lang="${lang}">
 
     <head>
@@ -1974,20 +2068,20 @@
     </body>
 
     </html>`;
-            }
+    }
 
-            function showConstelacionHTML(c) {
-                const lang = document.getElementById('inputLangConstelacion').value || 'es';
-                // For constellation, redirect to the dedicated page or generate inline
-                const html = generateConstelacionHTML(c, lang);
-                const win = window.open('', '_blank');
-                win.document.write(html);
-                win.document.close();
-            }
+    function showConstelacionHTML(c) {
+    const lang = document.getElementById('inputLangConstelacion').value || 'es';
+    // For constellation, redirect to the dedicated page or generate inline
+    const html = generateConstelacionHTML(c, lang);
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    }
 
-            function generateConstelacionHTML(c, lang) {
-                const personajes = c.personajes || c.characters || [];
-                const personajesHTML = personajes.map((p, i) => `
+    function generateConstelacionHTML(c, lang) {
+    const personajes = c.personajes || c.characters || [];
+    const personajesHTML = personajes.map((p, i) => `
     <div class="character-card">
         <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
         <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
@@ -1995,7 +2089,7 @@
     </div>
     `).join('');
 
-                return `
+    return `
     <!DOCTYPE html>
     <html lang="${lang}">
 
@@ -2076,23 +2170,23 @@
     </body>
 
     </html>`;
-            }
+    }
 
 
-            function openDemo(name) {
-                const lang = document.getElementById('inputLangPersonaje').value || 'es';
-                window.open(`demo_${name}.html?lang=${lang}`, '_blank');
-            }
+    function openDemo(name) {
+    const lang = document.getElementById('inputLangPersonaje').value || 'es';
+    window.open(`demo_${name}.html?lang=${lang}`, '_blank');
+    }
 
-            // --- INIT ---
-            window.addEventListener('load', () => {
-                updateTokenDisplay();
-                // Give 3 free tokens for new users
-                if (localStorage.getItem('soulforge_tokens') === null) {
-                    setTokens(3);
-                }
-            });
+    // --- INIT ---
+    window.addEventListener('load', () => {
+    updateTokenDisplay();
+    // Give 3 free tokens for new users
+    if (localStorage.getItem('soulforge_tokens') === null) {
+    setTokens(3);
+    }
+    });
     </script>
-</body>
+    </body>
 
-</html>
+    </html>

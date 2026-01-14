@@ -3,385 +3,603 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Aric Blackwood - SoulForge RPG Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aric Blackwood - Hoja de Personaje RPG</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1a20;
+            --bg-dark: #0a0a0f;
+            --panel-dark: #111;
             --paper: #e3dac9;
-            --ink: #2b2b2b;
+            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            --ink: #1a1a1a;
             --gold: #c5a059;
+            --gold-bright: #ffd700;
             --blood: #8a0b0b;
+            --accent: #5d4037;
+            --tag-conflict: #8a3b3b;
+            --tag-combat: #3b5b8a;
+            --tag-roleplay: #8a3b86;
         }
 
         body {
-            background: var(--bg);
-            font-family: 'Crimson Text', serif;
+            background-color: var(--bg-dark);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink);
             display: flex;
             justify-content: center;
-        }
-
-        .sheet-container {
-            width: 1000px;
-            background: var(--paper);
-            color: var(--ink);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            display: grid;
-            grid-template-columns: 300px 1fr;
             min-height: 100vh;
-            position: relative;
         }
 
-        /* SIDE PANEL */
-        .side-panel {
-            background: #111;
+        .rpg-sheet {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--paper);
+            background-image: var(--paper-texture);
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9);
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 1200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        /* SIDEBAR (STATS) */
+        .sidebar {
+            background-color: var(--panel-dark);
             color: #ccc;
-            padding: 20px;
-            border-right: 5px solid var(--gold);
+            padding: 30px 25px;
+            border-right: 4px solid var(--gold);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 30px;
         }
 
-        .avatar-frame {
+        .avatar-container {
             width: 200px;
             height: 200px;
-            border: 3px solid var(--gold);
-            border-radius: 50%;
             margin: 0 auto;
-            background: #222 url('https://placehold.co/200x200/1a1a1a/c5a059?text=🛡️') no-repeat center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden;
+            background: #000;
         }
 
-        .stats-grid {
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Stats Design */
+        .stats-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 15px 10px;
+            justify-items: center;
         }
 
-        .stat-box {
-            background: #222;
-            border: 1px solid #444;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
+        .stat-medallion {
+            position: relative;
+            width: 90px;
+            height: 100px;
+            background: linear-gradient(135deg, #222, #111);
+            border: 2px solid #444;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 10px;
+            box-shadow: inset 0 0 10px #000;
+            transition: transform 0.2s;
         }
 
-        .stat-val {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: var(--gold);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #888;
+        .stat-medallion:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
         }
 
         .stat-icon {
-            font-size: 1.2rem;
+            width: 24px;
+            height: 24px;
+            fill: var(--gold);
             margin-bottom: 5px;
         }
 
-        .tag-container {
+        .stat-value-big {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: #fff;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-name-tiny {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-top: 2px;
+            letter-spacing: 1px;
+        }
+
+        .stat-mod-seal {
+            position: absolute;
+            bottom: -8px;
+            background: var(--blood);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel';
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid #222;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Skills / Perks Section */
+        .resonance-section {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+        }
+
+        .resonance-title {
+            font-family: 'Cinzel';
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .soul-perk {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--gold);
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .perk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .perk-name {
+            color: var(--gold-bright);
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        /* DM TAGS for Mechanics */
+        .mech-tag {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-combat {
+            background: rgba(59, 91, 138, 0.3);
+            color: #8ab0ff;
+            border: 1px solid #3b5b8a;
+        }
+
+        .tag-passive {
+            background: rgba(138, 138, 138, 0.2);
+            color: #ccc;
+            border: 1px solid #666;
+        }
+
+        .tag-trigger {
+            background: rgba(138, 59, 59, 0.3);
+            color: #ff8a8a;
+            border: 1px solid #8a3b3b;
+        }
+
+        .mech-row {
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-bottom: 4px;
+            display: flex;
             gap: 5px;
         }
 
-        .tag {
-            color: var(--gold);
-            border: 1px solid #444;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            border-radius: 3px;
+        .mech-label {
+            color: #888;
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        .mech-narrative {
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+            border-top: 1px solid #333;
+            padding-top: 4px;
+            margin-top: 4px;
         }
 
         /* MAIN CONTENT */
         .main-content {
-            padding: 40px;
+            padding: 50px 60px;
             position: relative;
         }
 
-        .tension-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: #333;
-        }
-
-        .tension-bar {
-            height: 100%;
-            background: #ff4444;
-            width: 75%;
-            transition: width 1s;
-        }
-
-        .tension-label {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-family: 'Cinzel';
-            font-size: 0.8rem;
-            color: var(--blood);
+        .char-header {
+            border-bottom: 3px double var(--accent);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         h1 {
             font-family: 'Cinzel';
-            font-size: 3rem;
-            margin: 0;
+            font-size: 3.5rem;
             color: var(--ink);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
+            margin: 0;
+            letter-spacing: 2px;
+            line-height: 1;
         }
 
-        .meta-line {
+        .sub-header {
+            font-family: 'Metamorphous', cursive;
+            font-size: 1.2rem;
+            color: var(--blood);
+            margin-top: 10px;
             font-style: italic;
-            color: #555;
-            margin-bottom: 30px;
+        }
+
+        /* Reading Improvements */
+        h2 {
+            font-family: 'Cinzel';
+            font-size: 1.6rem;
+            color: var(--accent);
+            border-bottom: 1px solid #bbb;
+            padding-bottom: 5px;
+            margin-top: 35px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            text-align: justify;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        strong {
+            color: var(--blood);
+            font-weight: 700;
+        }
+
+        /* Highlight key phrases */
+
+        /* Quote Box */
+        .quote-box {
+            border-left: 4px solid var(--accent);
+            background: rgba(93, 64, 55, 0.05);
+            padding: 15px 20px;
+            margin: 25px 0;
+            font-family: 'Cinzel';
             font-size: 1.1rem;
-        }
-
-        .section-title {
-            font-family: 'Cinzel';
-            font-size: 1.5rem;
-            color: var(--blood);
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .moral-matrix {
-            background: rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px dashed #aaa;
-        }
-
-        .timeline-event {
-            border-left: 2px solid var(--gold);
-            padding-left: 15px;
-            margin-bottom: 15px;
-        }
-
-        .event-year {
-            font-weight: bold;
-            font-family: 'Cinzel';
             color: #444;
+            font-style: italic;
+            text-align: center;
         }
 
-        .event-scar {
+        /* Micro-Tags for Narrative */
+        .dm-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-family: 'sans-serif';
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: middle;
+            text-transform: uppercase;
+        }
+
+        .dm-conflict {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .dm-roleplay {
+            background: #f3e5f5;
+            color: #6a1b9a;
+            border: 1px solid #ce93d8;
+        }
+
+        /* Soul Meter */
+        .soul-meter-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: #dcd0c0;
+        }
+
+        .soul-meter-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #333, var(--blood));
+            width: 75%;
+        }
+
+        .soul-meter-label {
+            position: absolute;
+            top: 10px;
+            right: 60px;
+            font-family: 'Cinzel';
+            font-size: 0.75rem;
             color: var(--blood);
             font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 5px;
         }
 
-        .cta-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: var(--blood);
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-family: 'Cinzel';
+        /* Matrix Box */
+        .matrix-box {
+            background: rgba(0, 0, 0, 0.03);
+            border: 2px solid var(--accent);
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: baseline;
+        }
+
+        .matrix-label {
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(138, 11, 11, 0.4);
+            font-variant: small-caps;
+            color: var(--blood);
+            font-size: 1rem;
+            width: 140px;
         }
 
-        .cta-btn:hover {
-            transform: scale(1.05);
+        .matrix-text {
+            font-style: italic;
+            color: #333;
+            flex: 1;
         }
 
-        /* Responsive */
+        .download-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Cinzel';
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: var(--blood);
+        }
+
         @media (max-width: 900px) {
-            .sheet-container {
+            .rpg-sheet {
                 grid-template-columns: 1fr;
-                width: 100%;
             }
 
-            .side-panel {
-                border-right: none;
-                border-bottom: 5px solid var(--gold);
+            .sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
 </head>
 
-<body>
-    <div class="sheet-container">
-        <!-- SIDE PANEL -->
-        <div class="side-panel">
-            <div class="avatar-frame"></div>
+<body onload="translateContent()">
 
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-icon">⚔️</div>
-                    <div class="stat-val">18</div>
-                    <div class="stat-label">STR</div>
+    <div class="rpg-sheet">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="avatar-container">
+                <img src="aric_thumb.png" alt="Aric Portrait" class="avatar-img">
+            </div>
+
+            <div class="stats-container">
+                <!-- STR -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z M18,6 L6,18 L8,20 L15,13 L19,9 L22,6 L18,6 Z" />
+                    </svg>
+                    <span class="stat-value-big">18</span>
+                    <span class="stat-name-tiny">Fuerza</span>
+                    <div class="stat-mod-seal">+4</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon">🏹</div>
-                    <div class="stat-val">12</div>
-                    <div class="stat-label">DEX</div>
+                <!-- DEX -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L12,22 M2,12 L22,12 M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big">12</span>
+                    <span class="stat-name-tiny">Destreza</span>
+                    <div class="stat-mod-seal" style="background:#555;">+1</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon">🛡️</div>
-                    <div class="stat-val">16</div>
-                    <div class="stat-label">CON</div>
+                <!-- CON -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big">16</span>
+                    <span class="stat-name-tiny">Const.</span>
+                    <div class="stat-mod-seal">+3</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon">🔮</div>
-                    <div class="stat-val">10</div>
-                    <div class="stat-label">INT</div>
+                <!-- INT -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 C12,22 21,16.55 21,11 C21,6.03 16.97,2 12,2 Z M12,18 C9,18 9,16 9,14 C9,12 11,12 11,10 C11,9 12,9 12,9 C12,9 13,9 13,10 C13,12 15,12 15,14 C15,16 15,18 12,18 Z" />
+                    </svg>
+                    <span class="stat-value-big">10</span>
+                    <span class="stat-name-tiny">Intel.</span>
+                    <div class="stat-mod-seal" style="background:#444; color:#aaa;">+0</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon">👁️</div>
-                    <div class="stat-val">14</div>
-                    <div class="stat-label">WIS</div>
+                <!-- WIS -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z M12,6 C13.66,6 15,7.34 15,9 C15,10.66 13.66,12 12,12 C10.34,12 9,10.66 9,9 C9,7.34 10.34,6 12,6 Z M12,20 C9.33,20 7,18.67 7,16 C7,14 10,14 12,14 C14,14 17,14 17,16 C17,18.67 14.67,20 12,20 Z" />
+                    </svg>
+                    <span class="stat-value-big">14</span>
+                    <span class="stat-name-tiny">Sabid.</span>
+                    <div class="stat-mod-seal" style="background:#555;">+2</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon">🎭</div>
-                    <div class="stat-val">8</div>
-                    <div class="stat-label">CHA</div>
+                <!-- CHA -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z M12,4 L19,7.5 L12,11 L5,7.5 L12,4 Z M4,15.7 L4,9.3 L11,12.8 L11,19.2 L4,15.7 Z M13,19.2 L13,12.8 L20,9.3 L20,15.7 L13,19.2 Z" />
+                    </svg>
+                    <span class="stat-value-big">8</span>
+                    <span class="stat-name-tiny">Carisma</span>
+                    <div class="stat-mod-seal"
+                        style="background:none; border:2px solid #555; height:24px; width:24px; font-size:0.8rem; bottom:-5px;">
+                        -1</div>
                 </div>
             </div>
 
-            <div style="margin-top:20px;">
-                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">BEHAVIORAL TAGS</div>
-                <div class="tag-container">
-                    <span class="tag" id="t_tag1">Oathbreaker</span>
-                    <span class="tag" id="t_tag2">Divine Caster (Fallen)</span>
-                    <span class="tag" id="t_tag3">Intimidation Expert</span>
-                    <span class="tag" id="t_tag4">Trauma: Authority</span>
-                </div>
-            </div>
+            <!-- SKILLS / PERKS -->
+            <div class="resonance-section">
+                <div class="resonance-title">✨ RESONANCIA DEL ALMA</div>
 
-            <div style="margin-top:20px; text-align:center;">
-                <div style="font-size:0.8rem; color:#888;">CLASS FEATURE</div>
-                <div style="color:var(--gold); font-family:'Cinzel'; margin-top:5px;" id="t_feat">Sentinel Feat</div>
+                <!-- Perk 1 -->
+                <div class="soul-perk">
+                    <div class="perk-header">
+                        <span class="perk-name">Escudo del Mártir</span>
+                        <span class="mech-tag tag-combat">REACCIÓN</span>
+                    </div>
+                    <div class="mech-row">
+                        <span class="mech-label">Gatillo:</span>
+                        <span>Aliado adyacente es atacado.</span>
+                    </div>
+                    <div class="mech-row">
+                        <span class="mech-label">Efecto:</span>
+                        <span>Aliado gana <strong>+2 AC</strong>. Si ataque falla, Aric recibe mitad del daño.</span>
+                    </div>
+                    <div class="mech-narrative">"Su deseo de proteger es más fuerte que su instintos de supervivencia."
+                    </div>
+                </div>
+
+                <!-- Perk 2 -->
+                <div class="soul-perk">
+                    <div class="perk-header">
+                        <span class="perk-name">Fobia al Silencio</span>
+                        <span class="mech-tag tag-passive">PASIVA / RASPGO</span>
+                    </div>
+                    <div class="mech-row">
+                        <span class="mech-label">Efecto:</span>
+                        <span>Desventaja en tiradas de Sabiduría (Percepción) si hay silencio absoluto.</span>
+                    </div>
+                    <div class="mech-narrative">"El recuerdo de la Catedral silente aún paraliza sus sentidos."</div>
+                </div>
+
+                <!-- Perk 3 -->
+                <div class="soul-perk">
+                    <div class="perk-header">
+                        <span class="perk-name">Furia de la Fe Muerta</span>
+                        <span class="mech-tag tag-trigger">1/DÍA - 0 HP</span>
+                    </div>
+                    <div class="mech-row">
+                        <span class="mech-label">Efecto:</span>
+                        <span>Al caer a 0 HP, realiza inmediatamente un ataque con Ventaja antes de caer.</span>
+                    </div>
+                    <div class="mech-narrative">"La fe se ha ido, pero la ira lo mantiene de pie un segundo más."</div>
+                </div>
             </div>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
-            <div class="tension-container">
-                <div class="tension-bar"></div>
+            <div class="soul-meter-container">
+                <div class="soul-meter-bar" style="width: 75%;"></div>
             </div>
-            <div class="tension-label" id="t_tension">SOUL TENSION: 75% (CRITICAL)</div>
+            <div class="soul-meter-label">TENSIÓN DEL ALMA: 75% (INESTABLE)</div>
 
-            <h1 id="t_name">Aric Blackwood</h1>
-            <div class="meta-line" id="t_meta">Human Paladin · 34 Years · Dark Fantasy</div>
+            <div class="char-header">
+                <h1>Aric Blackwood</h1>
+                <div class="sub-header">Paladín Caído · Humano · 34 Años · Fantasía Oscura</div>
+            </div>
 
-            <div class="section-title" id="t_bio_title">📜 The Broken Oath</div>
-            <p id="t_bio_1">
-                Once a celebrated captain of the Order of the Silver Flame, Aric's life shattered during the Siege of
-                Vorath. He watched plague-ridden peasants being slaughtered by the very "purification" fires he was
-                sworn to wield.
+            <!-- DEFINING QUOTE -->
+            <div class="quote-box">
+                "Aric no lucha por redención. Lucha porque no sabe quién sería sin su juramento."
+            </div>
+
+            <h2>El Juramento Roto</h2>
+            <p>
+                <span class="dm-tag dm-roleplay">🎭 Contexto</span>
+                Aric no siempre fue un hombre de sombras. Una vez, su armadura brillaba como el sol de mediodía,
+                bendecida por la Orden de la Llama Eterna. <strong>Era el escudo de los inocentes</strong> en las
+                Tierras Fronterizas. Pero la luz proyecta las sombras más largas.
             </p>
-            <p id="t_bio_2">
-                Turned his blade against his High Inquisitor to save a family. Now branded a heretic, he wanders as a
-                mercenary who refuses to pray to silent gods.
+            <p>
+                <span class="dm-tag dm-conflict">🔥 Trauma Clave</span>
+                Durante el Asedio de la Catedral de Cristal, <strong>Aric rezó por refuerzos que nunca
+                    llegaron.</strong> Vio cómo las abominaciones devoraban a sus hermanos. En su desesperación, gritó a
+                su dios, pero solo el silencio respondió. En ese silencio, algo se rompió. No fue su espada, sino su fe.
+                Sobrevivió no por gracia divina, sino por una <strong>furia fría y brutal</strong> que despertó en su
+                sangre.
+            </p>
+            <p>
+                Ahora vaga como un mercenario, un "sin-dios". Su armadura está teñida de negro para ocultar el escudo
+                heráldico que ya no tiene derecho a portar.
             </p>
 
-            <div class="section-title" id="t_psy_title">🧠 Psico-Matriz Evolutiva</div>
-            <div class="moral-matrix">
-                <p><strong id="t_lie_label">The Lie (Start):</strong> <span id="t_lie">"I am a monster because I killed
-                        a holy man."</span></p>
-                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
-                <p><strong id="t_truth_label">The Truth (Goal):</strong> <span id="t_truth">"Sanctity is found in
-                        actions, not titles."</span></p>
-                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
-                    <div style="width:25%; background:var(--gold); height:100%;"></div>
+            <!-- PSYCHO MATRIX -->
+            <div class="matrix-box">
+                <div class="matrix-row">
+                    <span class="matrix-label">La Mentira</span>
+                    <span class="matrix-text">"La divinidad nos ha abandonado; solo la fuerza bruta dicta la
+                        justicia."</span>
                 </div>
-                <p style="text-align:right; font-size:0.8rem;" id="t_progress">Redemption Progress: 25%</p>
-            </div>
-
-            <div class="section-title" id="t_timeline_title">📜 Lifepath & Scars</div>
-            <div class="timeline-event">
-                <div class="event-year" id="t_year_1">Age 16: Ordination</div>
-                <div class="event-desc" id="t_event_1">Swore the Eternal Vow to the Silver Flame under a blood moon.
+                <div class="matrix-row">
+                    <span class="matrix-label">La Herida</span>
+                    <span class="matrix-text">El Silencio de Dios durante la masacre. Miedo existencial al
+                        abandono.</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">El Deseo</span>
+                    <span class="matrix-text">Encontrar una causa "real" por la que valga la pena morir.</span>
                 </div>
             </div>
-            <div class="timeline-event">
-                <div class="event-year" id="t_year_2">Age 28: The Siege</div>
-                <div class="event-desc" id="t_event_2">The Incident of Vorath. Defected from the order.</div>
-                <div class="event-scar" id="t_scar_1">🤕 Scar: Burned Left Hand (Divine Fire)</div>
-            </div>
-            <div class="timeline-event">
-                <div class="event-year" id="t_year_3">Age 34: Present Day</div>
-                <div class="event-desc" id="t_event_3">Working as a mercenary in the Shadowlands.</div>
-                <div class="event-scar" id="t_scar_2">🧠 Trauma: Nightmares of Burning Flesh</div>
-            </div>
 
-            <a href="/" class="cta-btn" id="t_cta">⚡ FORGE YOUR OWN</a>
+            <h2>Línea de Vida</h2>
+            <p><strong>Año 29 - El Asedio Silencioso:</strong> 7 días de matanza. Aric pierde la visión espiritual.</p>
+            <p><strong>Actualmente:</strong> Trabaja como matón con principios en los barrios bajos.</p>
+
+            <button class="download-btn" onclick="alert('Descargando JSON enriquecido...')">
+                📥 Descargar Ficha RPG
+            </button>
         </div>
     </div>
-
     <script>
-        const I18N = {
-            es: {
-                t_name: "Aric Blackwood",
-                t_meta: "Paladín Humano · 34 Años · Fantasía Oscura",
-                t_tag1: "Rompejuramentos", t_tag2: "Lanzador Divino (Caído)", t_tag3: "Experto en Intimidación", t_tag4: "Trauma: Autoridad",
-                t_feat: "Dote: Centinela",
-                t_tension: "TENSIÓN DEL ALMA: 75% (CRÍTICA)",
-                t_bio_title: "📜 El Juramento Roto",
-                t_bio_1: "Otrora capitán de la Orden de la Llama de Plata. Su vida se rompió en el Asedio de Vorath al ver a inocentes arder por 'fuego purificador'.",
-                t_bio_2: "Volvió su espada contra el Inquisidor. Ahora, marcado como hereje, vaga como mercenario rechazando a dioses silenciosos.",
-                t_psy_title: "🧠 Psico-Matriz Evolutiva",
-                t_lie_label: "La Mentira (Inicio):", t_lie: "\"Soy un monstruo por matar a un hombre santo.\"",
-                t_truth_label: "La Verdad (Meta):", t_truth: "\"La santidad está en los actos, no en los títulos.\"",
-                t_progress: "Progreso de Redención: 25%",
-                t_timeline_title: "📜 Línea de Vida y Cicatrices",
-                t_year_1: "Edad 16: Ordenación", t_event_1: "Juró el Voto Eterno bajo una luna de sangre.",
-                t_year_2: "Edad 28: El Asedio", t_event_2: "El Incidente de Vorath. Desertó de la orden.", t_scar_1: "🤕 Cicatriz: Mano Izquierda Quemada (Fuego Divino)",
-                t_year_3: "Edad 34: Actualidad", t_event_3: "Trabaja como mercenario en las Tierras Sombrías.", t_scar_2: "🧠 Trauma: Pesadillas de Carne Quemada",
-                t_cta: "⚡ FORJA EL TUYO"
-            },
-            jp: {
-                t_name: "アリク・ブラックウッド",
-                t_meta: "人間のパラディン · 34歳 · ダークファンタジー",
-                t_tag1: "誓いを破りし者", t_tag2: "神聖術師 (堕落)", t_tag3: "威圧の達人", t_tag4: "トラウマ: 権威",
-                t_feat: "特技: センチネル",
-                t_tension: "魂の緊張: 75% (危険)",
-                t_bio_title: "📜 破られた誓い",
-                t_bio_1: "かつて銀の炎の教団の隊長だった。ヴォラス包囲戦で、無実の人々が「浄化の炎」で焼かれるのを見て人生が崩壊した。",
-                t_bio_2: "審問官に刃を向けた。異端者の烙印を押され、沈黙する神々を拒絶する傭兵として彷徨う。",
-                t_psy_title: "🧠 深層心理マトリックス",
-                t_lie_label: "嘘 (開始):", t_lie: "「聖人を殺した私は怪物だ。」",
-                t_truth_label: "真実 (目標):", t_truth: "「神聖さは称号ではなく行動にある。」",
-                t_progress: "救済の進捗: 25%",
-                t_timeline_title: "📜 人生の軌跡と傷跡",
-                t_year_1: "16歳: 任命", t_event_1: "血の月の下で永遠の誓いを立てた。",
-                t_year_2: "28歳: 包囲戦", t_event_2: "ヴォラスの事件。教団を脱走。", t_scar_1: "🤕 傷跡: 左手の火傷 (神聖な炎)",
-                t_year_3: "34歳: 現在", t_event_3: "シャドウランドで傭兵として活動。", t_scar_2: "🧠 トラウマ: 焼ける肉の悪夢",
-                t_cta: "⚡ 今すぐ作成"
-            }
-        };
-
-        const params = new URLSearchParams(window.location.search);
-        const lang = params.get('lang') || 'en';
-
-        if (lang !== 'en' && I18N[lang]) {
-            const data = I18N[lang];
-            for (const key in data) {
-                const el = document.getElementById(key);
-                if (el) el.innerHTML = data[key];
-            }
-        }
+        function translateContent() { console.log("Ficha Profesional Cargada"); }
     </script>
 </body>
 

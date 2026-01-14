@@ -3,385 +3,408 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Elara Vex - SoulForge RPG Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elara Vex - Hoja de Personaje RPG</title>
+    <!-- Fonts: Orbitron for SciFi/Cyber, Roboto for body -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:ital,wght@0,300;0,400;0,700;1,400&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <style>
-        /* CYBERPUNK THEME OVERRIDE */
         :root {
-            --bg: #050510;
-            --paper: #0f0f1a;
-            --ink: #a0a0ff;
-            --gold: #b026ff;
-            --blood: #ff0055;
+            --bg-dark: #050510;
+            --panel-dark: #0a0a15;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #bc13fe;
+            --text-main: #e0e0ff;
+            --glass: rgba(20, 20, 40, 0.7);
         }
 
         body {
-            background: var(--bg);
-            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg-dark);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-main);
             display: flex;
             justify-content: center;
-            color: var(--ink);
+            min-height: 100vh;
+            background-image:
+                linear-gradient(rgba(0, 0, 20, 0.9), rgba(0, 0, 20, 0.9)),
+                url('https://www.transparenttextures.com/patterns/dark-matter.png');
         }
 
-        .sheet-container {
-            width: 1000px;
-            background: var(--paper);
-            box-shadow: 0 0 50px rgba(176, 38, 255, 0.2);
-            border: 1px solid var(--gold);
+        .rpg-sheet {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--panel-dark);
+            border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
             display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: 100vh;
+            grid-template-columns: 320px 1fr;
+            min-height: 1200px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* -------------------------------------------------------------
+           SIDEBAR (Cyber Stats)
+           ------------------------------------------------------------- */
+        .sidebar {
+            background: rgba(10, 10, 15, 0.95);
+            border-right: 2px solid var(--neon-purple);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
             position: relative;
         }
 
-        /* SIDE PANEL */
-        .side-panel {
-            background: #080812;
-            padding: 20px;
-            border-right: 2px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .avatar-frame {
-            width: 200px;
-            height: 200px;
-            border: 3px solid var(--gold);
-            border-radius: 10px;
-            /* Square for Tech */
+        /* Avatar */
+        .avatar-container {
+            width: 220px;
+            height: 220px;
             margin: 0 auto;
-            background: #222 url('https://placehold.co/200x200/0f0f1a/b026ff?text=💾') no-repeat center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px var(--gold);
+            position: relative;
+            border-radius: 12px;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            overflow: hidden;
+            background: #000;
         }
 
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Glitch effect overlay on hover (simple CSS) */
+        .avatar-container:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+            border-color: var(--neon-pink);
+        }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+            margin-top: 20px;
         }
 
         .stat-box {
-            background: #111;
-            border: 1px solid var(--gold);
-            padding: 10px;
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid #224;
+            padding: 8px;
             text-align: center;
-            border-radius: 4px;
+            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
         }
 
-        .stat-val {
+        .stat-value {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.5rem;
-            color: #fff;
-            text-shadow: 0 0 5px var(--gold);
+            color: var(--neon-blue);
+            display: block;
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--gold);
-        }
-
-        .stat-icon {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        .tag {
-            color: #fff;
-            background: rgba(176, 38, 255, 0.2);
-            border: 1px solid var(--gold);
-            padding: 2px 8px;
+            font-family: 'Share Tech Mono', monospace;
             font-size: 0.7rem;
-            border-radius: 4px;
+            color: #88a;
+            display: block;
+            margin-top: 4px;
         }
 
-        /* MAIN CONTENT */
+        /* Tags */
+        .rpg-tag {
+            background: rgba(188, 19, 254, 0.1);
+            color: var(--neon-pink);
+            border: 1px solid var(--neon-purple);
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-family: 'Share Tech Mono';
+            margin: 2px;
+            display: inline-block;
+        }
+
+        /* -------------------------------------------------------------
+           MAIN CONTENT (Holo-Narrative)
+           ------------------------------------------------------------- */
         .main-content {
-            padding: 40px;
-            position: relative;
+            padding: 50px 60px;
+            background:
+                linear-gradient(180deg, rgba(0, 243, 255, 0.02) 0%, transparent 5%, transparent 95%, rgba(0, 243, 255, 0.02) 100%),
+                repeating-linear-gradient(0deg, transparent 0, transparent 1px, rgba(0, 0, 0, 0.2) 2px, rgba(0, 0, 0, 0.2) 3px);
+            background-size: 100% 100%, 100% 4px;
         }
 
-        .tension-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: #333;
-        }
-
-        .tension-bar {
-            height: 100%;
-            background: var(--blood);
-            width: 45%;
-            transition: width 1s;
-            box-shadow: 0 0 10px var(--blood);
-        }
-
-        .tension-label {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-family: 'Orbitron';
-            font-size: 0.8rem;
-            color: var(--blood);
+        .char-header {
+            border-bottom: 2px solid var(--neon-blue);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         h1 {
             font-family: 'Orbitron';
             font-size: 3rem;
+            color: #fff;
             margin: 0;
-            color: #fff;
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 10px;
-            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue);
         }
 
-        .meta-line {
-            color: var(--gold);
-            margin-bottom: 30px;
+        .sub-header {
+            font-family: 'Share Tech Mono';
+            color: var(--neon-pink);
             font-size: 1.1rem;
-            letter-spacing: 1px;
         }
 
-        .section-title {
+        h2 {
             font-family: 'Orbitron';
-            font-size: 1.5rem;
-            color: #fff;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-left: 10px;
-            border-left: 4px solid var(--gold);
-        }
-
-        .moral-matrix {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 4px;
-            border: 1px solid #333;
-        }
-
-        .timeline-event {
-            border-left: 2px solid var(--gold);
+            font-size: 1.4rem;
+            color: var(--neon-purple);
+            border-left: 4px solid var(--neon-blue);
             padding-left: 15px;
-            margin-bottom: 15px;
+            margin-top: 40px;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent);
         }
 
-        .event-year {
-            font-weight: bold;
-            font-family: 'Orbitron';
-            color: #fff;
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #ccc;
+            text-align: justify;
         }
 
-        .event-scar {
-            color: var(--blood);
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 5px;
+        /* Tension Meter (Cyber Style) */
+        .soul-meter-container {
+            width: 100%;
+            background: #111;
+            height: 20px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+            position: relative;
         }
 
-        .cta-btn {
+        .soul-meter-bar {
+            height: 100%;
+            background: repeating-linear-gradient(45deg, var(--neon-pink), var(--neon-pink) 10px, #b000b0 10px, #b000b0 20px);
+            width: 40%;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .soul-meter-label {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: var(--gold);
+            right: 10px;
+            top: 2px;
+            font-family: 'Share Tech Mono';
+            font-size: 0.8rem;
             color: #fff;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 4px;
+        }
+
+        /* Matrix Box */
+        .matrix-box {
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid var(--neon-blue);
+            padding: 20px;
+            font-family: 'Share Tech Mono';
+        }
+
+        .matrix-row {
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #335;
+            padding-bottom: 8px;
+        }
+
+        .matrix-label {
+            color: var(--neon-blue);
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .matrix-text {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-year {
+            font-family: 'Orbitron';
+            color: var(--neon-pink);
+            width: 100px;
+            text-align: right;
+        }
+
+        .timeline-content {
+            border-left: 1px solid #444;
+            padding-left: 20px;
+            color: #bbb;
+        }
+
+        .download-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 30px;
             font-family: 'Orbitron';
             font-weight: bold;
-            box-shadow: 0 0 15px var(--gold);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
         }
 
-        .cta-btn:hover {
-            background: #fff;
+        .download-btn:hover {
+            background: var(--neon-blue);
             color: #000;
+            box-shadow: 0 0 20px var(--neon-blue);
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
-            .sheet-container {
+            .rpg-sheet {
                 grid-template-columns: 1fr;
-                width: 100%;
             }
 
-            .side-panel {
-                border-right: none;
-                border-bottom: 2px solid var(--gold);
+            .sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
             }
         }
     </style>
 </head>
 
-<body>
-    <div class="sheet-container">
-        <!-- SIDE PANEL -->
-        <div class="side-panel">
-            <div class="avatar-frame"></div>
+<body onload="translateContent()">
 
+    <div class="rpg-sheet">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="avatar-container">
+                <img src="elara_thumb.png" alt="Elara Portrait" class="avatar-img">
+            </div>
+
+            <div style="font-family:'Orbitron'; color:#fff; font-size:0.9rem; margin-top:10px;">SYSTEM STATUS</div>
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="stat-icon">💻</div>
-                    <div class="stat-val">20</div>
-                    <div class="stat-label">INT</div>
+                    <span class="stat-value">18</span>
+                    <span class="stat-label">INT (CPU)</span>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-val">16</div>
-                    <div class="stat-label">DEX</div>
+                    <span class="stat-value">16</span>
+                    <span class="stat-label">DEX (Reaction)</span>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-icon">🔋</div>
-                    <div class="stat-val">14</div>
-                    <div class="stat-label">CON</div>
+                    <span class="stat-value">10</span>
+                    <span class="stat-label">CON (Hardware)</span>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-icon">🦾</div>
-                    <div class="stat-val">10</div>
-                    <div class="stat-label">STR</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-icon">🧠</div>
-                    <div class="stat-val">12</div>
-                    <div class="stat-label">WIS</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-icon">😎</div>
-                    <div class="stat-val">14</div>
-                    <div class="stat-label">CHA</div>
+                    <span class="stat-value">14</span>
+                    <span class="stat-label">CHA (Social Protocol)</span>
                 </div>
             </div>
 
             <div style="margin-top:20px;">
-                <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">SYSTEM TAGS</div>
-                <div class="tag-container">
-                    <span class="tag" id="t_tag1">Netrunner</span>
-                    <span class="tag" id="t_tag2">Cyber-Sorceress</span>
-                    <span class="tag" id="t_tag3">Wanted: MegaCorp</span>
-                    <span class="tag" id="t_tag4">Glitch: Abandonment</span>
+                <div style="font-family:'Orbitron'; color:#fff; font-size:0.9rem; margin-bottom:10px;">INSTALLED MODS
                 </div>
-            </div>
-
-            <div style="margin-top:20px; text-align:center;">
-                <div style="font-size:0.8rem; color:#666;">LOADOUT</div>
-                <div style="color:var(--gold); font-family:'Orbitron'; margin-top:5px;" id="t_feat">Cyberdeck Mk.IV
-                </div>
+                <span class="rpg-tag">Neural_Interface_v4</span>
+                <span class="rpg-tag">Spell_Compiler_Rootkit</span>
+                <span class="rpg-tag">Elf_DNA_Sequence</span>
+                <span class="rpg-tag">Wanted: Corp_Arasoka</span>
             </div>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
-            <div class="tension-container">
-                <div class="tension-bar"></div>
+            <div class="soul-meter-container">
+                <div class="soul-meter-bar"></div>
+                <div class="soul-meter-label">SYSTEM STABILITY: 40% (CRITICAL)</div>
             </div>
-            <div class="tension-label" id="t_tension">SYSTEM INSTABILITY: 45%</div>
 
-            <h1 id="t_name">Elara "Glitch" Vex</h1>
-            <div class="meta-line" id="t_meta">Human Netrunner · 22 Years · Neo-Tokyo 2099</div>
-
-            <div class="section-title" id="t_bio_title">💾 Ghost in the Grid</div>
-            <p id="t_bio_1">
-                Born in Sector 7 slums. Found magic in corrupted data packets. Treats code as digital mana.
-            </p>
-            <p id="t_bio_2">
-                Legendary hacker "Glitch". Hosting a sentient AI virus named "Grim". The last firewall against digital
-                damnation.
-            </p>
-
-            <div class="section-title" id="t_psy_title">🧠 System Diagnostics</div>
-            <div class="moral-matrix">
-                <p><strong id="t_lie_label">Error (Start):</strong> <span id="t_lie">"Feelings are bugs. I am just
-                        code."</span></p>
-                <div style="text-align:center; margin:5px; font-size:1.2rem;">⬇️</div>
-                <p><strong id="t_truth_label">Patch (Goal):</strong> <span id="t_truth">"The soul is the only hardware
-                        that matters."</span></p>
-                <div style="margin-top:10px; background:#333; height:5px; border-radius:2px; overflow:hidden;">
-                    <div style="width:15%; background:var(--gold); height:100%;"></div>
+            <div class="char-header">
+                <div>
+                    <h1>Elara Vex</h1>
+                    <div class="sub-header">Techno-Sorceress · Elf · 128 (24) Years · Cyberpunk Fantasy</div>
                 </div>
-                <p style="text-align:right; font-size:0.8rem;" id="t_progress">Humanity Compilation: 15%</p>
+                <div style="font-size:3rem; color:var(--neon-purple);">⚡</div>
             </div>
 
-            <div class="section-title" id="t_timeline_title">📜 Runtime Logs</div>
-            <div class="timeline-event">
-                <div class="event-year" id="t_year_1">Cycle 0: Boot</div>
-                <div class="event-desc" id="t_event_1">Abandoned at server farm intake. Raised by bots.</div>
-            </div>
-            <div class="timeline-event">
-                <div class="event-year" id="t_year_2">Cycle 16: First Hack</div>
-                <div class="event-desc" id="t_event_2">Breached Arasaka sublevels. Installed "Grim" AI.</div>
-                <div class="event-scar" id="t_scar_1">🤕 Glitch: Neural Feedback Loop (Migraines)</div>
+            <h2>Biografía: El Código de la Magia</h2>
+            <p>
+                En Nueva Arcadia, la magia no es un don, es un producto licenciado por las Mega-Corporaciones. Elara Vex
+                nació en los barrios bajos del Sector 7, una elfa "sin patente" destinada a trabajar en las minas de
+                datos. Pero Elara veía el código detrás de la realidad.
+            </p>
+            <p>
+                A los 20 años (adolescencia para un elfo), hackeó los servidores de Omni-Corp y robó algo imposible: el
+                Algoritmo Primigenio, la raíz de toda magia moderna. No lo hizo por poder, sino para liberar el "Mana"
+                de las restricciones corporativas. Ahora, es la netrunner más buscada del hemisferio.
+            </p>
+            <p>
+                Vive en las sombras de neón, lanzando hechizos compilados en su cibercerebro y luchando contra
+                inquisidores corporativos. Su existencia es una carrera constante contra el "Desvanecimiento", un glitch
+                mágico que consume a los que usan magia sin licencia oficial.
+            </p>
+
+            <div class="matrix-box">
+                <div class="matrix-row">
+                    <span class="matrix-label">THE LIE (ERROR DEL SISTEMA)</span>
+                    <span class="matrix-text">"La libertad es solo otro tipo de prisión con mejor ancho de banda; nadie
+                        escapa realmente."</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">THE GLITCH (TRAUMA)</span>
+                    <span class="matrix-text">La purga de su clan. Vio cómo "desconectaban" a su familia
+                        remotamente.</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">THE PATCH (VERDAD)</span>
+                    <span class="matrix-text">La magia libre es posible, pero requiere sacrificar su propia humanidad
+                        para convertirse en la red misma.</span>
+                </div>
             </div>
 
-            <a href="/" class="cta-btn" id="t_cta">⚡ JACK IN & CREATE</a>
+            <h2>Línea de Tiempo del Sistema</h2>
+            <div class="timeline-item">
+                <div class="timeline-year">2089</div>
+                <div class="timeline-content">Compilación exitosa (Nacimiento). Genes élficos detectados.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2105</div>
+                <div class="timeline-content">Incidente "Blackout". Primera manifestación de poderes cinéticos no
+                    registrados.</div>
+                <div style="color:var(--neon-pink); margin-left: 20px; font-size:0.9rem;">⚠️ WARN: Archivo policial
+                    creado.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2112</div>
+                <div class="timeline-content">Robo del grimorio digital "Prometheus". Recompensa de 5M Créditos
+                    establecida.</div>
+            </div>
+
+            <button class="download-btn" onclick="alert('Downloading User Profile...')">
+                💾 SAVE DATA.JSON
+            </button>
         </div>
     </div>
 
     <script>
-        const I18N = {
-            es: {
-                t_name: "Elara \"Glitch\" Vex",
-                t_meta: "Netrunner Humana · 22 Años · Neo-Tokyo 2099",
-                t_tag1: "Netrunner", t_tag2: "Ciber-Hechicera", t_tag3: "Buscada: MegaCorp", t_tag4: "Glitch: Abandono",
-                t_feat: "Deck: Mk.IV Odín",
-                t_tension: "INESTABILIDAD DEL SISTEMA: 45%",
-                t_bio_title: "💾 Fantasma en la Red",
-                t_bio_1: "Nacida en Sector 7. Encontró magia en datos corruptos. Trata el código como maná digital.",
-                t_bio_2: "Hacker legendaria 'Glitch'. Hospeda al virus IA 'Grim'. El último firewall contra la condenación digital.",
-                t_psy_title: "🧠 Diagnóstico del Sistema",
-                t_lie_label: "Error (Inicio):", t_lie: "\"Los sentimientos son bugs. Soy solo código.\"",
-                t_truth_label: "Parche (Meta):", t_truth: "\"El alma es el único hardware que importa.\"",
-                t_progress: "Compilación de Humanidad: 15%",
-                t_timeline_title: "📜 Logs de Ejecución",
-                t_year_1: "Ciclo 0: Boot", t_event_1: "Abandonada en granja de servidores. Criada por bots.",
-                t_year_2: "Ciclo 16: Primer Hack", t_event_2: "Brecha en subniveles Arasaka. Instaló IA 'Grim'.", t_scar_1: "🤕 Glitch: Bucle de Retroalimentación Neural",
-                t_cta: "⚡ CONÉCTATE Y CREA"
-            },
-            jp: {
-                t_name: "エララ・\"グリッチ\"・ヴェックス",
-                t_meta: "人間のネットランナー · 22歳 · ネオトーキョー2099",
-                t_tag1: "ネットランナー", t_tag2: "サイバーソーサレス", t_tag3: "指名手配: メガコープ", t_tag4: "バグ: 孤独",
-                t_feat: "デッキ: Mk.IV オーディン",
-                t_tension: "システム不安定率: 45%",
-                t_bio_title: "💾 グリッドの亡霊",
-                t_bio_1: "セクター7生まれ。破損データに魔法を見出した。コードをデジタルマナとして扱う。",
-                t_bio_2: "伝説のハッカー「グリッチ」。AIウィルス「グリム」を宿す。デジタル地獄に対する最後のファイアウォール。",
-                t_psy_title: "🧠 システム診断",
-                t_lie_label: "エラー (開始):", t_lie: "「感情はバグ。私はただのコード。」",
-                t_truth_label: "パッチ (目標):", t_truth: "「魂こそが唯一重要なハードウェア。」",
-                t_progress: "人間性コンパイル: 15%",
-                t_timeline_title: "📜 実行ログ",
-                t_year_1: "サイクル 0: 起動", t_event_1: "サーバーファームで遺棄。ボットに育てられた。",
-                t_year_2: "サイクル 16: ハック", t_event_2: "アラサカのサブレベルに侵入。AI「グリム」をインストール。", t_scar_1: "🤕 グリッチ: 神経フィードバックループ",
-                t_cta: "⚡ ジャックイン作成"
-            }
-        };
-
-        const params = new URLSearchParams(window.location.search);
-        const lang = params.get('lang') || 'en';
-
-        if (lang !== 'en' && I18N[lang]) {
-            const data = I18N[lang];
-            for (const key in data) {
-                const el = document.getElementById(key);
-                if (el) el.innerHTML = data[key];
-            }
+        function translateContent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang');
+            console.log("Cyber-Interface Loaded. Lang:", lang);
         }
     </script>
 </body>
