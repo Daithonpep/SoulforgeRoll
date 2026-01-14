@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulForge - Forja de Almas</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #080a0e;
+            --bg-card: rgba(22, 25, 32, 0.65);
+            /* Glass base */
+            --accent: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --accent-dim: #7a6625;
+            --text-main: #f0f0f0;
+            --text-dim: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            /* Overlay oscuro + Imagen de fondo */
+            background-image:
+                linear-gradient(rgba(8, 10, 14, 0.85), rgba(8, 10, 14, 0.85)),
+                url("/static/images/background.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+            transition: all 0.5s ease;
+        }
+
+        .logo-img:hover {
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6));
+            transform: scale(1.02);
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .version {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-desc {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Pro Buttons */
+        .btn-forge {
+            width: 100%;
+            background: linear-gradient(135deg, #b48d28 0%, #ddb955 100%);
+            color: #0b0d12;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-forge:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-forge:active {
+            transform: translateY(1px);
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            border: none;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            transition: transform 0.2s;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Character Builder */
+        .character-builder {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px dashed var(--border);
+        }
+
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .hero {
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+                letter-spacing: 4px;
+            }
+
+            .tagline {
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header {
+                margin-bottom: 10px !important;
+            }
+
+            .title {
+                font-size: 1.3rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .lang-selector {
+                padding: 8px 12px !important;
+            }
+
+            .lang-selector a {
+                font-size: 1.3rem !important;
+                margin: 0 5px !important;
+            }
+
+            .card {
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-desc {
+                font-size: 0.8rem;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 0.7rem;
+                margin-bottom: 6px;
+            }
+
+            input,
+            select {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .btn-forge {
+                padding: 14px;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+
+            /* ===== FORCE ALL GRIDS TO SINGLE COLUMN ===== */
+            .mobile-grid-stack,
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat(3"],
+            [style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* Character row fields - stack vertically */
+            .character-row {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                margin-bottom: 15px !important;
+            }
+
+            .character-row>div:first-child {
+                margin: 0 auto 5px auto;
+            }
+
+            /* Steps section - vertical */
+            div[style*="repeat(3, 1fr)"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+
+            div[style*="repeat(3, 1fr)"]>div {
+                padding: 15px !important;
+            }
+
+            /* Feature list - single column */
+            div[style*="grid-template-columns: 1fr 1fr"] {
+                display: block !important;
+            }
+
+            /* Demo section grids */
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"] {
+                display: block !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"]>div {
+                margin-bottom: 20px;
+            }
+
+            /* Reduce margins on sections */
+            div[style*="margin-top: 80px"] {
+                margin-top: 40px !important;
+            }
+
+            div[style*="margin-top: 60px"] {
+                margin-top: 30px !important;
+            }
+
+            /* Character builder scroll area */
+            .character-builder {
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+
+            /* Version badge */
+            .version {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+
+            /* Credits display */
+            #creditsDisplay {
+                font-size: 0.8rem;
+                padding: 6px 12px !important;
+            }
+
+            /* Price labels */
+            [id*="priceLabel"] {
+                font-size: 1rem !important;
+            }
+
+            /* Demo section titles */
+            h2[style*="font-size: 2rem"] {
+                font-size: 1.4rem !important;
+            }
+
+            h2[style*="font-size: 2.5rem"] {
+                font-size: 1.6rem !important;
+            }
+
+            /* Quote blocks */
+            p[style*="font-size: 1.2rem"] {
+                font-size: 1rem !important;
+            }
+        }
+
+        /* Extra small screens (phones in portrait) */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 8px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+
+            .tagline {
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .btn-forge {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+
+            input,
+            select {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            /* Hide less important sections on very small screens */
+            .demo-section-hide-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="logo-container">
+            <img src="/static/images/logo_web.png" alt="SoulForge - Forja de Almas" class="logo-img">
+        </div>
+        <div class="tagline">{{ t.hero_tagline }}</div>
+        <span class="version">v2.4 - Mobile Ready</span>
+
+        <!-- Credits Display -->
+        <div id="creditsDisplay"
+            style="margin-top: 20px; display: none; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: bold;">
+            🎁 Modo Prueba: <span id="creditsCount">0</span> usos gratis restantes
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header" style="grid-column: 1 / -1; margin-bottom: 20px;">
+            <h1 class="title">{{ t.index_title }}</h1>
+            <p class="subtitle">{{ t.index_subtitle }}</p>
+            <div class="lang-selector"
+                style="margin-top: 25px; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
+                <a href="?lang=es"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; opacity: {% if lang == 'es' %}1{% else %}0.4{% endif %};"
+                    title="Español">🇪🇸</a>
+                <a href="?lang=en"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; opacity: {% if lang == 'en' %}1{% else %}0.4{% endif %};"
+                    title="English">🇺🇸</a>
+                <a href="?lang=jp"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; opacity: {% if lang == 'jp' %}1{% else %}0.4{% endif %};"
+                    title="日本語">🇯🇵</a>
+            </div>
+
+            <!-- NAV TABS -->
+            <div class="nav-tabs"
+                style="margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <a href="/ver/muro" target="_blank" class="nav-btn">
+                    ⚰️ Muro de los Caídos
+                </a>
+                <a href="/ver/juego" target="_blank" class="nav-btn glow-btn">
+                    🎮 Jugar en Línea (VTT)
+                </a>
+                <button type="button" class="nav-btn" onclick="alert('Sistema de Registro de Tokens en desarrollo.')">
+                    🪙 Mis Tokens
+                </button>
+            </div>
+
+            <style>
+                .nav-btn {
+                    padding: 12px 24px;
+                    background: rgba(22, 25, 32, 0.8);
+                    border: 1px solid var(--border);
+                    color: var(--text-main);
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-family: 'Cinzel', serif;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    text-transform: uppercase;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                }
+
+                .nav-btn:hover {
+                    border-color: var(--accent);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                    color: var(--accent);
+                }
+
+                .glow-btn {
+                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+                    border-color: rgba(212, 175, 55, 0.4);
+                    color: var(--accent);
+                }
+
+                .glow-btn:hover {
+                    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+                }
+            </style>
+        </div>
+
+        <!-- PERSONAJE ÚNICO -->
+        <div class="card">
+            <h2 class="card-title">{{ t.card_alma_title }}</h2>
+            <p class="card-desc">{{ t.card_alma_desc }}</p>
+
+            <form id="formPersonaje" action="/ver/personaje" method="GET" target="_blank">
+                <input type="hidden" name="lang" value="{{ lang }}">
+                <input type="hidden" name="token" value="{{ query_token }}">
+                <div class="form-group">
+                    <label>{{ t.label_nombre }}</label>
+                    <input type="text" name="nombre" placeholder="{{ t.label_nombre_placeholder }}">
+                </div>
+
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>{{ t.genero }}</label>
+                        <select name="genero">
+                            <option value="">-- Random --</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ t.rol }}</label>
+                        <select name="rol" id="rolSelect" onchange="toggleRaceField()">
+                            <option value="">-- Random --</option>
+                            <option value="Heroe">Heroe</option>
+                            <option value="Villano">Villano</option>
+                            <option value="Mentor">Mentor</option>
+                            <option value="Aliado">Aliado</option>
+                            <option value="Jugador">✨ Jugador (D&D Character)</option>
+                            <option value="Bufon">Bufón</option>
+                            <option value="Victima">Víctima</option>
+                            <option value="Profeta">Profeta</option>
+                            <option value="Guardian">Guardián</option>
+                            <option value="Embaucador">Embaucador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="razaGroup" style="display: none;">
+                        <label>Raza (D&D)</label>
+                        <select name="raza">
+                            <option value="">-- Random --</option>
+                            <option value="Humano">Humano</option>
+                            <option value="Elfo">Elfo</option>
+                            <option value="Enano">Enano</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="Gnomo">Gnomo</option>
+                            <option value="Tiefling">Tiefling</option>
+                            <option value="Orco">Orco</option>
+                        </select>
+                    </div>
+                </div>
+
+                <script>
+                    function toggleRaceField() {
+                        const rol = document.getElementById('rolSelect').value;
+                        const race = document.getElementById('razaGroup');
+                        if (rol === 'Jugador') {
+                            race.style.display = 'block';
+                        } else {
+                            race.style.display = 'none';
+                        }
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label>{{ t.edad }}</label>
+                    <input type="number" name="edad_fija" placeholder="Ej: 30 (Opcional)" min="5" max="900">
+                </div>
+
+                <div class="form-group">
+                    <label>{{ t.label_mundo }}</label>
+                    <select name="mundo">
+                        <option value="FantasiaMedieval">Fantasía Medieval / Medieval Fantasy</option>
+                        <option value="FantasiaOscura">Fantasía Oscura / Dark Fantasy</option>
+                        <option value="FantasiaUrbana">Fantasía Urbana / Urban Fantasy</option>
+                        <option value="SciFiCyberpunk">Cyberpunk</option>
+                        <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                        <option value="SciFiPostApocaliptico">Post-Apocalíptico / Post-Apocalyptic</option>
+                        <option value="Steampunk">Steampunk</option>
+                        <option value="Western">Western</option>
+                        <option value="Noir">Noir / Detective</option>
+                        <option value="Realista">Realista / Realistic</option>
+                        <option value="JaponFeudal">Japón Feudal / 戦国時代</option>
+                        <option value="ChinaImperial">China Imperial / 中華帝國</option>
+                        <option value="CoreaHistorica">Corea Histórica / 조선시대</option>
+                        <option value="MitologiaAsiatica">Mitología Asiática / Asian Mythology</option>
+                        <option value="AnimeFantasia">Anime Fantasy / アニメファンタジー</option>
+                        <option value="Wuxia">Wuxia / 武俠</option>
+                        <option value="Victoriano">Era Victoriana / Victorian Era</option>
+                        <option value="MitologiaGriega">Mitología Griega / Greek Mythology</option>
+                        <option value="MitologiaNordica">Mitología Nórdica / Norse Mythology</option>
+                        <option value="PiratasCaribe">Piratas del Caribe / Caribbean Pirates</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>{{ t.label_tono }}</label>
+                    <select name="tono_moral">
+                        <option value="">-- Random --</option>
+                        <option value="Luminoso">Luminoso</option>
+                        <option value="Gris">Gris</option>
+                        <option value="Oscuro">Oscuro</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <p id="priceLabelPersonaje"
+                        style="color: var(--accent); font-weight: bold; margin-bottom: 15px; font-size: 1.2rem; text-shadow: 0 0 10px rgba(212,175,55,0.3);">
+                        Precio: $4.99 USD
+                    </p>
+
+                    <button type="button" id="btnPersonaje" class="btn-forge" onclick="handleForge('personaje')">
+                        <span style="font-size: 1.2rem;">⚡</span> <span id="btnTextPersonaje">PAGAR Y FORJAR</span>
+                    </button>
+
+                    <p id="freeModeMsg" style="display:none; color: #4ade80; font-size: 0.8rem; margin-top: 10px;">
+                        ¡Usando crédito gratuito de prueba!
+                    </p>
+                </div>
+            </form>
+
+            <!-- Hidden PayPal Form -->
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id="paypalFormPersonaje"
+                style="display: none;">
+                <input type="hidden" name="cmd" value="_s-xclick" />
+                <input type="hidden" name="hosted_button_id" value="M26FMZZGTJPGS" />
+                <input type="hidden" name="currency_code" value="USD" />
+            </form>
+        </div>
+
+        <!-- CONSTELACIÓN -->
+        <div class="card">
+            <h2 class="card-title">{{ t.card_constelacion_title }}</h2>
+            <p class="card-desc">{{ t.card_constelacion_desc }}</p>
+
+            <form id="formConstelacion" action="/ver/constelacion" method="GET" target="_blank">
+                <input type="hidden" name="lang" value="{{ lang }}">
+                <input type="hidden" name="token" value="{{ query_token }}">
+                <input type="hidden" name="nombres" id="nombresHidden">
+                <input type="hidden" name="generos" id="generosHidden">
+                <input type="hidden" name="edades" id="edadesHidden">
+
+                <!-- Slider de cantidad -->
+                <div class="form-group">
+                    <label>{{ t.label_tamano_grupo }}</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="range" name="cantidad" id="cantidadSlider" min="2" max="4" value="3"
+                            oninput="updateCharacterFields()" style="flex: 1;">
+                        <span id="cantidadValue"
+                            style="font-weight: bold; color: var(--accent); width: 30px; text-align: center; font-size: 1.2rem;">3</span>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos de personajes -->
+                <div class="character-builder" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                    <h4 style="color: var(--text-dim); margin-bottom: 15px;">{{ t.label_personalizar }}</h4>
+                    <div id="characterFields">
+                        <!-- JS llenará esto -->
+                    </div>
+                </div>
+
+                <!-- Opciones avanzadas -->
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>{{ t.label_motivacion_villano }}</label>
+                        <select name="tipo_villano">
+                            <option value="None">Random / None</option>
+                            <option value="Envidia">Envidia</option>
+                            <option value="Ideologia">Ideología</option>
+                            <option value="Obstaculo">Obstáculo</option>
+                            <option value="PuraMaldad">Pura Maldad</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ t.label_romance }}</label>
+                        <select name="modo_romance">
+                            <option value="None">Random / None</option>
+                            <option value="Pareja">Pareja</option>
+                            <option value="Triangulo">Triángulo</option>
+                            <option value="AmorProhibido">Amor Prohibido</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ t.label_mundo }}</label>
+                        <select name="mundo">
+                            <option value="FantasiaMedieval">Fantasía Medieval / Medieval Fantasy</option>
+                            <option value="FantasiaOscura">Fantasía Oscura / Dark Fantasy</option>
+                            <option value="FantasiaUrbana">Fantasía Urbana / Urban Fantasy</option>
+                            <option value="SciFiCyberpunk">Cyberpunk</option>
+                            <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                            <option value="SciFiPostApocaliptico">Post-Apocalíptico / Post-Apocalyptic</option>
+                            <option value="Steampunk">Steampunk</option>
+                            <option value="Western">Western</option>
+                            <option value="Noir">Noir / Detective</option>
+                            <option value="Realista">Realista / Realistic</option>
+                            <option value="JaponFeudal">Japón Feudal / 戦国時代</option>
+                            <option value="ChinaImperial">China Imperial / 中華帝國</option>
+                            <option value="CoreaHistorica">Corea Histórica / 조선시대</option>
+                            <option value="MitologiaAsiatica">Mitología Asiática / Asian Mythology</option>
+                            <option value="AnimeFantasia">Anime Fantasy / アニメファンタジー</option>
+                            <option value="Wuxia">Wuxia / 武俠</option>
+                            <option value="Victoriano">Era Victoriana / Victorian Era</option>
+                            <option value="MitologiaGriega">Mitología Griega / Greek Mythology</option>
+                            <option value="MitologiaNordica">Mitología Nórdica / Norse Mythology</option>
+                            <option value="PiratasCaribe">Piratas del Caribe / Caribbean Pirates</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ t.label_densidad }}</label>
+                        <select name="densidad_relaciones">
+                            <option value="Normal">Normal</option>
+                            <option value="Densa">Densa</option>
+                            <option value="Dispersa">Dispersa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <p id="priceLabelConstelacion"
+                        style="color: var(--accent); font-weight: bold; margin-bottom: 15px; font-size: 1.2rem;">
+                        Precio: $12.99 USD
+                    </p>
+
+                    <button type="button" id="btnConstelacion" class="btn-forge" onclick="handleForge('constelacion')">
+                        <span style="font-size: 1.2rem;">⚡</span> <span id="btnTextConstelacion">FORJAR
+                            CONSTELACIÓN</span>
+                    </button>
+
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">
+                        El proceso iniciará inmediatamente después del pago.
+                    </p>
+                </div>
+            </form>
+
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id="paypalFormConstelacion"
+                style="display: none;">
+                <input type="hidden" name="cmd" value="_s-xclick" />
+                <input type="hidden" name="hosted_button_id" value="FD5B6NMCJ84F8" />
+                <input type="hidden" name="currency_code" value="USD" />
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        const USER_TOKEN = "{{ query_token }}";
+
+        // Limpieza y Gestión de Tokens VIP
+        function updateUI() {
+            const display = document.getElementById('creditsDisplay');
+            const freeMsg = document.getElementById('freeModeMsg');
+            const btnP = document.getElementById('btnTextPersonaje');
+            const btnC = document.getElementById('btnTextConstelacion');
+            const priceP = document.getElementById('priceLabelPersonaje');
+            const priceC = document.getElementById('priceLabelConstelacion');
+
+            if (display) display.style.display = 'none';
+            if (freeMsg) freeMsg.style.display = 'none';
+
+            // Si hay token VIP válido
+            if (USER_TOKEN && USER_TOKEN.length > 5) {
+                console.log("ACCESO VIP ACTIVADO:", USER_TOKEN);
+
+                if (btnP) {
+                    btnP.innerText = "✨ FORJAR CON PASE VIP";
+                    btnP.parentElement.style.border = "1px solid #4ade80";
+                    btnP.parentElement.style.background = "rgba(34, 197, 94, 0.2)";
+                }
+                if (btnC) {
+                    btnC.innerText = "✨ FORJAR CONSTELACIÓN VIP";
+                    btnC.parentElement.style.border = "1px solid #4ade80";
+                    btnC.parentElement.style.background = "rgba(34, 197, 94, 0.2)";
+                }
+
+                if (priceP) priceP.innerHTML = "<span style='text-decoration: line-through; opacity:0.5'>$4.99</span> <span style='color:#4ade80; font-weight:bold'>GRATIS</span>";
+                if (priceC) priceC.innerHTML = "<span style='text-decoration: line-through; opacity:0.5'>$12.99</span> <span style='color:#4ade80; font-weight:bold'>GRATIS</span>";
+            } else {
+                if (btnP) btnP.innerText = "PAGAR Y FORJAR";
+            }
+        }
+
+        function handleForge(type) {
+            const esVip = (USER_TOKEN && USER_TOKEN.length > 5);
+            console.log("Click Forjar:", type, "VIP:", esVip);
+
+            if (esVip) {
+                // RUTA VIP: IR AL SERVIDOR
+                if (type === 'personaje') {
+                    document.getElementById('formPersonaje').submit();
+                } else if (type === 'constelacion') {
+                    prepareConstellationData();
+                    document.getElementById('formConstelacion').submit();
+                }
+                return;
+            }
+
+            // RUTA NORMAL: IR A PAYPAL
+            if (type === 'personaje') {
+                document.getElementById('paypalFormPersonaje').submit();
+            } else if (type === 'constelacion') {
+                prepareConstellationData();
+                document.getElementById('paypalFormConstelacion').submit();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateUI);
+
+        // ============ CONSTELLATION DYNAMIC FIELDS ============
+        function updateCharacterFields() {
+            const slider = document.getElementById('cantidadSlider');
+            const valueDisplay = document.getElementById('cantidadValue');
+            const container = document.getElementById('characterFields');
+
+            if (!slider || !container) return;
+
+            const cantidad = parseInt(slider.value);
+            valueDisplay.innerText = cantidad;
+
+            container.innerHTML = '';
+
+            for (let i = 1; i <= cantidad; i++) {
+                const row = document.createElement('div');
+                row.className = 'character-row mobile-grid-stack';
+                row.style.cssText = 'display: grid; grid-template-columns: 30px 1fr 100px 80px; gap: 10px; margin-bottom: 12px; align-items: center;';
+
+                row.innerHTML = `
+                    <div style="background: var(--accent-dim); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">${i}</div>
+                    <input type="text" class="char-nombre" placeholder="Nombre (opcional)" style="padding: 10px; font-size: 0.85rem;">
+                    <select class="char-genero" style="padding: 10px; font-size: 0.85rem;">
+                        <option value="">Random</option>
+                        <option value="M">Masc</option>
+                        <option value="F">Fem</option>
+                    </select>
+                    <select class="char-edad" style="padding: 10px; font-size: 0.85rem;">
+                        <option value="">Random</option>
+                        <option value="Joven">Joven</option>
+                        <option value="Adulto">Adulto</option>
+                        <option value="Mayor">Mayor</option>
+                    </select>
+                `;
+
+                container.appendChild(row);
+            }
+        }
+
+        // Preparar datos del formulario antes de enviar
+        function prepareConstellationData() {
+            const nombres = [];
+            const generos = [];
+            const edades = [];
+
+            document.querySelectorAll('.char-nombre').forEach(el => nombres.push(el.value || ''));
+            document.querySelectorAll('.char-genero').forEach(el => generos.push(el.value || ''));
+            document.querySelectorAll('.char-edad').forEach(el => edades.push(el.value || ''));
+
+            document.getElementById('nombresHidden').value = nombres.join(',');
+            document.getElementById('generosHidden').value = generos.join(',');
+            document.getElementById('edadesHidden').value = edades.join(',');
+        }
+
+        // Inicializar al cargar
+        window.onload = function () {
+            updateUI();
+            updateCharacterFields();
+        };
+    </script>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- HOW IT WORKS SECTION -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 80px;">
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2 class="card-title" style="text-align: center; border-bottom: none; padding-bottom: 0;">🔮 {{
+                t.how_it_works_title }}</h2>
+            <p style="text-align: center; color: var(--text-dim); margin-bottom: 40px;">{{ t.how_it_works_subtitle }}
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px;">
+                <!-- Step 1 -->
+                <div style="text-align: center; padding: 25px;">
+                    <div
+                        style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #b48d28); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold; color: #000;">
+                        1</div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 10px;">{{
+                        t.step1_title }}</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;">{{ t.step1_desc }}</p>
+                </div>
+                <!-- Step 2 -->
+                <div style="text-align: center; padding: 25px;">
+                    <div
+                        style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #b48d28); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold; color: #000;">
+                        2</div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 10px;">{{
+                        t.step2_title }}</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;">{{ t.step2_desc }}</p>
+                </div>
+                <!-- Step 3 -->
+                <div style="text-align: center; padding: 25px;">
+                    <div
+                        style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), #b48d28); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold; color: #000;">
+                        3</div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 10px;">{{
+                        t.step3_title }}</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;">{{ t.step3_desc }}</p>
+                </div>
+            </div>
+
+            <div
+                style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 30px; border: 1px solid var(--border);">
+                <h3 style="color: var(--text-main); margin-bottom: 20px; font-family: 'Cinzel', serif;">📦 {{
+                    t.what_you_get_title }}
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature1 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature2 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature3 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature4 }}</li>
+                    </ul>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature5 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature6 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature7 }}</li>
+                        <li style="padding: 8px 0; color: var(--text-dim);"><span style="color: var(--accent);">✓</span>
+                            {{ t.feature8 }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- DEMO CHARACTER SECTION -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 60px;">
+        <h2
+            style="text-align: center; font-family: 'Cinzel', serif; color: var(--accent); font-size: 2rem; margin-bottom: 10px;">
+            ⚔️ {{ t.demo_title }}</h2>
+        <p style="text-align: center; color: var(--text-dim); margin-bottom: 40px;">{{ t.demo_subtitle }}</p>
+
+        <div class="card" style="border-top: 4px solid var(--accent);">
+            {% if lang == 'en' %}
+            <!-- ENGLISH DEMO CHARACTER -->
+            <div
+                style="text-align: center; padding-bottom: 30px; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
+                <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 5px;">
+                    KIERA STORMWIND</h2>
+                <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem;">"The Silent Blade"</p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Hero</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Medieval
+                        Fantasy</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Gray
+                        Tone</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">Identity</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim); margin-bottom: 20px;">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            Appearance</p>
+                        <p style="color: var(--text-main);">Light black leather armor with silver runes engraved. Dark
+                            hair tied in a war braid. A diagonal scar crosses her left eye, now storm-gray in color.</p>
+                    </div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">The Mask</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim);">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            Projected Image</p>
+                        <p style="color: var(--text-main);">The stoic, infallible warrior. The woman who never doubts,
+                            never trembles, never shows weakness.</p>
+                    </div>
+                    <p
+                        style="font-style: italic; color: #d1d5db; border-left: 2px solid var(--accent); padding-left: 20px; margin: 25px 0; font-size: 1.2rem;">
+                        "I don't seek redemption. I seek that those who followed me didn't die in vain."</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">Psychological
+                        Core</h3>
+                    <div
+                        style="background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(22,25,32,0.6)); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                        <p
+                            style="color: #ef4444; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            💔 The Wound (The Ghost)</p>
+                        <p style="color: var(--text-main); margin-bottom: 10px;"><strong>Betrayal:</strong> Her mentor
+                            used her as bait, sacrificing her company to buy time in a lost battle.</p>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Age when it happened: 23. Causer:
+                            Commander Aldric the Wise.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">Conscious Desire
+                            </p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">Find and kill Aldric</p>
+                        </div>
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">Unconscious Need
+                            </p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">Forgive herself for surviving</p>
+                        </div>
+                    </div>
+                    <div
+                        style="background: rgba(20,0,0,0.3); border: 1px solid rgba(100,0,0,0.3); border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #ef4444; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase;">🎪
+                            The Lie</h4>
+                        <p style="color: var(--text-main); font-style: italic;">"If I had been stronger, everyone would
+                            have survived."</p>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px;"><strong>Truth
+                                needed:</strong> No strength would have changed another's betrayal.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 20px;">📖 Life Story
+                    (Excerpt)</h3>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; border-left: 4px solid #666; margin-bottom: 15px;">
+                    <p style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">
+                        Humble Origins</p>
+                    <p style="color: #d1d5db; line-height: 1.8; font-family: 'Crimson Pro', serif; font-size: 1.05rem;">
+                        Born in a border village, Kiera grew up between the sound of steel and stories of fallen heroes.
+                        Her father, a silent blacksmith, taught her that words wear out more than metal...</p>
+                </div>
+            </div>
+            {% elif lang == 'jp' %}
+            <!-- JAPANESE DEMO CHARACTER -->
+            <div
+                style="text-align: center; padding-bottom: 30px; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
+                <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 5px;">
+                    影村 蒼月 (KAGIMURA SOGETSU)</h2>
+                <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem;">「嵐のささやき」</p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">英雄</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">中世ファンタジー</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">灰色のトーン</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">アイデンティティ</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim); margin-bottom: 20px;">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            外見</p>
+                        <p style="color: var(--text-main);">
+                            銀のルーンが刻まれた黒い革の軽量鎧。戦闘用の三つ編みにまとめられた暗い髪。左目を斜めに横切る傷跡があり、今は嵐のような灰色。</p>
+                    </div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">仮面</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim);">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            投影されたイメージ</p>
+                        <p style="color: var(--text-main);">禁欲的で間違いのない戦士。決して疑わず、震えず、弱さを見せない男。</p>
+                    </div>
+                    <p
+                        style="font-style: italic; color: #d1d5db; border-left: 2px solid var(--accent); padding-left: 20px; margin: 25px 0; font-size: 1.2rem;">
+                        「贖罪を求めているのではない。私に従った者たちが無駄死にではなかったことを証明したいのだ。」</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">心理的核心</h3>
+                    <div
+                        style="background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(22,25,32,0.6)); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                        <p
+                            style="color: #ef4444; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            💔 傷 (過去の亡霊)</p>
+                        <p style="color: var(--text-main); margin-bottom: 10px;"><strong>裏切り:</strong>
+                            師匠は彼を囮として使い、負け戦で時間を稼ぐために部隊を犠牲にした。</p>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">発生時の年齢: 23歳。原因: 司令官アルドリック</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">意識的な欲望</p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">アルドリックを見つけて殺す</p>
+                        </div>
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">無意識のニーズ</p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">生き残ったことを許す</p>
+                        </div>
+                    </div>
+                    <div
+                        style="background: rgba(20,0,0,0.3); border: 1px solid rgba(100,0,0,0.3); border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #ef4444; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase;">🎪
+                            嘘</h4>
+                        <p style="color: var(--text-main); font-style: italic;">「もっと強ければ、皆が生き残れたはずだ。」</p>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px;"><strong>必要な真実:</strong>
+                            どんな強さも他者の裏切りを変えることはできなかった。</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 20px;">📖 人生の物語 (抜粋)</h3>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; border-left: 4px solid #666; margin-bottom: 15px;">
+                    <p style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">
+                        質素な起源</p>
+                    <p style="color: #d1d5db; line-height: 1.8; font-family: 'Crimson Pro', serif; font-size: 1.05rem;">
+                        辺境の村で生まれた蒼月は、鋼の音と倒れた英雄たちの物語の中で育った。無口な鍛冶屋だった父は、言葉は金属よりも消耗するものだと教えた...</p>
+                </div>
+            </div>
+            {% else %}
+            <!-- SPANISH DEMO CHARACTER (Default) -->
+            <div
+                style="text-align: center; padding-bottom: 30px; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
+                <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 5px;">
+                    VAREK SOMBRAVERDE</h2>
+                <p style="color: var(--text-dim); font-style: italic; font-size: 1.1rem;">"El Susurro de la Tormenta"
+                </p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Héroe</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Fantasía
+                        Medieval</span>
+                    <span
+                        style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase;">Tono
+                        Gris</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">Identidad</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim); margin-bottom: 20px;">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            Apariencia</p>
+                        <p style="color: var(--text-main);">Armadura ligera de cuero negro con runas plateadas grabadas.
+                            Cabello oscuro recogido en una trenza de guerra. Una cicatriz diagonal cruza su ojo
+                            izquierdo, ahora de color gris tormentoso.</p>
+                    </div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">La Máscara</h3>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--accent-dim);">
+                        <p
+                            style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            Imagen Proyectada</p>
+                        <p style="color: var(--text-main);">El guerrero estoico e infalible. El hombre que nunca duda,
+                            nunca tiembla, nunca muestra debilidad.</p>
+                    </div>
+                    <p
+                        style="font-style: italic; color: #d1d5db; border-left: 2px solid var(--accent); padding-left: 20px; margin: 25px 0; font-size: 1.2rem;">
+                        "No busco redención. Busco que los que me siguieron no hayan muerto en vano."</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 15px;">Núcleo
+                        Psicológico</h3>
+                    <div
+                        style="background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(22,25,32,0.6)); padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                        <p
+                            style="color: #ef4444; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">
+                            💔 La Herida (The Ghost)</p>
+                        <p style="color: var(--text-main); margin-bottom: 10px;"><strong>Traición:</strong> Su mentor lo
+                            usó como señuelo, sacrificando a su compañía para ganar tiempo en una batalla perdida.</p>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Edad cuando ocurrió: 23 años. Causante:
+                            Comandante Aldric el Sabio.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">Deseo Consciente
+                            </p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">Encontrar y matar a Aldric</p>
+                        </div>
+                        <div
+                            style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #22c55e;">
+                            <p style="color: #22c55e; font-size: 0.7rem; text-transform: uppercase;">Necesidad
+                                Inconsciente</p>
+                            <p style="color: var(--text-main); font-size: 0.9rem;">Perdonarse por sobrevivir</p>
+                        </div>
+                    </div>
+                    <div
+                        style="background: rgba(20,0,0,0.3); border: 1px solid rgba(100,0,0,0.3); border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #ef4444; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase;">🎪
+                            La Mentira</h4>
+                        <p style="color: var(--text-main); font-style: italic;">"Si hubiera sido más fuerte, todos
+                            habrían sobrevivido."</p>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px;"><strong>Verdad
+                                necesaria:</strong> Ninguna fuerza habría cambiado la traición de otro.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                <h3 style="color: var(--accent); font-family: 'Cinzel', serif; margin-bottom: 20px;">📖 Historia de Vida
+                    (Extracto)</h3>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; border-left: 4px solid #666; margin-bottom: 15px;">
+                    <p style="color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px;">
+                        Orígenes Humildes</p>
+                    <p style="color: #d1d5db; line-height: 1.8; font-family: 'Crimson Pro', serif; font-size: 1.05rem;">
+                        Nacido en una aldea fronteriza, Varek creció entre el sonido del acero y las historias de héroes
+                        caídos. Su padre, un herrero silencioso, le enseñó que las palabras gastan más que el metal...
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Call to Action -->
+            <div
+                style="text-align: center; margin-top: 40px; padding: 30px; background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.3)); border-radius: 12px; border: 1px dashed var(--accent);">
+                <p style="color: var(--accent); font-size: 1.1rem; margin-bottom: 15px;">{{ t.cta_question }}</p>
+                <p style="color: var(--text-dim); margin-bottom: 20px;">{{ t.cta_description }}</p>
+                <a href="#top"
+                    style="display: inline-block; background: linear-gradient(135deg, #b48d28, #ddb955); color: #0b0d12; padding: 15px 40px; border-radius: 12px; text-decoration: none; font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">⚔️
+                    {{ t.cta_button }}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 60px;">
+        <div class="card">
+            {% if lang == 'en' %}
+            <h2 class="card-title" style="text-align: center; border-bottom: none;">❓ Frequently Asked Questions</h2>
+            <div style="margin-top: 30px;">
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">What format do I receive my character in?
+                    </h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">You receive a self-contained premium HTML file
+                        that you can open in any browser, print directly, or save as PDF. The format is optimized to
+                        look visually appealing on both screen and paper.</p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">Can I use these characters in my novels or
+                        games?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">Absolutely! Once generated, the character is
+                        100% yours. You can use it in novels, comics, RPG campaigns, video games, or any creative
+                        project without restrictions.</p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">What's the difference between a single
+                        character and a constellation?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">A single character generates one protagonist
+                        with a complete biography. A constellation generates 2-4 interconnected characters with
+                        relationships, tensions, shared history, and an anchor event that unites them.</p>
+                </div>
+                <div style="padding: 20px 0;">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">How long does it take to generate a
+                        character?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">Generation is instant. In less than 3 seconds,
+                        you'll have your complete character ready to download.</p>
+                </div>
+            </div>
+            {% elif lang == 'jp' %}
+            <h2 class="card-title" style="text-align: center; border-bottom: none;">❓ よくある質問</h2>
+            <div style="margin-top: 30px;">
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">キャラクターはどの形式で受け取れますか？</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">
+                        どのブラウザでも開くことができ、直接印刷したり、PDFとして保存したりできる自己完結型のプレミアムHTMLファイルを受け取ります。フォーマットは画面と紙の両方で視覚的に魅力的に見えるように最適化されています。
+                    </p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">これらのキャラクターを小説やゲームで使用できますか？</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">
+                        もちろんです！生成されたキャラクターは100%あなたのものです。小説、漫画、TRPGキャンペーン、ビデオゲーム、またはその他のクリエイティブプロジェクトで制限なく使用できます。</p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">単一キャラクターと星座の違いは何ですか？</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">
+                        単一キャラクターは完全な伝記を持つ1人の主人公を生成します。星座は、関係、緊張、共有された歴史、そして彼らを結びつけるアンカーイベントを持つ2〜4人の相互接続されたキャラクターを生成します。
+                    </p>
+                </div>
+                <div style="padding: 20px 0;">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">キャラクターの生成にはどのくらい時間がかかりますか？</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">生成は即座です。3秒以内に、ダウンロード可能な完全なキャラクターが準備されます。</p>
+                </div>
+            </div>
+            {% else %}
+            <h2 class="card-title" style="text-align: center; border-bottom: none;">❓ Preguntas Frecuentes</h2>
+            <div style="margin-top: 30px;">
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">¿En qué formato recibo mi personaje?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">Recibes un archivo HTML premium autocontenido
+                        que puedes abrir en cualquier navegador, imprimir directamente, o guardar como PDF. El formato
+                        está optimizado para ser visualmente atractivo tanto en pantalla como en papel.</p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">¿Puedo usar estos personajes en mis
+                        novelas o juegos?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">¡Absolutamente! Una vez generado, el personaje
+                        es 100% tuyo. Puedes usarlo en novelas, cómics, campañas de rol, videojuegos, o cualquier
+                        proyecto creativo sin restricciones.</p>
+                </div>
+                <div style="padding: 20px 0; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">¿Qué diferencia hay entre personaje único
+                        y constelación?</h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">El personaje único genera un protagonista con
+                        biografía completa. La constelación genera 2-4 personajes interconectados con relaciones,
+                        tensiones, historia compartida y un evento ancla que los une.</p>
+                </div>
+                <div style="padding: 20px 0;">
+                    <h4 style="color: var(--text-main); margin-bottom: 10px;">¿Cuánto tiempo toma generar un personaje?
+                    </h4>
+                    <p style="color: var(--text-dim); line-height: 1.6;">La generación es instantánea. En menos de 3
+                        segundos tendrás tu personaje completo listo para descargar.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- DISCLAIMER & FOOTER -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div
+        style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
+        {% if lang == 'en' %}
+        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;">Legal
+            Notice</strong>
+        <p style="margin-bottom: 10px;">SoulForge is an assisted creation tool based on procedural generation and
+            artificial intelligence.</p>
+        <p style="margin-bottom: 10px;">Characters and stories are dynamically generated and are not stored on our
+            servers, prioritizing user privacy.</p>
+        <p style="margin-bottom: 10px;">It is the user's responsibility to download and keep the generated file.</p>
+        <p>Use of the system implies acceptance that results may vary between executions and do not constitute
+            professional advice of any kind.</p>
+        {% elif lang == 'jp' %}
+        <strong
+            style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;">法的通知</strong>
+        <p style="margin-bottom: 10px;">SoulForgeは、手続き型生成と人工知能に基づく支援創作ツールです。</p>
+        <p style="margin-bottom: 10px;">キャラクターとストーリーは動的に生成され、ユーザーのプライバシーを優先してサーバーに保存されません。</p>
+        <p style="margin-bottom: 10px;">生成されたファイルをダウンロードして保存するのはユーザーの責任です。</p>
+        <p>システムの使用は、結果が実行ごとに異なる可能性があり、いかなる種類の専門的なアドバイスを構成するものではないことを受け入れることを意味します。</p>
+        {% else %}
+        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;">Aviso
+            Legal</strong>
+        <p style="margin-bottom: 10px;">SoulForge es una herramienta de creación asistida basada en generación
+            procedural e inteligencia artificial.</p>
+        <p style="margin-bottom: 10px;">Los personajes e historias se generan dinámicamente y no se almacenan en
+            nuestros servidores, priorizando la privacidad del usuario.</p>
+        <p style="margin-bottom: 10px;">Es responsabilidad del usuario descargar y conservar el archivo generado.</p>
+        <p>El uso del sistema implica la aceptación de que los resultados pueden variar entre ejecuciones y no
+            constituyen asesoramiento profesional de ningún tipo.</p>
+        {% endif %}
+    </div>
+
+    <div class="footer" id="top">
+        {% if lang == 'en' %}
+        <p>Developed with ❤️ by DAITHON BENEDICTUS</p>
+        {% elif lang == 'jp' %}
+        <p>DAITHON BENEDICTUSが❤️で開発</p>
+        {% else %}
+        <p>Desarrollado con ❤️ por DAITHON BENEDICTUS</p>
+        {% endif %}
+    </div>
+
+    <!-- OPTION TRANSLATION SCRIPT -->
+    <script>
+        const OPTION_TRANSLATIONS = {
+            'en': {
+                '': '-- Random --', 'None': '-- Random / None --', 'Masculino': 'Male', 'Femenino': 'Female',
+                'Heroe': 'Hero', 'Villano': 'Villain', 'Mentor': 'Mentor', 'Aliado': 'Ally',
+                'Bufon': 'Jester', 'Victima': 'Victim', 'Profeta': 'Prophet', 'Guardian': 'Guardian', 'Embaucador': 'Trickster',
+                'Luminoso': 'Luminous / Good', 'Claro': 'Light', 'Gris': 'Grey / Neutral', 'Oscuro': 'Dark', 'Abismal': 'Abyssal / Evil',
+                'Envidia': 'Envy', 'Ideologia': 'Ideology', 'Obstaculo': 'Simple Obstacle', 'PuraMaldad': 'Pure Evil',
+                'Pareja': 'Couple', 'Triangulo': 'Triangle', 'AmorProhibido': 'Forbidden Love',
+                'FantasiaMedieval': 'Medieval Fantasy', 'FantasiaOscura': 'Dark Fantasy', 'FantasiaUrbana': 'Urban Fantasy',
+                'SciFiCyberpunk': 'Cyberpunk', 'SciFiSpace': 'Space Opera', 'SciFiPostApocaliptico': 'Post-Apocalyptic',
+                'Steampunk': 'Steampunk', 'Western': 'Western', 'Noir': 'Noir', 'Realista': 'Realistic',
+                'JaponFeudal': 'Feudal Japan (Sengoku)', 'ChinaImperial': 'Imperial China', 'CoreaHistorica': 'Historical Korea (Joseon)',
+                'MitologiaAsiatica': 'Asian Mythology', 'AnimeFantasia': 'Anime Fantasy', 'Wuxia': 'Wuxia / Martial Arts',
+                'Victoriano': 'Victorian Era', 'MitologiaGriega': 'Greek Mythology', 'MitologiaNordica': 'Norse Mythology', 'PiratasCaribe': 'Pirates',
+                'Normal': 'Relationship Density: Normal', 'Densa': 'Dense', 'Dispersa': 'Sparse'
+            },
+            'jp': {
+                '': '-- ランダム --', 'None': '-- ランダム / 無し --', 'Masculino': '男性', 'Femenino': '女性',
+                'Heroe': '英雄 (Hero)', 'Villano': '悪役 (Villain)', 'Mentor': '師匠 (Mentor)', 'Aliado': '味方 (Ally)',
+                'Bufon': '道化師 (Jester)', 'Victima': '犠牲者 (Victim)', 'Profeta': '予言者 (Prophet)', 'Guardian': '守護者 (Guardian)', 'Embaucador': 'トリックスター',
+                'Luminoso': '光 (Good)', 'Claro': '明', 'Gris': '灰色 (Neutral)', 'Oscuro': '闇 (Dark)', 'Abismal': '深淵 (Evil)',
+                'Envidia': '嫉妬', 'Ideologia': 'イデオロギー', 'Obstaculo': '障害', 'PuraMaldad': '純粋悪',
+                'Pareja': 'カップル', 'Triangulo': '三角関係', 'AmorProhibido': '禁断の愛',
+                'FantasiaMedieval': '中世ファンタジー', 'FantasiaOscura': 'ダークファンタジー', 'FantasiaUrbana': '現代ファンタジー',
+                'SciFiCyberpunk': 'サイバーパンク', 'SciFiSpace': 'スペースオペラ', 'SciFiPostApocaliptico': 'ポストアポカリプス',
+                'Steampunk': 'スチームパンク', 'Western': '西部劇', 'Noir': 'ノワール / 探偵', 'Realista': '現実的',
+                'JaponFeudal': '戦国時代 / 時代劇', 'ChinaImperial': '中華帝國', 'CoreaHistorica': '朝鮮時代',
+                'MitologiaAsiatica': 'アジア神話', 'AnimeFantasia': 'アニメファンタジー', 'Wuxia': '武俠',
+                'Victoriano': 'ヴィクトリア朝', 'MitologiaGriega': 'ギリシャ神話', 'MitologiaNordica': '北欧神話', 'PiratasCaribe': '海賊',
+                'Normal': '関係密度：普通', 'Densa': '密', 'Dispersa': '疎'
+            }
+        };
+
+        function translateOptions() {
+            const langInputs = document.querySelectorAll('input[name="lang"]');
+            let lang = 'es';
+            if (langInputs.length > 0) lang = langInputs[0].value;
+
+            if (lang === 'es' || !OPTION_TRANSLATIONS[lang]) return;
+
+            const dict = OPTION_TRANSLATIONS[lang];
+            document.querySelectorAll('select').forEach(sel => {
+                Array.from(sel.options).forEach(opt => {
+                    if (dict[opt.value]) opt.innerText = dict[opt.value];
+                });
+            });
+
+            // Traducir también textos hardcodeados en el JS de constelaciones
+            if (lang === 'jp') {
+                document.querySelectorAll('.char-genero option[value=""]').forEach(o => o.innerText = 'ランダム');
+                document.querySelectorAll('.char-genero option[value="M"]').forEach(o => o.innerText = '男');
+                document.querySelectorAll('.char-genero option[value="F"]').forEach(o => o.innerText = '女');
+                document.querySelectorAll('.char-nombre').forEach(i => i.placeholder = '名前 (任意)');
+                document.querySelectorAll('input[placeholder="Edad"]').forEach(i => i.placeholder = '年齢');
+            } else if (lang === 'en') {
+                document.querySelectorAll('.char-genero option[value=""]').forEach(o => o.innerText = 'Random');
+                document.querySelectorAll('.char-genero option[value="M"]').forEach(o => o.innerText = 'M');
+                document.querySelectorAll('.char-genero option[value="F"]').forEach(o => o.innerText = 'F');
+                document.querySelectorAll('.char-nombre').forEach(i => i.placeholder = 'Name (Opt)');
+                document.querySelectorAll('input[placeholder="Edad"]').forEach(i => i.placeholder = 'Age');
+            }
+        }
+        window.addEventListener('load', translateOptions);
+    </script>
+
+    <script>
+        function updateCharacterFields() {
+            const cantidad = document.getElementById('cantidadSlider').value;
+            document.getElementById('cantidadValue').textContent = cantidad;
+
+            const container = document.getElementById('characterFields');
+            const valoresActuales = [];
+
+            for (let i = 1; i <= 4; i++) {
+                if (document.getElementById(`nombre${i}`)) {
+                    valoresActuales[i] = {
+                        nombre: document.getElementById(`nombre${i}`).value,
+                        genero: document.getElementById(`genero${i}`).value,
+                        edad: document.getElementById(`edad${i}`).value
+                    };
+                }
+            }
+
+            container.innerHTML = '';
+
+            for (let i = 1; i <= cantidad; i++) {
+                const prev = valoresActuales[i] || { nombre: '', genero: '', edad: '' };
+                const row = document.createElement('div');
+                row.className = 'character-row';
+                row.innerHTML = `
+                    <span class="num">${i}</span>
+                    <input type="text" id="nombre${i}" value="${prev.nombre}" placeholder="Nombre" style="flex: 2;">
+                    <input type="number" id="edad${i}" value="${prev.edad}" placeholder="Edad" min="10" max="900" style="width: 70px;">
+                    <select id="genero${i}" style="flex: 1;">
+                        <option value="" ${prev.genero === '' ? 'selected' : ''}>Gen</option>
+                        <option value="M" ${prev.genero === 'M' ? 'selected' : ''}>M</option>
+                        <option value="F" ${prev.genero === 'F' ? 'selected' : ''}>F</option>
+                    </select>
+                `;
+                container.appendChild(row);
+            }
+            if (typeof translateOptions === 'function') translateOptions();
+        }
+
+        function prepareSubmit() {
+            const cantidad = document.getElementById('cantidadSlider').value;
+            const nombres = [];
+            const generos = [];
+            const edades = [];
+
+            for (let i = 1; i <= cantidad; i++) {
+                const nombre = document.getElementById(`nombre${i}`).value.trim();
+                const genero = document.getElementById(`genero${i}`).value;
+                const edad = document.getElementById(`edad${i}`).value;
+
+                nombres.push(nombre || '');
+                generos.push(genero || '');
+                edades.push(edad || '');
+            }
+
+            document.getElementById('nombresHidden').value = nombres.join(',');
+            document.getElementById('generosHidden').value = generos.join(',');
+            document.getElementById('edadesHidden').value = edades.join(',');
+        }
+
+        // Init
+        updateCharacterFields();
+    </script>
+</body>
+
+</html>

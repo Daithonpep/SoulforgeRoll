@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es" data-quality="medium">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soulforge - Import Character Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --ambient-color: #1a1510;
+            --highlight-color: #c9a959;
+            --transition-speed: 0.5s;
+        }
+
+        body {
+            margin: 0;
+            background: #050505;
+            color: #e8e2d9;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* ═══════════════════════════════════════
+       LOADER SCREEN
+       ═══════════════════════════════════════ */
+        #loader-screen {
+            position: absolute;
+            inset: 0;
+            background: #080a0e;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease;
+        }
+
+        .loader-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--highlight-color);
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone {
+            width: 400px;
+            height: 200px;
+            border: 2px dashed rgba(201, 169, 89, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(20, 20, 30, 0.5);
+        }
+
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--highlight-color);
+            background: rgba(201, 169, 89, 0.05);
+            color: #ddd;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ═══════════════════════════════════════
+       MAIN VIEW
+       ═══════════════════════════════════════ */
+        #main-view {
+            flex: 1;
+            position: relative;
+            opacity: 0;
+            transition: opacity 1.5s ease 0.5s;
+        }
+
+        #main-view.visible {
+            opacity: 1;
+        }
+
+        /* Character Sheet Panel */
+        #char-panel {
+            width: 350px;
+            height: 100vh;
+            background: linear-gradient(90deg, #101215 0%, rgba(16, 18, 21, 0.95) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            overflow-y: auto;
+            transform: translateX(-350px);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 100;
+            position: relative;
+        }
+
+        #char-panel.visible {
+            transform: translateX(0);
+        }
+
+        .char-header {
+            border-bottom: 1px solid var(--highlight-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .char-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--highlight-color);
+            margin: 0;
+        }
+
+        .char-role {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 3px solid #555;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #aaa;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            color: #eee;
+            font-size: 1.1rem;
+        }
+
+        /* Visual Map Placeholder */
+        #visual-stage {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            /* Let clicks pass if needed */
+        }
+
+        .token-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--highlight-color);
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 0 50px rgba(201, 169, 89, 0.2);
+            transform: scale(0);
+            transition: transform 1s cubic-bezier(0.3, 1.5, 0.5, 1);
+        }
+
+        .token-avatar.visible {
+            transform: scale(1);
+        }
+
+        /* Narrative Text */
+        #intro-text {
+            position: absolute;
+            bottom: 100px;
+            left: 400px;
+            right: 100px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 1s;
+        }
+
+        #intro-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOADING / IMPORT SCREEN -->
+    <div id="loader-screen">
+        <div class="loader-title">Soulforge Engine</div>
+        <div class="drop-zone" id="drop-zone">
+            <div>
+                <p style="margin: 0; font-size: 1.2rem; color: #ddd;">Importar Personaje JSON</p>
+                <p style="font-size: 0.9rem;">Arrastra el archivo generado aquí<br>o haz clic para buscar</p>
+            </div>
+            <input type="file" id="file-input" accept=".json" style="display: none;">
+        </div>
+    </div>
+
+    <!-- MAIN INTERFACE -->
+    <div id="main-view">
+
+        <!-- Character Panel -->
+        <div id="char-panel">
+            <div class="char-header">
+                <h1 class="char-name" id="ui-name">...</h1>
+                <div class="char-role" id="ui-role">...</div>
+            </div>
+
+            <div class="stat-box" style="border-left-color: var(--highlight-color);">
+                <span class="stat-label">Arquetipo</span>
+                <div class="stat-value" id="ui-archetype">...</div>
+            </div>
+
+            <div class="stat-box" style="border-left-color: #ef4444;">
+                <span class="stat-label">Herida Core</span>
+                <div class="stat-value" id="ui-wound">...</div>
+            </div>
+
+            <div class="stat-box" style="border-left-color: #22c55e;">
+                <span class="stat-label">Deseo Consciente</span>
+                <div class="stat-value" id="ui-desire">...</div>
+            </div>
+
+            <h3 style="color: #aaa; font-size: 0.9rem; margin-top: 30px; text-transform: uppercase;">La Verdad Oculta
+            </h3>
+            <p style="font-style: italic; color: #ddd; border-left: 2px solid #666; padding-left: 15px;" id="ui-lie">...
+            </p>
+        </div>
+
+        <!-- Stage Visualization -->
+        <div id="visual-stage">
+            <div class="token-avatar" id="token">?</div>
+        </div>
+
+        <div id="intro-text"></div>
+    </div>
+
+    <script>
+        // --- DRAG & DROP LOGIC ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const charData = JSON.parse(e.target.result);
+                    initEngine(charData);
+                } catch (err) {
+                    alert("Error: Archivo JSON inválido");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- ENGINE INITIALIZATION ---
+        function initEngine(data) {
+            // 1. Hide Loader
+            document.getElementById('loader-screen').classList.add('hidden');
+
+            // 2. Populate UI
+            document.getElementById('ui-name').textContent = data.identidad.nombre;
+            document.getElementById('ui-role').textContent = `${data.rol} - Nvl 1`;
+            document.getElementById('ui-archetype').textContent = data.capas.arquetipo.tipo;
+            document.getElementById('ui-wound').textContent = data.capas.herida.tipo;
+            document.getElementById('ui-desire').textContent = data.capas.deseo_necesidad.deseo_consciente;
+            document.getElementById('ui-lie').textContent = `"${data.capas.mentira.la_mentira}"`;
+
+            // Narrative Intro
+            const intro = `
+            ${data.biografia.fases[0].contenido} 
+            <br><br>
+            <span style="font-size: 0.8em; color: var(--highlight-color)">BIENVENIDO A ${data.mundo.toUpperCase()}</span>
+        `;
+            document.getElementById('intro-text').innerHTML = intro;
+
+            // Token Initials
+            document.getElementById('token').textContent = data.identidad.nombre.charAt(0);
+
+            // 3. Show Main View with Animations
+            setTimeout(() => {
+                document.getElementById('main-view').classList.add('visible');
+                document.getElementById('char-panel').classList.add('visible');
+            }, 500);
+
+            setTimeout(() => {
+                document.getElementById('token').classList.add('visible');
+            }, 1200);
+
+            setTimeout(() => {
+                document.getElementById('intro-text').classList.add('visible');
+            }, 2000);
+        }
+
+        // Auto-load for testing if present (via URL param or similar in prod)
+        // Simulating upload for demo purposes if needed:
+        // initEngine(DEMO_JSON);
+    </script>
+</body>
+
+</html>
