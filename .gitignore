@@ -1,0 +1,39 @@
+# Backend (se despliega en Railway independientemente)
+SpriteEngine/
+
+# Python y otros proyectos
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Build artifacts
+target/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Frontend que ya está en la raíz
+frontend-clean/
+
+# Otros
+Dockerfile
+railway.toml
+.railwayignore

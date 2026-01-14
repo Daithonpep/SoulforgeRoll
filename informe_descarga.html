@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ nombre }} - Informe SoulForge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --bg: #0f1115;
+            --card-bg: rgba(22, 25, 32, 0.7);
+            /* Glass */
+            --accent: #d4af37;
+            --accent-dim: #9a8435;
+            --text-main: #f0f0f0;
+            --text-dim: #9ca3af;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --font-main: 'Cinzel', serif;
+            --font-body: 'Inter', sans-serif;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                linear-gradient(rgba(15, 17, 21, 0.97), rgba(15, 17, 21, 0.97)),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h1v1h-1v-1zm20 20h1v1h-1v-1z' fill='%23d4af37' fill-opacity='0.05'/%3E%3C/svg%3E");
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            padding: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: #222;
+                padding: 20px;
+            }
+
+            .card {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+                background: #fff;
+                box-shadow: none;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Cards with Glassmorphism */
+        .card {
+            background: var(--card-bg);
+            /* backdrop-filter not supported well in PDF generation often, but good for web view */
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            border-top: 4px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Typography improvements */
+        .report-title {
+            font-family: var(--font-main);
+            font-size: 3.5rem;
+            color: var(--accent);
+            letter-spacing: 6px;
+            text-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: var(--font-main);
+            font-size: 2rem;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin: 60px 0 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Buttons */
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #b48d28 100%);
+            color: #000;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            transition: transform 0.2s;
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Other details to match */
+        .card-title {
+            font-size: 1.6rem;
+            color: #fff;
+        }
+
+        .data-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .quote-block {
+            border-left: 3px solid var(--accent);
+            background: rgba(212, 175, 55, 0.08);
+            font-style: italic;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="action-buttons no-print">
+        <button class="action-btn pdf" onclick="guardarPDF()">📄 {{ t.guardar_pdf }}</button>
+        <button class="action-btn" onclick="descargarJSON()">💾 JSON</button>
+        <button class="action-btn" onclick="window.print()">🖨️ {{ t.imprimir }}</button>
+    </div>
+
+    <script>
+        function guardarPDF() {
+            const elemento = document.body;
+            const opciones = {
+                margin: 10,
+                filename: '{{ nombre | replace(from=" ", to="_") }}_SoulForge.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opciones).from(elemento).save();
+        }
+
+        function descargarJSON() {
+            // Re-use current query parameters to request the JSON version
+            const currentParams = window.location.search;
+            window.location.href = '/api/v1/descargar/constelacion/json' + currentParams;
+        }
+    </script>
+
+    <div class="report-header">
+        <h1 class="report-title">{{ nombre }}</h1>
+        <div class="report-meta">
+            <span>🌍 {{ t.mundo }}: {{ mundo }}</span>
+            <span>🎲 {{ t.semilla }}: {{ semilla }}</span>
+            <span>👥 {{ almas | length }} Personajes</span>
+        </div>
+    </div>
+
+    <!-- EVENTO ANCLA -->
+    <div class="evento-ancla">
+        <div class="fecha">{{ evento_ancla.anio }}</div>
+        <h3>{{ t.evento_ancla }}: {{ evento_ancla.nombre }}</h3>
+        <p class="narrative">{{ evento_ancla.descripcion }}</p>
+        <p style="margin-top: 15px; color: #999;"><em>Impacto Global: {{ evento_ancla.impacto_global }}</em></p>
+    </div>
+
+    <!-- HISTORIA CONJUNTA -->
+    <h2 class="section-title"><span class="icon">📜</span> {{ t.historia_conjunta }}</h2>
+    <div class="narrative" style="padding: 20px;">
+        {{ historia_conjunta }}
+    </div>
+
+    <!-- PERSONAJES -->
+    <h2 class="section-title"><span class="icon">👥</span> {{ t.dramatis_personae }}</h2>
+
+    {% for alma in almas %}
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">{{ alma.identidad.nombre }} {{ alma.identidad.apellido | default(value="")
+                }}</span>
+            <span class="card-badge">{{ alma.rol }}</span>
+        </div>
+
+        <div class="quote-block">
+            "{{ alma.capas.mascara.frase_tipica }}"
+        </div>
+
+        <!-- INFO BÁSICA -->
+        <div class="data-grid">
+            <div class="data-item">
+                <div class="data-label">{{ t.arquetipo }}</div>
+                <div class="data-value">{{ alma.capas.arquetipo.tipo }}</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Don Natural</div>
+                <div class="data-value">{{ alma.capas.arquetipo.don_natural }}</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">{{ t.genero }}</div>
+                <div class="data-value">{{ alma.identidad.genero }}</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">{{ t.edad }}</div>
+                <div class="data-value">{{ alma.identidad.edad }} años</div>
+            </div>
+        </div>
+
+        <!-- LA HERIDA -->
+        <div class="subsection">
+            <h4 class="subsection-title">💔 {{ t.herida }}</h4>
+            <ul class="detail-list">
+                <li><span class="key">Tipo:</span> <span class="value">{{ alma.capas.herida.tipo }}</span></li>
+                <li><span class="key">Edad cuando ocurrió:</span> <span class="value">{{
+                        alma.capas.herida.edad_cuando_ocurrio }}</span></li>
+                <li><span class="key">Causante:</span> <span class="value">{{ alma.capas.herida.causante }}</span></li>
+                <li><span class="key">Circunstancia:</span> <span class="value">{{ alma.capas.herida.circunstancia
+                        }}</span></li>
+                <li><span class="key">Cómo lo cambió:</span> <span class="value">{{ alma.capas.herida.como_lo_cambio
+                        }}</span></li>
+                <li><span class="key">Gatillo emocional:</span> <span class="value">{{
+                        alma.capas.herida.gatillo_emocional }}</span></li>
+                <li><span class="key">Mecanismo de defensa:</span> <span class="value">{{
+                        alma.capas.herida.mecanismo_defensa }}</span></li>
+            </ul>
+        </div>
+
+        <!-- LA MÁSCARA -->
+        <div class="subsection">
+            <h4 class="subsection-title">🎭 {{ t.mascara }}</h4>
+            <ul class="detail-list">
+                <li><span class="key">Comportamiento público:</span> <span class="value">{{
+                        alma.capas.mascara.comportamiento_publico }}</span></li>
+                <li><span class="key">Imagen proyectada:</span> <span class="value">{{
+                        alma.capas.mascara.imagen_proyectada }}</span></li>
+                <li><span class="key">Miedo central:</span> <span class="value">{{ alma.capas.mascara.miedo_central
+                        }}</span></li>
+                <li><span class="key">Deseo secreto:</span> <span class="value">{{ alma.capas.mascara.deseo_secreto
+                        }}</span></li>
+                <li><span class="key">Lo que rompe la máscara:</span> <span class="value">{{
+                        alma.capas.mascara.trigger_que_la_rompe }}</span></li>
+            </ul>
+        </div>
+
+        <!-- DESEO VS NECESIDAD -->
+        <div class="subsection">
+            <h4 class="subsection-title">⚖️ Deseo vs Necesidad</h4>
+            <div class="data-grid">
+                <div class="data-item">
+                    <div class="data-label">Deseo Consciente</div>
+                    <div class="data-value">{{ alma.capas.deseo_necesidad.deseo_consciente }}</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">Necesidad Real</div>
+                    <div class="data-value">{{ alma.capas.deseo_necesidad.necesidad_real }}</div>
+                </div>
+            </div>
+            <p style="margin-top: 15px; color: #999;"><em>Ironía: {{ alma.capas.deseo_necesidad.ironia }}</em></p>
+        </div>
+
+        <!-- LA SOMBRA -->
+        <div class="subsection">
+            <h4 class="subsection-title">🌑 La Sombra</h4>
+            <ul class="detail-list">
+                <li><span class="key">Rasgo negado:</span> <span class="value">{{ alma.capas.sombra.rasgo_negado
+                        }}</span></li>
+                <li><span class="key">Qué la despierta:</span> <span class="value">{{ alma.capas.sombra.que_la_despierta
+                        }}</span></li>
+                <li><span class="key">Potencial si integra:</span> <span class="value">{{
+                        alma.capas.sombra.potencial_integrado }}</span></li>
+                <li><span class="key">Peligro si domina:</span> <span class="value">{{
+                        alma.capas.sombra.peligro_si_domina }}</span></li>
+            </ul>
+        </div>
+
+        <!-- LA MENTIRA -->
+        <div class="subsection">
+            <h4 class="subsection-title">🎪 {{ t.verdad_oculta }} / Mentira</h4>
+            <div class="quote-block" style="text-align: left; font-size: 1.1rem;">
+                "{{ alma.capas.mentira.la_mentira }}"
+            </div>
+            <ul class="detail-list">
+                <li><span class="key">Cómo nació:</span> <span class="value">{{ alma.capas.mentira.como_nacio }}</span>
+                </li>
+                <li><span class="key">Cómo distorsiona:</span> <span class="value">{{
+                        alma.capas.mentira.como_distorsiona }}</span></li>
+                <li><span class="key">Verdad necesaria:</span> <span class="value">{{
+                        alma.capas.mentira.verdad_necesaria }}</span></li>
+            </ul>
+        </div>
+
+        <!-- BIOGRAFÍA -->
+        <div class="subsection">
+            <h4 class="subsection-title">📖 {{ t.pasado }}</h4>
+            {% for fase in alma.biografia.fases %}
+            <div class="bio-phase {{ fase.tonalidad | lower }}">
+                <div class="bio-phase-title">{{ fase.titulo }}</div>
+                <p class="narrative">{{ fase.contenido }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CONFLICTOS -->
+        {% if alma.biografia.conflictos %}
+        <div class="subsection">
+            <h4 class="subsection-title">⚔️ {{ t.conflictos }}</h4>
+            {% for conflicto in alma.biografia.conflictos %}
+            <div style="margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                <strong>{{ conflicto.nombre }}:</strong> {{ conflicto.polo_a }} ↔ {{ conflicto.polo_b }}
+                <p style="color: #999; font-size: 0.9rem; margin-top: 5px;">{{ conflicto.descripcion }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- MOMENTOS DE GRACIA -->
+        {% if alma.biografia.momentos_gracia %}
+        <div class="subsection" style="border-left-color: var(--success);">
+            <h4 class="subsection-title" style="color: var(--success);">✨ {{ t.momentos_gracia }}</h4>
+            {% for gracia in alma.biografia.momentos_gracia %}
+            <div class="gracia-card">
+                <div class="gracia-nombre">{{ gracia.nombre }}</div>
+                <div class="gracia-desc">{{ gracia.descripcion }}</div>
+                <div><strong>Regalo:</strong> {{ gracia.regalo }}</div>
+                <div class="gracia-eco">{{ gracia.eco }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- TENSIONES CENTRALES -->
+    {% if tensiones_centrales %}
+    <h2 class="section-title"><span class="icon">🔥</span> {{ t.tensiones_centrales }}</h2>
+    {% for tension in tensiones_centrales %}
+    <div class="card tension-card">
+        <h3 style="color: var(--danger); margin-bottom: 15px;">{{ tension.tipo }}</h3>
+        <p class="narrative">{{ tension.descripcion }}</p>
+        <div style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+            <strong>⚠️ Cómo podría estallar:</strong> {{ tension.como_podria_estallar }}
+        </div>
+        <div style="margin-top: 10px; color: #f88;">
+            <strong>Lo que está en juego:</strong> {{ tension.stakes }}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- RELACIONES -->
+    <h2 class="section-title"><span class="icon">🌐</span> {{ t.red_relaciones }}</h2>
+    {% for con in conexiones_profundas %}
+    <div class="card rel-card">
+        <div class="rel-names">{{ con.nombre_a }} ↔ {{ con.nombre_b }}</div>
+        <div style="margin-bottom: 15px;">
+            <span
+                style="background: rgba(136,136,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;">
+                {{ con.tipo }}
+            </span>
+        </div>
+
+        <div class="subsection" style="border-left-color: #8888ff;">
+            <h4 class="subsection-title" style="color: #aaf;">Momento Origen</h4>
+            <p class="narrative">{{ con.momento_origen.descripcion }}</p>
+            <div class="data-grid" style="margin-top: 15px;">
+                <div class="data-item">
+                    <div class="data-label">{{ con.nombre_a }} sintió</div>
+                    <div class="data-value">{{ con.momento_origen.perspectiva_a }}</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">{{ con.nombre_b }} sintió</div>
+                    <div class="data-value">{{ con.momento_origen.perspectiva_b }}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if con.momentos_clave %}
+        <div style="margin-top: 15px;">
+            <strong>Momentos Clave:</strong>
+            {% for momento in con.momentos_clave %}
+            <p style="margin: 5px 0; color: #bbb;">• {{ momento.descripcion }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="data-grid" style="margin-top: 20px;">
+            <div class="data-item">
+                <div class="data-label">Estado Actual</div>
+                <div class="data-value">{{ con.estado_actual }}</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Tensión</div>
+                <div class="data-value" style="color: #f88;">{{ con.tension_actual }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- HISTORIAS PARES -->
+    {% if historias_pares %}
+    <h2 class="section-title"><span class="icon">💫</span> Historias Entrelazadas</h2>
+    {% for par in historias_pares %}
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">{{ par.nombre_a }} y {{ par.nombre_b }}</span>
+        </div>
+        <div class="subsection">
+            <h4 class="subsection-title">🤝 Cómo se conocieron</h4>
+            <p class="narrative">{{ par.historia.narrativa_encuentro }}</p>
+        </div>
+        {% if par.historia.momentos_compartidos %}
+        <div class="subsection">
+            <h4 class="subsection-title">⭐ Momentos Compartidos</h4>
+            {% for momento in par.historia.momentos_compartidos %}
+            <div style="margin: 10px 0; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                <p><strong>{{ momento.descripcion }}</strong></p>
+                <p style="color: #999; font-size: 0.9rem; margin-top: 5px;">Impacto: {{ momento.impacto_a }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <p style="margin-top: 15px;"><strong>Dinámica actual:</strong> {{ par.historia.dinamica_actual }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Guía del Portador (Manual del Cliente) -->
+    <div class="card no-print"
+        style="margin-top: 40px; background: rgba(20,20,30,0.6); border: 1px dashed var(--glass-border);">
+        <h3 style="color: var(--accent); font-family: 'Cinzel', serif; text-align: center; margin-bottom: 20px;">📜 Guía
+            del Portador del Alma</h3>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; font-size: 0.9rem;">
+            <div>
+                <strong style="color: var(--accent);">Propiedad Total:</strong>
+                <span style="color: #ccc;">Este archivo es un objeto digital único generado para ti. No requiere
+                    conexión a internet.</span>
+            </div>
+            <div>
+                <strong style="color: var(--accent);">Uso Creativo:</strong>
+                <span style="color: #ccc;">Tienes permiso total para usar estos personajes y sus vínculos en tus
+                    novelas, RPGs o proyectos personales.</span>
+            </div>
+            <div>
+                <strong style="color: var(--accent);">Preservación:</strong>
+                <span style="color: #ccc;">Guarda una copia en la nube (Google Drive/Dropbox). SoulForge no almacena
+                    copias por privacidad.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-footer">
+        <p>Desarrollado con ❤️ por DAITHON BENEDICTUS</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">SoulForge v2.4 - Núcleo de Procesamiento de Alta Velocidad</p>
+    </div>
+</body>
+
+</html>
