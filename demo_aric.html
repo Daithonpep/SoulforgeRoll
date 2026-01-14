@@ -60,21 +60,139 @@
             gap: 30px;
         }
 
+        /* Avatar Container with Dynamic Border Logic & Upload Overlay */
         .avatar-container {
             width: 200px;
             height: 200px;
             margin: 0 auto;
             border-radius: 50%;
-            border: 3px solid var(--gold);
+            border: 4px solid var(--gold);
             box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
             overflow: hidden;
             background: #000;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            /* Clickable */
+        }
+
+        .avatar-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* High Tension State (Corrupted/Cracked Look) */
+        .avatar-container.high-tension {
+            border-color: var(--blood);
+            box-shadow: 0 0 35px rgba(138, 11, 11, 0.6);
+            /* Animate border color for smoother feel instad of jumpy border-style toggle (border style must stay solid for transition, but we use dashed for effect. We can't transition style. We will rely on shadow and color) */
+            animation: pulse-border 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+                border-color: var(--blood);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(138, 11, 11, 0.8);
+                border-color: #500;
+            }
+
+            100% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+                border-color: var(--blood);
+            }
         }
 
         .avatar-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* New Tension Bar Location (Sidebar) */
+        .tension-wrapper {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .tension-label-mini {
+            font-family: 'Cinzel';
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .tension-track {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .tension-fill {
+            height: 100%;
+            width: 75%;
+            /* Starter Value */
+            background: linear-gradient(90deg, var(--gold), var(--blood));
+            transition: width 0.3s;
+        }
+
+        /* BITÁCORA (Editable Log) */
+        .adventure-log {
+            margin-top: 40px;
+            border-top: 2px solid var(--accent);
+            padding-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px dashed #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+            font-family: 'Crimson Text';
+            font-size: 1.1rem;
+        }
+
+        .log-entry:focus {
+            background: rgba(255, 215, 0, 0.1);
+            outline: none;
+        }
+
+        .log-date {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        /* Editable Highlights */
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: text;
+            border-radius: 4px;
         }
 
         /* Stats Design */
@@ -399,12 +517,50 @@
         @media (max-width: 900px) {
             .rpg-sheet {
                 grid-template-columns: 1fr;
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
             }
 
             .sidebar {
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
+                gap: 20px;
+                padding: 20px;
+                border-right: none;
+                border-bottom: 4px solid var(--gold);
+            }
+
+            .stats-container {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .tension-wrapper {
+                width: 100%;
+                order: -1;
+                margin-bottom: 10px;
+            }
+
+            .main-content {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+                text-align: center;
+            }
+
+            .sub-header {
+                text-align: center;
+                font-size: 1rem;
+            }
+
+            .stat-medallion {
+                width: auto;
             }
         }
     </style>
@@ -415,8 +571,23 @@
     <div class="rpg-sheet">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar-container">
-                <img src="aric_thumb.png" alt="Aric Portrait" class="avatar-img">
+            <div class="avatar-container high-tension" onclick="triggerUpload()">
+                <!-- Added class low/high dynamically via JS usually, here hardcoded for demo visual -->
+                <img id="char-avatar" src="aric_thumb.png" alt="Aric Portrait" class="avatar-img">
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Cambiar Rostro</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none"
+                onchange="encodeImageFileAsURL(this)">
+
+            <!-- TENSION BAR (New Location) -->
+            <div class="tension-wrapper">
+                <div class="tension-label-mini">Tensión del Alma: 75%</div>
+                <div class="tension-track">
+                    <div class="tension-fill"></div>
+                </div>
             </div>
 
             <div class="stats-container">
@@ -536,10 +707,7 @@
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
-            <div class="soul-meter-container">
-                <div class="soul-meter-bar" style="width: 75%;"></div>
-            </div>
-            <div class="soul-meter-label">TENSIÓN DEL ALMA: 75% (INESTABLE)</div>
+            <!-- Old top bar removed -->
 
             <div class="char-header">
                 <h1>Aric Blackwood</h1>
@@ -590,16 +758,88 @@
             </div>
 
             <h2>Línea de Vida</h2>
-            <p><strong>Año 29 - El Asedio Silencioso:</strong> 7 días de matanza. Aric pierde la visión espiritual.</p>
-            <p><strong>Actualmente:</strong> Trabaja como matón con principios en los barrios bajos.</p>
+            <div class="timeline-item">
+                <div class="timeline-year">Año 29</div>
+                <div class="timeline-content">El Asedio Silencioso. Aric pierde la fe.</div>
+                <span class="timeline-scar">🤕 CICATRIZ: Pesadillas</span>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">Año 34</div>
+                <div class="timeline-content">Matón en los barrios bajos.</div>
+            </div>
 
-            <button class="download-btn" onclick="alert('Descargando JSON enriquecido...')">
-                📥 Descargar Ficha RPG
+            <!-- BITÁCORA DEL DESTINO (Adventure Log) -->
+            <div class="adventure-log">
+                <h2>📖 Bitácora del Destino</h2>
+                <p style="font-size:0.9rem; color:#666; font-style:italic;">
+                    (Esta sección es editable. Escribe aquí tus aventuras y guarda el archivo para mantener tu
+                    progreso).
+                </p>
+
+                <div class="log-entry" contenteditable="true">
+                    <span class="log-date">[Sesión 1]</span>
+                    El grupo se reunió en la taberna "El Cuervo Tuerto". Aceptamos el contrato para investigar las
+                    alcantarillas...
+                </div>
+                <div class="log-entry" contenteditable="true">
+                    <span class="log-date">[Sesión 2]</span>
+                    ...
+                </div>
+                <div class="log-entry" contenteditable="true">
+                    <span class="log-date">[Notas]</span>
+                    He conseguido una espada nueva (+1). Debo recordar reparar mi escudo.
+                </div>
+            </div>
+
+            <button class="download-btn" onclick="saveProgress()">
+                � Guardar Progreso (HTML)
             </button>
         </div>
     </div>
     <script>
-        function translateContent() { console.log("Ficha Profesional Cargada"); }
+        function translateContent() { /* Ready */ }
+
+        function saveProgress() {
+            // Clone the current document structure
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Aric_Blackwood_VIVA.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            document.body.removeChild(a);
+
+            alert("✨ Progreso guardado. Tu imagen y bitácora viajan contigo.");
+        }
+
+        // --- IMAGE UPLOAD LOGIC (BASE64) ---
+        function triggerUpload() {
+            document.getElementById('avatar-input').click();
+        }
+
+        function encodeImageFileAsURL(element) {
+            const file = element.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                const img = document.getElementById('char-avatar');
+                img.src = reader.result; // This sets the Base64 string
+
+                // Visual feedback
+                const container = document.querySelector('.avatar-container');
+                container.style.boxShadow = "0 0 50px #fff";
+                setTimeout(() => {
+                    container.style.boxShadow = "0 0 25px rgba(197, 160, 89, 0.4)";
+                }, 500);
+            }
+            reader.readAsDataURL(file);
+        }
     </script>
 </body>
 

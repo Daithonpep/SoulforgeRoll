@@ -255,6 +255,100 @@
             border: 1px dashed var(--border);
         }
 
+        /* Avatar Container with Dynamic Border Logic */
+        .avatar-frame {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden;
+            background: #222;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            transition: all 0.5s ease;
+        }
+
+        /* High Tension State (Corrupted/Cracked Look) if > 80% */
+        /* Dynamic class added via JS below */
+        .avatar-frame.corrupted {
+            border-color: var(--blood);
+            border-style: dashed;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(138, 11, 11, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+            }
+        }
+
+        .tension-wrapper {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .tension-track {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .tension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--blood));
+            transition: width 0.3s;
+        }
+
+        .adventure-log {
+            margin-top: 40px;
+            border-top: 2px solid var(--gold);
+            padding-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px dashed #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+            font-family: 'Crimson Text';
+            font-size: 1.1rem;
+        }
+
+        .log-entry:focus {
+            background: rgba(255, 215, 0, 0.1);
+            outline: none;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: text;
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
         /* Nav Tabs */
         .nav-tabs {
             margin-top: 30px;
@@ -1097,7 +1191,7 @@
                 "aviso_legal_2": "Los personajes e historias se generan dinámicamente y no se almacenan en nuestros servidores.",
                 "aviso_legal_3": "Es responsabilidad del usuario descargar y conservar el archivo generado.",
                 "aviso_legal_4": "El uso del sistema implica la aceptación de que los resultados pueden variar entre ejecuciones.",
-                "footer_dev": "Desarrollado con ❤️ por DAITHON BENEDICTUS",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
                 "genero": "Género",
                 "rol": "Rol",
                 "edad": "Edad"
@@ -1152,6 +1246,24 @@
             }
         };
 
+        const OPTION_TRANSLATIONS_CLASSES = {
+            'en': {
+                'Guerrero': 'Warrior', 'Mago': 'Mage', 'Picaro': 'Rogue', 'Clerigo': 'Cleric', 'Paladin': 'Paladin',
+                'Barbaro': 'Barbarian', 'Bardo': 'Bard', 'Druida': 'Druid', 'Monje': 'Monk', 'Artificiero': 'Artificer',
+                'Cazador': 'Ranger', 'Brujo': 'Warlock', 'Hechicero': 'Sorcerer', 'Necromancer': 'Necromancer'
+            },
+            'jp': {
+                'Guerrero': '戦士', 'Mago': '魔術師', 'Picaro': '盗賊', 'Clerigo': '聖職者', 'Paladin': '聖騎士',
+                'Barbaro': '野蛮人', 'Bardo': '吟遊詩人', 'Druida': 'ドルイド', 'Monje': 'モンク', 'Artificiero': 'アーティフィサー',
+                'Cazador': '狩人', 'Brujo': 'ウォーロック', 'Hechicero': 'ソーサラー', 'Necromancer': 'ネクロマンサー'
+            },
+            'es': {
+                'Guerrero': 'Guerrero', 'Mago': 'Mago', 'Picaro': 'Pícaro', 'Clerigo': 'Clérigo', 'Paladin': 'Paladín',
+                'Barbaro': 'Bárbaro', 'Bardo': 'Bardo', 'Druida': 'Druida', 'Monje': 'Monje', 'Artificiero': 'Artificiero',
+                'Cazador': 'Cazador', 'Brujo': 'Brujo', 'Hechicero': 'Hechicero', 'Necromancer': 'Nigromante'
+            }
+        };
+
         function changeLanguage(lang) {
             // Validate language
             if (!['es', 'en', 'jp'].includes(lang)) lang = 'es';
@@ -1177,12 +1289,15 @@
 
             // 3. Select Options Translation
             const dict = OPTION_TRANSLATIONS[lang];
+            const classDict = OPTION_TRANSLATIONS_CLASSES[lang];
             if (dict) {
                 document.querySelectorAll('select').forEach(sel => {
                     Array.from(sel.options).forEach(opt => {
                         // Original value logic relies on knowing the original key, which is the value attribute
                         if (dict[opt.value]) {
                             opt.textContent = dict[opt.value];
+                        } else if (classDict[opt.value]) { // Check for class translations
+                            opt.textContent = classDict[opt.value];
                         }
                     });
                 });
@@ -1459,15 +1574,25 @@
                     CHA: 10 + Math.floor(Math.random() * 8)
                 };
 
-                const age = parseInt(formData.get('edad')) || 25;
-                const moralTone = formData.get('tono') || 'gritty';
+                const age = parseInt(formData.get('edad_fija')) || 25; // Use edad_fija from form
+                const moralTone = formData.get('tono_moral') || 'Gris'; // Use tono_moral from form
                 const userClass = formData.get('clase'); // New Field
+                const userRole = formData.get('rol');
+                const userRaza = formData.get('raza');
 
                 // Override role/class if user specified one
                 if (userClass) {
                     characterData.clase = userClass; // We save it as 'clase'
-                    // Also update 'rol' for display consistency if needed, or keep separate
                 }
+                if (userRole) {
+                    characterData.rol = userRole;
+                }
+                if (userRaza) {
+                    characterData.raza = userRaza;
+                }
+                characterData.edad = age;
+                characterData.tono = moralTone;
+
 
                 // 2. Age Modifiers
                 let ageTraits = [];
@@ -1485,13 +1610,18 @@
 
                 // 3. Soul Tension & Moral Matrix
                 let soulTension = 0; // 0-100
-                if (moralTone === 'dark' || moralTone === 'lovecraft') {
+                if (moralTone === 'Oscuro') {
                     soulTension = 60 + Math.floor(Math.random() * 30); // High tension start
                     characterData.shadow_bonus = "Furia de Sombra (+1d6 Dmg cuando Tensión > 80)";
-                } else {
+                } else if (moralTone === 'Luminoso') {
                     soulTension = 10 + Math.floor(Math.random() * 20); // Enlightened start
                     characterData.purity_bonus = "Sintonía Fina (Ventaja en Perspicacia)";
+                } else { // Gris
+                    soulTension = 30 + Math.floor(Math.random() * 40);
                 }
+
+                // 4. Moral Matrix Progress (Placeholder for now)
+                const moralProgress = Math.floor(Math.random() * 100);
 
                 // 5. Soul Resonance (Procedural Perks)
                 const perks = this.generateSoulPerks(characterData, stats);
@@ -1499,7 +1629,13 @@
                 // 6. Narrative Depth (Origin, Turning Point, Light)
                 const narrative = this.generateNarrativeFlow(characterData, age, moralTone);
 
-                // 7. Meta-Tagging
+                // 7. Timeline
+                const timeline = this.generateTimeline(age, moralTone);
+
+                // 8. Economy & Equipment (New System)
+                const gear = this.generateEquipment(characterData.clase || characterData.rol, age, moralTone);
+
+                // 9. Meta-Tagging
                 const tags = this.generateTags(characterData);
 
                 // Construct Enhanced RPG JSON (Final Structure)
@@ -1514,12 +1650,15 @@
                             current_stage: "Mentira",
                             conflict: characterData.psicologia.mentira,
                             resolution: characterData.psicologia.verdad,
-                            progress: 10
+                            progress: moralProgress
                         },
                         soul_perks: perks
                     },
                     narrative_arc: narrative,
                     timeline: timeline,
+                    economy: gear.economy,
+                    equipment: gear.equipment,
+                    inventory: gear.inventory,
                     meta_tags: tags
                 };
             }
@@ -1607,6 +1746,9 @@
             generateTags(data) {
                 const tags = ["npc_compatible"];
                 if (data.clase) tags.push(data.clase.toLowerCase());
+                if (data.rol) tags.push(data.rol.toLowerCase());
+                if (data.raza) tags.push(data.raza.toLowerCase());
+                if (data.tono) tags.push(data.tono.toLowerCase());
                 return tags;
             }
         }
@@ -1695,13 +1837,47 @@
         body { background-color: var(--bg-dark); margin:0; padding:40px 20px; font-family:'Crimson Text',serif; display:flex; justify-content:center; min-height:100vh; }
         .rpg-sheet { width:100%; max-width:1100px; background:var(--paper); background-image:var(--paper-texture); box-shadow:0 0 80px rgba(0,0,0,0.9); display:grid; grid-template-columns:340px 1fr; border-radius:4px; overflow:hidden; }
         
-        /* SIDEBAR */
-        .sidebar { background:var(--panel-dark); color:#ccc; padding:30px 25px; border-right:4px solid var(--gold); display:flex; flex-direction:column; gap:30px; }
-        .avatar-container { width:200px; height:200px; margin:0 auto; border-radius:50%; border:3px solid var(--gold); box-shadow:0 0 25px rgba(197,160,89,0.4); overflow:hidden; background:#000; position:relative; }
-        .avatar-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem; color:#333; }
+        /* SHEET LAYOUT */
+        .sheet-container { display: flex; width: 100%; }
+        .side-panel { background: var(--panel-dark); color: #ccc; padding: 30px 25px; border-right: 4px solid var(--gold); display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; width: 340px; }
+        .main-content { padding: 50px 60px; position: relative; flex-grow: 1; }
+
+        /* AVATAR */
+        .avatar-frame {
+            width: 200px; height: 200px; margin: 0 auto;
+            border-radius: 50%; 
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden; background: #222; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
         
+        .avatar-frame:hover .upload-overlay { opacity: 1; }
+        
+        .upload-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s; color: #fff;
+            font-family: 'Cinzel'; font-size: 0.8rem; text-align: center;
+            border-radius: 50%;
+        }
+
+        .avatar-frame.corrupted {
+             border-color: var(--blood); border-style: dashed; animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border { 0% { box-shadow: 0 0 15px rgba(138, 11, 11, 0.4); } 50% { box-shadow: 0 0 25px rgba(138, 11, 11, 0.8); } 100% { box-shadow: 0 0 15px rgba(138, 11, 11, 0.4); } }
+
+        /* TENSION BAR */
+        .tension-wrapper { margin-top: 15px; text-align: center; }
+        .tension-track { width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; border: 1px solid #555; }
+        .tension-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--blood)); transition: width 0.3s; }
+
         /* STATS */
-        .stats-container { display:grid; grid-template-columns:1fr 1fr; gap:15px 10px; justify-items:center; }
+        .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px 10px; justify-items:center; margin-top: 20px; }
         .stat-medallion { position:relative; width:90px; height:100px; background:linear-gradient(135deg,#222,#111); border:2px solid #444; border-radius:8px; display:flex; flex-direction:column; align-items:center; padding-top:10px; transition:transform 0.2s; }
         .stat-medallion:hover { border-color:var(--gold); transform:scale(1.05); }
         .stat-icon { width:24px; height:24px; fill:var(--gold); margin-bottom:5px; }
@@ -1721,84 +1897,190 @@
         .mech-label { color:#888; font-weight:bold; min-width:50px; }
         .mech-narrative { font-style:italic; color:#888; border-top:1px solid #333; margin-top:4px; padding-top:2px; }
 
-        /* MAIN */
-        .main-content { padding:50px 60px; position:relative; }
-        .char-header { border-bottom:3px double var(--accent); padding-bottom:20px; margin-bottom:30px; }
+        /* MAIN CONTENT */
         h1 { font-family:'Cinzel'; font-size:3.5rem; color:var(--ink); margin:0; line-height:1; }
-        .sub-header { font-family:'Metamorphous'; font-size:1.2rem; color:var(--blood); margin-top:10px; font-style:italic; }
+        .meta-line { font-family:'Metamorphous'; font-size:1.2rem; color:var(--blood); margin-top:10px; font-style:italic; }
         
-        .quote-box { border-left:4px solid var(--accent); background:rgba(93,64,55,0.05); padding:15px 20px; margin:25px 0; font-family:'Cinzel'; font-size:1.1rem; color:#444; font-style:italic; text-align:center; }
-        
-        h2 { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); border-bottom:1px solid #bbb; margin-top:35px; }
+        .section-title { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); border-bottom:1px solid #bbb; margin-top:35px; padding-bottom:5px; }
         p { font-size:1.15rem; line-height:1.7; text-align:justify; color:#222; margin-bottom:15px; }
         
-        .dm-tag { display:inline-block; font-size:0.7rem; padding:2px 6px; border-radius:4px; margin-right:5px; font-weight:bold; text-transform:uppercase; background:#eee; color:#555; border:1px solid #ccc; }
-        .dm-conflict { background:#ffebee; color:#c62828; border-color:#ef9a9a; }
+        .moral-matrix { background:rgba(0,0,0,0.03); border:2px solid var(--accent); padding:25px; margin:30px 0; }
+        .moral-matrix p { margin-bottom: 5px; }
+
+        .timeline-item { margin-bottom: 15px; border-left: 3px solid #ccc; padding-left: 10px; }
+        .timeline-year { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
+        .timeline-content { color: #333; }
+        .timeline-scar { display: inline-block; background: #fce4ec; color: #c2185b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 5px; }
+
+        /* ADVENTURE LOG */
+        .adventure-log { margin-top: 40px; border-top: 2px solid var(--gold); padding-top: 20px; }
+        .adventure-log h2 { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); margin-bottom: 15px; }
+        .log-entry { 
+            background: rgba(0,0,0,0.02); border-bottom: 1px dashed #ccc; padding: 15px; margin-bottom: 10px; 
+            font-family: 'Crimson Text'; font-size: 1.1rem; border-radius: 4px; line-height: 1.6;
+        }
+        .log-entry:focus { background: rgba(255, 215, 0, 0.1); outline: none; }
         
-        .matrix-box { background:rgba(0,0,0,0.03); border:2px solid var(--accent); padding:25px; margin:30px 0; }
-        .matrix-row { display:flex; margin-bottom:10px; }
-        .matrix-label { font-weight:bold; color:var(--blood); width:130px; font-variant:small-caps; }
+        .btn-download {
+            display: block; width: fit-content; margin: 40px auto 30px;
+            background: var(--ink); color: var(--paper); border: none;
+            padding: 15px 30px; font-family: 'Cinzel'; font-size: 1rem;
+            cursor: pointer; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent; /* Mobile interaction fix */
+        }
+        .btn-download:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         
-        .soul-meter-container { position:absolute; top:0; left:0; width:100%; height:8px; background:#dcd0c0; }
-        .soul-meter-bar { height:100%; background:linear-gradient(90deg,#333,var(--blood)); width:${p.mechanics.soul_tension}%; }
-        
-        .download-btn { position:absolute; bottom:40px; right:60px; background:var(--ink); color:var(--paper); border:none; padding:15px 30px; font-family:'Cinzel'; font-size:1rem; cursor:pointer; }
-        
-        @media (max-width:900px) { .rpg-sheet{grid-template-columns:1fr;} .sidebar{flex-direction:row; flex-wrap:wrap; justify-content:center;} }
+        @media (max-width:900px) { 
+            .sheet-container { flex-direction: column; width: 100%; box-shadow: none; }
+            .side-panel { width: 100%; box-sizing: border-box; border-right: none; border-bottom: 4px solid var(--gold); flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+            .main-content { padding: 20px; width: 100%; box-sizing: border-box; }
+            
+            /* Better mobile stacking for avatar and stats */
+            .avatar-frame { margin-bottom: 10px; width: 160px; height: 160px; font-size: 3rem; }
+            .stats-grid { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .stat-medallion { width: auto; height: 90px; }
+            .tension-wrapper { width: 100%; order: -1; margin-bottom: 15px; } /* Tension bar top on mobile sidebar */
+            
+            /* Narrative Readability */
+            h1 { font-size: 2.5rem; text-align: center; }
+            .meta-line { text-align: center; font-size: 1rem; }
+            p { font-size: 1.1rem; text-align: left; }
+            
+            .btn-download { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
     <div class="rpg-sheet">
-        <div class="sidebar">
-            <div class="avatar-container">
-                <div class="avatar-placeholder">👤</div>
+        <div class="sheet-container">
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <div class="avatar-frame ${p.mechanics.soul_tension > 75 ? 'corrupted' : ''}" onclick="triggerUpload()">
+                <div id="avatar-display" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
+                    👤
+                </div>
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Subir Rostro</span>
+                </div>
             </div>
-            <div class="stats-container">
+            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="encodeImageFileAsURL(this)">
+            
+            <!-- TENSION BAR (Sidebar) -->
+            <div class="tension-wrapper">
+                <div style="font-size:0.7rem; color:#888; margin-bottom:5px; font-family:'Cinzel';">Tensión: ${p.mechanics.soul_tension}%</div>
+                <div class="tension-track">
+                    <div class="tension-fill" style="width:${p.mechanics.soul_tension}%"></div>
+                </div>
+            </div>
+
+            <!-- ECONOMY (New) -->
+            <div style="background:#000; border:1px solid #444; padding:10px; margin-top:20px; text-align:center; border-radius:4px;">
+                <span style="font-size:1.5rem;">🪙</span>
+                <span style="font-family:'Cinzel'; font-size:1.2rem; color:#ffd700; margin-left:10px;">${p.economy.currency} GP</span>
+                <div style="font-size:0.6rem; color:#666; margin-top:3px;">ESTADO: ${p.economy.status}</div>
+            </div>
+
+            <div class="stats-grid">
                 ${statsHTML}
             </div>
-            <div class="resonance-section">
-                <div class="resonance-title">✨ RESONANCIA DEL ALMA</div>
-                ${perksHTML}
+            <div style="margin-top:20px;">
+                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div> <!-- Renamed -->
+                ${p.meta_tags.map(t => `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
             </div>
         </div>
-        
-        <div class="main-content">
-            <div class="soul-meter-container"><div class="soul-meter-bar"></div></div>
-            
-            <div class="char-header">
-                <h1>${p.nombre}</h1>
-                <div class="sub-header">${p.clase || p.rol} · ${p.raza || "Humano"} · ${p.edad} Años</div>
-            </div>
-            
-            <div class="quote-box">${quote}</div>
-            
-            <h2>Historia del Alma</h2>
-            
-            <p><strong>📜 Los Inicios:</strong> ${p.narrative_arc ? p.narrative_arc.origin : p.resumen}</p>
-            
-            <p><strong>⚡ El Punto de Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : "Un evento desconocido lo empujó a la aventura."}</p>
-            
-            <p style="border-left: 3px solid #d4af37; padding-left: 10px; font-style: italic; background: rgba(212, 175, 55, 0.1); padding: 5px 10px;">
-                <strong>✨ Momento de Luz:</strong> ${p.narrative_arc ? p.narrative_arc.moment_of_light : "Conserva la esperanza en tiempos oscuros."}
-            </p>
 
-            <div class="matrix-box">
-                <div class="matrix-row"><span class="matrix-label">La Mentira</span><span>${p.mechanics.moral_matrix.conflict}</span></div>
-                <div class="matrix-row"><span class="matrix-label">La Verdad</span><span>${p.mechanics.moral_matrix.resolution}</span></div>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- Removed top tension bar -->
+
+            <h1>${p.nombre}</h1>
+            <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
+
+            <p>${p.resumen}</p>
+
+            <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
+            <div class="moral-matrix">
+                <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
+                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
+                <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
+                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
+                    <div style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;"></div>
+                </div>
+                <p style="text-align:right; font-size:0.8rem;">Progreso de Redención: ${p.mechanics.moral_matrix.progress}%</p>
+            </div>
+
+            <div class="section-title">📜 Historias & Cicatrices</div>
+            
+            <p><strong>📜 Origen:</strong> ${p.narrative_arc ? p.narrative_arc.origin : ""}</p>
+            <p><strong>⚡ Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : ""}</p>
+            <p style="background:rgba(212,175,55,0.1); padding:5px;"><strong>✨ Luz:</strong> ${p.narrative_arc ? p.narrative_arc.moment_of_light : ""}</p>
+
+            ${timelineHTML}
+
+            <!-- INVENTORY GRID (New) -->
+            <div class="section-title">🎒 Equipo & Inventario</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-family:'Cinzel'; font-size:0.9rem; color:#444;">
+                <div>⚔️ <strong>Mano Princ:</strong> ${p.equipment.main_hand}</div>
+                <div>🛡️ <strong>Armadura:</strong> ${p.equipment.armor}</div>
             </div>
             
-            <h2>Línea de Vida</h2>
-            ${timelineHTML}
-            
-            <button class="download-btn" onclick='downloadJSON()'>📥 Descargar JSON</button>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                ${p.inventory.map(item => `
+                <div style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
+                    <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
+                    <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
+                    <div style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">x${item.qty}</div>
+                </div>
+                `).join('')}
+                <!-- Empty Slots filler -->
+                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+            </div>
+
+            <!-- BITÁCORA -->
+            <div class="adventure-log">
+                <h2>📖 Bitácora de Aventuras</h2>
+                <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus sesiones)</p>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 1]</strong> ...</div>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 2]</strong> ...</div>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Notas / Inventario]</strong> ...</div>
+            </div>
+
+            <button class="btn-download" onclick='saveProgress()'>💾 Guardar Ficha Viva (HTML)</button>
         </div>
     </div>
+
     <script>
-        function downloadJSON() {
-             const dataStr = "data:text/json;charset=utf-8," + decodeURIComponent("${jsonString}");
+        function saveProgress() {
+             // Clone entire HTML to save edits
+             const htmlContent = document.documentElement.outerHTML;
+             const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
+             const url = URL.createObjectURL(blob);
              const a = document.createElement('a');
-             a.href = dataStr; a.download = "${p.nombre}_Ficha_RPG.json";
+             a.href = url;
+             a.download = "${p.nombre}_Viva.html";
              document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function triggerUpload() { document.getElementById('avatar-input').click(); }
+        
+        function encodeImageFileAsURL(element) {
+            const file = element.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                // Replace the placeholder with the real image
+                const display = document.getElementById('avatar-display');
+                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
+                
+                // Visual feedback
+                const frame = document.querySelector('.avatar-frame');
+                frame.style.borderColor = "#fff";
+                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
+            }
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
