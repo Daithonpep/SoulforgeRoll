@@ -257,10 +257,10 @@
 
         /* Nav Tabs */
         .nav-tabs {
-            margin-top: 30px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
@@ -523,7 +523,7 @@
             <img src="/static/images/logo_web.png" alt="SoulForge - Forja de Almas" class="logo-img">
         </div>
         <div class="tagline" data-i18n="hero_tagline">Soul Forging System</div>
-        <span class="version">v2.4 - Mobile Ready</span>
+        <span class="version">v2.5 - Fix Deployment</span>
 
         <!-- Credits Display -->
         <div id="creditsDisplay"
@@ -538,9 +538,14 @@
             <p class="subtitle" data-i18n="index_subtitle">Procedural Narrative Generation & Deep Psychology System</p>
             <div class="lang-selector"
                 style="margin-top: 25px; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
-                <a href="#es" onclick="changeLanguage('es')" style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="Español">🇪🇸</a>
-                <a href="#en" onclick="changeLanguage('en')" style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="English">🇺🇸</a>
-                <a href="#jp" onclick="changeLanguage('jp')" style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="日本語">🇯🇵</a>
+                <a href="#es" onclick="changeLanguage('es')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="Español">🇪🇸</a>
+                <a href="#en" onclick="changeLanguage('en')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="English">🇺🇸</a>
+                <a href="#jp" onclick="changeLanguage('jp')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="日本語">🇯🇵</a>
             </div>
 
             <!-- NAV TABS -->
@@ -549,7 +554,7 @@
                     API Root
                 </a>
                 <a href="#" class="nav-btn glow-btn">
-                     Jugar en Línea (VTT)
+                    Jugar en Línea (VTT)
                 </a>
                 <button type="button" class="nav-btn" onclick="alert('Sistema de Registro de Tokens en desarrollo.')">
                     🪙 Mis Tokens
@@ -562,11 +567,13 @@
             <h2 class="card-title" data-i18n="card_alma_title">⚔️ Forge Soul</h2>
             <p class="card-desc" data-i18n="card_alma_desc">Create a unique character with psychological depth.</p>
 
-            <form id="formPersonaje" action="https://soulforge.up.railway.app/api/v1/personaje" method="GET" target="_blank">
+            <form id="formPersonaje" action="https://soulforge.up.railway.app/api/v1/personaje" method="GET"
+                target="_blank">
                 <input type="hidden" name="lang" id="inputLangPersonaje" value="es">
                 <div class="form-group">
                     <label data-i18n="label_nombre">CHARACTER NAME</label>
-                    <input type="text" name="nombre" id="inputNombre" data-i18n-placeholder="label_nombre_placeholder" placeholder="Ex: Kael (empty = random)">
+                    <input type="text" name="nombre" id="inputNombre" data-i18n-placeholder="label_nombre_placeholder"
+                        placeholder="Ex: Kael (empty = random)">
                 </div>
 
                 <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -666,7 +673,8 @@
             <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forge Constellation</h2>
             <p class="card-desc" data-i18n="card_constelacion_desc">Generate a group of interconnected characters.</p>
 
-            <form id="formConstelacion" action="https://soulforge.up.railway.app/api/v1/constelacion" method="GET" target="_blank">
+            <form id="formConstelacion" action="https://soulforge.up.railway.app/api/v1/constelacion" method="GET"
+                target="_blank">
                 <input type="hidden" name="lang" id="inputLangConstelacion" value="es">
                 <input type="hidden" name="nombres" id="nombresHidden">
                 <input type="hidden" name="generos" id="generosHidden">
@@ -685,7 +693,8 @@
 
                 <!-- Campos dinámicos de personajes -->
                 <div class="character-builder" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
-                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalize</h4>
+                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalize
+                    </h4>
                     <div id="characterFields">
                         <!-- JS llenará esto -->
                     </div>
@@ -752,7 +761,8 @@
 
                 <div style="margin-top: 30px; text-align: center;">
                     <button type="submit" id="btnConstelacion" class="btn-forge" onclick="prepareSubmit()">
-                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORGE CONSTELLATION</span>
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORGE
+                            CONSTELLATION</span>
                     </button>
                     <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">
                         The process starts immediately.
@@ -765,25 +775,33 @@
     <!-- HOW IT WORKS SECTION -->
     <div style="width: 100%; max-width: 1200px; margin-top: 80px;">
         <div style="text-align: center; margin-bottom: 50px;">
-            <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;" data-i18n="how_it_works_title">How Does It Work?</h2>
-            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Your journey from idea to character.</p>
+            <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
+                data-i18n="how_it_works_title">How Does It Work?</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Your journey from
+                idea to character.</p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-            <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">⚙️</div>
                 <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step1_title">1. Configure</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Select gender, setting... or leave it random.</p>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Select gender, setting... or
+                    leave it random.</p>
             </div>
-            <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">🔥</div>
                 <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step2_title">2. Forge</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">The AI generates deep psychology and history.</p>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">The AI generates deep
+                    psychology and history.</p>
             </div>
-            <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">📥</div>
                 <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step3_title">3. Download</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Get a premium HTML file ready to use.</p>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Get a premium HTML file
+                    ready to use.</p>
             </div>
         </div>
     </div>
@@ -794,7 +812,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <div
         style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
-        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;" data-i18n="aviso_legal_titulo">
+        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;"
+            data-i18n="aviso_legal_titulo">
             Legal Notice
         </strong>
         <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge is an assisted creation tool.</p>
@@ -954,10 +973,10 @@
                 'MitologiaAsiatica': 'アジア神話', 'AnimeFantasia': 'アニメファンタジー', 'Wuxia': '武俠',
                 'Victoriano': 'ヴィクトリア朝', 'MitologiaGriega': 'ギリシャ神話', 'MitologiaNordica': '北欧神話', 'PiratasCaribe': '海賊',
                 'Normal': '関係密度：普通', 'Densa': '密', 'Dispersa': '疎'
-            }, 
+            },
             'es': {
-               '': '-- Random --', 'None': '-- Aleatorio / Ninguno --', 'Masculino': 'Masculino', 'Femenino': 'Femenino',
-               'Heroe': 'Héroe', 'Villano': 'Villano', 'Mentor': 'Mentor', 'Aliado': 'Aliado',
+                '': '-- Random --', 'None': '-- Aleatorio / Ninguno --', 'Masculino': 'Masculino', 'Femenino': 'Femenino',
+                'Heroe': 'Héroe', 'Villano': 'Villano', 'Mentor': 'Mentor', 'Aliado': 'Aliado',
                 'Bufon': 'Bufón', 'Victima': 'Víctima', 'Profeta': 'Profeta', 'Guardian': 'Guardián', 'Embaucador': 'Embaucador',
                 'Luminoso': 'Luminoso', 'Claro': 'Claro', 'Gris': 'Gris', 'Oscuro': 'Oscuro', 'Abismal': 'Abismal',
                 'Envidia': 'Envidia', 'Ideologia': 'Ideología', 'Obstaculo': 'Obstáculo', 'PuraMaldad': 'Pura Maldad',
@@ -1027,9 +1046,9 @@
 
         // Initialize
         window.addEventListener('load', () => {
-             // Check hash
-             let lang = window.location.hash.replace('#', '') || 'es';
-             changeLanguage(lang);
+            // Check hash
+            let lang = window.location.hash.replace('#', '') || 'es';
+            changeLanguage(lang);
         });
 
         function toggleRaceField() {
@@ -1047,7 +1066,7 @@
             document.getElementById('cantidadValue').textContent = cantidad;
 
             const container = document.getElementById('characterFields');
-            
+
             // Capture current values to preserve them
             const currentValues = {};
             container.querySelectorAll('.character-row').forEach(row => {
@@ -1062,7 +1081,7 @@
             });
 
             container.innerHTML = '';
-            
+
             // Get current lang for labels
             let lang = document.getElementById('inputLangConstelacion').value || 'es';
             // Simple label mapping for dynamic fields
@@ -1114,4 +1133,5 @@
         }
     </script>
 </body>
+
 </html>
