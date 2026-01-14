@@ -2083,67 +2083,364 @@
             reader.readAsDataURL(file);
         }
     </script>
+    </head>
+
+    <body>
+        <div class="rpg-sheet">
+            <div class="sheet-container">
+                <!-- SIDE PANEL -->
+                <div class="side-panel">
+                    <div class="avatar-frame ${p.mechanics.soul_tension > 75 ? 'corrupted' : ''}"
+                        onclick="triggerUpload()">
+                        <div id="avatar-display"
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
+                            👤
+                        </div>
+                        <div class="upload-overlay">
+                            <span style="font-size:1.5rem">📷</span>
+                            <span>Subir Rostro</span>
+                        </div>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display:none"
+                        onchange="encodeImageFileAsURL(this)">
+
+                    <!-- TENSION BAR (Sidebar) -->
+                    <div class="tension-wrapper">
+                        <div style="font-size:0.7rem; color:#888; margin-bottom:5px; font-family:'Cinzel';">Tensión:
+                            ${p.mechanics.soul_tension}%</div>
+                        <div class="tension-track">
+                            <div class="tension-fill" style="width:${p.mechanics.soul_tension}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- ECONOMY (New) -->
+                    <div
+                        style="background:#000; border:1px solid #444; padding:10px; margin-top:20px; text-align:center; border-radius:4px;">
+                        <span style="font-size:1.5rem;">🪙</span>
+                        <span
+                            style="font-family:'Cinzel'; font-size:1.2rem; color:#ffd700; margin-left:10px;">${p.economy.currency}
+                            GP</span>
+                        <div style="font-size:0.6rem; color:#666; margin-top:3px;">ESTADO: ${p.economy.status}</div>
+                    </div>
+
+                    <div class="stats-grid">
+                        ${statsHTML}
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div>
+                        <!-- Renamed -->
+                        ${p.meta_tags.map(t => `<span
+                            style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT -->
+                <div class="main-content">
+                    <!-- Removed top tension bar -->
+
+                    <h1>${p.nombre}</h1>
+                    <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
+
+                    <p>${p.resumen}</p>
+
+                    <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
+                    <div class="moral-matrix">
+                        <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
+                        <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
+                        <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
+                        <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
+                            <div
+                                style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;">
+                            </div>
+                        </div>
+                        <p style="text-align:right; font-size:0.8rem;">Progreso de Redención:
+                            ${p.mechanics.moral_matrix.progress}%</p>
+                    </div>
+
+                    <div class="section-title">📜 Historias & Cicatrices</div>
+
+                    <p><strong>📜 Origen:</strong> ${p.narrative_arc ? p.narrative_arc.origin : ""}</p>
+                    <p><strong>⚡ Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : ""}</p>
+                    <p style="background:rgba(212,175,55,0.1); padding:5px;"><strong>✨ Luz:</strong> ${p.narrative_arc ?
+                        p.narrative_arc.moment_of_light : ""}</p>
+
+                    ${timelineHTML}
+
+                    <!-- INVENTORY GRID (New) -->
+                    <div class="section-title">🎒 Equipo & Inventario</div>
+                    <div
+                        style="display:flex; justify-content:space-between; margin-bottom:15px; font-family:'Cinzel'; font-size:0.9rem; color:#444;">
+                        <div>⚔️ <strong>Mano Princ:</strong> ${p.equipment.main_hand}</div>
+                        <div>🛡️ <strong>Armadura:</strong> ${p.equipment.armor}</div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                        ${p.inventory.map(item => `
+                        <div
+                            style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
+                            <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
+                            <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
+                            <div
+                                style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">
+                                x${item.qty}</div>
+                        </div>
+                        `).join('')}
+                        <!-- Empty Slots filler -->
+                        <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                        <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                    </div>
+
+                    <!-- BITÁCORA -->
+                    <div class="adventure-log">
+                        <h2>📖 Bitácora de Aventuras</h2>
+                        <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus
+                            sesiones)</p>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión
+                                1]</strong> ...</div>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión
+                                2]</strong> ...</div>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Notas /
+                                Inventario]</strong> ...</div>
+                    </div>
+
+                    <button class="btn-download" onclick='saveProgress()'>💾 Guardar Ficha Viva (HTML)</button>
+                </div>
+            </div>
+
+            <script>
+        function saveProgress() {
+             // Clone entire HTML to save edits
+             const htmlContent = document.documentElement.outerHTML;
+             const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
+             const url = URL.createObjectURL(blob);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = "${p.nombre}_Viva.html";
+             document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function triggerUpload() { document.getElementById('avatar-input').click(); }
+        
+        function encodeImageFileAsURL(element) {
+            const file = element.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                // Replace the placeholder with the real image
+                const display = document.getElementById('avatar-display');
+                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
+                
+                // Visual feedback
+                const frame = document.querySelector('.avatar-frame');
+                frame.style.borderColor = "#fff";
+                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
+            }
+            reader.readAsDataURL(file);
+        }
+    <\/script>
+</head>
+<body>
+    <div class="rpg-sheet">
+        <div class="sheet-container">
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <div class="avatar-frame ${p.mechanics.soul_tension > 75 ? 'corrupted' : ''}" onclick="triggerUpload()">
+                <div id="avatar-display" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
+                    👤
+                </div>
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Subir Rostro</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="encodeImageFileAsURL(this)">
+            
+            <!-- TENSION BAR (Sidebar) -->
+            <div class="tension-wrapper">
+                <div style="font-size:0.7rem; color:#888; margin-bottom:5px; font-family:'Cinzel';">Tensión: ${p.mechanics.soul_tension}%</div>
+                <div class="tension-track">
+                    <div class="tension-fill" style="width:${p.mechanics.soul_tension}%"></div>
+                </div>
+            </div>
+
+            <!-- ECONOMY (New) -->
+            <div style="background:#000; border:1px solid #444; padding:10px; margin-top:20px; text-align:center; border-radius:4px;">
+                <span style="font-size:1.5rem;">🪙</span>
+                <span style="font-family:'Cinzel'; font-size:1.2rem; color:#ffd700; margin-left:10px;">${p.economy.currency} GP</span>
+                <div style="font-size:0.6rem; color:#666; margin-top:3px;">ESTADO: ${p.economy.status}</div>
+            </div>
+
+            <div class="stats-grid">
+                ${statsHTML}
+            </div>
+            <div style="margin-top:20px;">
+                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div> <!-- Renamed -->
+                ${p.meta_tags.map(t => `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- Removed top tension bar -->
+
+            <h1>${p.nombre}</h1>
+            <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
+
+            <p>${p.resumen}</p>
+
+            <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
+            <div class="moral-matrix">
+                <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
+                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
+                <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
+                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
+                    <div style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;"></div>
+                </div>
+                <p style="text-align:right; font-size:0.8rem;">Progreso de Redención: ${p.mechanics.moral_matrix.progress}%</p>
+            </div>
+
+            <div class="section-title">📜 Historias & Cicatrices</div>
+            
+            <p><strong>📜 Origen:</strong> ${p.narrative_arc ? p.narrative_arc.origin : ""}</p>
+            <p><strong>⚡ Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : ""}</p>
+            <p style="background:rgba(212,175,55,0.1); padding:5px;"><strong>✨ Luz:</strong> ${p.narrative_arc ? p.narrative_arc.moment_of_light : ""}</p>
+
+            ${timelineHTML}
+
+            <!-- INVENTORY GRID (New) -->
+            <div class="section-title">🎒 Equipo & Inventario</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-family:'Cinzel'; font-size:0.9rem; color:#444;">
+                <div>⚔️ <strong>Mano Princ:</strong> ${p.equipment.main_hand}</div>
+                <div>🛡️ <strong>Armadura:</strong> ${p.equipment.armor}</div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                ${p.inventory.map(item => `
+                <div style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
+                    <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
+                    <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
+                    <div style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">x${item.qty}</div>
+                </div>
+                `).join('')}
+                <!-- Empty Slots filler -->
+                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+            </div>
+
+            <!-- BITÁCORA -->
+            <div class="adventure-log">
+                <h2>📖 Bitácora de Aventuras</h2>
+                <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus sesiones)</p>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 1]</strong> ...</div>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 2]</strong> ...</div>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Notas / Inventario]</strong> ...</div>
+            </div>
+
+            <button class="btn-download" onclick='saveProgress()'>💾 Guardar Ficha Viva (HTML)</button>
+        </div>
+    </div>
+
+    <script>
+        function saveProgress() {
+             // Clone entire HTML to save edits
+             const htmlContent = document.documentElement.outerHTML;
+             const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
+             const url = URL.createObjectURL(blob);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = "${p.nombre}_Viva.html";
+             document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function triggerUpload() { document.getElementById('avatar-input').click(); }
+        
+        function encodeImageFileAsURL(element) {
+            const file = element.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                // Replace the placeholder with the real image
+                const display = document.getElementById('avatar-display');
+                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
+                
+                // Visual feedback
+                const frame = document.querySelector('.avatar-frame');
+                frame.style.borderColor = "#fff";
+                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
+            }
+            reader.readAsDataURL(file);
+        }
+    <\/script>
 </body>
 
 </html>
 `;
 
-const newWindow = window.open();
-newWindow.document.write(htmlContent);
-newWindow.document.close();
-}
+                    const newWindow = window.open();
+                    newWindow.document.write(htmlContent);
+                    newWindow.document.close();
+                }
 
-// --- MAIN FORGE HANDLERS ---
-async function handleForjarAlma(event) {
-event.preventDefault();
+                // --- MAIN FORGE HANDLERS ---
+                async function handleForjarAlma(event) {
+                    event.preventDefault();
 
-// Check tokens
-if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
-    form=document.getElementById('formPersonaje'); const formData=new FormData(form); const params=new
-    URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
-    response=await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
+                    // Check tokens
+                    if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
+                    form = document.getElementById('formPersonaje'); const formData = new FormData(form); const params = new
+                        URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
+                    response = await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
     servidor'); let personaje=await response.json(); // CHECK IF RPG MODE IS ACTIVE // We assume "rol_jugador" or
     similar option triggers this. // For now, let's treat "player" role or specific selection logic. // Assuming the
     user selects "Jugador de Rol" in a dropdown we haven't seen explicitly yet, // but we can infer or force it for
     testing. // Let's check if the 'uso' field (if we had one) or just apply it universally // if the resulting text
     implies deep stats needed. // FOR THIS UPDATE: We will apply RPG Engine if the user selected a Class (Role)
-    !='Civilian/None' const isRPGMode=true; // Force ON for demonstration as requested if (isRPGMode) { const
-    formDataObj=new FormData(form); personaje=rpgEngine.process(personaje, formDataObj);
-    showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
-    hideLoading(); } catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
-            // Refund token on error
-            setTokens(getTokens() + 1);
-        }
-
-        return false;
-        }
-
-        async function handleForjarConstelacion(event) {
-            event.preventDefault();
-            prepareSubmit(); // Prepare hidden fields
-
-            // Check tokens (constellation costs 2)
-            if (getTokens() < 2) {
-                showPayPalModal(' constelacion'); return false; } // Use tokens setTokens(getTokens() - 2); // Get form
-    data const form=document.getElementById('formConstelacion'); const formData=new FormData(form); const params=new
-    URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try { const response=await
-    fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
-    constelacion=await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
-    catch (error) { hideLoading(); alert('Error al forjar: ' + error.message);
-                        // Refund tokens on error
-                        setTokens(getTokens() + 2);
-                    }
-
-                    return false;
+    != 'Civilian/None' const isRPGMode = true; // Force ON for demonstration as requested if (isRPGMode) { const
+                    formDataObj = new FormData(form); personaje = rpgEngine.process(personaje, formDataObj);
+                    showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
+                    hideLoading();
+                } catch (error) {
+                    hideLoading(); alert('Error al forjar: ' + error.message);
+                    // Refund token on error
+                    setTokens(getTokens() + 1);
                 }
+
+                return false;
+        }
+
+                async function handleForjarConstelacion(event) {
+                    event.preventDefault();
+                    prepareSubmit(); // Prepare hidden fields
+
+                    // Check tokens (constellation costs 2)
+                    if (getTokens() < 2) {
+                        showPayPalModal(' constelacion'); return false;
+                    } // Use tokens setTokens(getTokens() - 2); // Get form
+    data const form = document.getElementById('formConstelacion'); const formData = new FormData(form); const params = new
+                        URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try {
+                            const response = await
+                                fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
+                                    constelacion = await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
+    catch (error) {
+                                hideLoading(); alert('Error al forjar: ' + error.message);
+                                // Refund tokens on error
+                                setTokens(getTokens() + 2);
+                            }
+
+                            return false;
+                        }
 
         // --- DEMO HANDLER ---
         function openDemo(name) {
-                const lang = document.getElementById(' inputLangPersonaje').value || 'es' ;
-    window.open(`/demo_${name}.html?lang=${lang}`, '_blank' ); } // --- HTML GENERATORS --- function
-    showPersonajeHTML(p) { const lang=document.getElementById('inputLangPersonaje').value || 'es' ; const
-    html=generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
-    win.document.write(html); win.document.close(); } function generatePersonajeHTML(p, lang) { return `<!DOCTYPE html>
+                        const lang = document.getElementById(' inputLangPersonaje').value || 'es';
+                        window.open(`/demo_${name}.html?lang=${lang}`, '_blank');
+                    } // --- HTML GENERATORS --- function
+                    showPersonajeHTML(p) {
+                        const lang = document.getElementById('inputLangPersonaje').value || 'es'; const
+                            html = generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
+                        win.document.write(html); win.document.close();
+                    } function generatePersonajeHTML(p, lang) {
+                        return `<!DOCTYPE html>
     <html lang="${lang}">
 
     <head>
@@ -2350,20 +2647,20 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </body>
 
     </html>`;
-    }
+                    }
 
-    function showConstelacionHTML(c) {
-    const lang = document.getElementById('inputLangConstelacion').value || 'es';
-    // For constellation, redirect to the dedicated page or generate inline
-    const html = generateConstelacionHTML(c, lang);
-    const win = window.open('', '_blank');
-    win.document.write(html);
-    win.document.close();
-    }
+                    function showConstelacionHTML(c) {
+                        const lang = document.getElementById('inputLangConstelacion').value || 'es';
+                        // For constellation, redirect to the dedicated page or generate inline
+                        const html = generateConstelacionHTML(c, lang);
+                        const win = window.open('', '_blank');
+                        win.document.write(html);
+                        win.document.close();
+                    }
 
-    function generateConstelacionHTML(c, lang) {
-    const personajes = c.personajes || c.characters || [];
-    const personajesHTML = personajes.map((p, i) => `
+                    function generateConstelacionHTML(c, lang) {
+                        const personajes = c.personajes || c.characters || [];
+                        const personajesHTML = personajes.map((p, i) => `
     <div class="character-card">
         <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
         <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
@@ -2371,7 +2668,7 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </div>
     `).join('');
 
-    return `
+                        return `
     <!DOCTYPE html>
     <html lang="${lang}">
 
@@ -2452,23 +2749,23 @@ if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token 
     </body>
 
     </html>`;
-    }
+                    }
 
 
-    function openDemo(name) {
-    const lang = document.getElementById('inputLangPersonaje').value || 'es';
-    window.open(`demo_${name}.html?lang=${lang}`, '_blank');
-    }
+                    function openDemo(name) {
+                        const lang = document.getElementById('inputLangPersonaje').value || 'es';
+                        window.open(`demo_${name}.html?lang=${lang}`, '_blank');
+                    }
 
-    // --- INIT ---
-    window.addEventListener('load', () => {
-    updateTokenDisplay();
-    // Give 3 free tokens for new users
-    if (localStorage.getItem('soulforge_tokens') === null) {
-    setTokens(3);
-    }
-    });
-    </script>
+                    // --- INIT ---
+                    window.addEventListener('load', () => {
+                        updateTokenDisplay();
+                        // Give 3 free tokens for new users
+                        if (localStorage.getItem('soulforge_tokens') === null) {
+                            setTokens(3);
+                        }
+                    });
+            </script>
     </body>
 
-    </html>
+</html>
