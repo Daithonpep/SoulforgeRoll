@@ -1,271 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aric Blackwood - SoulForge Demo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap"
+    <title>Aric Blackwood - SoulForge RPG Demo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --accent: #d4af37;
-            --bg: #0a0a0f;
-            --card: #12121a;
-            --text: #e8e6e3;
-            --dim: #888;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --bg: #1a1a20;
+            --paper: #e3dac9;
+            --ink: #2b2b2b;
+            --gold: #c5a059;
+            --blood: #8a0b0b;
         }
 
         body {
             background: var(--bg);
-            color: var(--text);
             font-family: 'Crimson Text', serif;
-            line-height: 1.7;
-            padding: 40px 20px;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 30px;
-        }
-
-        .name {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: var(--accent);
-            margin-bottom: 10px;
-        }
-
-        .meta {
-            color: var(--dim);
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .badge {
-            background: #331010;
-            color: #ff8888;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            border: 1px solid #552020;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        .section {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid #222;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .section-title {
-            font-family: 'Cinzel', serif;
-            color: var(--accent);
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .section p {
-            margin-bottom: 15px;
-            color: #ccc;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #1a1a25;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin: 3px;
-            border: 1px solid #333;
-            color: var(--dim);
-        }
-
-        .psychology-grid {
+        .sheet-container {
+            width: 1000px;
+            background: var(--paper);
+            color: var(--ink);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* SIDE PANEL */
+        .side-panel {
+            background: #111;
+            color: #ccc;
+            padding: 20px;
+            border-right: 5px solid var(--gold);
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
-        .psychology-item {
-            background: #0a0a10;
+        .avatar-frame {
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--gold);
+            border-radius: 50%;
+            margin: 0 auto;
+            background: #222 url('https://placehold.co/200x200/1a1a1a/c5a059?text=🛡️') no-repeat center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: #222;
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .stat-val {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tag {
+            color: var(--gold);
+            border: 1px solid #444;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 40px;
+            position: relative;
+        }
+
+        .tension-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #333;
+        }
+
+        .tension-bar {
+            height: 100%;
+            background: #ff4444;
+            width: 75%;
+            transition: width 1s;
+        }
+
+        .tension-label {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-family: 'Cinzel';
+            font-size: 0.8rem;
+            color: var(--blood);
+        }
+
+        h1 {
+            font-family: 'Cinzel';
+            font-size: 3rem;
+            margin: 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .meta-line {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-family: 'Cinzel';
+            font-size: 1.5rem;
+            color: var(--blood);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .moral-matrix {
+            background: rgba(0, 0, 0, 0.05);
             padding: 20px;
             border-radius: 8px;
-            border-left: 3px solid var(--accent);
+            border: 1px dashed #aaa;
         }
 
-        .psychology-label {
-            color: var(--accent);
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .timeline-event {
+            border-left: 2px solid var(--gold);
+            padding-left: 15px;
+            margin-bottom: 15px;
         }
 
-        .psychology-text {
-            font-style: italic;
-            color: #fff;
+        .event-year {
+            font-weight: bold;
+            font-family: 'Cinzel';
+            color: #444;
         }
 
-        .quote-box {
-            background: rgba(212, 175, 55, 0.1);
-            padding: 20px;
-            border-left: 4px solid var(--accent);
-            font-style: italic;
-            margin-bottom: 20px;
-            color: var(--text);
-        }
-
-        .footer {
-            text-align: center;
-            color: var(--dim);
-            font-size: 0.8rem;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid #222;
+        .event-scar {
+            color: var(--blood);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 5px;
         }
 
         .cta-btn {
-            display: inline-block;
-            background: var(--accent);
-            color: #000;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--blood);
+            color: white;
             padding: 12px 30px;
-            border-radius: 8px;
             text-decoration: none;
+            border-radius: 5px;
+            font-family: 'Cinzel';
             font-weight: bold;
-            margin-top: 20px;
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(138, 11, 11, 0.4);
         }
 
         .cta-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
 
-        @media (max-width: 600px) {
-            .psychology-grid {
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sheet-container {
                 grid-template-columns: 1fr;
+                width: 100%;
+            }
+
+            .side-panel {
+                border-right: none;
+                border-bottom: 5px solid var(--gold);
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1 class="name" id="t_name">Aric Blackwood</h1>
-            <p class="meta" id="t_meta">
-                Human Paladin · 34 Years · Dark Fantasy <span class="badge">OATHBREAKER</span>
-            </p>
+    <div class="sheet-container">
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <div class="avatar-frame"></div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-val">18</div>
+                    <div class="stat-label">STR</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🏹</div>
+                    <div class="stat-val">12</div>
+                    <div class="stat-label">DEX</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🛡️</div>
+                    <div class="stat-val">16</div>
+                    <div class="stat-label">CON</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🔮</div>
+                    <div class="stat-val">10</div>
+                    <div class="stat-label">INT</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-val">14</div>
+                    <div class="stat-label">WIS</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🎭</div>
+                    <div class="stat-val">8</div>
+                    <div class="stat-label">CHA</div>
+                </div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">BEHAVIORAL TAGS</div>
+                <div class="tag-container">
+                    <span class="tag" id="t_tag1">Oathbreaker</span>
+                    <span class="tag" id="t_tag2">Divine Caster (Fallen)</span>
+                    <span class="tag" id="t_tag3">Intimidation Expert</span>
+                    <span class="tag" id="t_tag4">Trauma: Authority</span>
+                </div>
+            </div>
+
+            <div style="margin-top:20px; text-align:center;">
+                <div style="font-size:0.8rem; color:#888;">CLASS FEATURE</div>
+                <div style="color:var(--gold); font-family:'Cinzel'; margin-top:5px;" id="t_feat">Sentinel Feat</div>
+            </div>
         </div>
 
-        <!-- BIOGRAPHY -->
-        <div class="section">
-            <h2 class="section-title" id="t_bio_title">📜 The Broken Oath</h2>
-            <div class="quote-box" id="t_quote">
-                "The light didn't leave me because I sinned. I left the light because it was blind to the suffering of
-                the innocent."
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="tension-container">
+                <div class="tension-bar"></div>
             </div>
+            <div class="tension-label" id="t_tension">SOUL TENSION: 75% (CRITICAL)</div>
+
+            <h1 id="t_name">Aric Blackwood</h1>
+            <div class="meta-line" id="t_meta">Human Paladin · 34 Years · Dark Fantasy</div>
+
+            <div class="section-title" id="t_bio_title">📜 The Broken Oath</div>
             <p id="t_bio_1">
                 Once a celebrated captain of the Order of the Silver Flame, Aric's life shattered during the Siege of
-                Vorath. While his commanders debated ethics in their ivory towers, Aric watched plague-ridden peasants
-                being slaughtered by the very "purification" fires he was sworn to wield.
+                Vorath. He watched plague-ridden peasants being slaughtered by the very "purification" fires he was
+                sworn to wield.
             </p>
             <p id="t_bio_2">
-                In a moment that would define his eternal shame—or his only true act of heroism—he turned his blade
-                against his High Inquisitor to save a family of "tainted" refugees. Stripped of his rank, branded a
-                heretic, and exiled to the Shadowlands, he now wanders as a mercenary who refuses to pray.
+                Turned his blade against his High Inquisitor to save a family. Now branded a heretic, he wanders as a
+                mercenary who refuses to pray to silent gods.
             </p>
-            <p id="t_bio_3">
-                He carries his cracked holy symbol not out of faith, but as a reminder of the hypocrisy he swore to
-                destroy. He fights not for gods, but for the gutter-rats and the forgotten, wielding dark magic he
-                barely understands to protect the little light that remains in the world.
-            </p>
-        </div>
 
-        <!-- DEEP PSYCHOLOGY -->
-        <div class="section">
-            <h2 class="section-title" id="t_psy_title">🧠 Deep Psychology Analysis</h2>
-            <div class="psychology-grid">
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_mask_label">The Mask (Persona)</div>
-                    <div class="psychology-text" id="t_mask">The Cynical Mercenary. He projects an image of caring only
-                        for coin to avoid getting emotionally attached to causes he knows are doomed.</div>
+            <div class="section-title" id="t_psy_title">🧠 Psico-Matriz Evolutiva</div>
+            <div class="moral-matrix">
+                <p><strong id="t_lie_label">The Lie (Start):</strong> <span id="t_lie">"I am a monster because I killed
+                        a holy man."</span></p>
+                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
+                <p><strong id="t_truth_label">The Truth (Goal):</strong> <span id="t_truth">"Sanctity is found in
+                        actions, not titles."</span></p>
+                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
+                    <div style="width:25%; background:var(--gold); height:100%;"></div>
                 </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_shadow_label">The Shadow (Repressed)</div>
-                    <div class="psychology-text" id="t_shadow">A desperate need for redemption. Despite his blasphemy,
-                        he secretly craves a sign that he isn't damned for eternity.</div>
-                </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_wound_label">Core Wound</div>
-                    <div class="psychology-text" id="t_wound">Betrayal of Authority. His father figure (The Inquisitor)
-                        tried to kill him for doing the right thing, shattering his trust in structure.</div>
-                </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_desire_label">Deepest Desire</div>
-                    <div class="psychology-text" id="t_desire">To find a cause worth dying for that is pure enough to
-                        wash away the blood on his hands.</div>
+                <p style="text-align:right; font-size:0.8rem;" id="t_progress">Redemption Progress: 25%</p>
+            </div>
+
+            <div class="section-title" id="t_timeline_title">📜 Lifepath & Scars</div>
+            <div class="timeline-event">
+                <div class="event-year" id="t_year_1">Age 16: Ordination</div>
+                <div class="event-desc" id="t_event_1">Swore the Eternal Vow to the Silver Flame under a blood moon.
                 </div>
             </div>
-        </div>
-
-        <!-- NARRATIVE DYNAMICS -->
-        <div class="section">
-            <h2 class="section-title" id="t_arc_title">🎭 Narrative Engine</h2>
-            <p><strong id="t_lie_label">The Lie He Believes:</strong> <span id="t_lie">"I am a monster because I killed
-                    a holy man."</span></p>
-            <p><strong id="t_truth_label">The Truth He Needs:</strong> <span id="t_truth">"Sanctity is found in actions,
-                    not titles. You are more of a paladin now than you ever were in armor."</span></p>
-            <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
-            <p><strong id="t_arc_label">Narrative Arc:</strong> <em id="t_arc_name">Redemption through Sacrifice.</em>
-                <span id="t_arc_desc">Aric starts by rejecting all selfless acts, but is slowly drawn into protecting a
-                    child who manifests the same powers he was branded for. He must choose between his survival and
-                    becoming the shield for a new, "heretical" generation.</span></p>
-        </div>
-
-        <!-- STATS / TAGS -->
-        <div class="section">
-            <h2 class="section-title">⚔️ Combat & Traits</h2>
-            <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                <span class="tag">STR: 18 (+4)</span>
-                <span class="tag">DEX: 12 (+1)</span>
-                <span class="tag">CON: 16 (+3)</span>
-                <span class="tag">INT: 10 (0)</span>
-                <span class="tag">WIS: 14 (+2)</span>
-                <span class="tag">CHA: 8 (-1)</span>
-                <span class="tag" id="t_skill_1">Skill: Intimidation</span>
-                <span class="tag" id="t_skill_2">Skill: Athletics</span>
-                <span class="tag" id="t_feat">Feat: Sentinel</span>
-                <span class="tag" id="t_weapon">Weapon: Greatsword</span>
+            <div class="timeline-event">
+                <div class="event-year" id="t_year_2">Age 28: The Siege</div>
+                <div class="event-desc" id="t_event_2">The Incident of Vorath. Defected from the order.</div>
+                <div class="event-scar" id="t_scar_1">🤕 Scar: Burned Left Hand (Divine Fire)</div>
             </div>
-        </div>
+            <div class="timeline-event">
+                <div class="event-year" id="t_year_3">Age 34: Present Day</div>
+                <div class="event-desc" id="t_event_3">Working as a mercenary in the Shadowlands.</div>
+                <div class="event-scar" id="t_scar_2">🧠 Trauma: Nightmares of Burning Flesh</div>
+            </div>
 
-        <!-- FOOTER CTA -->
-        <div class="footer">
-            <p id="t_footer">This character was generated in 1.4 seconds by SoulForge AI.</p>
-            <a href="/" class="cta-btn" id="t_cta">⚡ Create Your Own Character</a>
+            <a href="/" class="cta-btn" id="t_cta">⚡ FORGE YOUR OWN</a>
         </div>
     </div>
 
@@ -273,67 +334,41 @@
         const I18N = {
             es: {
                 t_name: "Aric Blackwood",
-                t_meta: "Paladín Humano · 34 Años · Fantasía Oscura <span class='badge'>ROPEJURAMENTOS</span>",
-                t_bio_title: "📜 El Juramento Roto",
-                t_quote: "\"La luz no me abandonó por pecar. Yo abandoné la luz porque estaba ciega ante el sufrimiento de los inocentes.\"",
-                t_bio_1: "Otrora un celebrado capitán de la Orden de la Llama de Plata, la vida de Aric se hizo añicos durante el Asedio de Vorath. Mientras sus comandantes debatían ética en sus torres de marfil, Aric veía cómo campesinos enfermos eran masacrados por los mismos fuegos de 'purificación' que él juró portar.",
-                t_bio_2: "En un momento que definiría su vergüenza eterna—o su único acto verdadero de heroísmo—volvió su espada contra su Alto Inquisidor para salvar a una familia de refugiados 'corruptos'. Despojado de su rango, marcado como hereje y exiliado a las Tierras Sombrías, ahora vaga como un mercenario que se niega a rezar.",
-                t_bio_3: "Lleva su símbolo sagrado agrietado no por fe, sino como recordatorio de la hipocresía que juró destruir. Lucha no por dioses, sino por las ratas de alcantarilla y los olvidados, empuñando magia oscura que apenas comprende para proteger la poca luz que queda en el mundo.",
-                t_psy_title: "🧠 Análisis Psicológico Profundo",
-                t_mask_label: "La Máscara (Persona)",
-                t_mask: "El Mercenario Cínico. Proyecta un imagen de que solo le importa el dinero para evitar apegarse emocionalmente a causas que sabe que están condenadas.",
-                t_shadow_label: "La Sombra (Reprimido)",
-                t_shadow: "Una necesidad desesperada de redención. A pesar de su blasfemia, secretamente anhela una señal de que no está condenado por la eternidad.",
-                t_wound_label: "Herida Central",
-                t_wound: "Traición a la Autoridad. Su figura paterna (El Inquisidor) intentó matarlo por hacer lo correcto, destrozando su confianza en la estructura.",
-                t_desire_label: "Deseo Profundo",
-                t_desire: "Encontrar una causa por la que valga la pena morir, lo suficientemente pura para lavar la sangre de sus manos.",
-                t_arc_title: "🎭 Motor Narrativo",
-                t_lie_label: "La Mentira que Cree:",
-                t_lie: "\"Soy un monstruo porque maté a un hombre santo.\"",
-                t_truth_label: "La Verdad que Necesita:",
-                t_truth: "\"La santidad se encuentra en las acciones, no en los títulos. Eres más paladín ahora que nunca lo fuiste con armadura.\"",
-                t_arc_label: "Arco Narrativo:",
-                t_arc_name: "Redención a través del Sacrificio.",
-                t_arc_desc: "Aric comienza rechazando todo acto altruista, pero es arrastrado lentamente a proteger a un niño que manifiesta los mismos poderes por los que fue marcado. Debe elegir entre su supervivencia y convertirse en el escudo de una nueva generación 'hereje'.",
-                t_skill_1: "Habilidad: Intimidación",
-                t_skill_2: "Habilidad: Atletismo",
+                t_meta: "Paladín Humano · 34 Años · Fantasía Oscura",
+                t_tag1: "Rompejuramentos", t_tag2: "Lanzador Divino (Caído)", t_tag3: "Experto en Intimidación", t_tag4: "Trauma: Autoridad",
                 t_feat: "Dote: Centinela",
-                t_weapon: "Arma: Espadón",
-                t_footer: "Este personaje fue generado en 1.4 segundos por SoulForge AI.",
-                t_cta: "⚡ Crea Tu Propio Personaje"
+                t_tension: "TENSIÓN DEL ALMA: 75% (CRÍTICA)",
+                t_bio_title: "📜 El Juramento Roto",
+                t_bio_1: "Otrora capitán de la Orden de la Llama de Plata. Su vida se rompió en el Asedio de Vorath al ver a inocentes arder por 'fuego purificador'.",
+                t_bio_2: "Volvió su espada contra el Inquisidor. Ahora, marcado como hereje, vaga como mercenario rechazando a dioses silenciosos.",
+                t_psy_title: "🧠 Psico-Matriz Evolutiva",
+                t_lie_label: "La Mentira (Inicio):", t_lie: "\"Soy un monstruo por matar a un hombre santo.\"",
+                t_truth_label: "La Verdad (Meta):", t_truth: "\"La santidad está en los actos, no en los títulos.\"",
+                t_progress: "Progreso de Redención: 25%",
+                t_timeline_title: "📜 Línea de Vida y Cicatrices",
+                t_year_1: "Edad 16: Ordenación", t_event_1: "Juró el Voto Eterno bajo una luna de sangre.",
+                t_year_2: "Edad 28: El Asedio", t_event_2: "El Incidente de Vorath. Desertó de la orden.", t_scar_1: "🤕 Cicatriz: Mano Izquierda Quemada (Fuego Divino)",
+                t_year_3: "Edad 34: Actualidad", t_event_3: "Trabaja como mercenario en las Tierras Sombrías.", t_scar_2: "🧠 Trauma: Pesadillas de Carne Quemada",
+                t_cta: "⚡ FORJA EL TUYO"
             },
             jp: {
                 t_name: "アリク・ブラックウッド",
-                t_meta: "人間のパラディン · 34歳 ·ダークファンタジー <span class='badge'>誓いを破りし者</span>",
-                t_bio_title: "📜 破られた誓い",
-                t_quote: "「私が罪を犯したから光が去ったのではない。光が無実の人々の苦しみに盲目だったから、私が光を捨てたのだ。」",
-                t_bio_1: "かつて銀の炎の教団で称賛された隊長であったアリクの人生は、ヴォラス包囲戦で粉々に砕け散った。指揮官たちが象牙の塔で倫理を議論している間、アリクは疫病に冒された農民たちが、彼が振るうことを誓った「浄化」の炎によって虐殺されるのを見ていた。",
-                t_bio_2: "彼の永遠の恥と定義される瞬間――あるいは唯一の真の英雄的行為において――彼は「汚れた」難民家族を救うために、自らの刃を大審問官に向けた。階級を剥奪され、異端者の烙印を押され、シャドウランドへ追放された彼は、今や祈ることを拒否する傭兵として彷徨っている。",
-                t_bio_3: "彼がひび割れた聖なるシンボルを持っているのは信仰のためではなく、彼が破壊すると誓った偽善の戒めとしてである。彼は神のためではなく、ドブネズミや忘れ去られた人々のために戦い、世界に残されたわずかな光を守るために、彼がほとんど理解していない闇の魔法を振るう。",
-                t_psy_title: "🧠 深層心理分析",
-                t_mask_label: "仮面 (ペルソナ)",
-                t_mask: "冷笑的な傭兵。絶望的だと分かっている大義に感情移入しないよう、金にしか興味がないというイメージを投影している。",
-                t_shadow_label: "影 (抑圧されたもの)",
-                t_shadow: "救済への絶望的な渇望。冒涜にもかかわらず、彼は密かに自分が永遠に呪われていないという兆候を切望している。",
-                t_wound_label: "核となる傷",
-                t_wound: "権威への裏切り。父親代わり（審問官）が正しいことをした彼を殺そうとしたため、組織への信頼が粉々に砕かれた。",
-                t_desire_label: "深層の願望",
-                t_desire: "自分の手の血を洗い流すのに十分純粋な、死ぬ価値のある大義を見つけること。",
-                t_arc_title: "🎭 物語エンジン",
-                t_lie_label: "彼が信じている嘘:",
-                t_lie: "「私は聖人を殺したから怪物だ。」",
-                t_truth_label: "彼が必要とする真実:",
-                t_truth: "「神聖さは称号ではなく行動に見出される。鎧を着ていた時よりも、今のあなたの方がパラディンらしい。」",
-                t_arc_label: "物語のアーク:",
-                t_arc_name: "犠牲による救済。",
-                t_arc_desc: "アリクはすべての利他的な行為を拒絶することから始めるが、徐々に彼が烙印を押されたのと同じ力を発現させた子供を守ることに引き込まれていく。彼は自分の生存と、新しい「異端」の世代の盾になることの間で選択しなければならない。",
-                t_skill_1: "スキル: 威圧",
-                t_skill_2: "スキル: 運動",
+                t_meta: "人間のパラディン · 34歳 · ダークファンタジー",
+                t_tag1: "誓いを破りし者", t_tag2: "神聖術師 (堕落)", t_tag3: "威圧の達人", t_tag4: "トラウマ: 権威",
                 t_feat: "特技: センチネル",
-                t_weapon: "武器: グレートソード",
-                t_footer: "このキャラクターはSoulForge AIによって1.4秒で生成されました。",
-                t_cta: "⚡ 自分のキャラクターを作成"
+                t_tension: "魂の緊張: 75% (危険)",
+                t_bio_title: "📜 破られた誓い",
+                t_bio_1: "かつて銀の炎の教団の隊長だった。ヴォラス包囲戦で、無実の人々が「浄化の炎」で焼かれるのを見て人生が崩壊した。",
+                t_bio_2: "審問官に刃を向けた。異端者の烙印を押され、沈黙する神々を拒絶する傭兵として彷徨う。",
+                t_psy_title: "🧠 深層心理マトリックス",
+                t_lie_label: "嘘 (開始):", t_lie: "「聖人を殺した私は怪物だ。」",
+                t_truth_label: "真実 (目標):", t_truth: "「神聖さは称号ではなく行動にある。」",
+                t_progress: "救済の進捗: 25%",
+                t_timeline_title: "📜 人生の軌跡と傷跡",
+                t_year_1: "16歳: 任命", t_event_1: "血の月の下で永遠の誓いを立てた。",
+                t_year_2: "28歳: 包囲戦", t_event_2: "ヴォラスの事件。教団を脱走。", t_scar_1: "🤕 傷跡: 左手の火傷 (神聖な炎)",
+                t_year_3: "34歳: 現在", t_event_3: "シャドウランドで傭兵として活動。", t_scar_2: "🧠 トラウマ: 焼ける肉の悪夢",
+                t_cta: "⚡ 今すぐ作成"
             }
         };
 

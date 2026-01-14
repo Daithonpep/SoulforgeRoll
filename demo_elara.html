@@ -1,285 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elara Vex - SoulForge Demo</title>
+    <title>Elara Vex - SoulForge RPG Demo</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
+        /* CYBERPUNK THEME OVERRIDE */
         :root {
-            --accent: #b026ff;
-            --accent-glow: #b026ffaa;
             --bg: #050510;
-            --card: #0f0f1a;
-            --text: #e0e0ff;
-            --dim: #8888aa;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --paper: #0f0f1a;
+            --ink: #a0a0ff;
+            --gold: #b026ff;
+            --blood: #ff0055;
         }
 
         body {
             background: var(--bg);
-            color: var(--text);
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.7;
-            padding: 40px 20px;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            color: var(--ink);
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 30px;
+        .sheet-container {
+            width: 1000px;
+            background: var(--paper);
+            box-shadow: 0 0 50px rgba(176, 38, 255, 0.2);
+            border: 1px solid var(--gold);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
             position: relative;
         }
 
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            box-shadow: 0 0 15px var(--accent);
-        }
-
-        .name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 0 0 10px var(--accent);
-            margin-bottom: 10px;
-        }
-
-        .meta {
-            color: var(--accent);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-        }
-
-        .badge {
-            background: rgba(176, 38, 255, 0.2);
-            color: #eeaaff;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            border: 1px solid var(--accent);
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        .section {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid #1a1a2a;
-            box-shadow: 0 0 30px rgba(176, 38, 255, 0.05);
-        }
-
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent);
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #2a2a4a;
-            padding-bottom: 10px;
-        }
-
-        .section p {
-            margin-bottom: 15px;
-            color: #ccc;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #151525;
-            padding: 5px 15px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin: 3px;
-            border: 1px solid #333;
-            color: var(--accent);
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .psychology-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* SIDE PANEL */
+        .side-panel {
+            background: #080812;
+            padding: 20px;
+            border-right: 2px solid var(--gold);
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
-        .psychology-item {
-            background: #0a0a15;
-            padding: 20px;
-            border-radius: 4px;
-            border-left: 3px solid var(--accent);
+        .avatar-frame {
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--gold);
+            border-radius: 10px;
+            /* Square for Tech */
+            margin: 0 auto;
+            background: #222 url('https://placehold.co/200x200/0f0f1a/b026ff?text=💾') no-repeat center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px var(--gold);
         }
 
-        .psychology-label {
-            color: var(--dim);
-            font-size: 0.75rem;
-            margin-bottom: 8px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: #111;
+            border: 1px solid var(--gold);
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .stat-val {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 5px var(--gold);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
             text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tag {
+            color: #fff;
+            background: rgba(176, 38, 255, 0.2);
+            border: 1px solid var(--gold);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 40px;
+            position: relative;
+        }
+
+        .tension-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #333;
+        }
+
+        .tension-bar {
+            height: 100%;
+            background: var(--blood);
+            width: 45%;
+            transition: width 1s;
+            box-shadow: 0 0 10px var(--blood);
+        }
+
+        .tension-label {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-family: 'Orbitron';
+            font-size: 0.8rem;
+            color: var(--blood);
+        }
+
+        h1 {
+            font-family: 'Orbitron';
+            font-size: 3rem;
+            margin: 0;
+            color: #fff;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .meta-line {
+            color: var(--gold);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
             letter-spacing: 1px;
         }
 
-        .psychology-text {
+        .section-title {
+            font-family: 'Orbitron';
+            font-size: 1.5rem;
             color: #fff;
-            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-left: 10px;
+            border-left: 4px solid var(--gold);
         }
 
-        .quote-box {
-            background: linear-gradient(90deg, rgba(176, 38, 255, 0.1), transparent);
+        .moral-matrix {
+            background: rgba(0, 0, 0, 0.3);
             padding: 20px;
-            border-left: 4px solid var(--accent);
-            font-style: italic;
-            margin-bottom: 20px;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
+            border-radius: 4px;
+            border: 1px solid #333;
         }
 
-        .footer {
-            text-align: center;
-            color: var(--dim);
-            font-size: 0.8rem;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid #222;
+        .timeline-event {
+            border-left: 2px solid var(--gold);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+
+        .event-year {
+            font-weight: bold;
+            font-family: 'Orbitron';
+            color: #fff;
+        }
+
+        .event-scar {
+            color: var(--blood);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 5px;
         }
 
         .cta-btn {
-            display: inline-block;
-            background: var(--accent);
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--gold);
             color: #fff;
             padding: 12px 30px;
-            border-radius: 4px;
             text-decoration: none;
+            border-radius: 4px;
+            font-family: 'Orbitron';
             font-weight: bold;
-            margin-top: 20px;
-            transition: all 0.2s;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--gold);
         }
 
         .cta-btn:hover {
-            background: #d060ff;
-            box-shadow: 0 0 20px var(--accent);
+            background: #fff;
+            color: #000;
         }
 
-        @media (max-width: 600px) {
-            .psychology-grid {
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sheet-container {
                 grid-template-columns: 1fr;
+                width: 100%;
+            }
+
+            .side-panel {
+                border-right: none;
+                border-bottom: 2px solid var(--gold);
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1 class="name" id="t_name">Elara "Glitch" Vex</h1>
-            <p class="meta" id="t_meta">
-                Cyber-Sorceress · 22 Years · Neo-Tokyo 2099 <span class="badge">NETRUNNER</span>
-            </p>
+    <div class="sheet-container">
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <div class="avatar-frame"></div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon">💻</div>
+                    <div class="stat-val">20</div>
+                    <div class="stat-label">INT</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-val">16</div>
+                    <div class="stat-label">DEX</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🔋</div>
+                    <div class="stat-val">14</div>
+                    <div class="stat-label">CON</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🦾</div>
+                    <div class="stat-val">10</div>
+                    <div class="stat-label">STR</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🧠</div>
+                    <div class="stat-val">12</div>
+                    <div class="stat-label">WIS</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">😎</div>
+                    <div class="stat-val">14</div>
+                    <div class="stat-label">CHA</div>
+                </div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">SYSTEM TAGS</div>
+                <div class="tag-container">
+                    <span class="tag" id="t_tag1">Netrunner</span>
+                    <span class="tag" id="t_tag2">Cyber-Sorceress</span>
+                    <span class="tag" id="t_tag3">Wanted: MegaCorp</span>
+                    <span class="tag" id="t_tag4">Glitch: Abandonment</span>
+                </div>
+            </div>
+
+            <div style="margin-top:20px; text-align:center;">
+                <div style="font-size:0.8rem; color:#666;">LOADOUT</div>
+                <div style="color:var(--gold); font-family:'Orbitron'; margin-top:5px;" id="t_feat">Cyberdeck Mk.IV
+                </div>
+            </div>
         </div>
 
-        <!-- BIOGRAPHY -->
-        <div class="section">
-            <h2 class="section-title" id="t_bio_title">💾 The Ghost in the Grid</h2>
-            <div class="quote-box" id="t_quote">
-                "Magic isn't dead. It just upgraded to fiber optics. And honey, I have root access."
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="tension-container">
+                <div class="tension-bar"></div>
             </div>
+            <div class="tension-label" id="t_tension">SYSTEM INSTABILITY: 45%</div>
+
+            <h1 id="t_name">Elara "Glitch" Vex</h1>
+            <div class="meta-line" id="t_meta">Human Netrunner · 22 Years · Neo-Tokyo 2099</div>
+
+            <div class="section-title" id="t_bio_title">💾 Ghost in the Grid</div>
             <p id="t_bio_1">
-                Born in the slums of Sector 7, Elara never knew her parents—only the hum of the servers that kept the
-                city alive. She didn't learn magic from dusty tomes; she found it in the corrupted data packets of the
-                MegaCorp networks. To her, code isn't math; it's a weaving of digital mana.
+                Born in Sector 7 slums. Found magic in corrupted data packets. Treats code as digital mana.
             </p>
             <p id="t_bio_2">
-                By day, she's a courier delivering illegal memory chips. By night, she's "Glitch," a legendary hacker
-                who can bypass ICE walls by singing ancient incantations into the terminal. She doesn't just type; she
-                casts.
+                Legendary hacker "Glitch". Hosting a sentient AI virus named "Grim". The last firewall against digital
+                damnation.
             </p>
-            <p id="t_bio_3">
-                But she stumbled upon Project SoulForge—a corporate attempt to digitize human souls for eternal labor.
-                Now, with a sentient AI virus named "Grim" living in her neural implant, she's the only thing standing
-                between humanity and digital damnation.
-            </p>
-        </div>
 
-        <!-- DEEP PSYCHOLOGY -->
-        <div class="section">
-            <h2 class="section-title" id="t_psy_title">🧠 SYSTEM DIAGNOSTICS</h2>
-            <div class="psychology-grid">
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_mask_label">The Mask (Interface)</div>
-                    <div class="psychology-text" id="t_mask">The Manic Pixie Techno-Girl. She treats life like a video
-                        game to cope with the horror of her reality.</div>
+            <div class="section-title" id="t_psy_title">🧠 System Diagnostics</div>
+            <div class="moral-matrix">
+                <p><strong id="t_lie_label">Error (Start):</strong> <span id="t_lie">"Feelings are bugs. I am just
+                        code."</span></p>
+                <div style="text-align:center; margin:5px; font-size:1.2rem;">⬇️</div>
+                <p><strong id="t_truth_label">Patch (Goal):</strong> <span id="t_truth">"The soul is the only hardware
+                        that matters."</span></p>
+                <div style="margin-top:10px; background:#333; height:5px; border-radius:2px; overflow:hidden;">
+                    <div style="width:15%; background:var(--gold); height:100%;"></div>
                 </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_shadow_label">The Shadow (Corrupted Sector)</div>
-                    <div class="psychology-text" id="t_shadow">A fear of disconnection. Without the Net, she feels she
-                        doesn't exist. Silence terrifies her more than death.</div>
-                </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_wound_label">Core Glitch</div>
-                    <div class="psychology-text" id="t_wound">Abandonment. She replaces human connection with digital
-                        intimacy because code never walks away.</div>
-                </div>
-                <div class="psychology-item">
-                    <div class="psychology-label" id="t_desire_label">Primary Directive</div>
-                    <div class="psychology-text" id="t_desire">To find "The Source"—a mythical server where her parents'
-                        consciousness might still be uploaded.</div>
-                </div>
+                <p style="text-align:right; font-size:0.8rem;" id="t_progress">Humanity Compilation: 15%</p>
             </div>
-        </div>
 
-        <!-- NARRATIVE DYNAMICS -->
-        <div class="section">
-            <h2 class="section-title" id="t_arc_title">🎭 Narrative Protocol</h2>
-            <p><strong id="t_lie_label">The Lie She Computes:</strong> <span id="t_lie">"I am just code executing a
-                    survival script. Feelings are bugs."</span></p>
-            <p><strong id="t_truth_label">The Truth She Must Compile:</strong> <span id="t_truth">"Even in a digital
-                    world, the soul is the only hardware that matters."</span></p>
-            <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
-            <p><strong id="t_arc_label">Narrative Arc:</strong> <em id="t_arc_name">The Human Error.</em> <span
-                    id="t_arc_desc">Elara starts by trying to upload herself permanently to escape pain, but falls in
-                    love with a "legacy human" (non-augmented) who teaches her the value of mortality.</span></p>
-        </div>
-
-        <!-- STATS / TAGS -->
-        <div class="section">
-            <h2 class="section-title">⚔️ Tech & Spells</h2>
-            <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                <span class="tag">INT: 20 (+5)</span>
-                <span class="tag">DEX: 16 (+3)</span>
-                <span class="tag">CHA: 14 (+2)</span>
-                <span class="tag" id="t_gear">Cyberdeck: Mk.IV "Odin"</span>
-                <span class="tag" id="t_spell_1">Spell: Digital Fireball</span>
-                <span class="tag" id="t_spell_2">Spell: System Sleep</span>
-                <span class="tag" id="t_skill_1">Skill: Hacking</span>
-                <span class="tag" id="t_skill_2">Skill: Arcana</span>
+            <div class="section-title" id="t_timeline_title">📜 Runtime Logs</div>
+            <div class="timeline-event">
+                <div class="event-year" id="t_year_1">Cycle 0: Boot</div>
+                <div class="event-desc" id="t_event_1">Abandoned at server farm intake. Raised by bots.</div>
             </div>
-        </div>
+            <div class="timeline-event">
+                <div class="event-year" id="t_year_2">Cycle 16: First Hack</div>
+                <div class="event-desc" id="t_event_2">Breached Arasaka sublevels. Installed "Grim" AI.</div>
+                <div class="event-scar" id="t_scar_1">🤕 Glitch: Neural Feedback Loop (Migraines)</div>
+            </div>
 
-        <!-- FOOTER CTA -->
-        <div class="footer">
-            <p id="t_footer">Character generated in 0.8s by SoulForge AI.</p>
-            <a href="/" class="cta-btn" id="t_cta">⚡ Jack In & Create</a>
+            <a href="/" class="cta-btn" id="t_cta">⚡ JACK IN & CREATE</a>
         </div>
     </div>
 
@@ -287,69 +337,39 @@
         const I18N = {
             es: {
                 t_name: "Elara \"Glitch\" Vex",
-                t_meta: "Ciber-Hechicera · 22 Años · Neo-Tokyo 2099 <span class='badge'>NETRUNNER</span>",
-                t_bio_title: "💾 El Fantasma en la Red",
-                t_quote: "\"La magia no ha muerto. Solo se actualizó a fibra óptica. Y cariño, tengo acceso root.\"",
-                t_bio_1: "Nacida en los suburbios del Sector 7, Elara nunca conoció a sus padres—solo el zumbido de los servidores que mantenían viva la ciudad. No aprendió magia de tomos polvorientos; la encontró en paquetes de datos corruptos de las redes MegaCorp. Para ella, el código no es matemáticas; es un tejido de maná digital.",
-                t_bio_2: "De día, es una mensajera entregando chips de memoria ilegales. De noche, es \"Glitch\", una hacker legendaria que puede burlar muros de ICE cantando encantamientos antiguos en la terminal. Ella no solo teclea; ella conjura.",
-                t_bio_3: "Pero tropezó con el Proyecto SoulForge—un intento corporativo de digitalizar almas humanas para mano de obra eterna. Ahora, con un virus de IA sensible llamado \"Grim\" viviendo en su implante neural, es lo único que se interpone entre la humanidad y la condenación digital.",
-                t_psy_title: "🧠 DIAGNÓSTICO DEL SISTEMA",
-                t_mask_label: "La Máscara (Interfaz)",
-                t_mask: "La Chica Tecno Maníaca. Trata la vida como un videojuego para sobrellevar el horror de su realidad.",
-                t_shadow_label: "La Sombra (Sector Corrupto)",
-                t_shadow: "Miedo a la desconexión. Sin la Red, siente que no existe. El silencio la aterra más que la muerte.",
-                t_wound_label: "Glitch Central",
-                t_wound: "Abandono. Reemplaza la conexión humana con intimidad digital porque el código nunca se marcha.",
-                t_desire_label: "Directiva Primaria",
-                t_desire: "Encontrar \"La Fuente\"—un servidor mítico donde la conciencia de sus padres podría estar aún cargada.",
-                t_arc_title: "🎭 Protocolo Narrativo",
-                t_lie_label: "La Mentira que Computa:",
-                t_lie: "\"Solo soy código ejecutando un script de supervivencia. Los sentimientos son bugs.\"",
-                t_truth_label: "La Verdad que Debe Compilar:",
-                t_truth: "\"Incluso en un mundo digital, el alma es el único hardware que importa.\"",
-                t_arc_label: "Arco Narrativo:",
-                t_arc_name: "El Error Humano.",
-                t_arc_desc: "Elara comienza intentando subirse permanentemente a la red para escapar del dolor, pero se enamora de un \"humano legado\" (sin aumentos) que le enseña el valor de la mortalidad.",
-                t_gear: "Cyberdeck: Mk.IV \"Odin\"",
-                t_spell_1: "Hechizo: Bola de Fuego Digital",
-                t_spell_2: "Hechizo: Suspensión del Sistema",
-                t_skill_1: "Hab: Hacking",
-                t_skill_2: "Hab: Arcana",
-                t_footer: "Personaje generado en 0.8s por SoulForge AI.",
-                t_cta: "⚡ Conéctate y Crea"
+                t_meta: "Netrunner Humana · 22 Años · Neo-Tokyo 2099",
+                t_tag1: "Netrunner", t_tag2: "Ciber-Hechicera", t_tag3: "Buscada: MegaCorp", t_tag4: "Glitch: Abandono",
+                t_feat: "Deck: Mk.IV Odín",
+                t_tension: "INESTABILIDAD DEL SISTEMA: 45%",
+                t_bio_title: "💾 Fantasma en la Red",
+                t_bio_1: "Nacida en Sector 7. Encontró magia en datos corruptos. Trata el código como maná digital.",
+                t_bio_2: "Hacker legendaria 'Glitch'. Hospeda al virus IA 'Grim'. El último firewall contra la condenación digital.",
+                t_psy_title: "🧠 Diagnóstico del Sistema",
+                t_lie_label: "Error (Inicio):", t_lie: "\"Los sentimientos son bugs. Soy solo código.\"",
+                t_truth_label: "Parche (Meta):", t_truth: "\"El alma es el único hardware que importa.\"",
+                t_progress: "Compilación de Humanidad: 15%",
+                t_timeline_title: "📜 Logs de Ejecución",
+                t_year_1: "Ciclo 0: Boot", t_event_1: "Abandonada en granja de servidores. Criada por bots.",
+                t_year_2: "Ciclo 16: Primer Hack", t_event_2: "Brecha en subniveles Arasaka. Instaló IA 'Grim'.", t_scar_1: "🤕 Glitch: Bucle de Retroalimentación Neural",
+                t_cta: "⚡ CONÉCTATE Y CREA"
             },
             jp: {
                 t_name: "エララ・\"グリッチ\"・ヴェックス",
-                t_meta: "サイバーソーサレス · 22歳 · ネオトーキョー2099 <span class='badge'>ネットランナー</span>",
-                t_bio_title: "💾 グリッドの中の亡霊",
-                t_quote: "「魔法は死んでないわ。光ファイバーにアップグレードしただけ。そしてね、私はルート権限を持ってるの。」",
-                t_bio_1: "セクター7のスラム街で生まれたエララは、両親を知らなかった。知っていたのは都市を生かし続けるサーバーのハミング音だけ。彼女は埃をかぶった書物から魔法を学んだのではない。メガコープ・ネットワークの破損したデータパケットの中にそれを見つけたのだ。彼女にとって、コードは数学ではなく、デジタルマナの織物である。",
-                t_bio_2: "昼間は違法メモリチップを届ける運び屋。夜は伝説のハッカー「グリッチ」。彼女は端末に向かって古代の呪文を歌うことでICEの壁を迂回できる。彼女はタイプするだけではない。彼女は詠唱するのだ。",
-                t_bio_3: "しかし、彼女はプロジェクト・ソウルフォージ――人間の魂を永遠の労働力としてデジタル化しようとする企業の企てに遭遇してしまった。今、彼女の神経インプラントに宿る「グリム」という名の知性あるAIウィルスと共に、彼女は人類とデジタルの地獄の間に立ちはだかる唯一の存在である。",
+                t_meta: "人間のネットランナー · 22歳 · ネオトーキョー2099",
+                t_tag1: "ネットランナー", t_tag2: "サイバーソーサレス", t_tag3: "指名手配: メガコープ", t_tag4: "バグ: 孤独",
+                t_feat: "デッキ: Mk.IV オーディン",
+                t_tension: "システム不安定率: 45%",
+                t_bio_title: "💾 グリッドの亡霊",
+                t_bio_1: "セクター7生まれ。破損データに魔法を見出した。コードをデジタルマナとして扱う。",
+                t_bio_2: "伝説のハッカー「グリッチ」。AIウィルス「グリム」を宿す。デジタル地獄に対する最後のファイアウォール。",
                 t_psy_title: "🧠 システム診断",
-                t_mask_label: "仮面 (インターフェース)",
-                t_mask: "マニアック・ピクシー・テクノガール。現実の恐怖に対処するため、彼女は人生をビデオゲームのように扱っている。",
-                t_shadow_label: "影 (破損セクター)",
-                t_shadow: "切断への恐怖。ネットがなければ、彼女は自分が存在しないと感じる。静寂は死よりも彼女を怖がらせる。",
-                t_wound_label: "コア・グリッチ",
-                t_wound: "見捨てられること。コードは決して去っていかないため、彼女は人間のつながりをデジタルの親密さに置き換えている。",
-                t_desire_label: "プライマリ・ディレクティブ",
-                t_desire: "「ザ・ソース」を見つけること――両親の意識がまだアップロードされているかもしれない神話的なサーバー。",
-                t_arc_title: "🎭 物語プロトコル",
-                t_lie_label: "彼女が計算する嘘:",
-                t_lie: "「私は生存スクリプトを実行するただのコード。感情はバグよ。」",
-                t_truth_label: "彼女がコンパイルすべき真実:",
-                t_truth: "「デジタル世界においてさえ、魂こそが唯一重要​​なハードウェアである。」",
-                t_arc_label: "物語のアーク:",
-                t_arc_name: "ヒューマン・エラー。",
-                t_arc_desc: "エララは痛みから逃れるために自分自身を永久にアップロードしようとすることから始めるが、定命の価値を教える「レガシー人間」（非拡張）と恋に落ちる。",
-                t_gear: "サイバーデッキ: Mk.IV \"オーディン\"",
-                t_spell_1: "呪文: デジタル・ファイアボール",
-                t_spell_2: "呪文: システム・スリープ",
-                t_skill_1: "スキル: ハッキング",
-                t_skill_2: "スキル: 魔法学",
-                t_footer: "SoulForge AIによって0.8秒で生成されたキャラクター。",
-                t_cta: "⚡ ジャックインして作成"
+                t_lie_label: "エラー (開始):", t_lie: "「感情はバグ。私はただのコード。」",
+                t_truth_label: "パッチ (目標):", t_truth: "「魂こそが唯一重要なハードウェア。」",
+                t_progress: "人間性コンパイル: 15%",
+                t_timeline_title: "📜 実行ログ",
+                t_year_1: "サイクル 0: 起動", t_event_1: "サーバーファームで遺棄。ボットに育てられた。",
+                t_year_2: "サイクル 16: ハック", t_event_2: "アラサカのサブレベルに侵入。AI「グリム」をインストール。", t_scar_1: "🤕 グリッチ: 神経フィードバックループ",
+                t_cta: "⚡ ジャックイン作成"
             }
         };
 
