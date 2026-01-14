@@ -870,32 +870,32 @@
     <!-- FAQ SECTION -->
     <div style="width: 100%; max-width: 800px; margin-top: 100px; margin-bottom: 50px;">
         <h2 style="font-family: 'Cinzel', serif; font-size: 2rem; color: var(--accent); margin-bottom: 40px; text-align: center;"
-            data-i18n="faq_title">FAQ</h2>
+            data-i18n="faq_title">Preguntas Frecuentes</h2>
 
         <div style="display: flex; flex-direction: column; gap: 20px;">
             <!-- Q1 -->
             <div
                 style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q1">Is it
-                    free?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a1">Yes, completely free for basic
-                    usage.</p>
+                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q1">¿Es
+                    gratuito?</h3>
+                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a1">Sí. Ofrecemos un nivel gratuito
+                    generoso. Usamos tokens para volumen alto.</p>
             </div>
             <!-- Q2 -->
             <div
                 style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
                 <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q2">
-                    Commercial
-                    use?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a2">Yes, you own the characters.</p>
+                    ¿Uso comercial?</h3>
+                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a2">Sí, los personajes generados son
+                    tuyos.</p>
             </div>
             <!-- Q3 -->
             <div
                 style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q3">Saved
-                    characters?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a3">No, we value privacy. Download
-                    them.</p>
+                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q3">¿Se
+                    guardan mis personajes?</h3>
+                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a3">Depende del modo. RPG guarda
+                    datos para VTT, Novelas no.</p>
             </div>
         </div>
     </div>
@@ -2060,6 +2060,12 @@
     </body>
 
     </html>`;
+            }
+
+
+            function openDemo(name) {
+                const lang = document.getElementById('inputLangPersonaje').value || 'es';
+                window.open(`demo_${name}.html?lang=${lang}`, '_blank');
             }
 
             // --- INIT ---
