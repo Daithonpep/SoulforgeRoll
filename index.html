@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulForge - Forja de Almas</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #080a0e;
+            --bg-card: rgba(22, 25, 32, 0.65);
+            /* Glass base */
+            --accent: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --accent-dim: #7a6625;
+            --text-main: #f0f0f0;
+            --text-dim: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            /* Overlay oscuro + Imagen de fondo */
+            background-image:
+                linear-gradient(rgba(8, 10, 14, 0.85), rgba(8, 10, 14, 0.85)),
+                url("/static/images/background.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+            transition: all 0.5s ease;
+        }
+
+        .logo-img:hover {
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6));
+            transform: scale(1.02);
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .version {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-desc {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Pro Buttons */
+        .btn-forge {
+            width: 100%;
+            background: linear-gradient(135deg, #b48d28 0%, #ddb955 100%);
+            color: #0b0d12;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-forge:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-forge:active {
+            transform: translateY(1px);
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            border: none;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            transition: transform 0.2s;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Character Builder */
+        .character-builder {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px dashed var(--border);
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(22, 25, 32, 0.8);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            color: var(--accent);
+        }
+
+        .glow-btn {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: var(--accent);
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+        }
+
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .hero {
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+                letter-spacing: 4px;
+            }
+
+            .tagline {
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header {
+                margin-bottom: 10px !important;
+            }
+
+            .title {
+                font-size: 1.3rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .lang-selector {
+                padding: 8px 12px !important;
+            }
+
+            .lang-selector a {
+                font-size: 1.3rem !important;
+                margin: 0 5px !important;
+            }
+
+            .card {
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-desc {
+                font-size: 0.8rem;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 0.7rem;
+                margin-bottom: 6px;
+            }
+
+            input,
+            select {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .btn-forge {
+                padding: 14px;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+
+            /* ===== FORCE ALL GRIDS TO SINGLE COLUMN ===== */
+            .mobile-grid-stack,
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat(3"],
+            [style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* Character row fields - stack vertically */
+            .character-row {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                margin-bottom: 15px !important;
+            }
+
+            .character-row>div:first-child {
+                margin: 0 auto 5px auto;
+            }
+
+            /* Steps section - vertical */
+            div[style*="repeat(3, 1fr)"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+
+            div[style*="repeat(3, 1fr)"]>div {
+                padding: 15px !important;
+            }
+
+            /* Feature list - single column */
+            div[style*="grid-template-columns: 1fr 1fr"] {
+                display: block !important;
+            }
+
+            /* Demo section grids */
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"] {
+                display: block !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"]>div {
+                margin-bottom: 20px;
+            }
+
+            /* Reduce margins on sections */
+            div[style*="margin-top: 80px"] {
+                margin-top: 40px !important;
+            }
+
+            div[style*="margin-top: 60px"] {
+                margin-top: 30px !important;
+            }
+
+            /* Character builder scroll area */
+            .character-builder {
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+
+            /* Version badge */
+            .version {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+
+            /* Credits display */
+            #creditsDisplay {
+                font-size: 0.8rem;
+                padding: 6px 12px !important;
+            }
+
+            /* Price labels */
+            [id*="priceLabel"] {
+                font-size: 1rem !important;
+            }
+
+            /* Demo section titles */
+            h2[style*="font-size: 2rem"] {
+                font-size: 1.4rem !important;
+            }
+
+            h2[style*="font-size: 2.5rem"] {
+                font-size: 1.6rem !important;
+            }
+
+            /* Quote blocks */
+            p[style*="font-size: 1.2rem"] {
+                font-size: 1rem !important;
+            }
+        }
+
+        /* Extra small screens (phones in portrait) */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 8px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+
+            .tagline {
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .btn-forge {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+
+            input,
+            select {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            /* Hide less important sections on very small screens */
+            .demo-section-hide-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="logo-container">
+            <img src="/static/images/logo_web.png" alt="SoulForge - Forja de Almas" class="logo-img">
+        </div>
+        <div class="tagline" data-i18n="hero_tagline">Soul Forging System</div>
+        <span class="version">v2.5 - Fix Deployment</span>
+
+        <!-- Credits Display -->
+        <div id="creditsDisplay"
+            style="margin-top: 20px; display: none; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: bold;">
+            🎁 Modo Prueba: <span id="creditsCount">0</span> usos gratis restantes
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header" style="grid-column: 1 / -1; margin-bottom: 20px;">
+            <h1 class="title" data-i18n="index_title">SoulForge Engine</h1>
+            <div
+                style="background:red; color:white; padding:10px; font-weight:bold; border-radius:5px; margin:10px auto; display:inline-block;">
+                VERSION 3.0 - ACTUALIZADO (SI VES ESTO, FUNCIONA)
+            </div>
+            <p class="subtitle" data-i18n="index_subtitle">Procedural Narrative Generation & Deep Psychology System</p>
+            <div class="lang-selector"
+                style="margin-top: 25px; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
+                <a href="#es" onclick="changeLanguage('es')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="Español">🇪🇸</a>
+                <a href="#en" onclick="changeLanguage('en')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="English">🇺🇸</a>
+                <a href="#jp" onclick="changeLanguage('jp')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="日本語">🇯🇵</a>
+            </div>
+
+            <!-- NAV TABS -->
+            <div class="nav-tabs">
+                <a href="https://soulforge.up.railway.app/" target="_blank" class="nav-btn">
+                    API Root
+                </a>
+                <a href="juego_en_linea.html" class="nav-btn glow-btn">
+                    Jugar en Línea (VTT)
+                </a>
+                <button type="button" class="nav-btn" onclick="alert('Sistema de Registro de Tokens en desarrollo.')">
+                    🪙 Mis Tokens
+                </button>
+            </div>
+        </div>
+
+        <!-- PERSONAJE ÚNICO -->
+        <div class="card">
+            <h2 class="card-title" data-i18n="card_alma_title">⚔️ Forge Soul</h2>
+            <p class="card-desc" data-i18n="card_alma_desc">Create a unique character with psychological depth.</p>
+
+            <form id="formPersonaje" action="https://soulforge.up.railway.app/api/v1/personaje" method="GET"
+                target="_blank">
+                <input type="hidden" name="lang" id="inputLangPersonaje" value="es">
+                <div class="form-group">
+                    <label data-i18n="label_nombre">CHARACTER NAME</label>
+                    <input type="text" name="nombre" id="inputNombre" data-i18n-placeholder="label_nombre_placeholder"
+                        placeholder="Ex: Kael (empty = random)">
+                </div>
+
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label data-i18n="genero">GENDER</label>
+                        <select name="genero">
+                            <option value="">-- Random --</option>
+                            <option value="Masculino">Masculino/Male</option>
+                            <option value="Femenino">Femenino/Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="rol">ROLE</label>
+                        <select name="rol" id="rolSelect" onchange="toggleRaceField()">
+                            <option value="">-- Random --</option>
+                            <option value="Heroe">Hero</option>
+                            <option value="Villano">Villain</option>
+                            <option value="Mentor">Mentor</option>
+                            <option value="Aliado">Ally</option>
+                            <option value="Jugador">✨ Player (D&D/RPG)</option>
+                            <option value="Bufon">Jester</option>
+                            <option value="Victima">Victim</option>
+                            <option value="Profeta">Prophet</option>
+                            <option value="Guardian">Guardian</option>
+                            <option value="Embaucador">Trickster</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="razaGroup" style="display: none;">
+                        <label>Raza (D&D)</label>
+                        <select name="raza">
+                            <option value="">-- Random --</option>
+                            <option value="Humano">Human</option>
+                            <option value="Elfo">Elf</option>
+                            <option value="Enano">Dwarf</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="Gnomo">Gnome</option>
+                            <option value="Tiefling">Tiefling</option>
+                            <option value="Orco">Orc</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="edad">AGE</label>
+                    <input type="number" name="edad_fija" placeholder="30 (Optional)" min="5" max="900">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="label_mundo">WORLD</label>
+                    <select name="mundo">
+                        <option value="FantasiaMedieval">Medieval Fantasy</option>
+                        <option value="FantasiaOscura">Dark Fantasy</option>
+                        <option value="FantasiaUrbana">Urban Fantasy</option>
+                        <option value="SciFiCyberpunk">Cyberpunk</option>
+                        <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                        <option value="SciFiPostApocaliptico">Post-Apocalyptic</option>
+                        <option value="Steampunk">Steampunk</option>
+                        <option value="Western">Western</option>
+                        <option value="Noir">Noir / Detective</option>
+                        <option value="Realista">Realistic</option>
+                        <option value="JaponFeudal">Feudal Japan</option>
+                        <option value="ChinaImperial">Imperial China</option>
+                        <option value="CoreaHistorica">Historical Korea</option>
+                        <option value="MitologiaAsiatica">Asian Mythology</option>
+                        <option value="AnimeFantasia">Anime Fantasy</option>
+                        <option value="Wuxia">Wuxia</option>
+                        <option value="Victoriano">Victorian Era</option>
+                        <option value="MitologiaGriega">Greek Mythology</option>
+                        <option value="MitologiaNordica">Norse Mythology</option>
+                        <option value="PiratasCaribe">Pirates</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="label_tono">TONE</label>
+                    <select name="tono_moral">
+                        <option value="">-- Random --</option>
+                        <option value="Luminoso">Luminous/Good</option>
+                        <option value="Gris">Grey/Moral Ambiguity</option>
+                        <option value="Oscuro">Dark</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" id="btnPersonaje" class="btn-forge">
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_alma">FORGE SOUL</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- CONSTELACIÓN -->
+        <div class="card">
+            <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forge Constellation</h2>
+            <p class="card-desc" data-i18n="card_constelacion_desc">Generate a group of interconnected characters.</p>
+
+            <form id="formConstelacion" action="https://soulforge.up.railway.app/api/v1/constelacion" method="GET"
+                target="_blank">
+                <input type="hidden" name="lang" id="inputLangConstelacion" value="es">
+                <input type="hidden" name="nombres" id="nombresHidden">
+                <input type="hidden" name="generos" id="generosHidden">
+                <input type="hidden" name="edades" id="edadesHidden">
+
+                <!-- Slider de cantidad -->
+                <div class="form-group">
+                    <label data-i18n="label_tamano_grupo">GROUP SIZE</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="range" name="cantidad" id="cantidadSlider" min="2" max="4" value="3"
+                            oninput="updateCharacterFields()" style="flex: 1;">
+                        <span id="cantidadValue"
+                            style="font-weight: bold; color: var(--accent); width: 30px; text-align: center; font-size: 1.2rem;">3</span>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos de personajes -->
+                <div class="character-builder" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalize
+                    </h4>
+                    <div id="characterFields">
+                        <!-- JS llenará esto -->
+                    </div>
+                </div>
+
+                <!-- Opciones avanzadas -->
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label data-i18n="label_motivacion_villano">VILLAIN MOTIVATION</label>
+                        <select name="tipo_villano">
+                            <option value="None">Random / None</option>
+                            <option value="Envidia">Envy</option>
+                            <option value="Ideologia">Ideology</option>
+                            <option value="Obstaculo">Obstacle</option>
+                            <option value="PuraMaldad">Pure Evil</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_romance">ROMANCE</label>
+                        <select name="modo_romance">
+                            <option value="None">Random / None</option>
+                            <option value="Pareja">Couple</option>
+                            <option value="Triangulo">Triangle</option>
+                            <option value="AmorProhibido">Forbidden Love</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_mundo">WORLD</label>
+                        <select name="mundo">
+                            <option value="FantasiaMedieval">Medieval Fantasy</option>
+                            <option value="FantasiaOscura">Dark Fantasy</option>
+                            <option value="FantasiaUrbana">Urban Fantasy</option>
+                            <option value="SciFiCyberpunk">Cyberpunk</option>
+                            <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                            <option value="SciFiPostApocaliptico">Post-Apocalyptic</option>
+                            <option value="Steampunk">Steampunk</option>
+                            <option value="Western">Western</option>
+                            <option value="Noir">Noir / Detective</option>
+                            <option value="Realista">Realistic</option>
+                            <option value="JaponFeudal">Feudal Japan</option>
+                            <option value="ChinaImperial">Imperial China</option>
+                            <option value="CoreaHistorica">Historical Korea</option>
+                            <option value="MitologiaAsiatica">Asian Mythology</option>
+                            <option value="AnimeFantasia">Anime Fantasy</option>
+                            <option value="Wuxia">Wuxia</option>
+                            <option value="Victoriano">Victorian Era</option>
+                            <option value="MitologiaGriega">Greek Mythology</option>
+                            <option value="MitologiaNordica">Norse Mythology</option>
+                            <option value="PiratasCaribe">Pirates</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_densidad">DENSITY</label>
+                        <select name="densidad_relaciones">
+                            <option value="Normal">Normal</option>
+                            <option value="Densa">Dense</option>
+                            <option value="Dispersa">Sparse</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" id="btnConstelacion" class="btn-forge" onclick="prepareSubmit()">
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORGE
+                            CONSTELLATION</span>
+                    </button>
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">
+                        The process starts immediately.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS SECTION -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 80px;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
+                data-i18n="how_it_works_title">How Does It Work?</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Your journey from
+                idea to character.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">⚙️</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step1_title">1. Configure</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Select gender, setting... or
+                    leave it random.</p>
+            </div>
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🔥</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step2_title">2. Forge</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">The AI generates deep
+                    psychology and history.</p>
+            </div>
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📥</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step3_title">3. Download</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Get a premium HTML file
+                    ready to use.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- DISCLAIMER & FOOTER -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div
+        style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
+        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;"
+            data-i18n="aviso_legal_titulo">
+            Legal Notice
+        </strong>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge is an assisted creation tool.</p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_2">Characters are dynamically generated.</p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_3">It is user responsibility to download the file.</p>
+        <p data-i18n="aviso_legal_4">Usage implies results may vary.</p>
+    </div>
+
+    <div class="footer" id="top">
+        <p data-i18n="footer_dev">Developed with ❤️ by DAITHON BENEDICTUS</p>
+    </div>
+
+    <!-- I18N SYSTEM -->
+    <script>
+        // Dictionary from Rust struct
+        const I18N = {
+            "en": {
+                "hero_tagline": "Soul Forging System",
+                "index_title": "SoulForge Engine",
+                "index_subtitle": "Procedural Narrative Generation & Deep Psychology System",
+                "card_alma_title": "⚔️ Forge Soul",
+                "card_alma_desc": "Create a unique character with psychological depth, history, and internal conflicts.",
+                "label_nombre": "Character Name (Optional)",
+                "label_nombre_placeholder": "Ex: Kael Shadowgreen (empty = random)",
+                "label_mundo": "World / Setting",
+                "label_tono": "Moral Tone",
+                "btn_forjar_alma": "Forge Soul",
+                "card_constelacion_title": "🌌 Forge Constellation",
+                "card_constelacion_desc": "Generate a group of interconnected characters with relationships, conflicts, and shared history.",
+                "label_tamano_grupo": "Group Size",
+                "label_personalizar": "Personalize Characters",
+                "label_motivacion_villano": "Antagonist Motivation",
+                "label_romance": "Romantic Dynamic",
+                "label_densidad": "Relationship Density",
+                "btn_forjar_constelacion": "Forge Constellation",
+                "how_it_works_title": "How Does SoulForge Work?",
+                "how_it_works_subtitle": "Your journey from idea to complete character in 3 simple steps",
+                "step1_title": "Configure",
+                "step1_desc": "Select gender, setting, moral tone and archetype. Leave fields empty for surprises.",
+                "step2_title": "Forge",
+                "step2_desc": "Our AI engine generates complete biography, deep psychology, wounds, conflicts and narrative arc.",
+                "step3_title": "Download",
+                "step3_desc": "Receive your character in premium HTML format, ready to print, save as PDF or integrate into your story.",
+                "aviso_legal_titulo": "Legal Notice",
+                "aviso_legal_1": "SoulForge is an assisted creation tool based on procedural generation.",
+                "aviso_legal_2": "Characters and stories are generated dynamically and appear only in your browser/download.",
+                "aviso_legal_3": "It is the user's responsibility to download and preserve the generated file.",
+                "aviso_legal_4": "System results may vary between executions.",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
+                "genero": "Gender",
+                "rol": "Role",
+                "edad": "Age"
+            },
+            "jp": {
+                "hero_tagline": "魂の鍛造システム",
+                "index_title": "SoulForge エンジン",
+                "index_subtitle": "手続き型物語生成と深層心理システム",
+                "card_alma_title": "⚔️ 魂を鍛造する",
+                "card_alma_desc": "心理的な深み、歴史、内部対立を持つユニークなキャラクターを作成します。",
+                "label_nombre": "キャラクター名（任意）",
+                "label_nombre_placeholder": "例：カエル（空欄＝ランダム）",
+                "label_mundo": "世界設定",
+                "label_tono": "道徳的なトーン",
+                "btn_forjar_alma": "魂を鍛造",
+                "card_constelacion_title": "🌌 星座を鍛造する",
+                "card_constelacion_desc": "関係、対立、共有された歴史を持つ相互接続されたキャラクターのグループを生成します。",
+                "label_tamano_grupo": "グループサイズ",
+                "label_personalizar": "キャラクターをカスタマイズ",
+                "label_motivacion_villano": "敵対者の動機",
+                "label_romance": "ロマンチックなダイナミクス",
+                "label_densidad": "関係の密度",
+                "btn_forjar_constelacion": "星座を鍛造",
+                "how_it_works_title": "SoulForgeの仕組み",
+                "how_it_works_subtitle": "アイデアから完成キャラクターまで3つの簡単なステップ",
+                "step1_title": "設定",
+                "step1_desc": "性別、設定、道徳的トーン、元型を選択。空欄にするとサプライズが生成されます。",
+                "step2_title": "鍛造",
+                "step2_desc": "AIエンジンが完全な伝記、深層心理、傷、対立、物語のアークを生成します。",
+                "step3_title": "ダウンロード",
+                "step3_desc": "プレミアムHTML形式でキャラクターを受け取り、印刷、PDF保存、または物語に統合できます。",
+                "aviso_legal_titulo": "法的通知",
+                "aviso_legal_1": "SoulForgeは手続き型生成に基づく創作支援ツールです。",
+                "aviso_legal_2": "キャラクターと物語は動的に生成され、あなたのブラウザ/ダウンロードファイルにのみ存在します。",
+                "aviso_legal_3": "生成されたファイルのダウンロードと保存はユーザーの責任となります。",
+                "aviso_legal_4": "システムの結果は実行ごとに異なる場合があります。",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
+                "genero": "性別",
+                "rol": "役割",
+                "edad": "年齢"
+            },
+            "es": {
+                "hero_tagline": "Sistema de Forja de Almas",
+                "index_title": "SoulForge Engine",
+                "index_subtitle": "Sistema de Generación Procedural de Narrativa y Psicología Profunda",
+                "card_alma_title": "⚔️ Forjar Alma",
+                "card_alma_desc": "Crea un personaje único con profundidad psicológica, historia y conflictos internos.",
+                "label_nombre": "Nombre del Personaje (Opcional)",
+                "label_nombre_placeholder": "Ej: Kael Sombraverde (vacío = aleatorio)",
+                "label_mundo": "Mundo / Ambientación",
+                "label_tono": "Tono Moral",
+                "btn_forjar_alma": "Forjar Alma",
+                "card_constelacion_title": "🌌 Forjar Constelación",
+                "card_constelacion_desc": "Genera un grupo de personajes interconectados con relaciones, conflictos y una historia compartida.",
+                "label_tamano_grupo": "Tamaño del Grupo",
+                "label_personalizar": "Personalizar Personajes",
+                "label_motivacion_villano": "Motivación Antagonista",
+                "label_romance": "Dinámica Romántica",
+                "label_densidad": "Densidad de Relaciones",
+                "btn_forjar_constelacion": "Forjar Constelación",
+                "how_it_works_title": "¿Cómo Funciona SoulForge?",
+                "how_it_works_subtitle": "Tu viaje de la idea al personaje completo en 3 simples pasos",
+                "step1_title": "Configura",
+                "step1_desc": "Selecciona el género, ambientación, tono moral y arquetipo. Deja campos vacíos para sorpresas.",
+                "step2_title": "Forja",
+                "step2_desc": "Nuestro motor de IA genera biografía completa, psicología profunda, heridas, conflictos y arco narrativo.",
+                "step3_title": "Descarga",
+                "step3_desc": "Recibe tu personaje en formato HTML premium, listo para imprimir, guardar como PDF o integrar en tu historia.",
+                "aviso_legal_titulo": "Aviso Legal",
+                "aviso_legal_1": "SoulForge es una herramienta de creación asistida basada en generación procedural e inteligencia artificial.",
+                "aviso_legal_2": "Los personajes e historias se generan dinámicamente y no se almacenan en nuestros servidores.",
+                "aviso_legal_3": "Es responsabilidad del usuario descargar y conservar el archivo generado.",
+                "aviso_legal_4": "El uso del sistema implica la aceptación de que los resultados pueden variar entre ejecuciones.",
+                "footer_dev": "Desarrollado con ❤️ por DAITHON BENEDICTUS",
+                "genero": "Género",
+                "rol": "Rol",
+                "edad": "Edad"
+            }
+        };
+
+        const OPTION_TRANSLATIONS = {
+            'en': {
+                '': '-- Random --', 'None': '-- Random / None --', 'Masculino': 'Male', 'Femenino': 'Female',
+                'Heroe': 'Hero', 'Villano': 'Villain', 'Mentor': 'Mentor', 'Aliado': 'Ally',
+                'Bufon': 'Jester', 'Victima': 'Victim', 'Profeta': 'Prophet', 'Guardian': 'Guardian', 'Embaucador': 'Trickster',
+                'Luminoso': 'Luminous / Good', 'Claro': 'Light', 'Gris': 'Grey / Neutral', 'Oscuro': 'Dark', 'Abismal': 'Abyssal / Evil',
+                'Envidia': 'Envy', 'Ideologia': 'Ideology', 'Obstaculo': 'Simple Obstacle', 'PuraMaldad': 'Pure Evil',
+                'Pareja': 'Couple', 'Triangulo': 'Triangle', 'AmorProhibido': 'Forbidden Love',
+                'FantasiaMedieval': 'Medieval Fantasy', 'FantasiaOscura': 'Dark Fantasy', 'FantasiaUrbana': 'Urban Fantasy',
+                'SciFiCyberpunk': 'Cyberpunk', 'SciFiSpace': 'Space Opera', 'SciFiPostApocaliptico': 'Post-Apocalyptic',
+                'Steampunk': 'Steampunk', 'Western': 'Western', 'Noir': 'Noir', 'Realista': 'Realistic',
+                'JaponFeudal': 'Feudal Japan (Sengoku)', 'ChinaImperial': 'Imperial China', 'CoreaHistorica': 'Historical Korea (Joseon)',
+                'MitologiaAsiatica': 'Asian Mythology', 'AnimeFantasia': 'Anime Fantasy', 'Wuxia': 'Wuxia / Martial Arts',
+                'Victoriano': 'Victorian Era', 'MitologiaGriega': 'Greek Mythology', 'MitologiaNordica': 'Norse Mythology', 'PiratasCaribe': 'Pirates',
+                'Normal': 'Relationship Density: Normal', 'Densa': 'Dense', 'Dispersa': 'Sparse'
+            },
+            'jp': {
+                '': '-- ランダム --', 'None': '-- ランダム / 無し --', 'Masculino': '男性', 'Femenino': '女性',
+                'Heroe': '英雄 (Hero)', 'Villano': '悪役 (Villain)', 'Mentor': '師匠 (Mentor)', 'Aliado': '味方 (Ally)',
+                'Bufon': '道化師 (Jester)', 'Victima': '犠牲者 (Victim)', 'Profeta': '予言者 (Prophet)', 'Guardian': '守護者 (Guardian)', 'Embaucador': 'トリックスター',
+                'Luminoso': '光 (Good)', 'Claro': '明', 'Gris': '灰色 (Neutral)', 'Oscuro': '闇 (Dark)', 'Abismal': '深淵 (Evil)',
+                'Envidia': '嫉妬', 'Ideologia': 'イデオロギー', 'Obstaculo': '障害', 'PuraMaldad': '純粋悪',
+                'Pareja': 'カップル', 'Triangulo': '三角関係', 'AmorProhibido': '禁断の愛',
+                'FantasiaMedieval': '中世ファンタジー', 'FantasiaOscura': 'ダークファンタジー', 'FantasiaUrbana': '現代ファンタジー',
+                'SciFiCyberpunk': 'サイバーパンク', 'SciFiSpace': 'スペースオペラ', 'SciFiPostApocaliptico': 'ポストアポカリプス',
+                'Steampunk': 'スチームパンク', 'Western': '西部劇', 'Noir': 'ノワール / 探偵', 'Realista': '現実的',
+                'JaponFeudal': '戦国時代 / 時代劇', 'ChinaImperial': '中華帝國', 'CoreaHistorica': '朝鮮時代',
+                'MitologiaAsiatica': 'アジア神話', 'AnimeFantasia': 'アニメファンタジー', 'Wuxia': '武俠',
+                'Victoriano': 'ヴィクトリア朝', 'MitologiaGriega': 'ギリシャ神話', 'MitologiaNordica': '北欧神話', 'PiratasCaribe': '海賊',
+                'Normal': '関係密度：普通', 'Densa': '密', 'Dispersa': '疎'
+            },
+            'es': {
+                '': '-- Random --', 'None': '-- Aleatorio / Ninguno --', 'Masculino': 'Masculino', 'Femenino': 'Femenino',
+                'Heroe': 'Héroe', 'Villano': 'Villano', 'Mentor': 'Mentor', 'Aliado': 'Aliado',
+                'Bufon': 'Bufón', 'Victima': 'Víctima', 'Profeta': 'Profeta', 'Guardian': 'Guardián', 'Embaucador': 'Embaucador',
+                'Luminoso': 'Luminoso', 'Claro': 'Claro', 'Gris': 'Gris', 'Oscuro': 'Oscuro', 'Abismal': 'Abismal',
+                'Envidia': 'Envidia', 'Ideologia': 'Ideología', 'Obstaculo': 'Obstáculo', 'PuraMaldad': 'Pura Maldad',
+                'Pareja': 'Pareja', 'Triangulo': 'Triángulo', 'AmorProhibido': 'Amor Prohibido',
+                'FantasiaMedieval': 'Fantasía Medieval', 'FantasiaOscura': 'Fantasía Oscura', 'FantasiaUrbana': 'Fantasía Urbana',
+                'SciFiCyberpunk': 'Cyberpunk', 'SciFiSpace': 'Space Opera', 'SciFiPostApocaliptico': 'Post-Apocalíptico',
+                'Steampunk': 'Steampunk', 'Western': 'Western', 'Noir': 'Noir', 'Realista': 'Realista',
+                'JaponFeudal': 'Japón Feudal', 'ChinaImperial': 'China Imperial', 'CoreaHistorica': 'Corea Histórica',
+                'MitologiaAsiatica': 'Mitología Asiática', 'AnimeFantasia': 'Anime Fantasía', 'Wuxia': 'Wuxia',
+                'Victoriano': 'Victoriano', 'MitologiaGriega': 'Mitología Griega', 'MitologiaNordica': 'Mitología Nórdica', 'PiratasCaribe': 'Piratas del Caribe',
+                'Normal': 'Densidad: Normal', 'Densa': 'Densa', 'Dispersa': 'Dispersa'
+            }
+        };
+
+        function changeLanguage(lang) {
+            // Validate language
+            if (!['es', 'en', 'jp'].includes(lang)) lang = 'es';
+
+            // Update URL hash without scrolling
+            history.replaceState(null, null, '#' + lang);
+
+            // 1. Text Content
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.textContent = I18N[lang][key];
+                }
+            });
+
+            // 2. Placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.placeholder = I18N[lang][key];
+                }
+            });
+
+            // 3. Select Options Translation
+            const dict = OPTION_TRANSLATIONS[lang];
+            if (dict) {
+                document.querySelectorAll('select').forEach(sel => {
+                    Array.from(sel.options).forEach(opt => {
+                        // Original value logic relies on knowing the original key, which is the value attribute
+                        if (dict[opt.value]) {
+                            opt.textContent = dict[opt.value];
+                        }
+                    });
+                });
+            }
+
+            // 4. Update hidden inputs for form submission
+            document.getElementById('inputLangPersonaje').value = lang;
+            document.getElementById('inputLangConstelacion').value = lang;
+
+            // 5. Update Opacity of Selectors
+            document.querySelectorAll('.lang-selector a').forEach(a => {
+                if (a.getAttribute('href') === '#' + lang) {
+                    a.style.opacity = '1';
+                } else {
+                    a.style.opacity = '0.4';
+                }
+            });
+
+            // Update character fields labels if they exist
+            updateCharacterFields();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            // Check hash
+            let lang = window.location.hash.replace('#', '') || 'es';
+            changeLanguage(lang);
+        });
+
+        function toggleRaceField() {
+            const rol = document.getElementById('rolSelect').value;
+            const race = document.getElementById('razaGroup');
+            if (rol === 'Jugador') {
+                race.style.display = 'block';
+            } else {
+                race.style.display = 'none';
+            }
+        }
+
+        function updateCharacterFields() {
+            const cantidad = document.getElementById('cantidadSlider').value;
+            document.getElementById('cantidadValue').textContent = cantidad;
+
+            const container = document.getElementById('characterFields');
+
+            // Capture current values to preserve them
+            const currentValues = {};
+            container.querySelectorAll('.character-row').forEach(row => {
+                const idx = row.querySelector('.num') ? row.querySelector('.num').textContent.replace('#', '') : null;
+                if (idx) {
+                    currentValues[idx] = {
+                        nombre: row.querySelector(`input[id^="nombre"]`).value,
+                        edad: row.querySelector(`input[id^="edad"]`).value,
+                        genero: row.querySelector(`select[id^="genero"]`).value
+                    };
+                }
+            });
+
+            container.innerHTML = '';
+
+            // Get current lang for labels
+            let lang = document.getElementById('inputLangConstelacion').value || 'es';
+            // Simple label mapping for dynamic fields
+            const lblName = (lang === 'jp') ? '名前' : (lang === 'en' ? 'Name' : 'Nombre');
+            const lblAge = (lang === 'jp') ? '年齢' : (lang === 'en' ? 'Age' : 'Edad');
+            const lblGen = (lang === 'jp') ? '性別' : (lang === 'en' ? 'Gender' : 'Género');
+            const optM = (lang === 'jp') ? '男' : (lang === 'en' ? 'M' : 'M');
+            const optF = (lang === 'jp') ? '女' : (lang === 'en' ? 'F' : 'F');
+
+
+            for (let i = 1; i <= cantidad; i++) {
+                const prev = currentValues[i] || { nombre: '', edad: '', genero: '' };
+                const row = document.createElement('div');
+                row.className = 'character-row';
+                row.innerHTML = `
+                    <span class="num" style="display:none">#${i}</span>
+                    <strong style="color:var(--accent); margin-right:5px;">#${i}</strong>
+                    <input type="text" id="nombre${i}" value="${prev.nombre}" placeholder="${lblName}" style="flex: 2;">
+                    <input type="number" id="edad${i}" value="${prev.edad}" placeholder="${lblAge}" min="10" max="900" style="width: 70px;">
+                    <select id="genero${i}" style="flex: 1;">
+                        <option value="" ${prev.genero === '' ? 'selected' : ''}>${lblGen}</option>
+                        <option value="M" ${prev.genero === 'M' ? 'selected' : ''}>${optM}</option>
+                        <option value="F" ${prev.genero === 'F' ? 'selected' : ''}>${optF}</option>
+                    </select>
+                `;
+                container.appendChild(row);
+            }
+        }
+
+        function prepareSubmit() {
+            const cantidad = document.getElementById('cantidadSlider').value;
+            const nombres = [];
+            const generos = [];
+            const edades = [];
+
+            for (let i = 1; i <= cantidad; i++) {
+                const nombre = document.getElementById(`nombre${i}`).value.trim();
+                const genero = document.getElementById(`genero${i}`).value;
+                const edad = document.getElementById(`edad${i}`).value;
+
+                nombres.push(nombre || '');
+                generos.push(genero || '');
+                edades.push(edad || '');
+            }
+
+            document.getElementById('nombresHidden').value = nombres.join(',');
+            document.getElementById('generosHidden').value = generos.join(',');
+            document.getElementById('edadesHidden').value = edades.join(',');
+        }
+    </script>
+</body>
+
+</html>
