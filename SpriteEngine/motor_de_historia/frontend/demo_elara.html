@@ -192,29 +192,29 @@
     <div class="container">
         <!-- HEADER -->
         <div class="header">
-            <h1 class="name">Elara "Glitch" Vex</h1>
-            <p class="meta">
+            <h1 class="name" id="t_name">Elara "Glitch" Vex</h1>
+            <p class="meta" id="t_meta">
                 Cyber-Sorceress · 22 Years · Neo-Tokyo 2099 <span class="badge">NETRUNNER</span>
             </p>
         </div>
 
         <!-- BIOGRAPHY -->
         <div class="section">
-            <h2 class="section-title">💾 The Ghost in the Grid</h2>
-            <div class="quote-box">
+            <h2 class="section-title" id="t_bio_title">💾 The Ghost in the Grid</h2>
+            <div class="quote-box" id="t_quote">
                 "Magic isn't dead. It just upgraded to fiber optics. And honey, I have root access."
             </div>
-            <p>
+            <p id="t_bio_1">
                 Born in the slums of Sector 7, Elara never knew her parents—only the hum of the servers that kept the
                 city alive. She didn't learn magic from dusty tomes; she found it in the corrupted data packets of the
                 MegaCorp networks. To her, code isn't math; it's a weaving of digital mana.
             </p>
-            <p>
+            <p id="t_bio_2">
                 By day, she's a courier delivering illegal memory chips. By night, she's "Glitch," a legendary hacker
                 who can bypass ICE walls by singing ancient incantations into the terminal. She doesn't just type; she
                 casts.
             </p>
-            <p>
+            <p id="t_bio_3">
                 But she stumbled upon Project SoulForge—a corporate attempt to digitize human souls for eternal labor.
                 Now, with a sentient AI virus named "Grim" living in her neural implant, she's the only thing standing
                 between humanity and digital damnation.
@@ -223,42 +223,42 @@
 
         <!-- DEEP PSYCHOLOGY -->
         <div class="section">
-            <h2 class="section-title">🧠 SYSTEM DIAGNOSTICS</h2>
+            <h2 class="section-title" id="t_psy_title">🧠 SYSTEM DIAGNOSTICS</h2>
             <div class="psychology-grid">
                 <div class="psychology-item">
-                    <div class="psychology-label">The Mask (Interface)</div>
-                    <div class="psychology-text">The Manic Pixie Techno-Girl. She treats life like a video game to cope
-                        with the horror of her reality.</div>
+                    <div class="psychology-label" id="t_mask_label">The Mask (Interface)</div>
+                    <div class="psychology-text" id="t_mask">The Manic Pixie Techno-Girl. She treats life like a video
+                        game to cope with the horror of her reality.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">The Shadow (Corrupted Sector)</div>
-                    <div class="psychology-text">A fear of disconnection. Without the Net, she feels she doesn't exist.
-                        Silence terrifies her more than death.</div>
+                    <div class="psychology-label" id="t_shadow_label">The Shadow (Corrupted Sector)</div>
+                    <div class="psychology-text" id="t_shadow">A fear of disconnection. Without the Net, she feels she
+                        doesn't exist. Silence terrifies her more than death.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">Core Glitch</div>
-                    <div class="psychology-text">Abandonment. She replaces human connection with digital intimacy
-                        because code never walks away.</div>
+                    <div class="psychology-label" id="t_wound_label">Core Glitch</div>
+                    <div class="psychology-text" id="t_wound">Abandonment. She replaces human connection with digital
+                        intimacy because code never walks away.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">Primary Directive</div>
-                    <div class="psychology-text">To find "The Source"—a mythical server where her parents' consciousness
-                        might still be uploaded.</div>
+                    <div class="psychology-label" id="t_desire_label">Primary Directive</div>
+                    <div class="psychology-text" id="t_desire">To find "The Source"—a mythical server where her parents'
+                        consciousness might still be uploaded.</div>
                 </div>
             </div>
         </div>
 
         <!-- NARRATIVE DYNAMICS -->
         <div class="section">
-            <h2 class="section-title">🎭 Narrative Protocol</h2>
-            <p><strong>The Lie She Computes:</strong> "I am just code executing a survival script. Feelings are bugs."
-            </p>
-            <p><strong>The Truth She Must Compile:</strong> "Even in a digital world, the soul is the only hardware that
-                matters."</p>
+            <h2 class="section-title" id="t_arc_title">🎭 Narrative Protocol</h2>
+            <p><strong id="t_lie_label">The Lie She Computes:</strong> <span id="t_lie">"I am just code executing a
+                    survival script. Feelings are bugs."</span></p>
+            <p><strong id="t_truth_label">The Truth She Must Compile:</strong> <span id="t_truth">"Even in a digital
+                    world, the soul is the only hardware that matters."</span></p>
             <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
-            <p><strong>Narrative Arc:</strong> <em>The Human Error.</em> Elara begins by trying to upload herself
-                permanently to escape pain, but falls in love with a "legacy human" (non-augmented) who teaches her the
-                value of mortality.</p>
+            <p><strong id="t_arc_label">Narrative Arc:</strong> <em id="t_arc_name">The Human Error.</em> <span
+                    id="t_arc_desc">Elara starts by trying to upload herself permanently to escape pain, but falls in
+                    love with a "legacy human" (non-augmented) who teaches her the value of mortality.</span></p>
         </div>
 
         <!-- STATS / TAGS -->
@@ -268,20 +268,102 @@
                 <span class="tag">INT: 20 (+5)</span>
                 <span class="tag">DEX: 16 (+3)</span>
                 <span class="tag">CHA: 14 (+2)</span>
-                <span class="tag">Cyberdeck: Mk.IV "Odin"</span>
-                <span class="tag">Spell: Digital Fireball</span>
-                <span class="tag">Spell: System Sleep</span>
-                <span class="tag">Skill: Hacking</span>
-                <span class="tag">Skill: Arcana</span>
+                <span class="tag" id="t_gear">Cyberdeck: Mk.IV "Odin"</span>
+                <span class="tag" id="t_spell_1">Spell: Digital Fireball</span>
+                <span class="tag" id="t_spell_2">Spell: System Sleep</span>
+                <span class="tag" id="t_skill_1">Skill: Hacking</span>
+                <span class="tag" id="t_skill_2">Skill: Arcana</span>
             </div>
         </div>
 
         <!-- FOOTER CTA -->
         <div class="footer">
-            <p>Character generated in 0.8s by SoulForge AI.</p>
-            <a href="/" class="cta-btn">⚡ Jack In & Create</a>
+            <p id="t_footer">Character generated in 0.8s by SoulForge AI.</p>
+            <a href="/" class="cta-btn" id="t_cta">⚡ Jack In & Create</a>
         </div>
     </div>
+
+    <script>
+        const I18N = {
+            es: {
+                t_name: "Elara \"Glitch\" Vex",
+                t_meta: "Ciber-Hechicera · 22 Años · Neo-Tokyo 2099 <span class='badge'>NETRUNNER</span>",
+                t_bio_title: "💾 El Fantasma en la Red",
+                t_quote: "\"La magia no ha muerto. Solo se actualizó a fibra óptica. Y cariño, tengo acceso root.\"",
+                t_bio_1: "Nacida en los suburbios del Sector 7, Elara nunca conoció a sus padres—solo el zumbido de los servidores que mantenían viva la ciudad. No aprendió magia de tomos polvorientos; la encontró en paquetes de datos corruptos de las redes MegaCorp. Para ella, el código no es matemáticas; es un tejido de maná digital.",
+                t_bio_2: "De día, es una mensajera entregando chips de memoria ilegales. De noche, es \"Glitch\", una hacker legendaria que puede burlar muros de ICE cantando encantamientos antiguos en la terminal. Ella no solo teclea; ella conjura.",
+                t_bio_3: "Pero tropezó con el Proyecto SoulForge—un intento corporativo de digitalizar almas humanas para mano de obra eterna. Ahora, con un virus de IA sensible llamado \"Grim\" viviendo en su implante neural, es lo único que se interpone entre la humanidad y la condenación digital.",
+                t_psy_title: "🧠 DIAGNÓSTICO DEL SISTEMA",
+                t_mask_label: "La Máscara (Interfaz)",
+                t_mask: "La Chica Tecno Maníaca. Trata la vida como un videojuego para sobrellevar el horror de su realidad.",
+                t_shadow_label: "La Sombra (Sector Corrupto)",
+                t_shadow: "Miedo a la desconexión. Sin la Red, siente que no existe. El silencio la aterra más que la muerte.",
+                t_wound_label: "Glitch Central",
+                t_wound: "Abandono. Reemplaza la conexión humana con intimidad digital porque el código nunca se marcha.",
+                t_desire_label: "Directiva Primaria",
+                t_desire: "Encontrar \"La Fuente\"—un servidor mítico donde la conciencia de sus padres podría estar aún cargada.",
+                t_arc_title: "🎭 Protocolo Narrativo",
+                t_lie_label: "La Mentira que Computa:",
+                t_lie: "\"Solo soy código ejecutando un script de supervivencia. Los sentimientos son bugs.\"",
+                t_truth_label: "La Verdad que Debe Compilar:",
+                t_truth: "\"Incluso en un mundo digital, el alma es el único hardware que importa.\"",
+                t_arc_label: "Arco Narrativo:",
+                t_arc_name: "El Error Humano.",
+                t_arc_desc: "Elara comienza intentando subirse permanentemente a la red para escapar del dolor, pero se enamora de un \"humano legado\" (sin aumentos) que le enseña el valor de la mortalidad.",
+                t_gear: "Cyberdeck: Mk.IV \"Odin\"",
+                t_spell_1: "Hechizo: Bola de Fuego Digital",
+                t_spell_2: "Hechizo: Suspensión del Sistema",
+                t_skill_1: "Hab: Hacking",
+                t_skill_2: "Hab: Arcana",
+                t_footer: "Personaje generado en 0.8s por SoulForge AI.",
+                t_cta: "⚡ Conéctate y Crea"
+            },
+            jp: {
+                t_name: "エララ・\"グリッチ\"・ヴェックス",
+                t_meta: "サイバーソーサレス · 22歳 · ネオトーキョー2099 <span class='badge'>ネットランナー</span>",
+                t_bio_title: "💾 グリッドの中の亡霊",
+                t_quote: "「魔法は死んでないわ。光ファイバーにアップグレードしただけ。そしてね、私はルート権限を持ってるの。」",
+                t_bio_1: "セクター7のスラム街で生まれたエララは、両親を知らなかった。知っていたのは都市を生かし続けるサーバーのハミング音だけ。彼女は埃をかぶった書物から魔法を学んだのではない。メガコープ・ネットワークの破損したデータパケットの中にそれを見つけたのだ。彼女にとって、コードは数学ではなく、デジタルマナの織物である。",
+                t_bio_2: "昼間は違法メモリチップを届ける運び屋。夜は伝説のハッカー「グリッチ」。彼女は端末に向かって古代の呪文を歌うことでICEの壁を迂回できる。彼女はタイプするだけではない。彼女は詠唱するのだ。",
+                t_bio_3: "しかし、彼女はプロジェクト・ソウルフォージ――人間の魂を永遠の労働力としてデジタル化しようとする企業の企てに遭遇してしまった。今、彼女の神経インプラントに宿る「グリム」という名の知性あるAIウィルスと共に、彼女は人類とデジタルの地獄の間に立ちはだかる唯一の存在である。",
+                t_psy_title: "🧠 システム診断",
+                t_mask_label: "仮面 (インターフェース)",
+                t_mask: "マニアック・ピクシー・テクノガール。現実の恐怖に対処するため、彼女は人生をビデオゲームのように扱っている。",
+                t_shadow_label: "影 (破損セクター)",
+                t_shadow: "切断への恐怖。ネットがなければ、彼女は自分が存在しないと感じる。静寂は死よりも彼女を怖がらせる。",
+                t_wound_label: "コア・グリッチ",
+                t_wound: "見捨てられること。コードは決して去っていかないため、彼女は人間のつながりをデジタルの親密さに置き換えている。",
+                t_desire_label: "プライマリ・ディレクティブ",
+                t_desire: "「ザ・ソース」を見つけること――両親の意識がまだアップロードされているかもしれない神話的なサーバー。",
+                t_arc_title: "🎭 物語プロトコル",
+                t_lie_label: "彼女が計算する嘘:",
+                t_lie: "「私は生存スクリプトを実行するただのコード。感情はバグよ。」",
+                t_truth_label: "彼女がコンパイルすべき真実:",
+                t_truth: "「デジタル世界においてさえ、魂こそが唯一重要​​なハードウェアである。」",
+                t_arc_label: "物語のアーク:",
+                t_arc_name: "ヒューマン・エラー。",
+                t_arc_desc: "エララは痛みから逃れるために自分自身を永久にアップロードしようとすることから始めるが、定命の価値を教える「レガシー人間」（非拡張）と恋に落ちる。",
+                t_gear: "サイバーデッキ: Mk.IV \"オーディン\"",
+                t_spell_1: "呪文: デジタル・ファイアボール",
+                t_spell_2: "呪文: システム・スリープ",
+                t_skill_1: "スキル: ハッキング",
+                t_skill_2: "スキル: 魔法学",
+                t_footer: "SoulForge AIによって0.8秒で生成されたキャラクター。",
+                t_cta: "⚡ ジャックインして作成"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang') || 'en';
+
+        if (lang !== 'en' && I18N[lang]) {
+            const data = I18N[lang];
+            for (const key in data) {
+                const el = document.getElementById(key);
+                if (el) el.innerHTML = data[key];
+            }
+        }
+    </script>
 </body>
 
 </html>

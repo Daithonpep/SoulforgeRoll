@@ -174,30 +174,30 @@
     <div class="container">
         <!-- HEADER -->
         <div class="header">
-            <h1 class="name">Aric Blackwood</h1>
-            <p class="meta">
+            <h1 class="name" id="t_name">Aric Blackwood</h1>
+            <p class="meta" id="t_meta">
                 Human Paladin · 34 Years · Dark Fantasy <span class="badge">OATHBREAKER</span>
             </p>
         </div>
 
         <!-- BIOGRAPHY -->
         <div class="section">
-            <h2 class="section-title">📜 The Broken Oath</h2>
-            <div class="quote-box">
+            <h2 class="section-title" id="t_bio_title">📜 The Broken Oath</h2>
+            <div class="quote-box" id="t_quote">
                 "The light didn't leave me because I sinned. I left the light because it was blind to the suffering of
                 the innocent."
             </div>
-            <p>
+            <p id="t_bio_1">
                 Once a celebrated captain of the Order of the Silver Flame, Aric's life shattered during the Siege of
                 Vorath. While his commanders debated ethics in their ivory towers, Aric watched plague-ridden peasants
                 being slaughtered by the very "purification" fires he was sworn to wield.
             </p>
-            <p>
+            <p id="t_bio_2">
                 In a moment that would define his eternal shame—or his only true act of heroism—he turned his blade
                 against his High Inquisitor to save a family of "tainted" refugees. Stripped of his rank, branded a
                 heretic, and exiled to the Shadowlands, he now wanders as a mercenary who refuses to pray.
             </p>
-            <p>
+            <p id="t_bio_3">
                 He carries his cracked holy symbol not out of faith, but as a reminder of the hypocrisy he swore to
                 destroy. He fights not for gods, but for the gutter-rats and the forgotten, wielding dark magic he
                 barely understands to protect the little light that remains in the world.
@@ -206,41 +206,43 @@
 
         <!-- DEEP PSYCHOLOGY -->
         <div class="section">
-            <h2 class="section-title">🧠 Deep Psychology Analysis</h2>
+            <h2 class="section-title" id="t_psy_title">🧠 Deep Psychology Analysis</h2>
             <div class="psychology-grid">
                 <div class="psychology-item">
-                    <div class="psychology-label">The Mask (Persona)</div>
-                    <div class="psychology-text">The Cynical Mercenary. He projects an image of caring only for coin to
-                        avoid getting emotionally attached to causes he knows are doomed.</div>
+                    <div class="psychology-label" id="t_mask_label">The Mask (Persona)</div>
+                    <div class="psychology-text" id="t_mask">The Cynical Mercenary. He projects an image of caring only
+                        for coin to avoid getting emotionally attached to causes he knows are doomed.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">The Shadow (Repressed)</div>
-                    <div class="psychology-text">A desperate need for redemption. Despite his blasphemy, he secretly
-                        craves a sign that he isn't damned for eternity.</div>
+                    <div class="psychology-label" id="t_shadow_label">The Shadow (Repressed)</div>
+                    <div class="psychology-text" id="t_shadow">A desperate need for redemption. Despite his blasphemy,
+                        he secretly craves a sign that he isn't damned for eternity.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">Core Wound</div>
-                    <div class="psychology-text">Betrayal of Authority. His father figure (The Inquisitor) tried to kill
-                        him for doing the right thing, shattering his trust in structure.</div>
+                    <div class="psychology-label" id="t_wound_label">Core Wound</div>
+                    <div class="psychology-text" id="t_wound">Betrayal of Authority. His father figure (The Inquisitor)
+                        tried to kill him for doing the right thing, shattering his trust in structure.</div>
                 </div>
                 <div class="psychology-item">
-                    <div class="psychology-label">Deepest Desire</div>
-                    <div class="psychology-text">To find a cause worth dying for that is pure enough to wash away the
-                        blood on his hands.</div>
+                    <div class="psychology-label" id="t_desire_label">Deepest Desire</div>
+                    <div class="psychology-text" id="t_desire">To find a cause worth dying for that is pure enough to
+                        wash away the blood on his hands.</div>
                 </div>
             </div>
         </div>
 
         <!-- NARRATIVE DYNAMICS -->
         <div class="section">
-            <h2 class="section-title">🎭 Narrative Engine</h2>
-            <p><strong>The Lie He Believes:</strong> "I am a monster because I killed a holy man."</p>
-            <p><strong>The Truth He Needs:</strong> "Sanctity is found in actions, not titles. You are more of a paladin
-                now than you ever were in armor."</p>
+            <h2 class="section-title" id="t_arc_title">🎭 Narrative Engine</h2>
+            <p><strong id="t_lie_label">The Lie He Believes:</strong> <span id="t_lie">"I am a monster because I killed
+                    a holy man."</span></p>
+            <p><strong id="t_truth_label">The Truth He Needs:</strong> <span id="t_truth">"Sanctity is found in actions,
+                    not titles. You are more of a paladin now than you ever were in armor."</span></p>
             <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
-            <p><strong>Narrative Arc:</strong> <em>Redemption through Sacrifice.</em> Aric starts by rejecting all
-                selfless acts, but is slowly drawn into protecting a child who manifests the same powers he was branded
-                for. He must choose between his survival and becoming the shield for a new, "heretical" generation.</p>
+            <p><strong id="t_arc_label">Narrative Arc:</strong> <em id="t_arc_name">Redemption through Sacrifice.</em>
+                <span id="t_arc_desc">Aric starts by rejecting all selfless acts, but is slowly drawn into protecting a
+                    child who manifests the same powers he was branded for. He must choose between his survival and
+                    becoming the shield for a new, "heretical" generation.</span></p>
         </div>
 
         <!-- STATS / TAGS -->
@@ -253,19 +255,99 @@
                 <span class="tag">INT: 10 (0)</span>
                 <span class="tag">WIS: 14 (+2)</span>
                 <span class="tag">CHA: 8 (-1)</span>
-                <span class="tag">Skill: Intimidation</span>
-                <span class="tag">Skill: Athletics</span>
-                <span class="tag">Feat: Sentinel</span>
-                <span class="tag">Weapon: Greatsword</span>
+                <span class="tag" id="t_skill_1">Skill: Intimidation</span>
+                <span class="tag" id="t_skill_2">Skill: Athletics</span>
+                <span class="tag" id="t_feat">Feat: Sentinel</span>
+                <span class="tag" id="t_weapon">Weapon: Greatsword</span>
             </div>
         </div>
 
         <!-- FOOTER CTA -->
         <div class="footer">
-            <p>This character was generated in 1.4 seconds by SoulForge AI.</p>
-            <a href="/" class="cta-btn">⚡ Create Your Own Character</a>
+            <p id="t_footer">This character was generated in 1.4 seconds by SoulForge AI.</p>
+            <a href="/" class="cta-btn" id="t_cta">⚡ Create Your Own Character</a>
         </div>
     </div>
+
+    <script>
+        const I18N = {
+            es: {
+                t_name: "Aric Blackwood",
+                t_meta: "Paladín Humano · 34 Años · Fantasía Oscura <span class='badge'>ROPEJURAMENTOS</span>",
+                t_bio_title: "📜 El Juramento Roto",
+                t_quote: "\"La luz no me abandonó por pecar. Yo abandoné la luz porque estaba ciega ante el sufrimiento de los inocentes.\"",
+                t_bio_1: "Otrora un celebrado capitán de la Orden de la Llama de Plata, la vida de Aric se hizo añicos durante el Asedio de Vorath. Mientras sus comandantes debatían ética en sus torres de marfil, Aric veía cómo campesinos enfermos eran masacrados por los mismos fuegos de 'purificación' que él juró portar.",
+                t_bio_2: "En un momento que definiría su vergüenza eterna—o su único acto verdadero de heroísmo—volvió su espada contra su Alto Inquisidor para salvar a una familia de refugiados 'corruptos'. Despojado de su rango, marcado como hereje y exiliado a las Tierras Sombrías, ahora vaga como un mercenario que se niega a rezar.",
+                t_bio_3: "Lleva su símbolo sagrado agrietado no por fe, sino como recordatorio de la hipocresía que juró destruir. Lucha no por dioses, sino por las ratas de alcantarilla y los olvidados, empuñando magia oscura que apenas comprende para proteger la poca luz que queda en el mundo.",
+                t_psy_title: "🧠 Análisis Psicológico Profundo",
+                t_mask_label: "La Máscara (Persona)",
+                t_mask: "El Mercenario Cínico. Proyecta un imagen de que solo le importa el dinero para evitar apegarse emocionalmente a causas que sabe que están condenadas.",
+                t_shadow_label: "La Sombra (Reprimido)",
+                t_shadow: "Una necesidad desesperada de redención. A pesar de su blasfemia, secretamente anhela una señal de que no está condenado por la eternidad.",
+                t_wound_label: "Herida Central",
+                t_wound: "Traición a la Autoridad. Su figura paterna (El Inquisidor) intentó matarlo por hacer lo correcto, destrozando su confianza en la estructura.",
+                t_desire_label: "Deseo Profundo",
+                t_desire: "Encontrar una causa por la que valga la pena morir, lo suficientemente pura para lavar la sangre de sus manos.",
+                t_arc_title: "🎭 Motor Narrativo",
+                t_lie_label: "La Mentira que Cree:",
+                t_lie: "\"Soy un monstruo porque maté a un hombre santo.\"",
+                t_truth_label: "La Verdad que Necesita:",
+                t_truth: "\"La santidad se encuentra en las acciones, no en los títulos. Eres más paladín ahora que nunca lo fuiste con armadura.\"",
+                t_arc_label: "Arco Narrativo:",
+                t_arc_name: "Redención a través del Sacrificio.",
+                t_arc_desc: "Aric comienza rechazando todo acto altruista, pero es arrastrado lentamente a proteger a un niño que manifiesta los mismos poderes por los que fue marcado. Debe elegir entre su supervivencia y convertirse en el escudo de una nueva generación 'hereje'.",
+                t_skill_1: "Habilidad: Intimidación",
+                t_skill_2: "Habilidad: Atletismo",
+                t_feat: "Dote: Centinela",
+                t_weapon: "Arma: Espadón",
+                t_footer: "Este personaje fue generado en 1.4 segundos por SoulForge AI.",
+                t_cta: "⚡ Crea Tu Propio Personaje"
+            },
+            jp: {
+                t_name: "アリク・ブラックウッド",
+                t_meta: "人間のパラディン · 34歳 ·ダークファンタジー <span class='badge'>誓いを破りし者</span>",
+                t_bio_title: "📜 破られた誓い",
+                t_quote: "「私が罪を犯したから光が去ったのではない。光が無実の人々の苦しみに盲目だったから、私が光を捨てたのだ。」",
+                t_bio_1: "かつて銀の炎の教団で称賛された隊長であったアリクの人生は、ヴォラス包囲戦で粉々に砕け散った。指揮官たちが象牙の塔で倫理を議論している間、アリクは疫病に冒された農民たちが、彼が振るうことを誓った「浄化」の炎によって虐殺されるのを見ていた。",
+                t_bio_2: "彼の永遠の恥と定義される瞬間――あるいは唯一の真の英雄的行為において――彼は「汚れた」難民家族を救うために、自らの刃を大審問官に向けた。階級を剥奪され、異端者の烙印を押され、シャドウランドへ追放された彼は、今や祈ることを拒否する傭兵として彷徨っている。",
+                t_bio_3: "彼がひび割れた聖なるシンボルを持っているのは信仰のためではなく、彼が破壊すると誓った偽善の戒めとしてである。彼は神のためではなく、ドブネズミや忘れ去られた人々のために戦い、世界に残されたわずかな光を守るために、彼がほとんど理解していない闇の魔法を振るう。",
+                t_psy_title: "🧠 深層心理分析",
+                t_mask_label: "仮面 (ペルソナ)",
+                t_mask: "冷笑的な傭兵。絶望的だと分かっている大義に感情移入しないよう、金にしか興味がないというイメージを投影している。",
+                t_shadow_label: "影 (抑圧されたもの)",
+                t_shadow: "救済への絶望的な渇望。冒涜にもかかわらず、彼は密かに自分が永遠に呪われていないという兆候を切望している。",
+                t_wound_label: "核となる傷",
+                t_wound: "権威への裏切り。父親代わり（審問官）が正しいことをした彼を殺そうとしたため、組織への信頼が粉々に砕かれた。",
+                t_desire_label: "深層の願望",
+                t_desire: "自分の手の血を洗い流すのに十分純粋な、死ぬ価値のある大義を見つけること。",
+                t_arc_title: "🎭 物語エンジン",
+                t_lie_label: "彼が信じている嘘:",
+                t_lie: "「私は聖人を殺したから怪物だ。」",
+                t_truth_label: "彼が必要とする真実:",
+                t_truth: "「神聖さは称号ではなく行動に見出される。鎧を着ていた時よりも、今のあなたの方がパラディンらしい。」",
+                t_arc_label: "物語のアーク:",
+                t_arc_name: "犠牲による救済。",
+                t_arc_desc: "アリクはすべての利他的な行為を拒絶することから始めるが、徐々に彼が烙印を押されたのと同じ力を発現させた子供を守ることに引き込まれていく。彼は自分の生存と、新しい「異端」の世代の盾になることの間で選択しなければならない。",
+                t_skill_1: "スキル: 威圧",
+                t_skill_2: "スキル: 運動",
+                t_feat: "特技: センチネル",
+                t_weapon: "武器: グレートソード",
+                t_footer: "このキャラクターはSoulForge AIによって1.4秒で生成されました。",
+                t_cta: "⚡ 自分のキャラクターを作成"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang') || 'en';
+
+        if (lang !== 'en' && I18N[lang]) {
+            const data = I18N[lang];
+            for (const key in data) {
+                const el = document.getElementById(key);
+                if (el) el.innerHTML = data[key];
+            }
+        }
+    </script>
 </body>
 
 </html>
