@@ -58,6 +58,11 @@ export class SoulRPGEngine {
         // 4. Moral Matrix
         const moralProgress = Math.floor(Math.random() * 100);
 
+        // SAFE ACCESS to Psicologia
+        const psych = characterData.psicologia || {};
+        const mentira = psych.mentira || "Una mentira oculta que aún no descubre.";
+        const verdad = psych.verdad || "La verdad que debe aceptar para crecer.";
+
         // 5. Perks
         const perks = this.generateSoulPerks(characterData, stats);
 
@@ -82,8 +87,8 @@ export class SoulRPGEngine {
                 age_traits: ageTraits,
                 moral_matrix: {
                     current_stage: "Mentira",
-                    conflict: characterData.psicologia.mentira,
-                    resolution: characterData.psicologia.verdad,
+                    conflict: mentira,
+                    resolution: verdad,
                     progress: moralProgress
                 },
                 soul_perks: perks
