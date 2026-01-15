@@ -34,7 +34,7 @@
             /* Overlay oscuro + Imagen de fondo */
             background-image:
                 linear-gradient(rgba(8, 10, 14, 0.85), rgba(8, 10, 14, 0.85)),
-                url("/static/images/forest_crystal_bg.jpg");
+                url("/static/images/background.png");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -2221,178 +2221,23 @@
              document.body.appendChild(a); a.click(); a.remove();
         }
 
-        // --- CROPPER LOGIC ---
-        let currentImageRaw = null;
-        let scale = 1;
-        let pX = 0;
-        let pY = 0;
-        let isDragging = false;
-        let startX, startY;
-
         function triggerUpload() { document.getElementById('avatar-input').click(); }
-
+        
         function encodeImageFileAsURL(element) {
             const file = element.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onloadend = function() {
-                currentImageRaw = reader.result;
-                openCropModal();
+                // Replace the placeholder with the real image
+                const display = document.getElementById('avatar-display');
+                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
+                
+                // Visual feedback
+                const frame = document.querySelector('.avatar-frame');
+                frame.style.borderColor = "#fff";
+                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
             }
             reader.readAsDataURL(file);
-        }
-
-        function openCropModal() {
-            // Check if modal exists, if not create it
-            let modal = document.getElementById('cropModal');
-            if (!modal) {
-                createCropModal();
-                modal = document.getElementById('cropModal');
-            }
-            // Reset state
-            scale = 1; pX = 0; pY = 0;
-            const img = document.getElementById('cropImageTarget');
-            img.src = currentImageRaw;
-            img.onload = () => {
-                // Center initially
-                img.style.transform = \`translate(0px, 0px) scale(1)\`;
-            };
-            modal.style.display = 'flex';
-        }
-
-        function closeCropModal() {
-            document.getElementById('cropModal').style.display = 'none';
-        }
-
-        function createCropModal() {
-            const modalHTML = \`
-            <div id="cropModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; flex-direction:column;">
-                <h3 style="color:var(--gold); font-family:'Cinzel'; margin-bottom:15px;">Ajustar Retrato</h3>
-                
-                <!-- Viewport Circle -->
-                <div style="width:300px; height:300px; border-radius:50%; border:4px solid var(--gold); overflow:hidden; position:relative; background:#000; cursor:grab;"
-                     onmousedown="startDrag(event)" onmousemove="doDrag(event)" onmouseup="endDrag()" onmouseleave="endDrag()"
-                     ontouchstart="startDrag(event)" ontouchmove="doDrag(event)" ontouchend="endDrag()">
-                    
-                    <img id="cropImageTarget" src="" style="position:absolute; top:50%; left:50%; transform-origin:center; transform:translate(-50%, -50%); pointer-events:none; max-width:none; max-height:none;">
-                    
-                    <!-- Overlay Grid -->
-                    <div style="position:absolute; width:100%; height:100%; border-radius:50%; box-shadow:inset 0 0 50px rgba(0,0,0,0.5); pointer-events:none;"></div>
-                </div>
-
-                <!-- Controls -->
-                <div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
-                    <button onclick="adjustScale(-0.1)" style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">-</button>
-                    <span style="color:white; font-family:'Cinzel'">ZOOM</span>
-                    <button onclick="adjustScale(0.1)" style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">+</button>
-                </div>
-                
-                <div style="margin-top:20px; display:flex; gap:20px;">
-                    <button onclick="applyCrop()" style="padding:10px 30px; background:var(--gold); color:#000; border:none; font-weight:bold; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CONFIRMAR</button>
-                    <button onclick="closeCropModal()" style="padding:10px 30px; background:transparent; border:1px solid #fff; color:#fff; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CANCELAR</button>
-                </div>
-            </div>
-            \`;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-
-        function startDrag(e) {
-            isDragging = true;
-            startX = (e.touches ? e.touches[0].clientX : e.clientX) - pX;
-            startY = (e.touches ? e.touches[0].clientY : e.clientY) - pY;
-            document.getElementById('cropImageTarget').parentElement.style.cursor = 'grabbing';
-        }
-
-        function doDrag(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX);
-            const y = (e.touches ? e.touches[0].clientY : e.clientY);
-            pX = x - startX;
-            pY = y - startY;
-            updateTransform();
-        }
-
-        function endDrag() {
-            isDragging = false;
-            document.getElementById('cropImageTarget').parentElement.style.cursor = 'grab';
-        }
-
-        function adjustScale(delta) {
-            scale += delta;
-            if (scale < 0.2) scale = 0.2;
-            if (scale > 5) scale = 5;
-            updateTransform();
-        }
-
-        function updateTransform() {
-            const img = document.getElementById('cropImageTarget');
-            // We need to keep the center anchor
-            img.style.transform = \`translate(calc(-50% + \${pX}px), calc(-50% + \${pY}px)) scale(\${scale})\`;
-        }
-
-        function applyCrop() {
-            // Apply the current view to the avatar frame
-            const display = document.getElementById('avatar-display');
-            const img = document.getElementById('cropImageTarget');
-            
-            // To do this properly and safely save, we basically just replicate the transforms onto the display
-            // OR we render to canvas. Canvas is cleaner for saving.
-            
-            // Create canvas
-            const canvas = document.createElement('canvas');
-            canvas.width = 400; canvas.height = 400; // Final resolution
-            const ctx = canvas.getContext('2d');
-            
-            // Fill black
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, 400, 400);
-            
-            // Image props
-            const originalWidth = img.naturalWidth;
-            const originalHeight = img.naturalHeight;
-            
-            // Calculate draw params matching the CSS transform
-            // The view port is 300px. The canvas is 400px. Factor = 1.333
-            const factor = 400 / 300;
-            
-            ctx.translate(200, 200); // Center of canvas
-            ctx.translate(pX * factor, pY * factor);
-            ctx.scale(scale * factor, scale * factor); // Scale is based on the 300px view, so scale applied to image needs to be adjusted?
-            // Actually, scaling the context works fine if we draw centered.
-            
-            // Wait, the scaling in CSS is visual. 1.0 means original size? No, we didn't specify size.
-            // In the modal, the image has max-width:none. So it is its natural size.
-            // So if scale is 1, it draws at natural size centered.
-            
-            // Because we used scale matches CSS, we can just use the same scale logic.
-            // But we need to account for the viewport size vs canvas size.
-            // If I draw it at 0,0 center with natural dimensions.
-            
-             // Re-render approach: simple HTML copy is safer than math guess work for quick fix
-             // We can just put the image inside the avatar display with the same styles!
-             // But 'avatar-display' needs to be relative and overflow hidden.
-             
-             display.innerHTML = '';
-             const finalImg = new Image();
-             finalImg.src = currentImageRaw;
-             finalImg.style.position = 'absolute';
-             finalImg.style.left = '50%';
-             finalImg.style.top = '50%';
-             finalImg.style.transform = \`translate(calc(-50% + \${pX}px), calc(-50% + \${pY}px)) scale(\${scale})\`;
-             // Scale fix: the modal viewport is 300px. The avatar frame is 200px.
-             // We need to scale the transforms by 200/300 = 0.666
-             const ratio = 200/300;
-             finalImg.style.transform = \`translate(calc(-50% + \${pX * ratio}px), calc(-50% + \${pY * ratio}px)) scale(\${scale * ratio})\`;
-             
-             display.appendChild(finalImg);
-             
-             // Visual feedback
-             const frame = document.querySelector('.avatar-frame');
-             frame.style.borderColor = "#fff";
-             setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
-             
-             closeCropModal();
         }
     <\/script>
     <\/script>
