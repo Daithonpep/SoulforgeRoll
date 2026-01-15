@@ -2285,12 +2285,21 @@
 
         async function handleForjarAlma(event) {
             event.preventDefault();
+            console.log('handleForjarAlma called'); // DEBUG
+
+            // TEMPORARY: Give test tokens if none exist (REMOVE FOR PRODUCTION)
+            if (getTokens() <= 0) {
+                console.log('No tokens, giving 5 test tokens');
+                setTokens(5);
+            }
 
             // Check tokens
             if (getTokens() <= 0) {
+                console.log('Showing PayPal modal');
                 showPayPalModal('alma');
                 return false;
             }
+
 
             // Use a token
             if (!useToken()) {
