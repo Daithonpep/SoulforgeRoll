@@ -918,8 +918,8 @@
             </form>
         </div>
 
-        <!-- CONSTELACIÓN -->
-        <div class="card">
+        <!-- CONSTELACIÓN (HIDDEN TEMPORARILY) -->
+        <div class="card" style="display:none">
             <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forjar Constelación</h2>
             <p class="card-desc" data-i18n="card_constelacion_desc">Genera un grupo de personajes interconectados.</p>
 
@@ -1612,10 +1612,14 @@
                         <p style="color:var(--text-dim);margin-bottom:20px;">${t.desc}</p>
                         <p style="color:#4ade80;font-weight:bold;margin-bottom:30px;">${t.price}</p>
                         
-                        <a href="${PAYPAL_ME_LINK}" target="_blank" 
-                           style="display:block;background:#0070ba;color:white;padding:15px 30px;border-radius:8px;text-decoration:none;font-weight:bold;margin-bottom:20px;">
-                            🅿️ ${t.btn}
-                        </a>
+                        <!-- NEW PAYPAL BUTTON FORM -->
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-bottom:20px;">
+                            <input type="hidden" name="cmd" value="_s-xclick" />
+                            <input type="hidden" name="hosted_button_id" value="AUH69VTF7QFH8" />
+                            <input type="hidden" name="currency_code" value="USD" />
+                            <!-- Custom styling for the image input to look like a button or keep default -->
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" style="transform: scale(1.2); cursor:pointer;" />
+                        </form>
                         
                         <div style="border-top:1px solid #333;padding-top:20px;margin-top:20px;">
                             <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:10px;">${t.token}</p>
@@ -2247,30 +2251,55 @@
         }
 
         // --- MAIN FORGE HANDLERS ---
+        // --- MAIN FORGE HANDLERS ---
         async function handleForjarAlma(event) {
             event.preventDefault();
 
             // Check tokens
-            if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
-            form = document.getElementById('formPersonaje'); const formData = new FormData(form); const params = new
-                URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
-            response = await fetch(`${ API_BASE } /api/v1 / personaje ? ${ params } `); if (!response.ok) throw new Error('Error del
-    servidor'); let personaje=await response.json(); // CHECK IF RPG MODE IS ACTIVE // We assume "rol_jugador" or
-    similar option triggers this. // For now, let's treat "player" role or specific selection logic. // Assuming the
-    user selects "Jugador de Rol" in a dropdown we haven't seen explicitly yet, // but we can infer or force it for
-    testing. // Let's check if the 'uso' field (if we had one) or just apply it universally // if the resulting text
-    implies deep stats needed. // FOR THIS UPDATE: We will apply RPG Engine if the user selected a Class (Role)
-    != 'Civilian/None' const isRPGMode = true; // Force ON for demonstration as requested if (isRPGMode) { const
-            formDataObj = new FormData(form); personaje = rpgEngine.process(personaje, formDataObj);
-            showRPGCharacterHTML(personaje); // NEW VISUALIZER } else { showPersonajeHTML(personaje); // OLD VISUALIZER }
-            hideLoading();
-        } catch (error) {
-            hideLoading(); alert('Error al forjar: ' + error.message);
-            // Refund token on error
-            setTokens(getTokens() + 1);
-        }
+            if (getTokens() <= 0) {
+                showPayPalModal('alma');
+                return false;
+            }
 
-        return false;
+            // Use a token
+            if (!useToken()) {
+                 alert("Error: No tienes tokens suficientes.");
+                 return false;
+            }
+
+            // Get form data
+            const form = document.getElementById('formPersonaje');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            showLoading('Forjando alma...');
+
+            // FETCH & GENERATE
+            try {
+                const response = await fetch(`${ API_BASE } /api/v1 / personaje ? ${ params } `);
+                if (!response.ok) throw new Error('Error del servidor');
+                let personaje = await response.json();
+
+                // FORCE RPG MODE ALWAYS
+                const isRPGMode = true;
+                if (isRPGMode) {
+                    const formDataObj = new FormData(form);
+                    personaje = rpgEngine.process(personaje, formDataObj);
+                    showRPGCharacterHTML(personaje);
+                } else {
+                    showPersonajeHTML(personaje);
+                }
+
+                hideLoading();
+
+            } catch (error) {
+                hideLoading();
+                alert('Error al forjar: ' + error.message);
+                // Refund token on error
+                setTokens(getTokens() + 1);
+            }
+
+            return false;
         }
 
         async function handleForjarConstelacion(event) {
@@ -2279,21 +2308,38 @@
 
             // Check tokens (constellation costs 2)
             if (getTokens() < 2) {
-                showPayPalModal(' constelacion'); return false;
-            } // Use tokens setTokens(getTokens() - 2); // Get form
-    data const form = document.getElementById('formConstelacion'); const formData = new FormData(form); const params = new
-                URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try {
-                    const response = await
-                        fetch(`${ API_BASE } /api/v1 / constelacion ? ${ params } `); if (!response.ok) throw new Error('Error del servidor'); const
-                            constelacion = await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
-    catch (error) {
-                        hideLoading(); alert('Error al forjar: ' + error.message);
-                        // Refund tokens on error
-                        setTokens(getTokens() + 2);
-                    }
+                showPayPalModal('constelacion');
+                return false;
+            }
 
-                    return false;
-                }
+            // Use tokens
+            setTokens(getTokens() - 2);
+
+            // Get form data
+            const form = document.getElementById('formConstelacion');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            showLoading('Forjando constelación...');
+
+            try {
+                const response = await fetch(`${ API_BASE } /api/v1 / constelacion ? ${ params } `);
+                if (!response.ok) throw new Error('Error del servidor');
+                const constelacion = await response.json();
+                
+                hideLoading();
+                // Generate and show HTML
+                showConstelacionHTML(constelacion);
+
+            } catch (error) {
+                hideLoading();
+                alert('Error al forjar: ' + error.message);
+                // Refund tokens on error
+                setTokens(getTokens() + 2);
+            }
+
+            return false;
+        }
 
         // --- DEMO HANDLER ---
         function openDemo(name) {
