@@ -2300,226 +2300,102 @@
 
         // --- DEMO HANDLER ---
         function openDemo(name) {
-                const lang = document.getElementById(' inputLangPersonaje').value || 'es';
-                window.open(`/demo_${name}.html?lang=${lang}`, '_blank');
-            } // --- HTML GENERATORS --- function
-            showPersonajeHTML(p) {
-                const lang = document.getElementById('inputLangPersonaje').value || 'es'; const
-                    html = generatePersonajeHTML(p, lang); // Open in new window const win=window.open('', '_blank' );
-                win.document.write(html); win.document.close();
-            } function generatePersonajeHTML(p, lang) {
+                const langInput = document.getElementById('inputLangPersonaje');
+                const lang = langInput ? langInput.value : 'es';
+                window.open(`demo_${name}.html?lang=${lang}`, '_blank');
+            }
+
+            // --- HTML GENERATORS ---
+            function showPersonajeHTML(p) {
+                const lang = document.getElementById('inputLangPersonaje').value || 'es';
+                const html = generatePersonajeHTML(p, lang);
+                const win = window.open('', '_blank');
+                win.document.write(html);
+                win.document.close();
+            }
+
+            function generatePersonajeHTML(p, lang) {
                 return `<!DOCTYPE html>
-    <html lang="${lang}">
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${p.nombre || 'Personaje'} - SoulForge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; line-height: 1.7; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 30px; }
+        .name { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
+        .meta { color: var(--dim); font-size: 1rem; }
+        .section { background: var(--card); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #222; }
+        .section-title { font-family: 'Cinzel', serif; color: var(--accent); font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .section p { margin-bottom: 12px; }
+        .tag { display: inline-block; background: #1a1a25; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; border: 1px solid #333; }
+        .psychology-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .psychology-item { background: #0a0a10; padding: 15px; border-radius: 8px; }
+        .psychology-label { color: var(--accent); font-size: 0.9rem; margin-bottom: 5px; }
+        .footer { text-align: center; color: var(--dim); font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; }
+        .download-btn { display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        @media print { .download-btn { display: none; } body { background: white; color: black; } .section { border: 1px solid #ccc; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="name">${p.nombre || 'Sin Nombre'}</h1>
+            <p class="meta">${p.genero || ''} · ${p.edad || '?'} años · ${p.mundo || 'Fantasía'}</p>
+            <p class="meta">${p.rol || ''} · ${p.tono_moral || ''}</p>
+        </div>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${p.nombre || 'Personaje'} - SoulForge</title>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap"
-            rel="stylesheet">
-        <style>
-            :root {
-                --accent: #d4af37;
-                --bg: #0a0a0f;
-                --card: #12121a;
-                --text: #e8e6e3;
-                --dim: #888;
-            }
+        <div class="section">
+            <h2 class="section-title">📜 Biografía</h2>
+            <p>${p.biografia || p.bio || 'Historia por descubrir...'}</p>
+        </div>
 
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                background: var(--bg);
-                color: var(--text);
-                font-family: 'Crimson Text', serif;
-                line-height: 1.7;
-                padding: 40px 20px;
-            }
-
-            .container {
-                max-width: 800px;
-                margin: 0 auto;
-            }
-
-            .header {
-                text-align: center;
-                margin-bottom: 40px;
-                border-bottom: 2px solid var(--accent);
-                padding-bottom: 30px;
-            }
-
-            .name {
-                font-family: 'Cinzel', serif;
-                font-size: 2.5rem;
-                color: var(--accent);
-                margin-bottom: 10px;
-            }
-
-            .meta {
-                color: var(--dim);
-                font-size: 1rem;
-            }
-
-            .section {
-                background: var(--card);
-                border-radius: 12px;
-                padding: 25px;
-                margin-bottom: 25px;
-                border: 1px solid #222;
-            }
-
-            .section-title {
-                font-family: 'Cinzel', serif;
-                color: var(--accent);
-                font-size: 1.3rem;
-                margin-bottom: 15px;
-                border-bottom: 1px solid #333;
-                padding-bottom: 10px;
-            }
-
-            .section p {
-                margin-bottom: 12px;
-            }
-
-            .tag {
-                display: inline-block;
-                background: #1a1a25;
-                padding: 4px 12px;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                margin: 3px;
-                border: 1px solid #333;
-            }
-
-            .psychology-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-
-            .psychology-item {
-                background: #0a0a10;
-                padding: 15px;
-                border-radius: 8px;
-            }
-
-            .psychology-label {
-                color: var(--accent);
-                font-size: 0.9rem;
-                margin-bottom: 5px;
-            }
-
-            .footer {
-                text-align: center;
-                color: var(--dim);
-                font-size: 0.8rem;
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 1px solid #222;
-            }
-
-            .download-btn {
-                display: inline-block;
-                background: var(--accent);
-                color: #000;
-                padding: 12px 30px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: bold;
-                margin-top: 20px;
-                cursor: pointer;
-            }
-
-            @media print {
-                .download-btn {
-                    display: none;
-                }
-
-                body {
-                    background: white;
-                    color: black;
-                }
-
-                .section {
-                    border: 1px solid #ccc;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1 class="name">${p.nombre || 'Sin Nombre'}</h1>
-                <p class="meta">${p.genero || ''} · ${p.edad || '?'} años · ${p.mundo || 'Fantasía'}</p>
-                <p class="meta">${p.rol || ''} · ${p.tono_moral || ''}</p>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">📜 Biografía</h2>
-                <p>${p.biografia || p.bio || 'Historia por descubrir...'}</p>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">🧠 Psicología Profunda</h2>
-                <div class="psychology-grid">
-                    <div class="psychology-item">
-                        <div class="psychology-label">Máscara (Lo que muestra)</div>
-                        <p>${p.mascara || p.psicologia?.mascara || '—'}</p>
-                    </div>
-                    <div class="psychology-item">
-                        <div class="psychology-label">Sombra (Lo que oculta)</div>
-                        <p>${p.sombra || p.psicologia?.sombra || '—'}</p>
-                    </div>
-                    <div class="psychology-item">
-                        <div class="psychology-label">Herida Core</div>
-                        <p>${p.herida || p.psicologia?.herida || '—'}</p>
-                    </div>
-                    <div class="psychology-item">
-                        <div class="psychology-label">Deseo Profundo</div>
-                        <p>${p.deseo || p.psicologia?.deseo || '—'}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">🎭 Mentira & Verdad</h2>
-                <p><strong>Mentira que cree:</strong> ${p.mentira || p.psicologia?.mentira || '—'}</p>
-                <p><strong>Verdad que necesita:</strong> ${p.verdad || p.psicologia?.verdad || '—'}</p>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">📈 Arco Narrativo</h2>
-                <p>${p.arco_narrativo || p.arco || 'Arco por definir...'}</p>
-            </div>
-
-            ${p.atributos ? `
-            <div class="section">
-                <h2 class="section-title">⚔️ Atributos (D&D)</h2>
-                <div style="display:flex;flex-wrap:wrap;gap:10px;">
-                    ${Object.entries(p.atributos).map(([k, v]) => `<span class="tag">${k}: ${v}</span>`).join('')}
-                </div>
-            </div>
-            ` : ''}
-
-            <div class="footer">
-                <p>Generado por SoulForge Engine · ${new Date().toLocaleDateString()}</p>
-                <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+        <div class="section">
+            <h2 class="section-title">🧠 Psicología Profunda</h2>
+            <div class="psychology-grid">
+                <div class="psychology-item"><div class="psychology-label">Máscara (Lo que muestra)</div><p>${p.mascara || p.psicologia?.mascara || '—'}</p></div>
+                <div class="psychology-item"><div class="psychology-label">Sombra (Lo que oculta)</div><p>${p.sombra || p.psicologia?.sombra || '—'}</p></div>
+                <div class="psychology-item"><div class="psychology-label">Herida Core</div><p>${p.herida || p.psicologia?.herida || '—'}</p></div>
+                <div class="psychology-item"><div class="psychology-label">Deseo Profundo</div><p>${p.deseo || p.psicologia?.deseo || '—'}</p></div>
             </div>
         </div>
-    </body>
 
-    </html>`;
+        <div class="section">
+            <h2 class="section-title">🎭 Mentira & Verdad</h2>
+            <p><strong>Mentira que cree:</strong> ${p.mentira || p.psicologia?.mentira || '—'}</p>
+            <p><strong>Verdad que necesita:</strong> ${p.verdad || p.psicologia?.verdad || '—'}</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📈 Arco Narrativo</h2>
+            <p>${p.arco_narrativo || p.arco || 'Arco por definir...'}</p>
+        </div>
+
+        ${p.atributos ? `
+        <div class="section">
+            <h2 class="section-title">⚔️ Atributos (D&D)</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                ${Object.entries(p.atributos).map(([k, v]) => `<span class="tag">${k}: ${v}</span>`).join('')}
+            </div>
+        </div>
+        ` : ''}
+
+        <div class="footer">
+            <p>Generado por SoulForge Engine · ${new Date().toLocaleDateString()}</p>
+            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+        </div>
+    </div>
+</body>
+</html>`;
             }
 
             function showConstelacionHTML(c) {
                 const lang = document.getElementById('inputLangConstelacion').value || 'es';
-                // For constellation, redirect to the dedicated page or generate inline
                 const html = generateConstelacionHTML(c, lang);
                 const win = window.open('', '_blank');
                 win.document.write(html);
@@ -2529,100 +2405,41 @@
             function generateConstelacionHTML(c, lang) {
                 const personajes = c.personajes || c.characters || [];
                 const personajesHTML = personajes.map((p, i) => `
-    <div class="character-card">
-        <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
-        <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
-        <p>${p.biografia || p.bio || ''}</p>
-    </div>
-    `).join('');
+<div class="character-card">
+    <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
+    <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
+    <p>${p.biografia || p.bio || ''}</p>
+</div>
+`).join('');
 
-                return `
-    <!DOCTYPE html>
-    <html lang="${lang}">
-
-    <head>
-        <meta charset="UTF-8">
-        <title>Constelación - SoulForge</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap"
-            rel="stylesheet">
-        <style>
-            :root {
-                --accent: #d4af37;
-                --bg: #0a0a0f;
-                --card: #12121a;
-                --text: #e8e6e3;
-                --dim: #888;
-            }
-
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                background: var(--bg);
-                color: var(--text);
-                font-family: 'Crimson Text', serif;
-                padding: 40px 20px;
-            }
-
-            .container {
-                max-width: 1000px;
-                margin: 0 auto;
-            }
-
-            h1 {
-                font-family: 'Cinzel', serif;
-                color: var(--accent);
-                text-align: center;
-                margin-bottom: 40px;
-            }
-
-            .character-card {
-                background: var(--card);
-                padding: 25px;
-                border-radius: 12px;
-                margin-bottom: 20px;
-                border: 1px solid #222;
-            }
-
-            .footer {
-                text-align: center;
-                color: var(--dim);
-                margin-top: 40px;
-            }
-
-            .download-btn {
-                display: inline-block;
-                background: var(--accent);
-                color: #000;
-                padding: 12px 30px;
-                border-radius: 8px;
-                cursor: pointer;
-                margin-top: 20px;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="container">
-            <h1>🌌 Constelación de Personajes</h1>
-            ${personajesHTML}
-            <div class="footer">
-                <p>Generado por SoulForge Engine</p>
-                <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
-            </div>
+                return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <title>Constelación - SoulForge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-family: 'Cinzel', serif; color: var(--accent); text-align: center; margin-bottom: 40px; }
+        .character-card { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #222; }
+        .footer { text-align: center; color: var(--dim); margin-top: 40px; }
+        .download-btn { display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌌 Constelación de Personajes</h1>
+        ${personajesHTML}
+        <div class="footer">
+            <p>Generado por SoulForge Engine</p>
+            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
         </div>
-    </body>
-
-    </html>`;
-            }
-
-
-            function openDemo(name) {
-                const lang = document.getElementById('inputLangPersonaje').value || 'es';
-                window.open(`demo_${name}.html?lang=${lang}`, '_blank');
+    </div>
+</body>
+</html>`;
             }
 
             // --- INIT ---
@@ -2631,6 +2448,14 @@
                 // Give 3 free tokens for new users
                 if (localStorage.getItem('soulforge_tokens') === null) {
                     setTokens(3);
+                }
+
+                // Force Translations Check
+                let lang = window.location.hash.replace('#', '') || 'es';
+                if (window.changeLanguage) {
+                    changeLanguage(lang);
+                } else {
+                    console.error("Translation engine not loaded yet.");
                 }
             });
     </script>
