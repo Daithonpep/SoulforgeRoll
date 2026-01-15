@@ -4,196 +4,2613 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motor Visual - Sistema de Fichas</title>
+    <title>SoulForge - Forja de Almas</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'void': '#080a0e',
-                        'neon-gold': '#d4af37',
-                        'neon-purple': '#800080',
-                        'neon-green': '#2E8B57',
-                        'glass': 'rgba(255, 255, 255, 0.05)'
-                    },
-                    fontFamily: {
-                        'cinzel': ['Cinzel', 'serif'],
-                        'inter': ['Inter', 'sans-serif'],
-                    }
-                }
+    <style>
+        :root {
+            --bg-dark: #080a0e;
+            --bg-card: rgba(22, 25, 32, 0.65);
+            /* Glass base */
+            --accent: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --accent-dim: #7a6625;
+            --text-main: #f0f0f0;
+            --text-dim: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            /* Overlay oscuro + Imagen de fondo */
+            background-image:
+                linear-gradient(rgba(8, 10, 14, 0.85), rgba(8, 10, 14, 0.85)),
+                url("/static/images/background.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+            transition: all 0.5s ease;
+        }
+
+        .logo-img:hover {
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6));
+            transform: scale(1.02);
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .version {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-desc {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Pro Buttons */
+        .btn-forge {
+            width: 100%;
+            background: linear-gradient(135deg, #b48d28 0%, #ddb955 100%);
+            color: #0b0d12;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-forge:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-forge:active {
+            transform: translateY(1px);
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            border: none;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            transition: transform 0.2s;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Character Builder */
+        .character-builder {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px dashed var(--border);
+        }
+
+        /* Avatar Container with Dynamic Border Logic */
+        .avatar-frame {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden;
+            background: #222;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            transition: all 0.5s ease;
+        }
+
+        /* High Tension State (Corrupted/Cracked Look) if > 80% */
+        /* Dynamic class added via JS below */
+        .avatar-frame.corrupted {
+            border-color: var(--blood);
+            border-style: dashed;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(138, 11, 11, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
             }
         }
-    </script>
-    <style>
-        body {
-            background-color: #050505;
-            color: #e0e0e0;
+
+        .tension-wrapper {
+            margin-top: 15px;
+            text-align: center;
         }
 
-        .gradient-text-gold {
-            background: linear-gradient(to right, #d4af37, #fced21);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .tension-track {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #555;
         }
 
-        .gradient-text-purple {
-            background: linear-gradient(to right, #c026d3, #7e22ce);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .tension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--blood));
+            transition: width 0.3s;
         }
 
-        .card-hover:hover {
+        .adventure-log {
+            margin-top: 40px;
+            border-top: 2px solid var(--gold);
+            padding-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px dashed #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+            font-family: 'Crimson Text';
+            font-size: 1.1rem;
+        }
+
+        .log-entry:focus {
+            background: rgba(255, 215, 0, 0.1);
+            outline: none;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: text;
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(22, 25, 32, 0.8);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            color: var(--accent);
+        }
+
+        .glow-btn {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: var(--accent);
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+        }
+
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .hero {
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+                letter-spacing: 4px;
+            }
+
+            .tagline {
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header {
+                margin-bottom: 10px !important;
+            }
+
+            .title {
+                font-size: 1.3rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .lang-selector {
+                padding: 8px 12px !important;
+            }
+
+            .lang-selector a {
+                font-size: 1.3rem !important;
+                margin: 0 5px !important;
+            }
+
+            .card {
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-desc {
+                font-size: 0.8rem;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 0.7rem;
+                margin-bottom: 6px;
+            }
+
+            input,
+            select {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .btn-forge {
+                padding: 14px;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+
+            /* ===== FORCE ALL GRIDS TO SINGLE COLUMN ===== */
+            .mobile-grid-stack,
+            [style*="grid-template-columns: 1fr 1fr"],
+            [style*="grid-template-columns: repeat(3"],
+            [style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* Character row fields - stack vertically */
+            .character-row {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                margin-bottom: 15px !important;
+            }
+
+            .character-row>div:first-child {
+                margin: 0 auto 5px auto;
+            }
+
+            /* Steps section - vertical */
+            div[style*="repeat(3, 1fr)"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+
+            div[style*="repeat(3, 1fr)"]>div {
+                padding: 15px !important;
+            }
+
+            /* Feature list - single column */
+            div[style*="grid-template-columns: 1fr 1fr"] {
+                display: block !important;
+            }
+
+            /* Demo section grids */
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"] {
+                display: block !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 40px"]>div {
+                margin-bottom: 20px;
+            }
+
+            /* Reduce margins on sections */
+            div[style*="margin-top: 80px"] {
+                margin-top: 40px !important;
+            }
+
+            div[style*="margin-top: 60px"] {
+                margin-top: 30px !important;
+            }
+
+            /* Character builder scroll area */
+            .character-builder {
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+
+            /* Version badge */
+            .version {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+
+            /* Credits display */
+            #creditsDisplay {
+                font-size: 0.8rem;
+                padding: 6px 12px !important;
+            }
+
+            /* Price labels */
+            [id*="priceLabel"] {
+                font-size: 1rem !important;
+            }
+
+            /* Demo section titles */
+            h2[style*="font-size: 2rem"] {
+                font-size: 1.4rem !important;
+            }
+
+            h2[style*="font-size: 2.5rem"] {
+                font-size: 1.6rem !important;
+            }
+
+            /* Quote blocks */
+            p[style*="font-size: 1.2rem"] {
+                font-size: 1rem !important;
+            }
+        }
+
+        /* Extra small screens (phones in portrait) */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 8px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+
+            .tagline {
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .btn-forge {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+
+            input,
+            select {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            /* Hide less important sections on very small screens */
+            .demo-section-hide-mobile {
+                display: none;
+            }
+        }
+
+        /* New Demo Card Style */
+        .demo-card-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .demo-card {
+            width: 380px;
+            background: rgba(16, 18, 23, 0.95);
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border-color: #555;
+            border-color: var(--accent);
+        }
+
+        .demo-img-wrapper {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 2px solid var(--accent-dim);
+        }
+
+        .demo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .demo-card:hover .demo-img {
+            transform: scale(1.05);
+        }
+
+        .demo-content {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .demo-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: #fff;
+            margin: 0;
+        }
+
+        .demo-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .demo-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .btn-view-demo {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-view-demo:hover {
+            background: var(--gold-bright);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            color: #000;
+        }
+
+        /* FAQ Section Styles */
+        .faq-section {
+            width: 100%;
+            max-width: 900px;
+            margin: 80px auto;
+        }
+
+        .faq-item {
+            background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(20, 20, 25, 0.4) 100%);
+            border-left: 3px solid var(--accent);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .faq-q {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .faq-a {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+    </style>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+
+<body>
+    <!-- DEBUG BANNER TO CONFIRM UPDATE -->
+    <!-- Removed red banner for clean look -->
+    <div class="hero">
+        <div class="logo-container">
+            <img src="/static/images/logo_web.png" alt="SoulForge - Forja de Almas" class="logo-img">
+        </div>
+        <div class="tagline" data-i18n="hero_tagline">Sistema de Forja de Almas</div>
+        <span class="version">v4.0 - Sistema Completo</span>
+
+        <!-- Credits Display -->
+        <div id="creditsDisplay"
+            style="margin-top: 20px; display: none; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: bold;">
+            🎁 Modo Prueba: <span id="creditsCount">0</span> usos gratis restantes
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header" style="grid-column: 1 / -1; margin-bottom: 20px;">
+            <h1 class="title" data-i18n="index_title">Motor SoulForge</h1>
+
+            <p class="subtitle" data-i18n="index_subtitle">Generación Narrativa Procedural & Sistema de Psicología
+                Profunda</p>
+            <div class="lang-selector"
+                style="margin-top: 25px; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
+                <a href="#es" onclick="changeLanguage('es')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="Español">🇪🇸</a>
+                <a href="#en" onclick="changeLanguage('en')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;"
+                    title="English">🇺🇸</a>
+                <a href="#jp" onclick="changeLanguage('jp')"
+                    style="font-size:2rem; text-decoration:none; margin: 0 10px; cursor: pointer;" title="日本語">🇯🇵</a>
+            </div>
+
+            <!-- NAV TABS -->
+            <div class="nav-tabs">
+                <a href="https://soulforge.up.railway.app/" target="_blank" class="nav-btn">
+                    API Root
+                </a>
+                <a href="juego_en_linea.html" class="nav-btn glow-btn">
+                    Jugar en Línea (VTT)
+                </a>
+                <button type="button" class="nav-btn" onclick="alert('Sistema de Registro de Tokens en desarrollo.')">
+                    🪙 Mis Tokens
+                </button>
+            </div>
+        </div>
+
+        <!-- PERSONAJE ÚNICO -->
+        <div class="card">
+            <h2 class="card-title" data-i18n="card_alma_title">⚔️ Forjar Alma</h2>
+            <p class="card-desc" data-i18n="card_alma_desc">Crea un personaje único con profundidad psicológica.</p>
+
+            <form id="formPersonaje" onsubmit="return handleForjarAlma(event)">
+                <input type="hidden" name="lang" id="inputLangPersonaje" value="es">
+                <div class="form-group">
+                    <label data-i18n="label_nombre">NOMBRE DEL PERSONAJE</label>
+                    <input type="text" name="nombre" id="inputNombre" data-i18n-placeholder="label_nombre_placeholder"
+                        placeholder="Ej: Kael (vacío = aleatorio)">
+                </div>
+
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label data-i18n="genero">GÉNERO</label>
+                        <select name="genero">
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="rol">ROL</label>
+                        <select name="rol" id="rolSelect" onchange="toggleRaceField()">
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Heroe">Héroe</option>
+                            <option value="Villano">Villano</option>
+                            <option value="Mentor">Mentor</option>
+                            <option value="Aliado">Aliado</option>
+                            <option value="Jugador">✨ Jugador (D&D/RPG)</option>
+                            <option value="Bufon">Bufón</option>
+                            <option value="Victima">Víctima</option>
+                            <option value="Profeta">Profeta</option>
+                            <option value="Guardian">Guardián</option>
+                            <option value="Embaucador">Embaucador</option>
+                        </select>
+                    </div>
+
+                    <!-- NEW CLASS SELECTOR -->
+                    <div class="form-group">
+                        <label data-i18n="label_clase">CLASE / OFICIO</label>
+                        <select name="clase" id="claseSelect">
+                            <option value="">-- Aleatorio / Sorpresa --</option>
+                            <option value="Guerrero">Guerrero</option>
+                            <option value="Mago">Mago</option>
+                            <option value="Picaro">Pícaro</option>
+                            <option value="Clerigo">Clérigo</option>
+                            <option value="Paladin">Paladín</option>
+                            <option value="Barbaro">Bárbaro</option>
+                            <option value="Bardo">Bardo</option>
+                            <option value="Druida">Druida</option>
+                            <option value="Monje">Monje</option>
+                            <option value="Artificiero">Artificiero</option>
+                            <option value="Cazador">Cazador</option>
+                            <option value="Brujo">Brujo</option>
+                            <option value="Hechicero">Hechicero</option>
+                            <option value="Necromancer">Nigromante</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="razaGroup" style="display: none;">
+                        <label>Raza (D&D)</label>
+                        <select name="raza">
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Humano">Humano</option>
+                            <option value="Elfo">Elfo</option>
+                            <option value="Enano">Enano</option>
+                            <option value="Halfling">Halfling</option>
+                            <option value="Dragonborn">Dragonborn</option>
+                            <option value="Gnomo">Gnomo</option>
+                            <option value="Tiefling">Tiefling</option>
+                            <option value="Orco">Orco</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="edad">EDAD</label>
+                    <input type="number" name="edad_fija" placeholder="30 (Opcional)" min="5" max="900">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="label_mundo">MUNDO</label>
+                    <select name="mundo">
+                        <option value="FantasiaMedieval">Fantasía Medieval</option>
+                        <option value="FantasiaOscura">Fantasía Oscura</option>
+                        <option value="FantasiaUrbana">Fantasía Urbana</option>
+                        <option value="SciFiCyberpunk">Cyberpunk</option>
+                        <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                        <option value="SciFiPostApocaliptico">Post-Apocalíptico</option>
+                        <option value="Steampunk">Steampunk</option>
+                        <option value="Western">Western</option>
+                        <option value="Noir">Noir / Detectives</option>
+                        <option value="Realista">Realista</option>
+                        <option value="JaponFeudal">Japón Feudal</option>
+                        <option value="ChinaImperial">China Imperial</option>
+                        <option value="CoreaHistorica">Corea Histórica</option>
+                        <option value="MitologiaAsiatica">Mitología Asiática</option>
+                        <option value="AnimeFantasia">Anime Fantasía</option>
+                        <option value="Wuxia">Wuxia</option>
+                        <option value="Victoriano">Era Victoriana</option>
+                        <option value="MitologiaGriega">Mitología Griega</option>
+                        <option value="MitologiaNordica">Mitología Nórdica</option>
+                        <option value="PiratasCaribe">Piratas</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="label_tono">TONO</label>
+                    <select name="tono_moral">
+                        <option value="">-- Aleatorio --</option>
+                        <option value="Luminoso">Luminoso/Bueno</option>
+                        <option value="Gris">Gris/Moral Ambigua</option>
+                        <option value="Oscuro">Oscuro</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" id="btnPersonaje" class="btn-forge">
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_alma">FORJAR ALMA</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- CONSTELACIÓN (HIDDEN TEMPORARILY) -->
+        <div class="card" style="display:none">
+            <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forjar Constelación</h2>
+            <p class="card-desc" data-i18n="card_constelacion_desc">Genera un grupo de personajes interconectados.</p>
+
+            <form id="formConstelacion" onsubmit="return handleForjarConstelacion(event)">
+                <input type="hidden" name="lang" id="inputLangConstelacion" value="es">
+                <input type="hidden" name="nombres" id="nombresHidden">
+                <input type="hidden" name="generos" id="generosHidden">
+                <input type="hidden" name="edades" id="edadesHidden">
+
+                <!-- Slider de cantidad -->
+                <div class="form-group">
+                    <label data-i18n="label_tamano_grupo">TAMAÑO DEL GRUPO</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="range" name="cantidad" id="cantidadSlider" min="2" max="4" value="3"
+                            oninput="updateCharacterFields()" style="flex: 1;">
+                        <span id="cantidadValue"
+                            style="font-weight: bold; color: var(--accent); width: 30px; text-align: center; font-size: 1.2rem;">3</span>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos de personajes -->
+                <div class="character-builder" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalizar
+                    </h4>
+                    <div id="characterFields">
+                        <!-- JS llenará esto -->
+                    </div>
+                </div>
+
+                <!-- Opciones avanzadas -->
+                <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label data-i18n="label_motivacion_villano">MOTIVACIÓN DEL VILLANO</label>
+                        <select name="tipo_villano">
+                            <option value="None">Aleatorio / Ninguna</option>
+                            <option value="Envidia">Envidia</option>
+                            <option value="Ideologia">Ideología</option>
+                            <option value="Obstaculo">Obstáculo</option>
+                            <option value="PuraMaldad">Pura Maldad</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_romance">ROMANCE</label>
+                        <select name="modo_romance">
+                            <option value="None">Aleatorio / Ninguno</option>
+                            <option value="Pareja">Pareja</option>
+                            <option value="Triangulo">Triángulo</option>
+                            <option value="AmorProhibido">Amor Prohibido</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_mundo">MUNDO</label>
+                        <select name="mundo">
+                            <option value="FantasiaMedieval">Fantasía Medieval</option>
+                            <option value="FantasiaOscura">Fantasía Oscura</option>
+                            <option value="FantasiaUrbana">Fantasía Urbana</option>
+                            <option value="SciFiCyberpunk">Cyberpunk</option>
+                            <option value="SciFiSpace">Sci-Fi Space Opera</option>
+                            <option value="SciFiPostApocaliptico">Post-Apocalíptico</option>
+                            <option value="Steampunk">Steampunk</option>
+                            <option value="Western">Western</option>
+                            <option value="Noir">Noir / Detectives</option>
+                            <option value="Realista">Realista</option>
+                            <option value="JaponFeudal">Japón Feudal</option>
+                            <option value="ChinaImperial">China Imperial</option>
+                            <option value="CoreaHistorica">Corea Histórica</option>
+                            <option value="MitologiaAsiatica">Mitología Asiática</option>
+                            <option value="AnimeFantasia">Anime Fantasía</option>
+                            <option value="Wuxia">Wuxia</option>
+                            <option value="Victoriano">Era Victoriana</option>
+                            <option value="MitologiaGriega">Mitología Griega</option>
+                            <option value="MitologiaNordica">Mitología Nórdica</option>
+                            <option value="PiratasCaribe">Piratas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="label_densidad">DENSIDAD</label>
+                        <select name="densidad_relaciones">
+                            <option value="Normal">Normal</option>
+                            <option value="Densa">Densa</option>
+                            <option value="Dispersa">Dispersa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" id="btnConstelacion" class="btn-forge" onclick="prepareSubmit()">
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORJAR
+                            CONSTELACIÓN</span>
+                    </button>
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">
+                        El proceso inicia inmediatamente.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS SECTION -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 80px;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
+                data-i18n="how_it_works_title">¿Cómo Funciona?</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Tu viaje de la
+                idea al personaje.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">⚙️</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step1_title">1. Configura</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Elige género, mundo... o
+                    déjalo al azar.</p>
+            </div>
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🔥</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step2_title">2. Forja</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">La IA genera psicología
+                    profunda e historia.</p>
+            </div>
+            <div
+                style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📥</div>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step3_title">3. Descarga</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Obtén una ficha HTML premium
+                    lista para usar.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CHARACTER DEMOS SECTION -->
+    <div style="width: 100%; max-width: 1200px; margin-top: 100px;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
+                data-i18n="demos_title">Ejemplos de Personajes</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="demos_subtitle">Mira la profundidad y
+                complejidad.</p>
+        </div>
+
+        <div class="demo-card-container">
+            <!-- Demo 1: Eldric -->
+            <a href="demo_aric.html" target="_blank" class="demo-card" style="text-decoration: none;">
+                <div class="demo-img-wrapper">
+                    <!-- Showing HTML Sheet Preview as requested -->
+                    <img src="/static/images/preview_ficha_eldric.png" class="demo-img" alt="Aric Sheet Preview">
+                </div>
+                <div class="demo-content">
+                    <h3 class="demo-name" data-i18n="demo_1_name">Aric, The Fallen Paladin</h3>
+                    <div class="demo-tags">
+                        <span class="demo-tag" data-i18n="tag_human">Human</span>
+                        <span class="demo-tag" data-i18n="tag_lvl5">Level 5</span>
+                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;"
+                            data-i18n="tag_oathbreaker">Oathbreaker</span>
+                    </div>
+                    <!-- Button removed, entire card is link -->
+                    <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
+                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> 📜
+                    </p>
+                </div>
+            </a>
+
+            <!-- Demo 2: Elara -->
+            <a href="demo_elara.html" target="_blank" class="demo-card" style="text-decoration: none;">
+                <div class="demo-img-wrapper">
+                    <img src="/static/images/preview_ficha_elara.png" class="demo-img" alt="Elara Sheet Preview">
+                </div>
+                <div class="demo-content">
+                    <h3 class="demo-name" data-i18n="demo_2_name">Elara, The Cyber-Hacker</h3>
+                    <div class="demo-tags">
+                        <span class="demo-tag" data-i18n="tag_elf">Elf</span>
+                        <span class="demo-tag" data-i18n="tag_lvl3">Level 3</span>
+                        <span class="demo-tag" style="border-color: #b026ff; color:#e0afff;"
+                            data-i18n="tag_netrunner">Netrunner</span>
+                    </div>
+                    <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
+                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> ⚡
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+    </div>
+    <!-- DISCLAIMER & FOOTER -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div
+        style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
+        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;"
+            data-i18n="aviso_legal_titulo">
+            Aviso Legal
+        </strong>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge es una herramienta de creación
+            asistida.</p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_2">Los personajes son generados dinámicamente.
+        </p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_3">Es responsabilidad del usuario descargar el
+            archivo.
+        </p>
+        <p data-i18n="aviso_legal_4">El uso implica que los resultados varían.</p>
+    </div>
+
+    <div class="footer" id="top">
+        <p data-i18n="footer_dev">Developed with ❤️ by DAITHON BENEDICTUS</p>
+    </div>
+
+    <!-- I18N SYSTEM -->
+    <script>
+        // Dictionary from Rust struct
+        const I18N = {
+            "en": {
+                "hero_tagline": "Soul Forging System",
+                "index_title": "SoulForge Engine",
+                "index_subtitle": "Procedural Narrative Generation & Deep Psychology System",
+                "card_alma_title": "⚔️ Forge Soul",
+                "card_alma_desc": "Create a unique character with psychological depth, history, and internal conflicts.",
+                "label_nombre": "Character Name (Optional)",
+                "label_nombre_placeholder": "Ex: Kael Shadowgreen (empty = random)",
+                "label_mundo": "World / Setting",
+                "label_tono": "Moral Tone",
+                "label_clase": "Class / Job",
+                "btn_forjar_alma": "Forge Soul",
+                "card_constelacion_title": "🌌 Forge Constellation",
+                "card_constelacion_desc": "Generate a group of interconnected characters with relationships, conflicts, and shared history.",
+                "label_tamano_grupo": "Group Size",
+                "label_personalizar": "Personalize Characters",
+                "label_motivacion_villano": "Antagonist Motivation",
+                "label_romance": "Romantic Dynamic",
+                "label_densidad": "Relationship Density",
+                "btn_forjar_constelacion": "Forge Constellation",
+                "how_it_works_title": "How Does SoulForge Work?",
+                "how_it_works_subtitle": "Your journey from idea to complete character in 3 simple steps",
+                "step1_title": "Configure",
+                "step1_desc": "Select gender, setting, moral tone and archetype. Leave fields empty for surprises.",
+                "step2_title": "Forge",
+                "step2_desc": "Our AI engine generates complete biography, deep psychology, wounds, conflicts and narrative arc.",
+                "step3_title": "Download",
+                "step3_desc": "Receive your character in premium HTML format, ready to print, save as PDF or integrate into your story.",
+                "demos_title": "Character Examples",
+                "demos_subtitle": "See the depth and complexity of our generated profiles",
+                "demo_1_name": "Aric, The Fallen Paladin",
+                "demo_2_name": "Elara, The Cyber-Hacker",
+                "demo_btn": "Preview Character",
+                "demo_click_cta": "CLICK TO VIEW SHEET",
+                "tag_human": "Human",
+                "tag_elf": "Elf",
+                "tag_lvl5": "Level 5",
+                "tag_lvl3": "Level 3",
+                "tag_oathbreaker": "Oathbreaker",
+                "tag_netrunner": "Netrunner",
+                "faq_title": "Frequently Asked Questions",
+                "faq_q1": "Is SoulForge really free?",
+                "faq_a1": "Yes. We offer a generous free tier. We use a token system for advanced features or heavy volume.",
+                "faq_q2": "Can I use the characters commercially?",
+                "faq_a2": "Absolutely. Once the character is forged, it belongs to you. You can use it in novels, RPG campaigns, or video games.",
+                "faq_q3": "Does the system save my characters?",
+                "faq_a3": "No. For privacy, everything is generated instantly and delivered to you. If you close the tab without downloading, it is lost forever.",
+                "aviso_legal_titulo": "Legal Notice",
+                "aviso_legal_1": "SoulForge is an assisted creation tool based on procedural generation.",
+                "aviso_legal_2": "Characters and stories are generated dynamically and appear only in your browser/download.",
+                "aviso_legal_3": "It is the user's responsibility to download and preserve the generated file.",
+                "aviso_legal_4": "System results may vary between executions.",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
+                "genero": "Gender",
+                "rol": "Role",
+                "edad": "Age"
+            },
+            "jp": {
+                "hero_tagline": "魂の鍛造システム",
+                "index_title": "SoulForge エンジン",
+                "index_subtitle": "手続き型物語生成と深層心理システム",
+                "card_alma_title": "⚔️ 魂を鍛造する",
+                "card_alma_desc": "心理的な深み、歴史、内部対立を持つユニークなキャラクターを作成します。",
+                "label_nombre": "キャラクター名（任意）",
+                "label_nombre_placeholder": "例：カエル（空欄＝ランダム）",
+                "label_mundo": "世界設定",
+                "label_tono": "道徳的なトーン",
+                "label_clase": "クラス / 職業",
+                "btn_forjar_alma": "魂を鍛造",
+                "card_constelacion_title": "🌌 星座を鍛造する",
+                "card_constelacion_desc": "関係、対立、共有された歴史を持つ相互接続されたキャラクターのグループを生成します。",
+                "label_tamano_grupo": "グループサイズ",
+                "label_personalizar": "キャラクターをカスタマイズ",
+                "label_motivacion_villano": "敵対者の動機",
+                "label_romance": "ロマンチックなダイナミクス",
+                "label_densidad": "関係の密度",
+                "btn_forjar_constelacion": "星座を鍛造",
+                "how_it_works_title": "SoulForgeの仕組み",
+                "how_it_works_subtitle": "アイデアから完成キャラクターまで3つの簡単なステップ",
+                "step1_title": "設定",
+                "step1_desc": "性別、設定、道徳的トーン、元型を選択。空欄にするとサプライズが生成されます。",
+                "step2_title": "鍛造",
+                "step2_desc": "AIエンジンが完全な伝記、深層心理、傷、対立、物語のアークを生成します。",
+                "step3_title": "ダウンロード",
+                "step3_desc": "プレミアムHTML形式でキャラクターを受け取り、印刷、PDF保存、または物語に統合できます。",
+                "demos_title": "キャラクター例",
+                "demos_subtitle": "生成されたプロファイルの深みと複雑さをご覧ください",
+                "demo_1_name": "アリック（堕ちた聖騎士）",
+                "demo_2_name": "エララ（サイバーハッカー）",
+                "demo_btn": "キャラクターをプレビュー",
+                "demo_click_cta": "シートを表示するにはクリック",
+                "tag_human": "人間",
+                "tag_elf": "エルフ",
+                "tag_lvl5": "レベル 5",
+                "tag_lvl3": "レベル 3",
+                "tag_oathbreaker": "誓いを破る者",
+                "tag_netrunner": "ネットランナー",
+                "faq_title": "よくある質問",
+                "faq_q1": "SoulForgeは本当に無料ですか？",
+                "faq_a1": "はい。寛大な無料枠を提供しています。高度な機能や大量生成にはトークンシステムを使用します。",
+                "faq_q2": "キャラクターを商用利用できますか？",
+                "faq_a2": "もちろんです。鍛造されたキャラクターはあなたのものです。小説、RPGキャンペーン、ビデオゲームなどで自由に使用してください。",
+                "faq_q3": "システムはキャラクターを保存しますか？",
+                "faq_a3": "いいえ。プライバシーのため、すべて即座に生成され、あなたに配信されます。ダウンロードせずにタブを閉じると、永遠に失われます。",
+                "aviso_legal_titulo": "法的通知",
+                "aviso_legal_1": "SoulForgeは手続き型生成に基づく創作支援ツールです。",
+                "aviso_legal_2": "キャラクターと物語は動的に生成され、あなたのブラウザ/ダウンロードファイルにのみ存在します。",
+                "aviso_legal_3": "生成されたファイルのダウンロードと保存はユーザーの責任となります。",
+                "aviso_legal_4": "システムの結果は実行ごとに異なる場合があります。",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
+                "genero": "性別",
+                "rol": "役割",
+                "edad": "年齢"
+            },
+            "es": {
+                "hero_tagline": "Sistema de Forja de Almas",
+                "index_title": "SoulForge Engine",
+                "index_subtitle": "Sistema de Generación Procedural de Narrativa y Psicología Profunda",
+                "card_alma_title": "⚔️ Forjar Alma",
+                "card_alma_desc": "Crea un personaje único con profundidad psicológica, historia y conflictos internos.",
+                "label_nombre": "Nombre del Personaje (Opcional)",
+                "label_nombre_placeholder": "Ej: Kael Sombraverde (vacío = aleatorio)",
+                "label_mundo": "Mundo / Ambientación",
+                "label_tono": "Tono Moral",
+                "label_clase": "Clase / Trabajo",
+                "btn_forjar_alma": "Forjar Alma",
+                "card_constelacion_title": "🌌 Forjar Constelación",
+                "card_constelacion_desc": "Genera un grupo de personajes interconectados con relaciones, conflictos y una historia compartida.",
+                "label_tamano_grupo": "Tamaño del Grupo",
+                "label_personalizar": "Personalizar Personajes",
+                "label_motivacion_villano": "Motivación Antagonista",
+                "label_romance": "Dinámica Romántica",
+                "label_densidad": "Densidad de Relaciones",
+                "btn_forjar_constelacion": "Forjar Constelación",
+                "how_it_works_title": "¿Cómo Funciona SoulForge?",
+                "how_it_works_subtitle": "Tu viaje de la idea al personaje completo en 3 simples pasos",
+                "step1_title": "Configura",
+                "step1_desc": "Selecciona el género, ambientación, tono moral y arquetipo. Deja campos vacíos para sorpresas.",
+                "step2_title": "Forja",
+                "step2_desc": "Nuestro motor de IA genera biografía completa, psicología profunda, heridas, conflictos y arco narrativo.",
+                "step3_title": "Descarga",
+                "step3_desc": "Recibe tu personaje en formato HTML premium, listo para imprimir, guardar como PDF o integrar en tu historia.",
+                "demos_title": "Ejemplos de Personajes",
+                "demos_subtitle": "Descubre la profundidad y complejidad de nuestros perfiles",
+                "demo_1_name": "Aric, El Paladín Caído",
+                "demo_2_name": "Elara, La Cyber-Hacker",
+                "demo_btn": "Ver Personaje",
+                "demo_click_cta": "VER FICHA DE PERSONAJE",
+                "tag_human": "Humano",
+                "tag_elf": "Elfo",
+                "tag_lvl5": "Nivel 5",
+                "tag_lvl3": "Nivel 3",
+                "tag_oathbreaker": "Rompejuramentos",
+                "tag_netrunner": "Netrunner",
+                "faq_title": "Preguntas Frecuentes",
+                "faq_q1": "¿Es SoulForge realmente gratis?",
+                "faq_a1": "Sí. Ofrecemos un nivel gratuito generoso. Usamos un sistema de tokens para funciones avanzadas o alto volumen.",
+                "faq_q2": "¿Puedo usar los personajes comercialmente?",
+                "faq_a2": "Absolutamente. Una vez forjado, el personaje te pertenece. Puedes usarlo en novelas, campañas de rol o videojuegos.",
+                "faq_q3": "¿El sistema guarda mis personajes?",
+                "faq_a3": "Depende del modo. Para 'Novelas/Historias' NO guardamos nada (privacidad total). Pero si eliges 'Jugador de Rol (RPG)', tu personaje SE GUARDA para usarlo en el Tablero Virtual (VTT) y partidas online.",
+                "aviso_legal_titulo": "Aviso Legal",
+                "aviso_legal_1": "SoulForge es una herramienta de creación asistida basada en generación procedural e inteligencia artificial.",
+                "aviso_legal_2": "Los personajes e historias se generan dinámicamente y no se almacenan en nuestros servidores.",
+                "aviso_legal_3": "Es responsabilidad del usuario descargar y conservar el archivo generado.",
+                "aviso_legal_4": "El uso del sistema implica la aceptación de que los resultados pueden variar entre ejecuciones.",
+                "footer_dev": "Developed with ❤️ by DAITHON BENEDICTUS",
+                "genero": "Género",
+                "rol": "Rol",
+                "edad": "Edad"
+            }
+        };
+
+        const OPTION_TRANSLATIONS = {
+            'en': {
+                '': '-- Random --', 'None': '-- Random / None --', 'Masculino': 'Male', 'Femenino': 'Female',
+                'Heroe': 'Hero', 'Villano': 'Villain', 'Mentor': 'Mentor', 'Aliado': 'Ally',
+                'Bufon': 'Jester', 'Victima': 'Victim', 'Profeta': 'Prophet', 'Guardian': 'Guardian', 'Embaucador': 'Trickster',
+                'Luminoso': 'Luminous / Good', 'Claro': 'Light', 'Gris': 'Grey / Neutral', 'Oscuro': 'Dark', 'Abismal': 'Abyssal / Evil',
+                'Envidia': 'Envy', 'Ideologia': 'Ideology', 'Obstaculo': 'Simple Obstacle', 'PuraMaldad': 'Pure Evil',
+                'Pareja': 'Couple', 'Triangulo': 'Triangle', 'AmorProhibido': 'Forbidden Love',
+                'FantasiaMedieval': 'Medieval Fantasy', 'FantasiaOscura': 'Dark Fantasy', 'FantasiaUrbana': 'Urban Fantasy',
+                'SciFiCyberpunk': 'Cyberpunk', 'SciFiSpace': 'Space Opera', 'SciFiPostApocaliptico': 'Post-Apocalyptic',
+                'Steampunk': 'Steampunk', 'Western': 'Western', 'Noir': 'Noir', 'Realista': 'Realistic',
+                'JaponFeudal': 'Feudal Japan (Sengoku)', 'ChinaImperial': 'Imperial China', 'CoreaHistorica': 'Historical Korea (Joseon)',
+                'MitologiaAsiatica': 'Asian Mythology', 'AnimeFantasia': 'Anime Fantasy', 'Wuxia': 'Wuxia / Martial Arts',
+                'Victoriano': 'Victorian Era', 'MitologiaGriega': 'Greek Mythology', 'MitologiaNordica': 'Norse Mythology', 'PiratasCaribe': 'Pirates',
+                'Normal': 'Relationship Density: Normal', 'Densa': 'Dense', 'Dispersa': 'Sparse'
+            },
+            'jp': {
+                '': '-- ランダム --', 'None': '-- ランダム / 無し --', 'Masculino': '男性', 'Femenino': '女性',
+                'Heroe': '英雄 (Hero)', 'Villano': '悪役 (Villain)', 'Mentor': '師匠 (Mentor)', 'Aliado': '味方 (Ally)',
+                'Bufon': '道化師 (Jester)', 'Victima': '犠牲者 (Victim)', 'Profeta': '予言者 (Prophet)', 'Guardian': '守護者 (Guardian)', 'Embaucador': 'トリックスター',
+                'Luminoso': '光 (Good)', 'Claro': '明', 'Gris': '灰色 (Neutral)', 'Oscuro': '闇 (Dark)', 'Abismal': '深淵 (Evil)',
+                'Envidia': '嫉妬', 'Ideologia': 'イデオロギー', 'Obstaculo': '障害', 'PuraMaldad': '純粋悪',
+                'Pareja': 'カップル', 'Triangulo': '三角関係', 'AmorProhibido': '禁断の愛',
+                'FantasiaMedieval': '中世ファンタジー', 'FantasiaOscura': 'ダークファンタジー', 'FantasiaUrbana': '現代ファンタジー',
+                'SciFiCyberpunk': 'サイバーパンク', 'SciFiSpace': 'スペースオペラ', 'SciFiPostApocaliptico': 'ポストアポカリプス',
+                'Steampunk': 'スチームパンク', 'Western': '西部劇', 'Noir': 'ノワール / 探偵', 'Realista': '現実的',
+                'JaponFeudal': '戦国時代 / 時代劇', 'ChinaImperial': '中華帝國', 'CoreaHistorica': '朝鮮時代',
+                'MitologiaAsiatica': 'アジア神話', 'AnimeFantasia': 'アニメファンタジー', 'Wuxia': '武俠',
+                'Victoriano': 'ヴィクトリア朝', 'MitologiaGriega': 'ギリシャ神話', 'MitologiaNordica': '北欧神話', 'PiratasCaribe': '海賊',
+                'Normal': '関係密度：普通', 'Densa': '密', 'Dispersa': '疎'
+            },
+            'es': {
+                '': '-- Random --', 'None': '-- Aleatorio / Ninguno --', 'Masculino': 'Masculino', 'Femenino': 'Femenino',
+                'Heroe': 'Héroe', 'Villano': 'Villano', 'Mentor': 'Mentor', 'Aliado': 'Aliado',
+                'Bufon': 'Bufón', 'Victima': 'Víctima', 'Profeta': 'Profeta', 'Guardian': 'Guardián', 'Embaucador': 'Embaucador',
+                'Luminoso': 'Luminoso', 'Claro': 'Claro', 'Gris': 'Gris', 'Oscuro': 'Oscuro', 'Abismal': 'Abismal',
+                'Envidia': 'Envidia', 'Ideologia': 'Ideología', 'Obstaculo': 'Obstáculo', 'PuraMaldad': 'Pura Maldad',
+                'Pareja': 'Pareja', 'Triangulo': 'Triángulo', 'AmorProhibido': 'Amor Prohibido',
+                'FantasiaMedieval': 'Fantasía Medieval', 'FantasiaOscura': 'Fantasía Oscura', 'FantasiaUrbana': 'Fantasía Urbana',
+                'SciFiCyberpunk': 'Cyberpunk', 'SciFiSpace': 'Space Opera', 'SciFiPostApocaliptico': 'Post-Apocalíptico',
+                'Steampunk': 'Steampunk', 'Western': 'Western', 'Noir': 'Noir', 'Realista': 'Realista',
+                'JaponFeudal': 'Japón Feudal', 'ChinaImperial': 'China Imperial', 'CoreaHistorica': 'Corea Histórica',
+                'MitologiaAsiatica': 'Mitología Asiática', 'AnimeFantasia': 'Anime Fantasía', 'Wuxia': 'Wuxia',
+                'Victoriano': 'Victoriano', 'MitologiaGriega': 'Mitología Griega', 'MitologiaNordica': 'Mitología Nórdica', 'PiratasCaribe': 'Piratas del Caribe',
+                'Normal': 'Densidad: Normal', 'Densa': 'Densa', 'Dispersa': 'Dispersa'
+            }
+        };
+
+        const OPTION_TRANSLATIONS_CLASSES = {
+            'en': {
+                'Guerrero': 'Warrior', 'Mago': 'Mage', 'Picaro': 'Rogue', 'Clerigo': 'Cleric', 'Paladin': 'Paladin',
+                'Barbaro': 'Barbarian', 'Bardo': 'Bard', 'Druida': 'Druid', 'Monje': 'Monk', 'Artificiero': 'Artificer',
+                'Cazador': 'Ranger', 'Brujo': 'Warlock', 'Hechicero': 'Sorcerer', 'Necromancer': 'Necromancer'
+            },
+            'jp': {
+                'Guerrero': '戦士', 'Mago': '魔術師', 'Picaro': '盗賊', 'Clerigo': '聖職者', 'Paladin': '聖騎士',
+                'Barbaro': '野蛮人', 'Bardo': '吟遊詩人', 'Druida': 'ドルイド', 'Monje': 'モンク', 'Artificiero': 'アーティフィサー',
+                'Cazador': '狩人', 'Brujo': 'ウォーロック', 'Hechicero': 'ソーサラー', 'Necromancer': 'ネクロマンサー'
+            },
+            'es': {
+                'Guerrero': 'Guerrero', 'Mago': 'Mago', 'Picaro': 'Pícaro', 'Clerigo': 'Clérigo', 'Paladin': 'Paladín',
+                'Barbaro': 'Bárbaro', 'Bardo': 'Bardo', 'Druida': 'Druida', 'Monje': 'Monje', 'Artificiero': 'Artificiero',
+                'Cazador': 'Cazador', 'Brujo': 'Brujo', 'Hechicero': 'Hechicero', 'Necromancer': 'Nigromante'
+            }
+        };
+
+        function changeLanguage(lang) {
+            // Validate language
+            if (!['es', 'en', 'jp'].includes(lang)) lang = 'es';
+
+            // Update URL hash without scrolling
+            history.replaceState(null, null, '#' + lang);
+
+            // 1. Text Content
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.textContent = I18N[lang][key];
+                }
+            });
+
+            // 2. Placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.placeholder = I18N[lang][key];
+                }
+            });
+
+            // 3. Select Options Translation
+            const dict = OPTION_TRANSLATIONS[lang];
+            const classDict = OPTION_TRANSLATIONS_CLASSES[lang];
+            if (dict) {
+                document.querySelectorAll('select').forEach(sel => {
+                    Array.from(sel.options).forEach(opt => {
+                        // Original value logic relies on knowing the original key, which is the value attribute
+                        if (dict[opt.value]) {
+                            opt.textContent = dict[opt.value];
+                        } else if (classDict[opt.value]) { // Check for class translations
+                            opt.textContent = classDict[opt.value];
+                        }
+                    });
+                });
+            }
+
+            // 4. Update hidden inputs for form submission
+            const langInputP = document.getElementById('inputLangPersonaje');
+            if (langInputP) langInputP.value = lang;
+
+            const langInputC = document.getElementById('inputLangConstelacion');
+            if (langInputC) langInputC.value = lang;
+
+            // 5. Update Opacity of Selectors
+            document.querySelectorAll('.lang-selector a').forEach(a => {
+                if (a.getAttribute('href') === '#' + lang) {
+                    a.style.opacity = '1';
+                } else {
+                    a.style.opacity = '0.4';
+                }
+            });
+
+            // Update character fields labels if they exist
+            updateCharacterFields();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            // Check hash
+            let lang = window.location.hash.replace('#', '') || 'es';
+            changeLanguage(lang);
+        });
+
+        function toggleRaceField() {
+            const rol = document.getElementById('rolSelect').value;
+            const race = document.getElementById('razaGroup');
+            if (rol === 'Jugador') {
+                race.style.display = 'block';
+            } else {
+                race.style.display = 'none';
+            }
+        }
+
+        function updateCharacterFields() {
+            const slider = document.getElementById('cantidadSlider');
+            if (!slider) return;
+
+            const cantidad = slider.value;
+            const valDisplay = document.getElementById('cantidadValue');
+            if (valDisplay) valDisplay.textContent = cantidad;
+
+            const container = document.getElementById('characterFields');
+            if (!container) return;
+
+            // Capture current values to preserve them
+            const currentValues = {};
+            container.querySelectorAll('.character-row').forEach(row => {
+                const idx = row.querySelector('.num') ? row.querySelector('.num').textContent.replace('#', '') : null;
+                if (idx) {
+                    const nInput = row.querySelector(`input[id^="nombre"]`);
+                    const eInput = row.querySelector(`input[id^="edad"]`);
+                    const gSelect = row.querySelector(`select[id^="genero"]`);
+
+                    currentValues[idx] = {
+                        nombre: nInput ? nInput.value : '',
+                        edad: eInput ? eInput.value : '',
+                        genero: gSelect ? gSelect.value : ''
+                    };
+                }
+            });
+
+            container.innerHTML = '';
+
+            // Get current lang for labels
+            const langInput = document.getElementById('inputLangConstelacion');
+            let lang = langInput ? langInput.value : 'es';
+
+            // Simple label mapping for dynamic fields
+            const lblName = (lang === 'jp') ? '名前' : (lang === 'en' ? 'Name' : 'Nombre');
+            const lblAge = (lang === 'jp') ? '年齢' : (lang === 'en' ? 'Age' : 'Edad');
+            const lblGen = (lang === 'jp') ? '性別' : (lang === 'en' ? 'Gender' : 'Género');
+            const optM = (lang === 'jp') ? '男' : (lang === 'en' ? 'M' : 'M');
+            const optF = (lang === 'jp') ? '女' : (lang === 'en' ? 'F' : 'F');
+
+
+            for (let i = 1; i <= cantidad; i++) {
+                const prev = currentValues[i] || { nombre: '', edad: '', genero: '' };
+                const row = document.createElement('div');
+                row.className = 'character-row';
+                row.innerHTML = `
+                    <span class="num" style="display:none">#${i}</span>
+                    <strong style="color:var(--accent); margin-right:5px;">#${i}</strong>
+                    <input type="text" id="nombre${i}" value="${prev.nombre}" placeholder="${lblName}" style="flex: 2;">
+                    <input type="number" id="edad${i}" value="${prev.edad}" placeholder="${lblAge}" min="10" max="900" style="width: 70px;">
+                    <select id="genero${i}" style="flex: 1;">
+                        <option value="" ${prev.genero === '' ? 'selected' : ''}>${lblGen}</option>
+                        <option value="M" ${prev.genero === 'M' ? 'selected' : ''}>${optM}</option>
+                        <option value="F" ${prev.genero === 'F' ? 'selected' : ''}>${optF}</option>
+                    </select>
+                `;
+                container.appendChild(row);
+            }
+        }
+
+        function prepareSubmit() {
+            const slider = document.getElementById('cantidadSlider');
+            if (!slider) return;
+            const cantidad = slider.value;
+
+            const nombres = [];
+            const generos = [];
+            const edades = [];
+
+            for (let i = 1; i <= cantidad; i++) {
+                const nInput = document.getElementById(`nombre${i}`);
+                const gInput = document.getElementById(`genero${i}`);
+                const eInput = document.getElementById(`edad${i}`);
+
+                nombres.push(nInput ? nInput.value.trim() : '');
+                generos.push(gInput ? gInput.value : '');
+                edades.push(eInput ? eInput.value : '');
+            }
+
+            document.getElementById('nombresHidden').value = nombres.join(',');
+            document.getElementById('generosHidden').value = generos.join(',');
+            document.getElementById('edadesHidden').value = edades.join(',');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SOULFORGE ENGINE - COMPLETE SYSTEM
+        // ═══════════════════════════════════════════════════════════════════════
+
+        const API_BASE = 'https://soulforge.up.railway.app';
+        const PAYPAL_ME_LINK = 'https://paypal.me/YOURPAYPAL/5'; // CAMBIAR POR TU LINK
+
+        // --- TOKEN SYSTEM ---
+        function getTokens() {
+            return parseInt(localStorage.getItem('soulforge_tokens') || '0');
+        }
+        function setTokens(n) {
+            localStorage.setItem('soulforge_tokens', n.toString());
+            updateTokenDisplay();
+        }
+        function useToken() {
+            const current = getTokens();
+            if (current > 0) {
+                setTokens(current - 1);
+                return true;
+            }
+            return false;
+        }
+        function updateTokenDisplay() {
+            const display = document.getElementById('creditsDisplay');
+            const count = document.getElementById('creditsCount');
+            const tokens = getTokens();
+            if (tokens > 0) {
+                display.style.display = 'block';
+                count.textContent = tokens;
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        // --- PAYPAL MODAL ---
+        function showPayPalModal(type) {
+            const lang = document.getElementById('inputLangPersonaje').value || 'es';
+            const texts = {
+                es: {
+                    title: '💳 Acceso Premium Requerido',
+                    desc: 'Para forjar este ' + (type === 'alma' ? 'personaje' : 'grupo') + ', necesitas un token VIP.',
+                    price: 'Precio: $5 USD = 5 Tokens',
+                    btn: 'Pagar con PayPal',
+                    token: '¿Ya pagaste? Ingresa tu código:',
+                    tokenBtn: 'Activar Token',
+                    close: 'Cancelar'
+                },
+                en: {
+                    title: '💳 Premium Access Required',
+                    desc: 'To forge this ' + (type === 'alma' ? 'character' : 'group') + ', you need a VIP token.',
+                    price: 'Price: $5 USD = 5 Tokens',
+                    btn: 'Pay with PayPal',
+                    token: 'Already paid? Enter your code:',
+                    tokenBtn: 'Activate Token',
+                    close: 'Cancel'
+                },
+                jp: {
+                    title: '💳 プレミアムアクセスが必要',
+                    desc: 'この' + (type === 'alma' ? 'キャラクター' : 'グループ') + 'を鍛造するにはVIPトークンが必要です。',
+                    price: '価格: $5 USD = 5トークン',
+                    btn: 'PayPalで支払う',
+                    token: '支払い済み？コードを入力:',
+                    tokenBtn: 'トークンを有効化',
+                    close: 'キャンセル'
+                }
+            };
+            const t = texts[lang] || texts.es;
+
+            const modal = document.createElement('div');
+            modal.id = 'paypalModal';
+            modal.innerHTML = `
+                <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;">
+                    <div style="background:#1a1a1f;border:2px solid var(--accent);border-radius:16px;padding:40px;max-width:450px;text-align:center;">
+                        <h2 style="color:var(--accent);margin-bottom:20px;font-family:'Cinzel',serif;">${t.title}</h2>
+                        <p style="color:var(--text-dim);margin-bottom:20px;">${t.desc}</p>
+                        <p style="color:#4ade80;font-weight:bold;margin-bottom:30px;">${t.price}</p>
+                        
+                        <!-- NEW PAYPAL BUTTON FORM -->
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-bottom:20px;">
+                            <input type="hidden" name="cmd" value="_s-xclick" />
+                            <input type="hidden" name="hosted_button_id" value="AUH69VTF7QFH8" />
+                            <input type="hidden" name="currency_code" value="USD" />
+                            <!-- Custom styling for the image input to look like a button or keep default -->
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Buy Now" style="transform: scale(1.2); cursor:pointer;" />
+                        </form>
+                        
+                        <div style="border-top:1px solid #333;padding-top:20px;margin-top:20px;">
+                            <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:10px;">${t.token}</p>
+                            <input type="text" id="tokenInput" placeholder="XXXX-XXXX-XXXX" 
+                                   style="width:100%;padding:12px;background:#0a0a0f;border:1px solid #333;border-radius:8px;color:white;text-align:center;margin-bottom:10px;">
+                            <button onclick="activateToken('${type}')" 
+                                    style="width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">
+                                ${t.tokenBtn}
+                            </button>
+                        </div>
+                        
+                        <button onclick="closePayPalModal()" 
+                                style="margin-top:20px;background:transparent;border:1px solid #555;color:#888;padding:10px 30px;border-radius:8px;cursor:pointer;">
+                            ${t.close}
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closePayPalModal() {
+            const modal = document.getElementById('paypalModal');
+            if (modal) modal.remove();
+        }
+
+        function activateToken(type) {
+            const code = document.getElementById('tokenInput').value.trim().toUpperCase();
+            // Simple validation - in production this would check against a server
+            if (code.length >= 8) {
+                setTokens(getTokens() + 5); // Add 5 tokens
+                closePayPalModal();
+                alert('✅ Token activado! Tienes ' + getTokens() + ' usos disponibles.');
+                // Retry the forge
+                if (type === 'alma') {
+                    document.getElementById('formPersonaje').dispatchEvent(new Event('submit'));
+                } else {
+                    document.getElementById('formConstelacion').dispatchEvent(new Event('submit'));
+                }
+            } else {
+                alert('❌ Código inválido. Verifica tu token.');
+            }
+        }
+
+        // --- LOADING OVERLAY ---
+        function showLoading(message) {
+            const overlay = document.createElement('div');
+            overlay.id = 'loadingOverlay';
+            overlay.innerHTML = `
+                <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                    <div style="width:60px;height:60px;border:4px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;"></div>
+                    <p style="color:var(--accent);margin-top:20px;font-family:'Cinzel',serif;">${message}</p>
+                </div>
+                <style>@keyframes spin{to{transform:rotate(360deg);}}</style>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.remove();
+        }
+
+
+        // --- SOUL RPG ENGINE (V4.5 Logic) ---
+        class SoulRPGEngine {
+            constructor() {
+                this.statIcons = {
+                    STR: '⚔️', DEX: '🏹', CON: '🛡️',
+                    INT: '🔮', WIS: '👁️', CHA: '🎭'
+                };
+            }
+
+            process(characterData, formData) {
+                // 1. Basic Stat Generation (Standard 10-18 range)
+                let stats = {
+                    STR: 10 + Math.floor(Math.random() * 8),
+                    DEX: 10 + Math.floor(Math.random() * 8),
+                    CON: 10 + Math.floor(Math.random() * 8),
+                    INT: 10 + Math.floor(Math.random() * 8),
+                    WIS: 10 + Math.floor(Math.random() * 8),
+                    CHA: 10 + Math.floor(Math.random() * 8)
+                };
+
+                const age = parseInt(formData.get('edad_fija')) || 25; // Use edad_fija from form
+                const moralTone = formData.get('tono_moral') || 'Gris'; // Use tono_moral from form
+                const userClass = formData.get('clase'); // New Field
+                const userRole = formData.get('rol');
+                const userRaza = formData.get('raza');
+
+                // Override role/class if user specified one
+                if (userClass) {
+                    characterData.clase = userClass; // We save it as 'clase'
+                }
+                if (userRole) {
+                    characterData.rol = userRole;
+                }
+                if (userRaza) {
+                    characterData.raza = userRaza;
+                }
+                characterData.edad = age;
+                characterData.tono = moralTone;
+
+
+                // 2. Age Modifiers
+                let ageTraits = [];
+                if (age < 25) {
+                    stats.STR += 2; stats.DEX += 2; stats.CON += 2;
+                    stats.WIS -= 2;
+                    ageTraits.push("Vitalidad Juvenil", "Impetuoso");
+                } else if (age > 50) {
+                    stats.STR -= 2; stats.DEX -= 2; stats.CON -= 2;
+                    stats.WIS += 3; stats.INT += 1;
+                    ageTraits.push("Sabiduría Ancestral", "Cuerpo Frágil");
+                    // Chance for Heirloom
+                    if (Math.random() > 0.5) characterData.inventory = ["Artefacto Heredado: Reloj de Arena de Hueso"];
+                }
+
+                // 3. Soul Tension & Moral Matrix
+                let soulTension = 0; // 0-100
+                if (moralTone === 'Oscuro') {
+                    soulTension = 60 + Math.floor(Math.random() * 30); // High tension start
+                    characterData.shadow_bonus = "Furia de Sombra (+1d6 Dmg cuando Tensión > 80)";
+                } else if (moralTone === 'Luminoso') {
+                    soulTension = 10 + Math.floor(Math.random() * 20); // Enlightened start
+                    characterData.purity_bonus = "Sintonía Fina (Ventaja en Perspicacia)";
+                } else { // Gris
+                    soulTension = 30 + Math.floor(Math.random() * 40);
+                }
+
+                // 4. Moral Matrix Progress (Placeholder for now)
+                const moralProgress = Math.floor(Math.random() * 100);
+
+                // 5. Soul Resonance (Procedural Perks)
+                const perks = this.generateSoulPerks(characterData, stats);
+
+                // 6. Narrative Depth (Origin, Turning Point, Light)
+                const narrative = this.generateNarrativeFlow(characterData, age, moralTone);
+
+                // 7. Timeline
+                const timeline = this.generateTimeline(age, moralTone);
+
+                // 8. Economy & Equipment (New System)
+                const gear = this.generateEquipment(characterData.clase || characterData.rol, age, moralTone);
+
+                // 9. Meta-Tagging
+                const tags = this.generateTags(characterData);
+
+                // Construct Enhanced RPG JSON (Final Structure)
+                return {
+                    ...characterData,
+                    isRPG: true,
+                    rpg_stats: stats,
+                    mechanics: {
+                        soul_tension: soulTension,
+                        age_traits: ageTraits,
+                        moral_matrix: {
+                            current_stage: "Mentira",
+                            conflict: characterData.psicologia.mentira,
+                            resolution: characterData.psicologia.verdad,
+                            progress: moralProgress
+                        },
+                        soul_perks: perks
+                    },
+                    narrative_arc: narrative,
+                    timeline: timeline,
+                    economy: gear.economy,
+                    equipment: gear.equipment,
+                    inventory: gear.inventory,
+                    meta_tags: tags
+                };
+            }
+
+            generateNarrativeFlow(data, age, tone) {
+                // Procedural Narrative Generation based on Role/Class
+                const role = data.clase || data.rol || "Aventurero";
+
+                // 1. ORIGINS
+                let origins = [
+                    "Creció escuchando historias de héroes caídos, soñando con superar sus leyendas.",
+                    "Su infancia estuvo marcada por la disciplina férrea de un mentor que ya no está.",
+                    "Nacido en la pobreza, aprendió que la única ley real es la fuerza de voluntad."
+                ];
+                if (role.match(/Mago|Hechicero/i)) origins = ["La magia se manifestó temprano, un don peligroso que casi consume su hogar.", "Estudió en las torres de marfil hasta que descubrió una verdad prohibida."];
+                else if (role.match(/Picaro|Crimen/i)) origins = ["Las calles fueron su escuela; las sombras, su única familia.", "Huyó de una familia noble para encontrar libertad en el barro."];
+
+                // 2. TURNING POINT
+                let turningPoints = [
+                    "Todo cambió la noche que la luna se tornó roja y las bestias hablaron.",
+                    "Una traición inesperada le enseñó a nunca dar la espalda, ni siquiera a un amigo.",
+                    "Encontró un artefacto antiguo que le susurró su verdadero nombre."
+                ];
+
+                // 3. MOMENT OF LIGHT (The Anchor)
+                let lights = [
+                    "Aún conserva la flauta de madera que talló su padre; su sonido le trae paz en las guardias frías.",
+                    "Recuerda la sonrisa de alguien a quien salvó sin pedir nada a cambio. Esa memoria es su escudo.",
+                    "Hay un jardín secreto en su mente, un lugar de calma absoluta al que va cuando el mundo arde."
+                ];
+
+                const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+                return {
+                    origin: pick(origins),
+                    turning_point: pick(turningPoints),
+                    moment_of_light: pick(lights)
+                };
+            }
+
+            generateSoulPerks(data, stats) {
+                const perks = [];
+
+                // Perk 1: Class/Role Based
+                let rolePerk = { name: "Golpe Básico", type: "COMBAT", trigger: "Ataque", effect: "Daño normal.", flavor: "Técnica estándar." };
+                const role = data.clase || data.rol || "Aventurero";
+
+                if (role.match(/Guerrero|Barbaro|Paladin/i)) {
+                    rolePerk = { name: "Furia Vindictiva", type: "COMBAT", trigger: "Recibir Daño", effect: "Próximo ataque tiene Ventaja.", flavor: "El dolor solo alimenta su determinación." };
+                } else if (role.match(/Mago|Hechicero|Brujo/i)) {
+                    rolePerk = { name: "Eco Arcano", type: "MAGIC", trigger: "Lanzar Hechizo", effect: "Recupera 1 espacio de conjuro con 5-6 en 1d6.", flavor: "La magia residual se aferra a su alma." };
+                } else if (role.match(/Picaro|Cazador/i)) {
+                    rolePerk = { name: "Sombra Oportuna", type: "STEALTH", trigger: "Ocultarse", effect: "+5 al sigilo si está herido.", flavor: "Sabe desaparecer cuando la muerte acecha." };
+                }
+                perks.push(rolePerk);
+
+                // Perk 2: High Stat Based
+                let statPerk = { name: "Voluntad de Hierro", type: "PASIVA", trigger: "Siempre", effect: "+1 HP por nivel.", flavor: "Duro de matar." };
+                if (stats.STR >= 15) statPerk = { name: "Rompehuesos", type: "COMBAT", trigger: "Crítico", effect: "El enemigo cae derribado.", flavor: "Su fuerza es imparable." };
+                else if (stats.INT >= 15) statPerk = { name: "Mente Analítica", type: "PASIVA", trigger: "Investigación", effect: "Detecta mentiras automáticamente.", flavor: "Ve los patrones donde otros ven caos." };
+                else if (stats.CHA >= 15) statPerk = { name: "Aura de Mando", type: "SOCIAL", trigger: "Persuasión", effect: "Los aliados ganan inmunidad al miedo.", flavor: "Su voz inspira valor." };
+                perks.push(statPerk);
+
+                // Perk 3: Flaw/Psychology Based
+                perks.push({
+                    name: "Cicatriz Psíquica",
+                    type: "RASGO",
+                    trigger: "Situación de Stress",
+                    effect: "Desventaja si revive su trauma.",
+                    flavor: `Su pasado (${data.psicologia.herida || "oscuro"}) aún lo persigue.`
+                });
+
+                return perks;
+            }
+
+            generateTimeline(age, tone) {
+                const events = [];
+                const origin = { year: "Año 0", event: "Nacimiento bajo un presagio incierto.", scar: null };
+                events.push(origin);
+                if (age > 15) events.push({ year: `Año ${Math.floor(age / 2)}`, event: "Una pérdida define su carácter.", scar: "Cicatriz Emocional: Desconfianza" });
+                if (age > 25) events.push({ year: "Actualidad", event: "Busca un propósito mayor en este mundo roto.", scar: null });
+                return events;
+            }
+
+            generateTags(data) {
+                const tags = ["npc_compatible"];
+                if (data.clase) tags.push(data.clase.toLowerCase());
+                if (data.rol) tags.push(data.rol.toLowerCase());
+                if (data.raza) tags.push(data.raza.toLowerCase());
+                if (data.tono) tags.push(data.tono.toLowerCase());
+                return tags;
+            }
+        }
+
+        const rpgEngine = new SoulRPGEngine();
+
+        function showRPGCharacterHTML(p) {
+            // PREMIUM RPG SHEET GENERATOR (Aric V3 Standard)
+            const jsonString = encodeURIComponent(JSON.stringify(p, null, 2));
+
+            // Icons Map (SVG Paths)
+            const icons = {
+                STR: 'M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z M18,6 L6,18 L8,20 L15,13 L19,9 L22,6 L18,6 Z',
+                DEX: 'M12,2 L12,22 M2,12 L22,12 M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z',
+                CON: 'M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z',
+                INT: 'M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 C12,22 21,16.55 21,11 C21,6.03 16.97,2 12,2 Z M12,18 C9,18 9,16 9,14 C9,12 11,12 11,10 C11,9 12,9 12,9 C12,9 13,9 13,10 C13,12 15,12 15,14 C15,16 15,18 12,18 Z',
+                WIS: 'M12,6 C13.66,6 15,7.34 15,9 C15,10.66 13.66,12 12,12 C10.34,12 9,10.66 9,9 C9,7.34 10.34,6 12,6 Z',
+                CHA: 'M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z'
+            };
+
+            // Build Stats HTML (Medallions)
+            let statsHTML = '';
+            for (let [key, val] of Object.entries(p.rpg_stats)) {
+                let mod = Math.floor((val - 10) / 2);
+                let modStr = (mod >= 0) ? `+${mod}` : `${mod}`;
+                let modColor = (mod >= 0) ? '#8a0b0b' : '#444';
+
+                statsHTML += `
+                    <div class="stat-medallion">
+                        <svg class="stat-icon" viewBox="0 0 24 24"><path d="${icons[key] || icons.STR}"/></svg>
+                        <span class="stat-value-big">${val}</span>
+                        <span class="stat-name-tiny">${key}</span>
+                        <div class="stat-mod-seal" style="background:${modColor}">${modStr}</div>
+                    </div>
+                `;
+            }
+
+            // Build Perks HTML
+            let perksHTML = '';
+            if (p.mechanics && p.mechanics.soul_perks) {
+                p.mechanics.soul_perks.forEach(k => {
+                    let tagClass = k.type === 'COMBAT' ? 'tag-combat' : 'tag-passive';
+                    perksHTML += `
+                        <div class="soul-perk">
+                            <div class="perk-header">
+                                <span class="perk-name">${k.name}</span>
+                                <span class="mech-tag ${tagClass}">${k.type}</span>
+                            </div>
+                            <div class="mech-row"><span class="mech-label">Gatillo:</span><span>${k.trigger}</span></div>
+                            <div class="mech-row"><span class="mech-label">Efecto:</span><span>${k.effect}</span></div>
+                            <div class="mech-narrative">"${k.flavor}"</div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Build Timeline HTML with DM Tags if possible
+            let timelineHTML = '';
+            p.timeline.forEach(t => {
+                timelineHTML += `
+                    <div class="timeline-item">
+                        <div class="timeline-year">${t.year}</div>
+                        <div class="timeline-content">${t.event}</div>
+                        ${t.scar ? `<span class="timeline-scar">🤕 ${t.scar}</span>` : ''}
+                    </div>
+                `;
+            });
+
+            // Build Meta Tags HTML
+            const metaTagsHTML = p.meta_tags.map(t =>
+                `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`
+            ).join('');
+
+            // Build Inventory HTML
+            const inventoryHTML = p.inventory.map(item => `
+        <div style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
+            <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
+            <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
+            <div style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">x${item.qty}</div>
+        </div>
+    `).join('');
+
+            // Quotes derived from psychology
+            const quote = `"${p.psicologia.mentira || "El mundo es cruel, pero yo lo soy más."}"`;
+
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>${p.nombre} - Ficha RPG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f; --panel-dark: #111; --paper: #e3dac9;
+            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            --ink: #1a1a1a; --gold: #c5a059; --gold-bright: #ffd700; --blood: #8a0b0b; --accent: #5d4037;
+            --tag-conflict: #8a3b3b; --tag-combat: #3b5b8a; --tag-roleplay: #8a3b86;
+        }
+        body { background-color: var(--bg-dark); margin:0; padding:40px 20px; font-family:'Crimson Text',serif; display:flex; justify-content:center; min-height:100vh; }
+        .rpg-sheet { width:100%; max-width:1100px; background:var(--paper); background-image:var(--paper-texture); box-shadow:0 0 80px rgba(0,0,0,0.9); display:grid; grid-template-columns:340px 1fr; border-radius:4px; overflow:hidden; }
+        
+        /* SHEET LAYOUT */
+        .sheet-container { display: flex; width: 100%; }
+        .side-panel { background: var(--panel-dark); color: #ccc; padding: 30px 25px; border-right: 4px solid var(--gold); display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; width: 340px; }
+        .main-content { padding: 50px 60px; position: relative; flex-grow: 1; }
+
+        /* AVATAR */
+        .avatar-frame {
+            width: 200px; height: 200px; margin: 0 auto;
+            border-radius: 50%; 
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden; background: #222; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+        
+        .avatar-frame:hover .upload-overlay { opacity: 1; }
+        
+        .upload-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s; color: #fff;
+            font-family: 'Cinzel'; font-size: 0.8rem; text-align: center;
+            border-radius: 50%;
+        }
+
+        .avatar-frame.corrupted {
+             border-color: var(--blood); border-style: dashed; animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border { 0% { box-shadow: 0 0 15px rgba(138, 11, 11, 0.4); } 50% { box-shadow: 0 0 25px rgba(138, 11, 11, 0.8); } 100% { box-shadow: 0 0 15px rgba(138, 11, 11, 0.4); } }
+
+        /* TENSION BAR */
+        .tension-wrapper { margin-top: 15px; text-align: center; }
+        .tension-track { width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; border: 1px solid #555; }
+        .tension-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--blood)); transition: width 0.3s; }
+
+        /* STATS */
+        .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px 10px; justify-items:center; margin-top: 20px; }
+        .stat-medallion { position:relative; width:90px; height:100px; background:linear-gradient(135deg,#222,#111); border:2px solid #444; border-radius:8px; display:flex; flex-direction:column; align-items:center; padding-top:10px; transition:transform 0.2s; }
+        .stat-medallion:hover { border-color:var(--gold); transform:scale(1.05); }
+        .stat-icon { width:24px; height:24px; fill:var(--gold); margin-bottom:5px; }
+        .stat-value-big { font-family:'Cinzel'; font-size:1.8rem; color:#fff; font-weight:700; line-height:1; }
+        .stat-name-tiny { font-size:0.65rem; text-transform:uppercase; color:#888; letter-spacing:1px; }
+        .stat-mod-seal { position:absolute; bottom:-8px; background:var(--blood); color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel'; font-weight:bold; font-size:0.9rem; border:2px solid #222; }
+
+        /* PERKS */
+        .resonance-section { border-top:1px solid #444; padding-top:20px; }
+        .resonance-title { font-family:'Cinzel'; color:var(--gold); text-align:center; margin-bottom:15px; font-size:1.1rem; }
+        .soul-perk { background:rgba(255,255,255,0.05); border-left:3px solid var(--gold); padding:10px; margin-bottom:12px; font-size:0.85rem; }
+        .perk-header { display:flex; justify-content:space-between; margin-bottom:5px; }
+        .perk-name { color:var(--gold-bright); font-weight:bold; }
+        .mech-tag { font-size:0.6rem; padding:2px 5px; border-radius:3px; font-weight:bold; letter-spacing:0.5px; background:#444; color:#ccc; }
+        .tag-combat { background:rgba(59,91,138,0.3); color:#8ab0ff; border:1px solid #3b5b8a; }
+        .mech-row { display:flex; gap:5px; color:#ccc; margin-bottom:2px; }
+        .mech-label { color:#888; font-weight:bold; min-width:50px; }
+        .mech-narrative { font-style:italic; color:#888; border-top:1px solid #333; margin-top:4px; padding-top:2px; }
+
+        /* MAIN CONTENT */
+        h1 { font-family:'Cinzel'; font-size:3.5rem; color:var(--ink); margin:0; line-height:1; }
+        .meta-line { font-family:'Metamorphous'; font-size:1.2rem; color:var(--blood); margin-top:10px; font-style:italic; }
+        
+        .section-title { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); border-bottom:1px solid #bbb; margin-top:35px; padding-bottom:5px; }
+        p { font-size:1.15rem; line-height:1.7; text-align:justify; color:#222; margin-bottom:15px; }
+        
+        .moral-matrix { background:rgba(0,0,0,0.03); border:2px solid var(--accent); padding:25px; margin:30px 0; }
+        .moral-matrix p { margin-bottom: 5px; }
+
+        .timeline-item { margin-bottom: 15px; border-left: 3px solid #ccc; padding-left: 10px; }
+        .timeline-year { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
+        .timeline-content { color: #333; }
+        .timeline-scar { display: inline-block; background: #fce4ec; color: #c2185b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 5px; }
+
+        /* ADVENTURE LOG */
+        .adventure-log { margin-top: 40px; border-top: 2px solid var(--gold); padding-top: 20px; }
+        .adventure-log h2 { font-family:'Cinzel'; font-size:1.6rem; color:var(--accent); margin-bottom: 15px; }
+        .log-entry { 
+            background: rgba(0,0,0,0.02); border-bottom: 1px dashed #ccc; padding: 15px; margin-bottom: 10px; 
+            font-family: 'Crimson Text'; font-size: 1.1rem; border-radius: 4px; line-height: 1.6;
+        }
+        .log-entry:focus { background: rgba(255, 215, 0, 0.1); outline: none; }
+        
+        .btn-download {
+            display: block; width: fit-content; margin: 40px auto 30px;
+            background: var(--ink); color: var(--paper); border: none;
+            padding: 15px 30px; font-family: 'Cinzel'; font-size: 1rem;
+            cursor: pointer; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent; /* Mobile interaction fix */
+        }
+        .btn-download:hover { background: var(--gold); color: var(--ink); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        
+        @media (max-width:900px) { 
+            .sheet-container { flex-direction: column; width: 100%; box-shadow: none; }
+            .side-panel { width: 100%; box-sizing: border-box; border-right: none; border-bottom: 4px solid var(--gold); flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+            .main-content { padding: 20px; width: 100%; box-sizing: border-box; }
+            
+            /* Better mobile stacking for avatar and stats */
+            .avatar-frame { margin-bottom: 10px; width: 160px; height: 160px; font-size: 3rem; }
+            .stats-grid { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .stat-medallion { width: auto; height: 90px; }
+            .tension-wrapper { width: 100%; order: -1; margin-bottom: 15px; } /* Tension bar top on mobile sidebar */
+            
+            /* Narrative Readability */
+            h1 { font-size: 2.5rem; text-align: center; }
+            .meta-line { text-align: center; font-size: 1rem; }
+            p { font-size: 1.1rem; text-align: left; }
+            
+            .btn-download { width: 100%; text-align: center; }
         }
     </style>
 </head>
 
-<body
-    class="min-h-screen flex flex-col items-center justify-start py-20 px-4 bg-void bg-[url('/static/images/background.png')] bg-cover bg-fixed bg-blend-overlay">
 
-    <!-- HEADER -->
-    <header class="text-center mb-16 relative z-10">
-        <div class="mb-4">
-            <span
-                class="px-3 py-1 rounded-full border border-neon-gold/30 bg-neon-gold/10 text-neon-gold text-xs font-bold tracking-widest">
-                SISTEMA V3.5 LIVE
-            </span>
+    <body>
+        <div class="rpg-sheet">
+            <div class="sheet-container">
+                <!-- SIDE PANEL -->
+                <div class="side-panel">
+                    <div class="avatar-frame ${p.mechanics.soul_tension > 75 ? 'corrupted' : ''}"
+                        onclick="triggerUpload()">
+                        <div id="avatar-display"
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
+                            👤
+                        </div>
+                        <div class="upload-overlay">
+                            <span style="font-size:1.5rem">📷</span>
+                            <span>Subir Rostro</span>
+                        </div>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display:none"
+                        onchange="encodeImageFileAsURL(this)">
+
+                    <!-- TENSION BAR (Sidebar) -->
+                    <div class="tension-wrapper">
+                        <div style="font-size:0.7rem; color:#888; margin-bottom:5px; font-family:'Cinzel';">Tensión:
+                            ${p.mechanics.soul_tension}%</div>
+                        <div class="tension-track">
+                            <div class="tension-fill" style="width:${p.mechanics.soul_tension}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- ECONOMY (New) -->
+                    <div
+                        style="background:#000; border:1px solid #444; padding:10px; margin-top:20px; text-align:center; border-radius:4px;">
+                        <span style="font-size:1.5rem;">🪙</span>
+                        <span
+                            style="font-family:'Cinzel'; font-size:1.2rem; color:#ffd700; margin-left:10px;">${p.economy.currency}
+                            GP</span>
+                        <div style="font-size:0.6rem; color:#666; margin-top:3px;">ESTADO: ${p.economy.status}</div>
+                    </div>
+
+                    <div class="stats-grid">
+                        ${statsHTML}
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div>
+                        <!-- Renamed -->
+                        ${metaTagsHTML}
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT -->
+                <div class="main-content">
+                    <!-- Removed top tension bar -->
+
+                    <h1>${p.nombre}</h1>
+                    <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
+
+                    <p>${p.resumen}</p>
+
+                    <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
+                    <div class="moral-matrix">
+                        <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
+                        <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
+                        <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
+                        <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
+                            <div
+                                style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;">
+                            </div>
+                        </div>
+                        <p style="text-align:right; font-size:0.8rem;">Progreso de Redención:
+                            ${p.mechanics.moral_matrix.progress}%</p>
+                    </div>
+
+                    <div class="section-title">📜 Historias & Cicatrices</div>
+
+                    <p><strong>📜 Origen:</strong> ${p.narrative_arc ? p.narrative_arc.origin : ""}</p>
+                    <p><strong>⚡ Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : ""}</p>
+                    <p style="background:rgba(212,175,55,0.1); padding:5px;"><strong>✨ Luz:</strong> ${p.narrative_arc ?
+                    p.narrative_arc.moment_of_light : ""}</p>
+
+                    ${timelineHTML}
+
+                    <!-- INVENTORY GRID (New) -->
+                    <div class="section-title">🎒 Equipo & Inventario</div>
+                    <div
+                        style="display:flex; justify-content:space-between; margin-bottom:15px; font-family:'Cinzel'; font-size:0.9rem; color:#444;">
+                        <div>⚔️ <strong>Mano Princ:</strong> ${p.equipment.main_hand}</div>
+                        <div>🛡️ <strong>Armadura:</strong> ${p.equipment.armor}</div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                        ${inventoryHTML}
+                        <!-- Empty Slots filler -->
+                        <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                        <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
+                    </div>
+
+                    <!-- BITÁCORA -->
+                    <div class="adventure-log">
+                        <h2>📖 Bitácora de Aventuras</h2>
+                        <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus
+                            sesiones)</p>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión
+                                1]</strong> ...</div>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión
+                                2]</strong> ...</div>
+                        <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Notas /
+                                Inventario]</strong> ...</div>
+                    </div>
+
+                    <button class="btn-download" onclick='saveProgress()'>💾 Guardar Ficha Viva (HTML)</button>
+                </div>
+            </div>
+
+            <script>
+        function saveProgress() {
+             // Clone entire HTML to save edits
+             const htmlContent = document.documentElement.outerHTML;
+             const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
+             const url = URL.createObjectURL(blob);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = "${p.nombre}_Viva.html";
+             document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function triggerUpload() { document.getElementById('avatar-input').click(); }
+        
+        function encodeImageFileAsURL(element) {
+            const file = element.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                // Replace the placeholder with the real image
+                const display = document.getElementById('avatar-display');
+                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
+                
+                // Visual feedback
+                const frame = document.querySelector('.avatar-frame');
+                frame.style.borderColor = "#fff";
+                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
+            }
+            reader.readAsDataURL(file);
+        }
+    <\/script>
+    <\/script>
+</body>
+</html>`;
+            `;
+
+            const newWindow = window.open();
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
+
+        // --- MAIN FORGE HANDLERS ---
+        // --- MAIN FORGE HANDLERS ---
+        async function handleForjarAlma(event) {
+            event.preventDefault();
+
+            // Check tokens
+            if (getTokens() <= 0) {
+                showPayPalModal('alma');
+                return false;
+            }
+
+            // Use a token
+            if (!useToken()) {
+                 alert("Error: No tienes tokens suficientes.");
+                 return false;
+            }
+
+            // Get form data
+            const form = document.getElementById('formPersonaje');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            showLoading('Forjando alma...');
+
+            // FETCH & GENERATE
+            try {
+                const response = await fetch(`${ API_BASE } /api/v1 / personaje ? ${ params } `);
+                if (!response.ok) throw new Error('Error del servidor');
+                let personaje = await response.json();
+
+                // FORCE RPG MODE ALWAYS
+                const isRPGMode = true;
+                if (isRPGMode) {
+                    const formDataObj = new FormData(form);
+                    personaje = rpgEngine.process(personaje, formDataObj);
+                    showRPGCharacterHTML(personaje);
+                } else {
+                    showPersonajeHTML(personaje);
+                }
+
+                hideLoading();
+
+            } catch (error) {
+                hideLoading();
+                alert('Error al forjar: ' + error.message);
+                // Refund token on error
+                setTokens(getTokens() + 1);
+            }
+
+            return false;
+        }
+
+        async function handleForjarConstelacion(event) {
+            event.preventDefault();
+            prepareSubmit(); // Prepare hidden fields
+
+            // Check tokens (constellation costs 2)
+            if (getTokens() < 2) {
+                showPayPalModal('constelacion');
+                return false;
+            }
+
+            // Use tokens
+            setTokens(getTokens() - 2);
+
+            // Get form data
+            const form = document.getElementById('formConstelacion');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+
+            showLoading('Forjando constelación...');
+
+            try {
+                const response = await fetch(`${ API_BASE } /api/v1 / constelacion ? ${ params } `);
+                if (!response.ok) throw new Error('Error del servidor');
+                const constelacion = await response.json();
+                
+                hideLoading();
+                // Generate and show HTML
+                showConstelacionHTML(constelacion);
+
+            } catch (error) {
+                hideLoading();
+                alert('Error al forjar: ' + error.message);
+                // Refund tokens on error
+                setTokens(getTokens() + 2);
+            }
+
+            return false;
+        }
+
+
+        <!-- ================================================================= -->
+        <!-- NEW MOTOR VISUAL SECTION (Integrated at Bottom)                   -->
+        <!-- ================================================================= -->
+        <br><br><br>
+        
+        <div class="header" id="motorVisualSection">
+            <h1 class="title" style="font-size: 3rem;">Motor <span style="color:var(--accent)">Visual</span></h1>
+            <p class="subtitle" style="letter-spacing: 4px;">JERARQUÍA DE PODER & ARQUITECTURA DE ALMAS</p>
         </div>
-        <h1 class="text-6xl md:text-7xl font-cinzel font-bold text-white mb-2 drop-shadow-lg">
-            MOTOR <span class="gradient-text-gold">VISUAL</span>
-        </h1>
-        <p class="text-gray-400 text-lg tracking-[0.2em] font-light max-w-2xl mx-auto">
-            FORJA DE LEGADOS & ARQUITECTURA DE ALMAS
-        </p>
-    </header>
 
-    <!-- SYSTEM EXPLAINER -->
-    <section class="max-w-5xl w-full mb-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center z-10">
-        <div class="space-y-6">
-            <h2 class="text-3xl font-cinzel text-white border-l-4 border-neon-gold pl-4">Jerarquía de Poder</h2>
-            <p class="text-gray-300 leading-relaxed font-inter">
-                El sistema de cartas no es solo estético; define el potencial narrativo y mecánico de tu personaje.
-                Cada carta es un contrato con el destino. Las cartas de alto nivel (SSS) no solo otorgan mejores
-                estadísticas,
+        <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 40px; text-align: left; max-width: 900px; margin-left: auto; margin-right: auto;">
+            <h2 style="font-family:'Cinzel'; color: var(--text-main); border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 20px;">
+                Jerarquía de Poder
+            </h2>
+            <p style="color: var(--text-dim); line-height: 1.8; margin-bottom: 20px;">
+                El sistema de cartas no es solo estético; define el potencial narrativo y mecánico de tu personaje. 
+                Cada carta es un contrato con el destino. Las cartas de alto nivel (SSS) no solo otorgan mejores estadísticas, 
                 sino que alteran las reglas del juego.
             </p>
-            <ul class="space-y-3">
-                <li class="flex items-center text-gray-400">
-                    <span class="w-2 h-2 rounded-full bg-neon-green mr-3"></span>
-                    <span><strong class="text-neon-green">Clase Eco (C-B):</strong> Sobrevivientes. Stats base.
-                        Tecnología estándar.</span>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span style="width: 10px; height: 10px; background: #2E8B57; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #2E8B57;"></span>
+                    <span style="color: #aaa;"><strong style="color: #2E8B57;">Clase Eco (C-B):</strong> Sobrevivientes. Stats base. Tecnología estándar.</span>
                 </li>
-                <li class="flex items-center text-gray-400">
-                    <span class="w-2 h-2 rounded-full bg-neon-gold mr-3"></span>
-                    <span><strong class="text-neon-gold">Clase Sombra (A):</strong> Agentes de élite. Acceso a perks
-                        ocultos.</span>
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span style="width: 10px; height: 10px; background: #d4af37; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #d4af37;"></span>
+                    <span style="color: #aaa;"><strong style="color: var(--accent);">Clase Sombra (A):</strong> Agentes de élite. Acceso a perks ocultos.</span>
                 </li>
-                <li class="flex items-center text-gray-400">
-                    <span class="w-2 h-2 rounded-full bg-neon-purple mr-3"></span>
-                    <span><strong class="text-neon-purple">Clase Primordial (SSS):</strong> Entidades cósmicas. Rompen
-                        las reglas.</span>
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span style="width: 10px; height: 10px; background: #800080; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #800080;"></span>
+                    <span style="color: #aaa;"><strong style="color: #c026d3;">Clase Primordial (SSS):</strong> Entidades cósmicas. Rompen las reglas.</span>
                 </li>
             </ul>
         </div>
-        <!-- Card Preview Graphic (CSS Only) -->
-        <div class="relative w-full h-64 flex justify-center items-center">
-            <div
-                class="absolute w-40 h-56 bg-gradient-to-br from-green-900 to-black border border-green-700 rounded-lg transform -rotate-12 translate-x-12 opacity-60 z-0">
-            </div>
-            <div
-                class="absolute w-40 h-56 bg-gradient-to-br from-purple-900 to-black border border-purple-500 rounded-lg transform rotate-6 z-10 shadow-[0_0_30px_rgba(128,0,128,0.5)] flex flex-col justify-between p-4">
-                <div class="text-xs text-purple-300 font-cinzel text-center">PRIMORDIAL</div>
-                <div class="text-3xl text-center">◈</div>
-                <div class="text-xs text-purple-300 text-center font-bold">SSS</div>
-            </div>
+
+        <!-- EXAMPLES GRID -->
+        <h2 class="card-title" style="text-align:center; border:none;">Ejemplos de Personajes</h2>
+        <div class="demo-card-container">
+            
+            <!-- ECO CARD -->
+            <a href="demo_elara.html" target="_blank" style="text-decoration:none;">
+                <div class="demo-card" style="border-color: #2E8B57;">
+                    <div class="demo-img-wrapper">
+                        <img src="static/images/elara_thumb.png" class="demo-img" alt="Eco Class">
+                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#2E8B57; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #2E8B57; border-radius:4px;">CLASE ECO</div>
+                    </div>
+                    <div class="demo-content">
+                        <h3 class="demo-name" style="color:#2E8B57;">Elara Vex</h3>
+                        <div class="demo-tags">
+                            <span class="demo-tag">Cyberpunk</span>
+                            <span class="demo-tag">Hacker</span>
+                        </div>
+                        <p style="color:#888; font-size:0.9rem;">
+                            Ficha estándar con sistema de implantes y economía básica.
+                        </p>
+                        <span class="btn-view-demo" style="background: #2E8B57; color:white;">VER DEMO</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- SSS CARD -->
+            <a href="demo_sss_strict.html" target="_blank" style="text-decoration:none;">
+                <div class="demo-card" style="border-color: #800080; box-shadow: 0 0 20px rgba(128,0,128,0.2);">
+                    <div class="demo-img-wrapper">
+                        <img src="static/images/aric_thumb.png" class="demo-img" alt="SSS Class">
+                        <div style="position:absolute; top:10px; right:10px; background:#800080; color:white; padding:4px 12px; font-size:0.8rem; font-weight:bold; border-radius:4px; box-shadow:0 0 10px #800080;">SSS | MÍTICA</div>
+                    </div>
+                    <div class="demo-content">
+                        <h3 class="demo-name" style="background: linear-gradient(to right, #c026d3, #7e22ce); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Azraell</h3>
+                        <div class="demo-tags">
+                            <span class="demo-tag" style="border-color:#800080; color:#d88;">Divino</span>
+                            <span class="demo-tag">Kintsugi</span>
+                        </div>
+                        <p style="color:#aaa; font-size:0.9rem;">
+                            La joya de la corona. Stats encriptados y mecánica "Anti-Porcelana".
+                        </p>
+                        <span class="btn-view-demo" style="background: linear-gradient(135deg, #800080, #4b0082); color:white; border:1px solid #a0f;">INSPECCIONAR ALMA</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- GACHA CARD -->
+            <a href="demo_gacha.html" target="_blank" style="text-decoration:none;">
+                <div class="demo-card" style="border-color: #d4af37;">
+                    <div class="demo-img-wrapper" style="display:flex; align-items:center; justify-content:center; background:#000;">
+                        <div style="font-size:5rem;">💎</div>
+                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#d4af37; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #d4af37; border-radius:4px;">SYSTEM</div>
+                    </div>
+                    <div class="demo-content">
+                        <h3 class="demo-name" style="color:#d4af37;">Gacha System</h3>
+                        <div class="demo-tags">
+                            <span class="demo-tag">RNG</span>
+                            <span class="demo-tag">Animation</span>
+                        </div>
+                        <p style="color:#888; font-size:0.9rem;">
+                            Prueba tu suerte con el sistema de invocación procedural.
+                        </p>
+                        <span class="btn-view-demo">INICIAR RITUAL</span>
+                    </div>
+                </div>
+            </a>
+
         </div>
-    </section>
 
-    <!-- DEMO GRID -->
-    <section class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-8 z-10">
 
-        <!-- CARD 1: ECO -->
-        <a href="demo_elara.html" target="_blank"
-            class="group relative bg-glass border border-white/10 rounded-xl overflow-hidden card-hover transition-all duration-300">
-            <div class="h-48 bg-black/50 overflow-hidden relative">
-                <div class="absolute inset-0 bg-neon-green/10 mix-blend-overlay"></div>
-                <img src="/static/images/elara_thumb.png"
-                    class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500"
-                    alt="Eco Class">
-                <div
-                    class="absolute bottom-2 left-2 px-2 py-1 bg-black/80 border border-neon-green text-neon-green text-xs font-bold rounded">
-                    CLASE ECO</div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-xl font-cinzel text-white mb-2">Elara Vex</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Demostración de ficha estándar. Estética Cypher-Punk. Sistema de seguridad y cicatrices básicas.
-                </p>
-                <span class="text-neon-green text-xs font-bold tracking-widest group-hover:underline">VER DEMO
-                    &rarr;</span>
-            </div>
-        </a>
 
-        <!-- CARD 2: SSS (FEATURED) -->
-        <a href="demo_sss_strict.html" target="_blank"
-            class="group relative bg-glass border border-neon-purple/50 rounded-xl overflow-hidden card-hover transition-all duration-300 transform md:-translate-y-4 shadow-[0_0_40px_rgba(128,0,128,0.15)]">
-            <div class="h-56 bg-black/50 overflow-hidden relative">
-                <div class="absolute inset-0 bg-neon-purple/20 mix-blend-overlay"></div>
-                <!-- Using ARIC thumb as placeholder for Azraell/SSS per request logic -->
-                <img src="/static/images/aric_thumb.png"
-                    class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500"
-                    alt="SSS Class">
-                <div
-                    class="absolute top-2 right-2 px-3 py-1 bg-neon-purple text-white text-xs font-bold rounded shadow-lg border border-white/20">
-                    MÍTICA</div>
-                <div class="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent"></div>
-            </div>
-            <div class="p-6 relative">
-                <h3
-                    class="text-2xl font-cinzel text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300 mb-2">
-                    Azraell (SSS)</h3>
-                <p class="text-sm text-gray-300 mb-4 font-light">
-                    <strong>La Joya de la Corona.</strong><br>
-                    Estética Kintsugi, Stats Encriptados, Narrativa Profunda y Mecánicas de Riesgo Divino.
-                </p>
-                <span class="text-purple-400 text-xs font-bold tracking-widest group-hover:underline">INSPECCIONAR ALMA
-                    &rarr;</span>
-            </div>
-        </a>
+            // --- HTML GENERATORS ---
+            function showPersonajeHTML(p) {
+                const lang = document.getElementById('inputLangPersonaje').value || 'es';
+                const html = generatePersonajeHTML(p, lang);
+                const win = window.open('', '_blank');
+                win.document.write(html);
+                win.document.close();
+            }
 
-        <!-- CARD 3: GACHA -->
-        <a href="demo_gacha.html" target="_blank"
-            class="group relative bg-glass border border-white/10 rounded-xl overflow-hidden card-hover transition-all duration-300">
-            <div class="h-48 bg-black/50 overflow-hidden relative flex items-center justify-center">
-                <div class="absolute inset-0 bg-neon-gold/10 mix-blend-overlay"></div>
-                <div class="text-6xl animate-pulse">💎</div>
-                <div
-                    class="absolute bottom-2 left-2 px-2 py-1 bg-black/80 border border-neon-gold text-neon-gold text-xs font-bold rounded">
-                    GACHA SYSTEM</div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-xl font-cinzel text-white mb-2">Portal de Invocación</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    Prueba tu suerte. Animación de invocación procedural con probabilidades reales de drop.
-                </p>
-                <span class="text-neon-gold text-xs font-bold tracking-widest group-hover:underline">INICIAR RITUAL
-                    &rarr;</span>
-            </div>
-        </a>
+            function generatePersonajeHTML(p, lang) {
+                // Build Attributes HTML safely
+                let atributosHTML = '';
+                if (p.atributos) {
+                    const attrs = Object.entries(p.atributos)
+                        .map(([k, v]) => `< span class="tag" > ${ k }: ${ v }</span > `)
+                        .join('');
+                    atributosHTML = `
+                < div class="section" >
+                            <h2 class="section-title">⚔️ Atributos (D&D)</h2>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                                ${attrs}
+                            </div>
+                        </div >
+                `;
+                }
 
-    </section>
+                return `< !DOCTYPE html >
+                <html lang="${lang}">
+                    <head>
+                        <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>${p.nombre || 'Personaje'} - SoulForge</title>
+                                <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+                                    <style>
+                                        :root {--accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+                                        * {margin: 0; padding: 0; box-sizing: border-box; }
+                                        body {background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; line-height: 1.7; padding: 40px 20px; }
+                                        .container {max - width: 800px; margin: 0 auto; }
+                                        .header {text - align: center; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 30px; }
+                                        .name {font - family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
+                                        .meta {color: var(--dim); font-size: 1rem; }
+                                        .section {background: var(--card); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #222; }
+                                        .section-title {font - family: 'Cinzel', serif; color: var(--accent); font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+                                        .section p {margin - bottom: 12px; }
+                                        .tag {display: inline-block; background: #1a1a25; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; border: 1px solid #333; }
+                                        .psychology-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                                        .psychology-item {background: #0a0a10; padding: 15px; border-radius: 8px; }
+                                        .psychology-label {color: var(--accent); font-size: 0.9rem; margin-bottom: 5px; }
+                                        .footer {text - align: center; color: var(--dim); font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; }
+                                        .download-btn {display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
+                                        @media print { .download - btn {display: none; } body {background: white; color: black; } .section {border: 1px solid #ccc; } }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                        <div class="header">
+                                            <h1 class="name">${p.nombre || 'Sin Nombre'}</h1>
+                                            <p class="meta">${p.genero || ''} · ${p.edad || '?'} años · ${p.mundo || 'Fantasía'}</p>
+                                            <p class="meta">${p.rol || ''} · ${p.tono_moral || ''}</p>
+                                        </div>
 
-    <footer class="mt-20 text-center text-gray-600 text-xs font-inter z-10">
-        <p>© 2026 SOULFORGE ENGINE. ALL RIGHTS RESERVED.</p>
-        <p class="mt-2">Desarrollado para entornos de Alta Fantasía y Sci-Fi Oscura.</p>
-    </footer>
+                                        <div class="section">
+                                            <h2 class="section-title">📜 Biografía</h2>
+                                            <p>${p.biografia || p.bio || 'Historia por descubrir...'}</p>
+                                        </div>
 
+                                        <div class="section">
+                                            <h2 class="section-title">🧠 Psicología Profunda</h2>
+                                            <div class="psychology-grid">
+                                                <div class="psychology-item"><div class="psychology-label">Máscara (Lo que muestra)</div><p>${p.mascara || p.psicologia?.mascara || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Sombra (Lo que oculta)</div><p>${p.sombra || p.psicologia?.sombra || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Herida Core</div><p>${p.herida || p.psicologia?.herida || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Deseo Profundo</div><p>${p.deseo || p.psicologia?.deseo || '—'}</p></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="section">
+                                            <h2 class="section-title">🎭 Mentira & Verdad</h2>
+                                            <p><strong>Mentira que cree:</strong> ${p.mentira || p.psicologia?.mentira || '—'}</p>
+                                            <p><strong>Verdad que necesita:</strong> ${p.verdad || p.psicologia?.verdad || '—'}</p>
+                                        </div>
+
+                                        <div class="section">
+                                            <h2 class="section-title">📈 Arco Narrativo</h2>
+                                            <p>${p.arco_narrativo || p.arco || 'Arco por definir...'}</p>
+                                        </div>
+
+                                        ${atributosHTML}
+
+                                        <div class="footer">
+                                            <p>Generado por SoulForge Engine · ${new Date().toLocaleDateString()}</p>
+                                            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+                                        </div>
+                                    </div>
+                                </body>
+                            </html>`;
+            }
+
+                            function showConstelacionHTML(c) {
+                const lang = document.getElementById('inputLangConstelacion').value || 'es';
+                            const html = generateConstelacionHTML(c, lang);
+                            const win = window.open('', '_blank');
+                            win.document.write(html);
+                            win.document.close();
+            }
+
+                            function generateConstelacionHTML(c, lang) {
+                const personajes = c.personajes || c.characters || [];
+                const personajesHTML = personajes.map((p, i) => `
+                            <div class="character-card">
+                                <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
+                                <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
+                                <p>${p.biografia || p.bio || ''}</p>
+                            </div>
+                            `).join('');
+
+                            return `<!DOCTYPE html>
+                            <html lang="${lang}">
+                                <head>
+                                    <meta charset="UTF-8">
+                                        <title>Constelación - SoulForge</title>
+                                        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap" rel="stylesheet">
+                                            <style>
+                                                :root {--accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+                                                * {margin: 0; padding: 0; box-sizing: border-box; }
+                                                body {background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; padding: 40px 20px; }
+                                                .container {max - width: 1000px; margin: 0 auto; }
+                                                h1 {font - family: 'Cinzel', serif; color: var(--accent); text-align: center; margin-bottom: 40px; }
+                                                .character-card {background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #222; }
+                                                .footer {text - align: center; color: var(--dim); margin-top: 40px; }
+                                                .download-btn {display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <div class="container">
+                                                <h1>🌌 Constelación de Personajes</h1>
+                                                ${personajesHTML}
+                                                <div class="footer">
+                                                    <p>Generado por SoulForge Engine</p>
+                                                    <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+                                                </div>
+                                            </div>
+                                        </body>
+                                    </html>`;
+            }
+
+            // --- INIT ---
+            window.addEventListener('load', () => {
+                updateTokenDisplay();
+                // Give 3 free tokens for new users
+                if (localStorage.getItem('soulforge_tokens') === null) {
+                    setTokens(3);
+                }
+
+                // Force Translations Check
+                let lang = window.location.hash.replace('#', '') || 'es';
+                if (window.changeLanguage) {
+                    changeLanguage(lang);
+                } else {
+                    console.error("Translation engine not loaded yet.");
+                }
+            });
+    </script>
 </body>
 
 </html>
