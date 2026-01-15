@@ -1056,7 +1056,7 @@
     </div>
 
 
-    <!-- CHARACTER DEMOS SECTION -->
+    <!-- CHARACTER DEMOS SECTION (MOTOR VISUAL) -->
     <div style="width: 100%; max-width: 1200px; margin-top: 100px;">
         <div style="text-align: center; margin-bottom: 50px;">
             <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
@@ -1065,43 +1065,106 @@
                 complejidad.</p>
         </div>
 
+        <!-- HIERARCHY EXPLANATION BOX -->
+        <div
+            style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 40px; text-align: left; max-width: 900px; margin-left: auto; margin-right: auto;">
+            <h3
+                style="font-family:'Cinzel'; color: var(--text-main); border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 20px;">
+                🏆 Jerarquía de Poder
+            </h3>
+            <p style="color: var(--text-dim); line-height: 1.8; margin-bottom: 20px;">
+                El sistema de cartas no es solo estético; define el potencial narrativo y mecánico de tu personaje.
+                Las cartas de alto nivel (SSS) no solo otorgan mejores estadísticas, sino que alteran las reglas del
+                juego.
+            </p>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span
+                        style="width: 10px; height: 10px; background: #2E8B57; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #2E8B57;"></span>
+                    <span style="color: #aaa;"><strong style="color: #2E8B57;">Clase Eco (C-B):</strong> Sobrevivientes.
+                        Stats base. Tecnología estándar.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span
+                        style="width: 10px; height: 10px; background: #d4af37; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #d4af37;"></span>
+                    <span style="color: #aaa;"><strong style="color: var(--accent);">Clase Sombra (A):</strong> Agentes
+                        de élite. Acceso a perks ocultos.</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: center;">
+                    <span
+                        style="width: 10px; height: 10px; background: #800080; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #800080;"></span>
+                    <span style="color: #aaa;"><strong style="color: #c026d3;">Clase Primordial (SSS):</strong>
+                        Entidades cósmicas. Rompen las reglas.</span>
+                </li>
+            </ul>
+        </div>
+
         <div class="demo-card-container">
-            <!-- Demo 1: Eldric -->
-            <a href="demo_aric.html" target="_blank" class="demo-card" style="text-decoration: none;">
+            <!-- Demo 1: Aric (SSS) -->
+            <a href="demo_sss_strict.html" target="_blank" class="demo-card"
+                style="text-decoration: none; border-color: #800080; box-shadow: 0 0 20px rgba(128,0,128,0.2);">
                 <div class="demo-img-wrapper">
-                    <!-- Showing HTML Sheet Preview as requested -->
                     <img src="/static/images/preview_ficha_eldric.png" class="demo-img" alt="Aric Sheet Preview">
+                    <div
+                        style="position:absolute; top:10px; right:10px; background:#800080; color:white; padding:4px 12px; font-size:0.8rem; font-weight:bold; border-radius:4px; box-shadow:0 0 10px #800080;">
+                        SSS | PRIMORDIAL</div>
                 </div>
                 <div class="demo-content">
-                    <h3 class="demo-name" data-i18n="demo_1_name">Aric, The Fallen Paladin</h3>
+                    <h3 class="demo-name"
+                        style="background: linear-gradient(to right, #c026d3, #7e22ce); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"
+                        data-i18n="demo_1_name">Azraell, Entidad Cósmica</h3>
                     <div class="demo-tags">
-                        <span class="demo-tag" data-i18n="tag_human">Human</span>
-                        <span class="demo-tag" data-i18n="tag_lvl5">Level 5</span>
-                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;"
-                            data-i18n="tag_oathbreaker">Oathbreaker</span>
+                        <span class="demo-tag" style="border-color:#800080; color:#d88;">Divino</span>
+                        <span class="demo-tag">Kintsugi</span>
+                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;">Anti-Porcelana</span>
                     </div>
-                    <!-- Button removed, entire card is link -->
                     <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
-                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> 📜
+                        <span data-i18n="demo_click_cta">INSPECCIONAR ALMA</span> ✨
                     </p>
                 </div>
             </a>
 
-            <!-- Demo 2: Elara -->
-            <a href="demo_elara.html" target="_blank" class="demo-card" style="text-decoration: none;">
+            <!-- Demo 2: Elara (ECO) -->
+            <a href="demo_elara.html" target="_blank" class="demo-card"
+                style="text-decoration: none; border-color: #2E8B57;">
                 <div class="demo-img-wrapper">
                     <img src="/static/images/preview_ficha_elara.png" class="demo-img" alt="Elara Sheet Preview">
+                    <div
+                        style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#2E8B57; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #2E8B57; border-radius:4px;">
+                        CLASE ECO</div>
                 </div>
                 <div class="demo-content">
-                    <h3 class="demo-name" data-i18n="demo_2_name">Elara, The Cyber-Hacker</h3>
+                    <h3 class="demo-name" style="color:#2E8B57;" data-i18n="demo_2_name">Elara, The Cyber-Hacker</h3>
                     <div class="demo-tags">
                         <span class="demo-tag" data-i18n="tag_elf">Elf</span>
                         <span class="demo-tag" data-i18n="tag_lvl3">Level 3</span>
-                        <span class="demo-tag" style="border-color: #b026ff; color:#e0afff;"
-                            data-i18n="tag_netrunner">Netrunner</span>
+                        <span class="demo-tag" style="border-color: #2E8B57; color:#8fbc8f;">Netrunner</span>
                     </div>
                     <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
-                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> ⚡
+                        <span data-i18n="demo_click_cta">VER FICHA</span> ⚡
+                    </p>
+                </div>
+            </a>
+
+            <!-- Demo 3: Gacha System -->
+            <a href="demo_gacha.html" target="_blank" class="demo-card"
+                style="text-decoration: none; border-color: #d4af37;">
+                <div class="demo-img-wrapper"
+                    style="display:flex; align-items:center; justify-content:center; background:#000;">
+                    <div style="font-size:5rem;">💎</div>
+                    <div
+                        style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#d4af37; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #d4af37; border-radius:4px;">
+                        SISTEMA</div>
+                </div>
+                <div class="demo-content">
+                    <h3 class="demo-name" style="color:#d4af37;">Portal de Invocación</h3>
+                    <div class="demo-tags">
+                        <span class="demo-tag">Gacha</span>
+                        <span class="demo-tag">RNG</span>
+                        <span class="demo-tag">Animación</span>
+                    </div>
+                    <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
+                        INICIAR RITUAL 🔮
                     </p>
                 </div>
             </a>
@@ -2341,111 +2404,7 @@
             return false;
         }
 
-
-        <!-- ================================================================= -->
-        <!-- NEW MOTOR VISUAL SECTION (Integrated at Bottom)                   -->
-        <!-- ================================================================= -->
-        <br><br><br>
-        
-        <div class="header" id="motorVisualSection">
-            <h1 class="title" style="font-size: 3rem;">Motor <span style="color:var(--accent)">Visual</span></h1>
-            <p class="subtitle" style="letter-spacing: 4px;">JERARQUÍA DE PODER & ARQUITECTURA DE ALMAS</p>
-        </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 40px; text-align: left; max-width: 900px; margin-left: auto; margin-right: auto;">
-            <h2 style="font-family:'Cinzel'; color: var(--text-main); border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 20px;">
-                Jerarquía de Poder
-            </h2>
-            <p style="color: var(--text-dim); line-height: 1.8; margin-bottom: 20px;">
-                El sistema de cartas no es solo estético; define el potencial narrativo y mecánico de tu personaje. 
-                Cada carta es un contrato con el destino. Las cartas de alto nivel (SSS) no solo otorgan mejores estadísticas, 
-                sino que alteran las reglas del juego.
-            </p>
-            <ul style="list-style: none; padding: 0;">
-                <li style="margin-bottom: 10px; display: flex; align-items: center;">
-                    <span style="width: 10px; height: 10px; background: #2E8B57; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #2E8B57;"></span>
-                    <span style="color: #aaa;"><strong style="color: #2E8B57;">Clase Eco (C-B):</strong> Sobrevivientes. Stats base. Tecnología estándar.</span>
-                </li>
-                <li style="margin-bottom: 10px; display: flex; align-items: center;">
-                    <span style="width: 10px; height: 10px; background: #d4af37; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #d4af37;"></span>
-                    <span style="color: #aaa;"><strong style="color: var(--accent);">Clase Sombra (A):</strong> Agentes de élite. Acceso a perks ocultos.</span>
-                </li>
-                <li style="margin-bottom: 10px; display: flex; align-items: center;">
-                    <span style="width: 10px; height: 10px; background: #800080; border-radius: 50%; margin-right: 15px; box-shadow: 0 0 10px #800080;"></span>
-                    <span style="color: #aaa;"><strong style="color: #c026d3;">Clase Primordial (SSS):</strong> Entidades cósmicas. Rompen las reglas.</span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- EXAMPLES GRID -->
-        <h2 class="card-title" style="text-align:center; border:none;">Ejemplos de Personajes</h2>
-        <div class="demo-card-container">
-            
-            <!-- ECO CARD -->
-            <a href="demo_elara.html" target="_blank" style="text-decoration:none;">
-                <div class="demo-card" style="border-color: #2E8B57;">
-                    <div class="demo-img-wrapper">
-                        <img src="static/images/elara_thumb.png" class="demo-img" alt="Eco Class">
-                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#2E8B57; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #2E8B57; border-radius:4px;">CLASE ECO</div>
-                    </div>
-                    <div class="demo-content">
-                        <h3 class="demo-name" style="color:#2E8B57;">Elara Vex</h3>
-                        <div class="demo-tags">
-                            <span class="demo-tag">Cyberpunk</span>
-                            <span class="demo-tag">Hacker</span>
-                        </div>
-                        <p style="color:#888; font-size:0.9rem;">
-                            Ficha estándar con sistema de implantes y economía básica.
-                        </p>
-                        <span class="btn-view-demo" style="background: #2E8B57; color:white;">VER DEMO</span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- SSS CARD -->
-            <a href="demo_sss_strict.html" target="_blank" style="text-decoration:none;">
-                <div class="demo-card" style="border-color: #800080; box-shadow: 0 0 20px rgba(128,0,128,0.2);">
-                    <div class="demo-img-wrapper">
-                        <img src="static/images/aric_thumb.png" class="demo-img" alt="SSS Class">
-                        <div style="position:absolute; top:10px; right:10px; background:#800080; color:white; padding:4px 12px; font-size:0.8rem; font-weight:bold; border-radius:4px; box-shadow:0 0 10px #800080;">SSS | MÍTICA</div>
-                    </div>
-                    <div class="demo-content">
-                        <h3 class="demo-name" style="background: linear-gradient(to right, #c026d3, #7e22ce); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Azraell</h3>
-                        <div class="demo-tags">
-                            <span class="demo-tag" style="border-color:#800080; color:#d88;">Divino</span>
-                            <span class="demo-tag">Kintsugi</span>
-                        </div>
-                        <p style="color:#aaa; font-size:0.9rem;">
-                            La joya de la corona. Stats encriptados y mecánica "Anti-Porcelana".
-                        </p>
-                        <span class="btn-view-demo" style="background: linear-gradient(135deg, #800080, #4b0082); color:white; border:1px solid #a0f;">INSPECCIONAR ALMA</span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- GACHA CARD -->
-            <a href="demo_gacha.html" target="_blank" style="text-decoration:none;">
-                <div class="demo-card" style="border-color: #d4af37;">
-                    <div class="demo-img-wrapper" style="display:flex; align-items:center; justify-content:center; background:#000;">
-                        <div style="font-size:5rem;">💎</div>
-                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); color:#d4af37; padding:2px 8px; font-size:0.7rem; font-weight:bold; border:1px solid #d4af37; border-radius:4px;">SYSTEM</div>
-                    </div>
-                    <div class="demo-content">
-                        <h3 class="demo-name" style="color:#d4af37;">Gacha System</h3>
-                        <div class="demo-tags">
-                            <span class="demo-tag">RNG</span>
-                            <span class="demo-tag">Animation</span>
-                        </div>
-                        <p style="color:#888; font-size:0.9rem;">
-                            Prueba tu suerte con el sistema de invocación procedural.
-                        </p>
-                        <span class="btn-view-demo">INICIAR RITUAL</span>
-                    </div>
-                </div>
-            </a>
-
-        </div>
-
+        // --- DEMO HANDLER (Motor Visual Section is in HTML above, not here) ---
 
 
             // --- HTML GENERATORS ---
