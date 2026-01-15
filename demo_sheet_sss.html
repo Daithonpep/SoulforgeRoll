@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Azraell - Ficha Mítica (SSS) - Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* MÍTICA (TIER SSS) THEME: CYAN, VOID, COSMIC */
+            --bg-dark: #020205;
+            --panel-dark: #0b0b15;
+            --paper: #090910;
+            /* Dark cosmic paper */
+            --ink: #e0faff;
+            /* Ice white text */
+
+            --tier-color: #00FFFF;
+            /* CYAN */
+            --tier-glow: 0 0 20px rgba(0, 255, 255, 0.4);
+
+            --gold: #00FFFF;
+            /* Replaced Gold with Cyan */
+            --gold-bright: #ccffff;
+            --blood: #FF00FF;
+            /* Magenta for danger/scars */
+            --accent: #4682B4;
+            /* Steel Blue */
+
+            --tag-conflict: #551a1a;
+            --tag-combat: #1a3a55;
+            --tag-roleplay: #441a44;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Crimson Text', serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            /* Simple stars bg */
+            background-image:
+                radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255, 255, 255, .1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        .rpg-sheet {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--paper);
+            border: 1px solid #333;
+            box-shadow: 0 0 80px rgba(0, 255, 255, 0.15);
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TIER SSS BADGE */
+        .mythic-badge {
+            position: absolute;
+            top: 35px;
+            right: -40px;
+            background: linear-gradient(90deg, #00FFFF, #FF00FF);
+            color: #000;
+            padding: 8px 60px;
+            transform: rotate(45deg);
+            font-family: 'Cinzel';
+            font-weight: 900;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            z-index: 100;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px white;
+            border: 2px solid white;
+        }
+
+        /* SHEET LAYOUT */
+        .sheet-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .side-panel {
+            background: var(--panel-dark);
+            color: #ccc;
+            padding: 40px 25px;
+            border-right: 2px solid var(--tier-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+            width: 340px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Shimmer effect on side panel border */
+        .side-panel::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #00FFFF, #FF00FF, transparent);
+            box-shadow: var(--tier-glow);
+        }
+
+        .main-content {
+            padding: 60px 70px;
+            position: relative;
+            flex-grow: 1;
+        }
+
+        /* AVATAR */
+        .avatar-frame {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 4px solid var(--tier-color);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.2);
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .avatar-frame:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.5);
+        }
+
+        .avatar-frame:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* TENSION BAR */
+        .tension-wrapper {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .tension-track {
+            width: 100%;
+            height: 6px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .tension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00FFFF, #FF00FF);
+            box-shadow: 0 0 10px #FF00FF;
+            transition: width 0.3s;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        .stat-medallion {
+            position: relative;
+            width: 90px;
+            height: 100px;
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+            border: 1px solid #444;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        .stat-medallion:hover {
+            border-color: var(--tier-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+
+        .stat-value-big {
+            font-family: 'Cinzel';
+            font-size: 1.8rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-name-tiny {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: var(--tier-color);
+            letter-spacing: 1px;
+        }
+
+        .stat-mod-seal {
+            position: absolute;
+            bottom: -10px;
+            background: #000;
+            color: var(--tier-color);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel';
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid var(--tier-color);
+            box-shadow: 0 0 10px var(--tier-color);
+        }
+
+        /* MAIN CONTENT */
+        h1 {
+            font-family: 'Cinzel';
+            font-size: 3.5rem;
+            color: var(--tier-color);
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+
+        .meta-line {
+            font-family: 'Metamorphous';
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-top: 10px;
+            font-style: italic;
+            border-left: 3px solid var(--blood);
+            padding-left: 15px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel';
+            font-size: 1.6rem;
+            color: #fff;
+            border-bottom: 1px solid #333;
+            margin-top: 35px;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '❖';
+            color: var(--tier-color);
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            text-align: justify;
+            color: var(--ink);
+            margin-bottom: 15px;
+        }
+
+        /* MORAL MATRIX (COSMIC) */
+        .moral-matrix {
+            background: rgba(0, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .timeline-item {
+            margin-bottom: 15px;
+            border-left: 2px solid var(--tier-color);
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: var(--tier-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--tier-color);
+        }
+
+        /* ECONOMY & INVENTORY */
+        .gold-display {
+            background: linear-gradient(90deg, #111, #000);
+            border: 1px solid var(--tier-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .inv-slot {
+            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.03);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #aaa;
+            padding: 5px;
+            transition: all 0.3s;
+        }
+
+        .inv-slot.filled {
+            border-color: var(--tier-color);
+            color: #fff;
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        /* DOWNLOAD BUTTON */
+        .btn-download {
+            display: block;
+            width: fit-content;
+            margin: 40px auto 30px;
+            background: transparent;
+            color: var(--tier-color);
+            border: 2px solid var(--tier-color);
+            padding: 15px 30px;
+            font-family: 'Cinzel';
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 0;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            background: var(--tier-color);
+            color: #000;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--tier-color);
+            border-radius: 4px;
+        }
+
+        @media (max-width:900px) {
+            .rpg-sheet {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .side-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid var(--tier-color);
+            }
+
+            .inv-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="rpg-sheet">
+        <div class="mythic-badge">MÍTICA</div>
+
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+            <div class="avatar-frame" onclick="document.getElementById('avatar-input').click()">
+                <div id="avatar-display"
+                    style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
+                    <span style="font-size:3rem; color:var(--tier-color)">◈</span>
+                </div>
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Cambiar</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="loadFile(event)">
+
+            <!-- TENSION -->
+            <div class="tension-wrapper">
+                <div
+                    style="font-size:0.7rem; color:var(--blood); margin-bottom:5px; font-family:'Cinzel'; text-transform:uppercase; letter-spacing:2px;">
+                    Inestabilidad: 92%</div>
+                <div class="tension-track">
+                    <div class="tension-fill" style="width:92%"></div>
+                </div>
+            </div>
+
+            <!-- GP -->
+            <div class="gold-display">
+                <div style="font-size:0.7rem; color:#888; text-transform:uppercase;">Fortuna Cósmica</div>
+                <div
+                    style="font-family:'Cinzel'; font-size:1.8rem; color:var(--tier-color); text-shadow:0 0 10px var(--tier-color);">
+                    2,500 <span style="font-size:1rem;">GP</span>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats-grid">
+                <div class="stat-medallion">
+                    <div class="stat-value-big">18</div>
+                    <div class="stat-name-tiny">Fuerza</div>
+                    <div class="stat-mod-seal">+4</div>
+                </div>
+                <div class="stat-medallion">
+                    <div class="stat-value-big">20</div>
+                    <div class="stat-name-tiny">Destreza</div>
+                    <div class="stat-mod-seal">+5</div>
+                </div>
+                <div class="stat-medallion">
+                    <div class="stat-value-big">22</div>
+                    <div class="stat-name-tiny">Mente</div>
+                    <div class="stat-mod-seal">+6</div>
+                </div>
+                <div class="stat-medallion">
+                    <div class="stat-value-big">16</div>
+                    <div class="stat-name-tiny">Carisma</div>
+                    <div class="stat-mod-seal">+3</div>
+                </div>
+            </div>
+
+            <!-- TAGS -->
+            <div style="margin-top:20px;">
+                <div style="font-size:0.7rem; color:#666; margin-bottom:10px; font-family:'Cinzel';">ETIQUETAS DEL ALMA
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                    <span
+                        style="background:var(--tag-combat); font-size:0.7rem; padding:3px 8px; border-radius:4px; color:#fff;">Deidad
+                        Menor</span>
+                    <span
+                        style="background:var(--tag-roleplay); font-size:0.7rem; padding:3px 8px; border-radius:4px; color:#fff;">Eterno</span>
+                    <span
+                        style="background:var(--tag-conflict); font-size:0.7rem; padding:3px 8px; border-radius:4px; color:#fff;">Temido</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <h1>Azraell</h1>
+            <div class="meta-line">Entidad Cósmica · Caminante de Planos · Edad Incalculable · Tono: Solemne y Aterrador
+            </div>
+
+            <p>Azraell no "nació" en el sentido tradicional. Despertó cuando la primera estrella colapsó en un agujero
+                negro. Desde entonces, vaga entre los planos de existencia, observando el auge y caída de civilizaciones
+                enteras. No es malvado, simplemente inevitable. Su presencia distorsiona la realidad, causando que la
+                magia se vuelva inestable y los sueños se manifiesten físicamente.</p>
+
+            <p>Recientemente ha sido atado a una forma mortal por un ritual fallido de la Orden del Loto Negro. Ahora
+                busca la manera de romper sus cadenas, aunque el mundo terrenal le resulta fascinante y extrañamente
+                frágil.</p>
+
+            <!-- MORAL MATRIX -->
+            <div class="section-title">🧠 Psico-Matriz Trascendental</div>
+            <div class="moral-matrix">
+                <div
+                    style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem; color:#888;">
+                    <span>LA MENTIRA</span>
+                    <span>LA VERDAD</span>
+                </div>
+                <div
+                    style="display:flex; align-items:center; justify-content:space-between; font-family:'Crimson Text'; font-size:1.1rem; color:#fff;">
+                    <div style="width:45%; text-align:left;">"La entropía es el único final posible para este universo."
+                    </div>
+                    <div style="color:var(--tier-color); font-size:1.5rem;">↔</div>
+                    <div style="width:45%; text-align:right;">"La vida encuentra su camino incluso en el vacío total."
+                    </div>
+                </div>
+                <div style="margin-top:15px; background:#111; height:6px; border-radius:3px; overflow:hidden;">
+                    <div style="width:35%; background: linear-gradient(90deg, #00FFFF, #FF00FF); height:100%;"></div>
+                </div>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="section-title">📜 Eones & Cicatrices</div>
+            <div class="timeline-item">
+                <div style="color:var(--tier-color); font-weight:bold; font-size:0.9rem;">ERA PRIMORDIAL</div>
+                <div style="color:#ccc;">Azraell devora su primer sistema solar para evitar que una plaga del vacío se
+                    expanda.</div>
+            </div>
+            <div class="timeline-item">
+                <div style="color:var(--tier-color); font-weight:bold; font-size:0.9rem;">ERA DE LOS DIOSES</div>
+                <div style="color:#ccc;">Es condenado al exilio por el panteón unificado tras negarse a intervenir en la
+                    Guerra Eterna. <span
+                        style="color:var(--blood); border:1px solid var(--blood); padding:0 3px; font-size:0.7rem; margin-left:5px;">CICATRIZ:
+                        ALMA FRACTURADA</span></div>
+            </div>
+            <div class="timeline-item">
+                <div style="color:var(--tier-color); font-weight:bold; font-size:0.9rem;">354 A.C. (Tiempo Mortal)</div>
+                <div style="color:#ccc;">El ritual de invocación. Es atrapado en un cuerpo Humano/Elfo sintético.</div>
+            </div>
+
+            <!-- INVENTORY -->
+            <div class="section-title">🎒 Artefactos Vinculados</div>
+            <div class="inv-grid">
+                <div class="inv-slot filled">🗡️ Espada de Eventos</div>
+                <div class="inv-slot filled">🔮 Orbe de Almas</div>
+                <div class="inv-slot filled">🧥 Manto del Vacío</div>
+                <div class="inv-slot filled">💍 Anillo de Singularidad</div>
+                <div class="inv-slot">Vacío</div>
+                <div class="inv-slot">Vacío</div>
+            </div>
+
+            <button class="btn-download" onclick="alert('Guardando estado cuántico...')">💾 CRISTALIZAR DATOS</button>
+        </div>
+    </div>
+
+    <script>
+        function loadFile(event) {
+            const display = document.getElementById('avatar-display');
+            const img = URL.createObjectURL(event.target.files[0]);
+            display.innerHTML = `<img src="${img}" style="width:100%; height:100%; object-fit:cover;">`;
+        }
+    </script>
+
+</body>
+
+</html>

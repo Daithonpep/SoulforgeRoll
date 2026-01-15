@@ -38,8 +38,11 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+            /* Relative path for local testing */
+            background-image: url("static/images/forest_crystal_bg.jpg");
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
         }
 
         /* --- CRYSTAL ANIMATION CONTAINER --- */
@@ -255,7 +258,8 @@
 
             <div style="display:flex; align-items:flex-start; text-align:left; gap:15px; margin-bottom:20px;">
                 <div id="finalAvatar"
-                    style="width:80px; height:80px; background:#333; border:2px solid var(--accent); background-size:cover;">
+                    style="width:80px; height:80px; background:#111; border:2px solid var(--accent); overflow:hidden; position:relative;">
+                    <!-- Image will be injected here via JS -->
                 </div>
                 <div>
                     <div id="finalCharName" style="font-weight:bold; font-size:1.2rem; color:white;">Nombre del PJ</div>
@@ -301,9 +305,40 @@
         }
     </style>
 
+    <!-- CROP MODAL -->
+    <div id="cropModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; flex-direction:column;">
+        <h3 style="color:var(--accent); font-family:'Cinzel'; margin-bottom:15px;">Ajustar Retrato</h3>
+
+        <div style="width:300px; height:300px; border-radius:50%; border:4px solid var(--accent); overflow:hidden; position:relative; background:#000; cursor:grab;"
+            onmousedown="startDrag(event)" onmousemove="doDrag(event)" onmouseup="endDrag()" onmouseleave="endDrag()"
+            ontouchstart="startDrag(event)" ontouchmove="doDrag(event)" ontouchend="endDrag()">
+
+            <img id="cropImageTarget" src=""
+                style="position:absolute; top:50%; left:50%; transform-origin:center; transform:translate(-50%, -50%); pointer-events:none; max-width:none; max-height:none;">
+            <div
+                style="position:absolute; width:100%; height:100%; border-radius:50%; box-shadow:inset 0 0 50px rgba(0,0,0,0.5); pointer-events:none;">
+            </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
+            <button onclick="adjustScale(-0.1)"
+                style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">-</button>
+            <span style="color:white; font-family:'Cinzel'">ZOOM</span>
+            <button onclick="adjustScale(0.1)"
+                style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">+</button>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:20px;">
+            <button onclick="applyCrop()"
+                style="padding:10px 30px; background:var(--accent); color:#000; border:none; font-weight:bold; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CONFIRMAR</button>
+            <button onclick="closeCropModal()"
+                style="padding:10px 30px; background:transparent; border:1px solid #fff; color:#fff; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CANCELAR</button>
+        </div>
+    </div>
+
     <script>
         // --- CONFIGURATION ---
-        // Using descriptive names acts as IDs and displays
         const TIERS = {
             Eco: { color: "#808080", prob: 0.30, benefits: ["Biografía Básica", "1 Defecto Menor"] },
             Murmullo: { color: "#FFFFFF", prob: 0.25, benefits: ["Biografía Extendida", "1 Cicatriz", "100 GP Iniciales"] },
@@ -329,7 +364,12 @@
         ];
 
         let isAnimating = false;
-        let finalTierKey = "Eco"; // Store result
+        let finalTierKey = "Eco";
+
+        // CROPPER STATE
+        let currentImageRaw = null;
+        let scale = 1; let pX = 0; let pY = 0;
+        let isDragging = false; let startX, startY;
 
         // --- CORE LOGIC ---
         function rollTier() {
@@ -353,13 +393,12 @@
 
             const crystal = document.getElementById('crystal');
 
-            // PHASE 1: CHARGING (1s)
+            // PHASE 1
             crystal.className = "soul-crystal charging";
             await wait(1000);
 
-            // PHASE 2: RESONATING (2.5s)
+            // PHASE 2
             crystal.className = "soul-crystal resonating";
-
             const targetIndex = Object.keys(TIERS).indexOf(finalTierKey);
             const steps = 15;
             for (let i = 0; i < steps; i++) {
@@ -371,22 +410,19 @@
                 await wait(150);
             }
 
-            // Final hold
             const tierData = TIERS[finalTierKey];
             crystal.style.setProperty('--current-color', tierData.color);
             await wait(500);
 
-            // PHASE 3: EXPLOSION -> UPLOAD PROMPT
+            // PHASE 3
             document.getElementById('flash').classList.add('active');
             crystal.style.opacity = '0';
 
-            // Setup Text
             const badge = document.getElementById('tierBadge');
-            badge.textContent = finalTierKey.toUpperCase(); // "ECO", "SOMBRA"
+            badge.textContent = finalTierKey.toUpperCase();
             badge.style.color = tierData.color;
             badge.style.textShadow = `0 0 30px ${tierData.color}`;
 
-            // Reveal Upload Step
             setTimeout(() => {
                 document.getElementById('uploadStep').classList.add('visible');
                 crystal.className = "soul-crystal idle";
@@ -398,35 +434,92 @@
             document.getElementById('avatarUpload').click();
         }
 
-        async function finishProcess() {
-            // Simulate processing
+        function finishProcess() {
+            const file = document.getElementById('avatarUpload').files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                currentImageRaw = reader.result;
+                openCropModal();
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // --- CROPPER FUNCTIONS ---
+        function openCropModal() {
+            scale = 1; pX = 0; pY = 0;
+            const img = document.getElementById('cropImageTarget');
+            img.src = currentImageRaw;
+            img.onload = () => { img.style.transform = `translate(0px, 0px) scale(1)`; };
+            document.getElementById('cropModal').style.display = 'flex';
+        }
+
+        function closeCropModal() { document.getElementById('cropModal').style.display = 'none'; }
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = (e.touches ? e.touches[0].clientX : e.clientX) - pX;
+            startY = (e.touches ? e.touches[0].clientY : e.clientY) - pY;
+        }
+        function doDrag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX);
+            const y = (e.touches ? e.touches[0].clientY : e.clientY);
+            pX = x - startX; pY = y - startY;
+            updateTransform();
+        }
+        function endDrag() { isDragging = false; }
+
+        function adjustScale(delta) {
+            scale += delta; if (scale < 0.2) scale = 0.2; if (scale > 5) scale = 5;
+            updateTransform();
+        }
+        function updateTransform() {
+            const img = document.getElementById('cropImageTarget');
+            img.style.transform = `translate(calc(-50% + ${pX}px), calc(-50% + ${pY}px)) scale(${scale})`;
+        }
+
+        async function applyCrop() {
+            closeCropModal();
+
+            // TRANSITION TO FINAL VIEW
             const uploadStep = document.getElementById('uploadStep');
             uploadStep.innerHTML = "<p style='color:var(--accent)'>Anclando alma a imagen...</p>";
-
-            await wait(1500);
-
-            uploadStep.classList.remove('visible'); // Hide upload
+            await wait(1000);
+            uploadStep.classList.remove('visible');
 
             // Show Final Sheet Reveal
             const finalReveal = document.getElementById('finalReveal');
             const tierData = TIERS[finalTierKey];
 
-            // Populate
             document.getElementById('finalTierName').textContent = finalTierKey.toUpperCase();
             document.getElementById('finalTierName').style.color = tierData.color;
             document.getElementById('tierLabel').textContent = finalTierKey;
 
-            // Populate Benefits List
             const list = document.getElementById('tierBenefits');
             list.innerHTML = tierData.benefits.map(b => `<li>💎 ${b}</li>`).join('');
 
-            // Set Fake Image (Normally user's uploaded img)
-            // Just simulating a color block for now or a generic placeholder
-            document.getElementById('finalAvatar').style.backgroundColor = tierData.color;
+            // APPLY VISUAL TRANSFORM
+            const finalAvatar = document.getElementById('finalAvatar');
+            finalAvatar.innerHTML = '';
 
-            setTimeout(() => {
-                finalReveal.classList.add('visible');
-            }, 500);
+            const img = document.createElement('img');
+            img.src = currentImageRaw;
+            img.style.position = 'absolute';
+            img.style.top = '50%';
+            img.style.left = '50%';
+
+            // Map 300px modal transform to 80px result (Ratio ~0.266)
+            const ratio = 80 / 300;
+            // We apply the translations scaled by ratio, but keep the scale factor AS IS relative to the container frame
+            // Actually, if we use the exact same logic, we just scale the pixel values.
+
+            img.style.transform = `translate(-50%, -50%) translate(${pX * ratio}px, ${pY * ratio}px) scale(${scale * ratio})`;
+
+            finalAvatar.appendChild(img);
+
+            setTimeout(() => { finalReveal.classList.add('visible'); }, 500);
         }
 
         function wait(ms) {
