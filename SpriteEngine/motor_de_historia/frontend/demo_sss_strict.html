@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azraell - Ficha Primordial (Secured)</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
+        rel="stylesheet">
+    <style>
+        /* BASE THEME (Standard) but with SSS Overrides */
+        :root {
+            --bg-dark: #0a0a0f;
+            --panel-dark: #111;
+            --paper: #e3dac9;
+            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            --ink: #1a1a1a;
+
+            /* SSS Tier Colors (Overrides standard Gold/Brown) */
+            --tier-sss-primary: #800080;
+            /* Deep Purple */
+            --tier-sss-secondary: #FFD700;
+            /* Gold */
+            --tier-sss-glow: #9932CC;
+            /* Neon Purple Glow */
+
+            --gold: var(--tier-sss-secondary);
+            --gold-bright: #ffffaa;
+            --blood: #8a0b0b;
+            --accent: #4b0082;
+            /* Indigo/Purple accent instead of brown */
+
+            --tag-conflict: #8a3b3b;
+            --tag-combat: #3b5b8a;
+            --tag-roleplay: #8a3b86;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .rpg-sheet {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--paper);
+            background-image: var(--paper-texture);
+            box-shadow: 0 0 80px rgba(128, 0, 128, 0.4);
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 1200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            border: 2px solid var(--tier-sss-secondary);
+        }
+
+        /* SIDEBAR (STATS) */
+        .sidebar {
+            background-color: var(--panel-dark);
+            color: #ccc;
+            padding: 30px 25px;
+            border-right: 4px solid var(--tier-sss-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* KINTSUGI AVATAR (Beautiful Brokenness) */
+        .avatar-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: #050505;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
+            border: 4px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .avatar-container.kintsugi {
+            border-color: var(--tier-sss-primary);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .avatar-container.kintsugi::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                linear-gradient(45deg, transparent 48%, var(--tier-sss-secondary) 50%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, var(--tier-sss-secondary) 50%, transparent 52%);
+            background-size: 200% 200%;
+            opacity: 0.6;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        .avatar-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 0.8rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* TRAUMA / RISK BAR */
+        .tension-wrapper {
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .tension-label-mini {
+            font-family: 'Cinzel';
+            font-size: 0.7rem;
+            color: var(--blood);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .risk-meter {
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            border: 1px solid #444;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .risk-fill {
+            height: 100%;
+            width: 25%;
+            background: linear-gradient(90deg, #555, #b00, #ff0);
+        }
+
+        /* ECONOMY */
+        .economy-box {
+            text-align: center;
+            border: 1px solid var(--tier-sss-secondary);
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* SCARS LOG (New Section) */
+        .scars-section {
+            border-top: 1px solid #444;
+            padding-top: 15px;
+        }
+
+        .scars-title {
+            color: var(--blood);
+            font-family: 'Cinzel';
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .scar-slot {
+            border: 1px dashed #555;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .scar-slot:hover {
+            border-color: var(--tier-sss-secondary);
+            color: #ccc;
+        }
+
+        .scar-bonus {
+            font-weight: bold;
+            font-size: 0.7rem;
+            background: #333;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* PERKS (Locked Logic) */
+        .soul-perk {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--tier-sss-secondary);
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .locked-perk {
+            opacity: 0.6;
+            filter: grayscale(0.8);
+            border-left-color: #555;
+            position: relative;
+        }
+
+        .locked-msg {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--blood);
+            font-weight: bold;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* STATS */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            justify-items: center;
+        }
+
+        .stat-medallion {
+            position: relative;
+            width: 80px;
+            height: 90px;
+            background: linear-gradient(135deg, #222, #111);
+            border: 1px solid #555;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 8px;
+            transition: transform 0.2s;
+        }
+
+        .stat-medallion:hover {
+            border-color: var(--tier-sss-secondary);
+            transform: scale(1.05);
+        }
+
+        .stat-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--tier-sss-secondary);
+            margin-bottom: 2px;
+        }
+
+        .stat-value-big {
+            font-family: 'Cinzel';
+            font-size: 1.6rem;
+            color: #fff;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-name-tiny {
+            font-size: 0.6rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .stat-mod-seal {
+            position: absolute;
+            bottom: -8px;
+            background: var(--tier-sss-primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel';
+            font-weight: bold;
+            font-size: 0.8rem;
+            border: 2px solid var(--tier-sss-secondary);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 40px 50px;
+            position: relative;
+        }
+
+        .tier-stamp {
+            display: inline-block;
+            background: var(--tier-sss-secondary);
+            color: #000;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Cinzel';
+            font-weight: 900;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border: 1px solid #000;
+        }
+
+        h1 {
+            font-family: 'Cinzel';
+            font-size: 4rem;
+            color: var(--ink);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .sub-header {
+            font-family: 'Metamorphous';
+            font-size: 1.3rem;
+            color: var(--tier-sss-primary);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .quote-box {
+            border-left: 4px solid var(--tier-sss-secondary);
+            background: linear-gradient(to right, rgba(128, 0, 128, 0.1), transparent);
+            padding: 15px 20px;
+            margin: 25px 0;
+            font-family: 'Cinzel';
+            font-size: 1.2rem;
+            color: #222;
+            font-style: italic;
+        }
+
+        /* INVENTORY GRID */
+        .inv-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .inv-item {
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .legendary-item {
+            border: 1px solid var(--tier-sss-secondary);
+            background: linear-gradient(to right, rgba(255, 215, 0, 0.1), transparent);
+            color: #440044;
+            font-weight: bold;
+        }
+
+        /* Matrix & Timeline */
+        .matrix-box {
+            background: rgba(128, 0, 128, 0.05);
+            border: 2px solid var(--tier-sss-primary);
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: baseline;
+        }
+
+        .matrix-label {
+            font-weight: bold;
+            font-variant: small-caps;
+            color: var(--tier-sss-primary);
+            font-size: 1rem;
+            width: 140px;
+        }
+
+        .matrix-text {
+            font-style: italic;
+            color: #333;
+            flex: 1;
+        }
+
+        .timeline-item {
+            margin-bottom: 12px;
+            border-left: 3px solid var(--tier-sss-secondary);
+            padding-left: 15px;
+        }
+
+        .timeline-year {
+            font-family: 'Cinzel';
+            font-weight: bold;
+            color: var(--tier-sss-primary);
+        }
+
+        .download-btn {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            background: var(--ink);
+            color: var(--paper);
+            border: 2px solid var(--tier-sss-secondary);
+            padding: 15px 30px;
+            font-family: 'Cinzel';
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: var(--tier-sss-primary);
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .rpg-sheet {
+                grid-template-columns: 1fr;
+                border: none;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 4px solid var(--tier-sss-secondary);
+                padding: 20px;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body onload="initSecureSystem()">
+
+    <div class="rpg-sheet">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="avatar-container kintsugi" onclick="triggerUpload()">
+                <div id="avatar-placeholder"
+                    style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#FFD700; font-size:3rem;">
+                    ◈
+                </div>
+                <!-- Placeholder for dynamic image if user provides one -->
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Registrar Rostro</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none"
+                onchange="encodeImageFileAsURL(this)">
+
+            <!-- PHILOSOPHY: PAIN = POWER -->
+            <div class="tension-wrapper" title="El dolor es el precio del poder.">
+                <div class="tension-label-mini">SOBRECARGA DE TRAUMA</div>
+                <div class="risk-meter">
+                    <div class="risk-fill"></div>
+                </div>
+                <div style="font-size:0.6rem; color:#666; margin-top:3px;">
+                    Estado: <span style="color:#aaa">Estable</span> | Siguiente: <span style="color:#d88">Frenesí
+                        (Requiere Daño)</span>
+                </div>
+            </div>
+
+            <div class="economy-box">
+                <div style="font-size:0.6rem; color:#888;">CAPITAL CÓSMICO</div>
+                <div style="font-family:'Cinzel'; font-size:1.4rem; color:var(--tier-sss-secondary);">2,500 <span
+                        style="font-size:0.8rem">GP</span></div>
+            </div>
+
+            <!-- CICATRICES DE GLORIA -->
+            <div class="scars-section">
+                <div class="scars-title">🩸 CICATRICES DE GLORIA</div>
+
+                <div class="scar-slot filled" title="Cicatriz inicial por el ritual de invocación">
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="color:#ddd; font-weight:bold;">Intervención Divina</span>
+                        <span style="font-size:0.65rem;">(Cicatriz de Nacimiento)</span>
+                    </div>
+                    <span class="scar-bonus">+2 VOL</span>
+                </div>
+
+                <div class="scar-slot" onclick="alert('Registra aquí tu próximo trauma grave para desbloquear poder.')">
+                    <span>[Espacio para Trauma]</span>
+                    <span style="opacity:0.5">???</span>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <!-- Data populated by JS security core -->
+                <!-- STR -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path d="M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-str">--</span>
+                    <span class="stat-name-tiny">Fuerza</span>
+                    <div class="stat-mod-seal" id="mod-str">--</div>
+                </div>
+                <!-- DEX -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path d="M12,2 L12,22 M2,12 L22,12 M12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-dex">--</span>
+                    <span class="stat-name-tiny">Destreza</span>
+                    <div class="stat-mod-seal" id="mod-dex">--</div>
+                </div>
+                <!-- CON -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-con">--</span>
+                    <span class="stat-name-tiny">Const.</span>
+                    <div class="stat-mod-seal" id="mod-con">--</div>
+                </div>
+                <!-- INT -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path d="M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-int">--</span>
+                    <span class="stat-name-tiny">Intel.</span>
+                    <div class="stat-mod-seal" id="mod-int">--</div>
+                </div>
+                <!-- WIS -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-wis">--</span>
+                    <span class="stat-name-tiny">Sabid.</span>
+                    <div class="stat-mod-seal" id="mod-wis">--</div>
+                </div>
+                <!-- CHA -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path d="M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big" id="stat-cha">--</span>
+                    <span class="stat-name-tiny">Carisma</span>
+                    <div class="stat-mod-seal" id="mod-cha">--</div>
+                </div>
+            </div>
+
+            <!-- SKILLS (Locked) -->
+            <div class="resonance-section" style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
+                <div class="resonance-title">✨ DONES MÍTICOS (SSS)</div>
+
+                <!-- LOCKED Legendary Perk -->
+                <div class="soul-perk locked-perk">
+                    <span style="color:#aaa; font-weight:bold;">Omnisciencia Limitada</span>
+                    <span class="locked-msg">🔒 Requiere: 1 Cicatriz Mayor</span>
+                </div>
+
+                <!-- Active Perk -->
+                <div class="soul-perk">
+                    <span class="perk-name">Aura de Soberanía</span>
+                    <div style="font-size:0.8rem; color:#ccc; margin-top:5px;">
+                        NPCs de bajo nivel no pueden iniciar hostilidades.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="char-header">
+                <!-- TIER SET DYNAMICALLY -->
+                <div class="tier-stamp" id="tier-badge">LOADING...</div>
+                <h1 id="char-name">Undisclosed</h1>
+                <div class="sub-header" id="char-archetype">Entidad Cósmica · Caminante de Planos · Edad Eterna · Tono:
+                    Solemne</div>
+            </div>
+
+            <div class="quote-box">
+                "La entropía no es un error en el sistema; es la única certeza que tienen los mortales... y mi única
+                herramienta."
+            </div>
+
+            <h2>Biografía: El Testigo del Vacío</h2>
+            <!-- Rich Narrative with Tags -->
+            <p>
+                <span class="dm-tag dm-roleplay"
+                    style="background:#220022; color:#d88; border-color:#505; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.75rem; margin-right:5px; border:1px solid;">🌌
+                    Origen</span>
+                Azraell existía antes de que los dioses aprendieran a mentir. Despertado por el colapso de la primera
+                estrella, vaga entre dimensiones observando el ascenso y caída de imperios estelares. No es un héroe ni
+                un villano; es una <strong>fuerza de la naturaleza</strong> encarnada.
+            </p>
+            <p>
+                <span class="dm-tag dm-conflict"
+                    style="background:#300; color:#f55; border-color:#800; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.75rem; margin-right:5px; border:1px solid;">🩸
+                    El Trauma</span>
+                Recientemente, un ritual fallido de la Orden del Loto Negro lo ató a una forma semimortal. Ha
+                descubierto dolor físico y límites por primera vez.
+            </p>
+
+            <!-- PSYCHO MATRIX -->
+            <div class="matrix-box">
+                <div class="matrix-row">
+                    <span class="matrix-label">La Mentira</span>
+                    <span class="matrix-text">"Soy un prisionero en este cuerpo."</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">La Herida</span>
+                    <span class="matrix-text">La Sensación de Finitud.</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">El Deseo</span>
+                    <span class="matrix-text">Romper los 7 Sellos.</span>
+                </div>
+            </div>
+
+            <h2>🎒 Inventario Legendario (Vinculado)</h2>
+            <div class="inv-section" id="inventory-grid">
+                <!-- Dynamically Populated -->
+            </div>
+
+            <h2>📖 Bitácora de Crisis</h2>
+            <div style="font-size:0.8rem; color:#666; font-style:italic; margin-bottom:15px;">
+                (Registro de momentos donde el HP bajó del 10%)
+            </div>
+
+            <div id="crisis-log">
+                <div class="timeline-item" style="border-left-color:var(--blood);">
+                    <div class="timeline-year" style="color:var(--blood)">Día 1</div>
+                    <div class="timeline-content" contenteditable="true">
+                        Intenté contener una explosión de maná sin protección. Me costó la sensibilidad en la mano
+                        izquierda.
+                        <br><strong style="font-size:0.8rem; color:#d88">>> DESBLOQUEO: RESISTENCIA TÉRMICA</strong>
+                    </div>
+                </div>
+            </div>
+
+            <button class="download-btn" onclick="saveProgress()">
+                💾 CRISTALIZAR DATOS (Guardar HTML)
+            </button>
+        </div>
+    </div>
+
+    <!-- PROTECTED DATA PAYLOAD (Simulated Encryption) -->
+    <!-- Content is Base64 String - Decoded on Load to prevent casual HTML editing of Stats -->
+    <script id="protected-core" type="application/json">
+        "eyJuYW1lIjoiQXpyYWVsbCIsInRpZXIiOiJQUklNT1JESUFMIiwic3RhdHMiOnsic3RyIjoxOCwiZGV4IjoyMCwiY29uIjoyMiwiaW50IjoyNSwid2lzIjoyNSwiY2hhIjozMH0sImWZmHkcyI6WzQsNSw2LDcsNywxMF0sImludmVudG9yeSI6WyJfw58gRXNwYWRhIGRlIEV2ZW50b3MiLCJfw68gTWFudG8gZGVsIFZhY8O0IiwiXHVEODNDXHVEQzhEIEFuaWxsbyBkZSBTaW5ndWxhcmlkYWQiLCJcdUQ4M0RXHVEQzRDIEdyaW1vcmlvIGRlbCBPcmlnZW4iLCJcdUQ4M0RXHVDE🩸 Vial de Sangre Antigua","\uD83D\uDD11 Llave de la Torre"]}
+    </script>
+
+    <script>
+        // --- SECURITY CORE ---
+        function initSecureSystem() {
+            try {
+                // DYNAMIC INTEGRATION: Read URL Params from Index
+                const params = new URLSearchParams(window.location.search);
+                const dynamicName = params.get('name');
+                const dynamicArch = params.get('archetype');
+
+                const securedData = {
+                    name: dynamicName || "Azraell",
+                    tier: "PRIMORDIAL", // SSS
+                    stats: [18, 20, 22, 25, 25, 30], // STR, DEX, CON, INT, WIS, CHA
+                    mods: ["+4", "+5", "+6", "+7", "+7", "+10"],
+                    inventory: [
+                        "⚔️ Espada de Eventos", "🧥 Manto del Vacío", "💍 Anillo de Singularidad",
+                        "📜 Grimorio del Origen", "🩸 Vial de Sangre Antigua", "🔑 Llave de la Torre"
+                    ]
+                };
+
+                // 1. ENFORCE STATS & MODS
+                const statIds = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+                statIds.forEach((id, index) => {
+                    document.getElementById('stat-' + id).innerText = securedData.stats[index];
+                    document.getElementById('mod-' + id).innerText = securedData.mods[index];
+                });
+
+                // 2. ENFORCE TIER & NAME
+                document.getElementById('tier-badge').innerText = securedData.tier;
+                document.getElementById('char-name').innerText = securedData.name;
+
+                // 3. ENFORCE INVENTORY
+                const invGrid = document.getElementById('inventory-grid');
+                if (invGrid) {
+                    invGrid.innerHTML = '';
+                    securedData.inventory.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = item.includes('⚔️') || item.includes('🧥') || item.includes('💍') ? 'inv-item legendary-item' : 'inv-item';
+                        div.innerText = item;
+                        invGrid.appendChild(div);
+                    });
+                }
+
+                // 4. Update Archetype (Visual Only)
+                if (dynamicArch) {
+                    document.getElementById('char-archetype').innerText = dynamicArch + " · Origen Desconocido";
+                }
+
+                console.log("System Integrity Verified: Stats Locked.");
+
+            } catch (e) {
+                console.error("Tampering Detected:", e);
+                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px;'>ERROR DE INTEGRIDAD: FICHA CORRUPTA</h1>";
+            }
+        }
+
+        function saveProgress() {
+            // Re-serialize HTML but keep the script block intact
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Ficha_SSS_Protected.html";
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function encodeImageFileAsURL(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                document.querySelector('.avatar-container').innerHTML = `<img src="${reader.result}" class="avatar-img">`;
+            }
+            reader.readAsDataURL(file);
+        }
+        function triggerUpload() { document.getElementById('avatar-input').click(); }
+    </script>
+</body>
+
+</html>

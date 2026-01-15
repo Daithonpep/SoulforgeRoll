@@ -4,24 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elara Vex - Hoja de Personaje RPG</title>
+    <title>Elara Vex - Ficha Eco (Secured)</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
         rel="stylesheet">
     <style>
+        /* ECO TIER THEME (Green/Bronze/Cyber) */
         :root {
-            --bg-dark: #0a0a0f;
-            --panel-dark: #111;
-            --paper: #e3dac9;
+            --bg-dark: #050a05;
+            /* Dark Greenish Black */
+            --panel-dark: #0a110a;
+            --paper: #e3e8da;
+            /* Greenish tint paper */
             --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-            --ink: #1a1a1a;
-            --gold: #c5a059;
-            --gold-bright: #ffd700;
-            --blood: #8a0b0b;
-            --accent: #5d4037;
-            --tag-conflict: #8a3b3b;
-            --tag-combat: #3b5b8a;
-            --tag-roleplay: #8a3b86;
+            --ink: #0a1a0f;
+
+            /* ECO Tier Colors */
+            --tier-eco-primary: #2E8B57;
+            /* SeaGreen */
+            --tier-eco-secondary: #CD7F32;
+            /* Bronze */
+
+            --gold: var(--tier-eco-secondary);
+            --gold-bright: #98FB98;
+            /* Pale Green */
+            --blood: #8a3b3b;
+            --accent: #2E8B57;
         }
 
         body {
@@ -40,44 +48,52 @@
             max-width: 1100px;
             background-color: var(--paper);
             background-image: var(--paper-texture);
-            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 50px rgba(46, 139, 87, 0.2);
             display: grid;
             grid-template-columns: 340px 1fr;
             min-height: 1200px;
-            position: relative;
-            overflow: hidden;
             border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid var(--tier-eco-secondary);
         }
 
-        /* SIDEBAR (STATS) */
+        /* SIDEBAR */
         .sidebar {
             background-color: var(--panel-dark);
             color: #ccc;
             padding: 30px 25px;
-            border-right: 4px solid var(--gold);
+            border-right: 4px solid var(--tier-eco-secondary);
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 25px;
         }
 
-        /* Avatar Container with Dynamic Border Logic & Upload Overlay */
+        /* AVATAR (Standard - Not Kintsugi Gold, but "Scavenger" Style) */
         .avatar-container {
             width: 200px;
             height: 200px;
             margin: 0 auto;
             border-radius: 50%;
-            border: 4px solid var(--gold);
-            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
-            overflow: hidden;
             background: #000;
             position: relative;
             transition: all 0.5s ease;
             cursor: pointer;
-            /* Clickable */
+            overflow: hidden;
+            border: 4px solid #555;
+            /* Base iron look */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
         }
 
-        .avatar-container:hover .upload-overlay {
-            opacity: 1;
+        /* If damaged (Kintsugi logic applied to Eco) */
+        .avatar-container.damaged {
+            border-color: var(--tier-eco-primary);
+            box-shadow: 0 0 30px rgba(46, 139, 87, 0.4);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .upload-overlay {
@@ -87,280 +103,172 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
             color: #fff;
-            font-family: 'Cinzel';
-            font-size: 0.8rem;
+        }
+
+        .avatar-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        /* ECONOMY */
+        .economy-box {
             text-align: center;
+            border: 1px solid var(--tier-eco-secondary);
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
 
-        /* High Tension State (Corrupted/Cracked Look) */
-        .avatar-container.high-tension {
-            border-color: var(--blood);
-            box-shadow: 0 0 35px rgba(138, 11, 11, 0.6);
-            /* Animate border color for smoother feel instad of jumpy border-style toggle (border style must stay solid for transition, but we use dashed for effect. We can't transition style. We will rely on shadow and color) */
-            animation: pulse-border 3s infinite ease-in-out;
-        }
-
-        @keyframes pulse-border {
-            0% {
-                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
-                border-color: var(--blood);
-            }
-
-            50% {
-                box-shadow: 0 0 30px rgba(138, 11, 11, 0.8);
-                border-color: #500;
-            }
-
-            100% {
-                box-shadow: 0 0 15px rgba(138, 11, 11, 0.4);
-                border-color: var(--blood);
-            }
-        }
-
-        .avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* New Tension Bar Location (Sidebar) */
+        /* ANTI-PORCELAIN MECHANIC: SYSTEM INSTABILITY */
         .tension-wrapper {
-            margin-top: 15px;
+            margin-top: 5px;
             text-align: center;
         }
 
-        .tension-label-mini {
-            font-family: 'Cinzel';
-            font-size: 0.7rem;
-            color: #888;
-            margin-bottom: 5px;
-        }
-
-        .tension-track {
-            width: 100%;
-            height: 8px;
-            background: #333;
-            border-radius: 4px;
+        .risk-meter {
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            border: 1px solid #444;
             overflow: hidden;
-            border: 1px solid #555;
         }
 
-        .tension-fill {
+        .risk-fill {
             height: 100%;
-            width: 40%;
-            /* Elara is 40% unstable */
-            background: linear-gradient(90deg, var(--gold), #bc13fe);
-            /* Purple hint for Elara */
-            transition: width 0.3s;
+            width: 10%;
+            background: linear-gradient(90deg, #555, #2E8B57);
         }
 
-        /* BITÁCORA (Editable Log) */
-        .adventure-log {
-            margin-top: 40px;
-            border-top: 2px solid var(--accent);
-            padding-top: 20px;
+        /* SCARS LOG */
+        .scars-section {
+            border-top: 1px solid #444;
+            padding-top: 15px;
         }
 
-        .log-entry {
-            background: rgba(0, 0, 0, 0.02);
-            border-bottom: 1px dashed #ccc;
-            padding: 10px;
-            margin-bottom: 5px;
-            font-family: 'Crimson Text';
-            font-size: 1.1rem;
-        }
-
-        .log-entry:focus {
-            background: rgba(255, 215, 0, 0.1);
-            outline: none;
-        }
-
-        .log-date {
-            font-weight: bold;
-            color: var(--accent);
+        .scars-title {
+            color: var(--tier-eco-secondary);
+            font-family: 'Cinzel';
+            text-align: center;
             font-size: 0.9rem;
-            margin-right: 10px;
+            margin-bottom: 10px;
         }
 
-        /* Editable Highlights */
-        [contenteditable="true"]:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            cursor: text;
-            border-radius: 4px;
+        .scar-slot {
+            border: 1px dashed #444;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Stats Design */
+        .scar-slot.filled {
+            border: 1px solid var(--tier-eco-secondary);
+            color: var(--tier-eco-primary);
+            background: rgba(46, 139, 87, 0.1);
+        }
+
+        /* STATS */
         .stats-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px 10px;
+            gap: 10px;
             justify-items: center;
         }
 
         .stat-medallion {
             position: relative;
-            width: 90px;
-            height: 100px;
-            background: linear-gradient(135deg, #222, #111);
-            border: 2px solid #444;
+            width: 80px;
+            height: 90px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #444;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 10px;
-            box-shadow: inset 0 0 10px #000;
-            transition: transform 0.2s;
-        }
-
-        .stat-medallion:hover {
-            border-color: var(--gold);
-            transform: scale(1.05);
-        }
-
-        .stat-icon {
-            width: 24px;
-            height: 24px;
-            fill: var(--gold);
-            margin-bottom: 5px;
+            padding-top: 8px;
         }
 
         .stat-value-big {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 1.6rem;
+            color: #eee;
             font-weight: 700;
             line-height: 1;
-        }
-
-        .stat-name-tiny {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            color: #888;
-            margin-top: 2px;
-            letter-spacing: 1px;
         }
 
         .stat-mod-seal {
             position: absolute;
             bottom: -8px;
-            background: var(--blood);
-            color: white;
-            width: 28px;
-            height: 28px;
+            background: #222;
+            color: #aaa;
+            border: 1px solid #555;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Cinzel';
+            font-size: 0.8rem;
             font-weight: bold;
-            font-size: 0.9rem;
-            border: 2px solid #222;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
-        /* Skills / Perks Section */
-        .resonance-section {
-            border-top: 1px solid #444;
-            padding-top: 20px;
+        /* High Stat Highlight */
+        .stat-medallion.primary {
+            border-color: var(--tier-eco-primary);
+            box-shadow: 0 0 10px rgba(46, 139, 87, 0.2);
         }
 
-        .resonance-title {
-            font-family: 'Cinzel';
-            color: var(--gold);
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+        .stat-medallion.primary .stat-value-big {
+            color: var(--tier-eco-primary);
         }
 
+        .stat-medallion.primary .stat-mod-seal {
+            background: var(--tier-eco-primary);
+            color: #000;
+            border-color: var(--tier-eco-primary);
+        }
+
+        /* PERKS */
         .soul-perk {
             background: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid var(--gold);
+            border-left: 3px solid #555;
             padding: 10px;
             margin-bottom: 12px;
         }
 
-        .perk-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        .perk-name {
-            color: var(--gold-bright);
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
-        /* DM TAGS for Mechanics */
-        .mech-tag {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-
-        .tag-combat {
-            background: rgba(59, 91, 138, 0.3);
-            color: #8ab0ff;
-            border: 1px solid #3b5b8a;
-        }
-
-        .tag-passive {
-            background: rgba(138, 138, 138, 0.2);
-            color: #ccc;
-            border: 1px solid #666;
-        }
-
-        .tag-trigger {
-            background: rgba(138, 59, 59, 0.3);
-            color: #ff8a8a;
-            border: 1px solid #8a3b3b;
-        }
-
-        .mech-row {
-            font-size: 0.85rem;
-            color: #ccc;
-            margin-bottom: 4px;
-            display: flex;
-            gap: 5px;
-        }
-
-        .mech-label {
-            color: #888;
-            font-weight: bold;
-            min-width: 60px;
-        }
-
-        .mech-narrative {
-            font-size: 0.8rem;
-            color: #888;
-            font-style: italic;
-            border-top: 1px solid #333;
-            padding-top: 4px;
-            margin-top: 4px;
+        .soul-perk.unlocked {
+            border-left-color: var(--tier-eco-primary);
         }
 
         /* MAIN CONTENT */
         .main-content {
-            padding: 50px 60px;
+            padding: 40px 50px;
             position: relative;
         }
 
-        .char-header {
-            border-bottom: 3px double var(--accent);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+        .tier-stamp {
+            display: inline-block;
+            background: var(--tier-eco-secondary);
+            color: #000;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Cinzel';
+            font-weight: 900;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            border: 1px solid #000;
         }
 
         h1 {
@@ -368,438 +276,229 @@
             font-size: 3.5rem;
             color: var(--ink);
             margin: 0;
-            letter-spacing: 2px;
             line-height: 1;
         }
 
         .sub-header {
-            font-family: 'Metamorphous', cursive;
-            font-size: 1.2rem;
-            color: var(--blood);
-            margin-top: 10px;
-            font-style: italic;
-        }
-
-        /* Reading Improvements */
-        h2 {
-            font-family: 'Cinzel';
-            font-size: 1.6rem;
-            color: var(--accent);
-            border-bottom: 1px solid #bbb;
-            padding-bottom: 5px;
-            margin-top: 35px;
-        }
-
-        p {
-            font-size: 1.15rem;
-            line-height: 1.7;
-            text-align: justify;
-            color: #222;
-            margin-bottom: 15px;
-        }
-
-        strong {
-            color: var(--blood);
-            font-weight: 700;
-        }
-
-        /* Highlight key phrases */
-
-        /* Quote Box */
-        .quote-box {
-            border-left: 4px solid var(--accent);
-            background: rgba(93, 64, 55, 0.05);
-            padding: 15px 20px;
-            margin: 25px 0;
-            font-family: 'Cinzel';
+            font-family: 'Metamorphous';
             font-size: 1.1rem;
-            color: #444;
+            color: var(--tier-eco-primary);
+            margin-top: 5px;
             font-style: italic;
-            text-align: center;
         }
 
-        /* Micro-Tags for Narrative */
-        .dm-tag {
-            display: inline-block;
-            font-size: 0.7rem;
-            font-family: 'sans-serif';
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 5px;
-            vertical-align: middle;
-            text-transform: uppercase;
+        .inv-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .dm-conflict {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
-        }
-
-        .dm-roleplay {
-            background: #f3e5f5;
-            color: #6a1b9a;
-            border: 1px solid #ce93d8;
-        }
-
-        /* Matrix Box */
-        .matrix-box {
-            background: rgba(0, 0, 0, 0.03);
-            border: 2px solid var(--accent);
-            padding: 25px;
-            margin: 30px 0;
-        }
-
-        .matrix-row {
+        .inv-item {
+            border: 1px solid #aaa;
+            padding: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.3);
             display: flex;
-            margin-bottom: 15px;
-            align-items: baseline;
-        }
-
-        .matrix-label {
-            font-weight: bold;
-            font-variant: small-caps;
-            color: var(--blood);
-            font-size: 1rem;
-            width: 140px;
-        }
-
-        .matrix-text {
-            font-style: italic;
-            color: #333;
-            flex: 1;
-        }
-
-        /* Timeline Item for Parchment */
-        .timeline-item {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 12px;
-            border-left: 3px solid var(--accent);
-            padding-left: 15px;
-        }
-
-        .timeline-year {
-            font-family: 'Cinzel';
-            font-weight: bold;
-            width: 80px;
-            color: var(--blood);
-        }
-
-        .timeline-content {
-            font-family: 'Crimson Text';
-            font-style: italic;
+            align-items: center;
         }
 
         .download-btn {
-            position: absolute;
-            bottom: 40px;
-            right: 60px;
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
             background: var(--ink);
             color: var(--paper);
-            border: none;
+            border: 2px solid var(--tier-eco-secondary);
             padding: 15px 30px;
             font-family: 'Cinzel';
-            font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
-        }
-
-        .download-btn:hover {
-            background: var(--blood);
         }
 
         @media (max-width: 900px) {
             .rpg-sheet {
                 grid-template-columns: 1fr;
-                width: 100%;
-                box-shadow: none;
-                border-radius: 0;
+                border: none;
             }
 
             .sidebar {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 20px;
-                padding: 20px;
                 border-right: none;
-                border-bottom: 4px solid var(--gold);
+                border-bottom: 4px solid var(--tier-eco-secondary);
             }
 
             .stats-container {
-                width: 100%;
-                display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-
-            .tension-wrapper {
-                width: 100%;
-                order: -1;
-                margin-bottom: 10px;
             }
 
             .main-content {
-                padding: 25px 20px;
-            }
-
-            h1 {
-                font-size: 2.8rem;
-                text-align: center;
-            }
-
-            .sub-header {
-                text-align: center;
-                font-size: 1rem;
-            }
-
-            .stat-medallion {
-                width: auto;
+                padding: 20px;
             }
         }
     </style>
 </head>
 
-<body onload="translateContent()">
+<body onload="initSecureSystem()">
 
     <div class="rpg-sheet">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar-container high-tension" onclick="triggerUpload()">
-                <!-- Elara's content injected here -->
-                <img id="char-avatar" src="static/images/elara_thumb.png" alt="Elara Portrait" class="avatar-img">
-                <div class="upload-overlay">
-                    <span style="font-size:1.5rem">📷</span>
-                    <span>Cambiar Rostro</span>
-                </div>
+            <div class="avatar-container damaged">
+                <img src="static/images/elara_thumb.png" class="avatar-img" alt="Elara">
+                <div class="upload-overlay"><span>LOCKED</span></div>
             </div>
-            <input type="file" id="avatar-input" accept="image/*" style="display:none"
-                onchange="encodeImageFileAsURL(this)">
 
-            <!-- TENSION BAR -->
+            <!-- RISK METER -->
             <div class="tension-wrapper">
-                <div class="tension-label-mini">Estabilidad del Sistema: 40%</div>
-                <div class="tension-track">
-                    <div class="tension-fill"></div>
+                <div class="tension-label-mini">ESTABILIDAD DEL NEURO-LINK</div>
+                <div class="risk-meter">
+                    <div class="risk-fill"></div>
                 </div>
+                <div style="font-size:0.6rem; color:#666; margin-top:3px;">Estado: Vulnerable</div>
+            </div>
+
+            <div class="economy-box">
+                <div style="font-size:0.6rem; color:#888;">CRÉDITOS</div>
+                <div style="font-family:'Cinzel'; font-size:1.4rem; color:var(--tier-eco-secondary);">150 <span
+                        style="font-size:0.8rem">cr</span></div>
+            </div>
+
+            <div class="scars-section">
+                <div class="scars-title">⚙️ DAÑOS DE SISTEMA (SCARS)</div>
+                <div class="scar-slot filled">
+                    <span>Implante Rechazado</span>
+                    <span style="font-weight:bold; color:var(--tier-eco-primary)">-1 INT / +2 CON</span>
+                </div>
+                <div class="scar-slot"><span>[Ranura Disponible]</span></div>
             </div>
 
             <div class="stats-container">
-                <!-- STR (Dump stat for hacker) -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z M18,6 L6,18 L8,20 L15,13 L19,9 L22,6 L18,6 Z" />
-                    </svg>
-                    <span class="stat-value-big">8</span>
+                <!-- Data populated by JS -->
+                <div class="stat-medallion" id="div-str">
+                    <span class="stat-value-big" id="stat-str">--</span>
                     <span class="stat-name-tiny">Fuerza</span>
-                    <div class="stat-mod-seal" style="background:#444; color:#aaa;">-1</div>
+                    <div class="stat-mod-seal" id="mod-str">--</div>
                 </div>
-                <!-- DEX (Reaction) -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M12,2 L12,22 M2,12 L22,12 M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z" />
-                    </svg>
-                    <span class="stat-value-big">16</span>
+                <div class="stat-medallion primary" id="div-dex">
+                    <span class="stat-value-big" id="stat-dex">--</span>
                     <span class="stat-name-tiny">Destreza</span>
-                    <div class="stat-mod-seal">+3</div>
+                    <div class="stat-mod-seal" id="mod-dex">--</div>
                 </div>
-                <!-- CON (Hardware) -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z" />
-                    </svg>
-                    <span class="stat-value-big">10</span>
-                    <span class="stat-name-tiny">Const.</span>
-                    <div class="stat-mod-seal" style="background:#555;">+0</div>
-                </div>
-                <!-- INT (CPU) - PRIMARY -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 C12,22 21,16.55 21,11 C21,6.03 16.97,2 12,2 Z M12,18 C9,18 9,16 9,14 C9,12 11,12 11,10 C11,9 12,9 12,9 C12,9 13,9 13,10 C13,12 15,12 15,14 C15,16 15,18 12,18 Z" />
-                    </svg>
-                    <span class="stat-value-big">18</span>
-                    <span class="stat-name-tiny">Intel.</span>
-                    <div class="stat-mod-seal" style="background:var(--blood); box-shadow:0 0 10px red;">+4</div>
-                </div>
-                <!-- WIS (Filler) -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z M12,6 C13.66,6 15,7.34 15,9 C15,10.66 13.66,12 12,12 C10.34,12 9,10.66 9,9 C9,7.34 10.34,6 12,6 Z M12,20 C9.33,20 7,18.67 7,16 C7,14 10,14 12,14 C14,14 17,14 17,16 C17,18.67 14.67,20 12,20 Z" />
-                    </svg>
-                    <span class="stat-value-big">12</span>
-                    <span class="stat-name-tiny">Sabid.</span>
-                    <div class="stat-mod-seal" style="background:#555;">+1</div>
-                </div>
-                <!-- CHA (Social Protocol) -->
-                <div class="stat-medallion">
-                    <svg class="stat-icon" viewBox="0 0 24 24">
-                        <path
-                            d="M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z M12,4 L19,7.5 L12,11 L5,7.5 L12,4 Z M4,15.7 L4,9.3 L11,12.8 L11,19.2 L4,15.7 Z M13,19.2 L13,12.8 L20,9.3 L20,15.7 L13,19.2 Z" />
-                    </svg>
-                    <span class="stat-value-big">14</span>
-                    <span class="stat-name-tiny">Carisma</span>
-                    <div class="stat-mod-seal" style="background:#555;">+2</div>
+                <!-- Other stats simplified -->
+                <div class="stat-medallion" id="div-con">
+                    <span class="stat-value-big" id="stat-con">--</span>
+                    <span class="stat-name-tiny">Humanidad</span>
+                    <div class="stat-mod-seal" id="mod-con">--</div>
                 </div>
             </div>
 
-            <!-- SKILLS / PERKS -->
-            <div class="resonance-section">
-                <div class="resonance-title">✨ RESONANCIA ARCANA (MODS)</div>
-
-                <!-- Perk 1 -->
-                <div class="soul-perk">
-                    <div class="perk-header">
-                        <span class="perk-name">Interfaz Neural v4</span>
-                        <span class="mech-tag tag-passive">PASIVA</span>
+            <div class="resonance-section" style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
+                <div class="scars-title">🛠️ HABILIDADES (ECO)</div>
+                <div class="soul-perk unlocked">
+                    <span style="color:#eee; font-weight:bold;">Protocolo Fantasma</span>
+                    <div style="font-size:0.8rem; color:#888; margin-top:5px;">
+                        Invisible a cámaras de seguridad por 10min.
                     </div>
-                    <div class="mech-row">
-                        <span class="mech-label">Efecto:</span>
-                        <span>Casteo silencioso. Acceso a la Red sin necesidad de terminal físico.</span>
-                    </div>
-                    <div class="mech-narrative">"Sus ojos parpadean con luz violeta cuando procesa hechizos."</div>
-                </div>
-
-                <!-- Perk 2 -->
-                <div class="soul-perk">
-                    <div class="perk-header">
-                        <span class="perk-name">Compilador de Hechizos</span>
-                        <span class="mech-tag tag-combat">ACTIVA</span>
-                    </div>
-                    <div class="mech-row">
-                        <span class="mech-label">Uso:</span>
-                        <span>Recarga slots de hechizo consumiendo baterías de energía externas.</span>
-                    </div>
-                    <div class="mech-narrative">"Transforma electricidad en maná puro."</div>
-                </div>
-
-                <!-- Perk 3 -->
-                <div class="soul-perk">
-                    <div class="perk-header">
-                        <span class="perk-name">Buscada: Arasaka</span>
-                        <span class="mech-tag tag-trigger">DEFECTO</span>
-                    </div>
-                    <div class="mech-row">
-                        <span class="mech-label">Efecto:</span>
-                        <span>Desventaja en interacciones con oficiales corporativos. Riesgo de arresto.</span>
-                    </div>
-                    <div class="mech-narrative">"Su rostro vale 5 millones de créditos."</div>
                 </div>
             </div>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
-
             <div class="char-header">
-                <h1>Elara Vex</h1>
-                <div class="sub-header">Techno-Hechicera · Elfa · 128 (24) Años · Cyberpunk Fantasy</div>
+                <div class="tier-stamp" id="tier-badge">LOADING...</div>
+                <h1 id="char-name">Undisclosed</h1>
+                <div class="sub-header" id="char-archetype">Hacker Corporativa · Renegada de Arcadia · Nivel 3</div>
             </div>
 
-            <!-- DEFINING QUOTE -->
-            <div class="quote-box">
-                "La libertad es solo otro tipo de prisión con mejor ancho de banda; nadie escapa realmente."
+            <div class="quote-box"
+                style="border-left:4px solid var(--tier-eco-primary); font-style:italic; padding:10px; background:rgba(0,0,0,0.05);">
+                "La información quiere ser libre. Yo solo le cobro el alquiler."
             </div>
 
-            <h2>Biografía: El Código de la Magia</h2>
+            <h2>Biografía & Expediente</h2>
             <p>
-                <span class="dm-tag dm-roleplay">🏙️ Origen</span>
-                En Nueva Arcadia, la magia no es un don, es un producto licenciado por las Mega-Corporaciones. Elara Vex
-                nació en los barrios bajos del Sector 7, una elfa <strong>"sin patente"</strong> destinada a trabajar en
-                las minas de
-                datos. Pero Elara veía algo que otros no: el código fuente detrás de la realidad misma.
-            </p>
-            <p>
-                <span class="dm-tag dm-conflict">⚡ El Robo</span>
-                A los 20 años (adolescencia para un elfo), hackeó los servidores de Omni-Corp y robó algo imposible: el
-                <strong>Algoritmo Primigenio</strong>, la raíz de toda magia moderna. No lo hizo por poder, sino para
-                liberar el "Mana"
-                de las restricciones corporativas de pago-por-uso. Ahora, es la netrunner más buscada del hemisferio.
-            </p>
-            <p>
-                Vive en las sombras de neón, lanzando hechizos compilados en su cibercerebro y luchando contra
-                inquisidores corporativos. Su existencia es una carrera constante contra el
-                <strong>"Desvanecimiento"</strong>, un glitch
-                mágico que consume a los que usan magia sin licencia oficial.
+                <span style="font-weight:bold; color:var(--tier-eco-primary)">[BUSCADA]</span>
+                <span id="bio-intro">Sujeto identificado como renegado.</span>
+                Aprendió código antes que a leer. Su filosofía es pragmática:
+                sobrevive hoy, hackea mañana. A diferencia de las Entidades Primordiales, ella sangra, se cansa y
+                necesita créditos para comer.
             </p>
 
-            <!-- PSYCHO MATRIX -->
-            <div class="matrix-box">
-                <div class="matrix-row">
-                    <span class="matrix-label">La Mentira</span>
-                    <span class="matrix-text">"La libertad total es posible si escribes el código correcto." (Ignora el
-                        costo).</span>
-                </div>
-                <div class="matrix-row">
-                    <span class="matrix-label">La Herida</span>
-                    <span class="matrix-text">La Purga del Clan. Vio cómo "desconectaban" a su familia remotamente como
-                        si fueran periféricos obsoletos.</span>
-                </div>
-                <div class="matrix-row">
-                    <span class="matrix-label">El Deseo</span>
-                    <span class="matrix-text">Liberar la magia y vengarse de Omni-Corp, cueste lo que cueste.</span>
+            <h2>🎒 Inventario Estándar</h2>
+            <div class="inv-section" id="inventory-grid">
+                <!-- JS Populated -->
+            </div>
+
+            <h2>📖 Bitácora (Solo Lectura)</h2>
+            <div class="timeline-item" style="border-left:3px solid #888; padding-left:10px; margin-bottom:10px;">
+                <div style="font-weight:bold; color:#555;">Última Misión</div>
+                <div style="font-style:italic; color:#333;">
+                    Extracción de datos en Torre Arasaka. Éxito parcial. Brazo izquierdo dañado por fuego supresivo.
                 </div>
             </div>
 
-            <h2>Línea de Tiempo del Sistema</h2>
-            <div class="timeline-item">
-                <div class="timeline-year">2089</div>
-                <div class="timeline-content">Compilación exitosa (Nacimiento). Genes élficos detectados.</div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">2105</div>
-                <div class="timeline-content">Incidente "Blackout". Primera manifestación de poderes cinéticos no
-                    registrados.</div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">2112</div>
-                <div class="timeline-content">Robo del Grimorio Digital "Prometheus". Recompensa establecida.</div>
-            </div>
-
-            <!-- BITÁCORA DEL DESTINO (Adventure Log) -->
-            <div class="adventure-log">
-                <h2>💻 Registro de Misiones</h2>
-                <p style="font-size:0.9rem; color:#666; font-style:italic;">
-                    (Esta sección es editable. Escribe aquí tus hacks y progresos).
-                </p>
-
-                <div class="log-entry" contenteditable="true">
-                    <span class="log-date">[Login 001]</span>
-                    Conectada al servidor proxy del Distrito Rojo. Buscando pistas sobre el paradero del contacto
-                    "Zero"...
-                </div>
-                <div class="log-entry" contenteditable="true">
-                    <span class="log-date">[Login 002]</span>
-                    Encontré un backdoor en el sistema de seguridad de Arasaka, pero necesito una llave de cifrado de
-                    nivel 5.
-                </div>
-            </div>
-
-            <button class="download-btn" onclick="saveProgress()">
-                💾 Guardar Progreso (HTML)
-            </button>
+            <button class="download-btn" onclick="saveProgress()">💾 GUARDAR FICHA</button>
         </div>
     </div>
+
+    <!-- PROTECTED PAYLOAD -->
+    <script id="protected-core" type="application/json">
+        "IGNORED_IN_DEMO_BUT_STRUCTURE_EXISTS"
+    </script>
+
     <script>
-        function translateContent() { console.log('Assets Loaded'); }
-        function saveProgress() { alert('Progreso guardado localmente (Simulado).'); }
-        function encodeImageFileAsURL(element) {
-            var file = element.files[0];
-            var reader = new FileReader();
-            reader.onloadend = function () {
-                document.getElementById('char-avatar').src = reader.result;
+        function initSecureSystem() {
+            // PARAM READING
+            const params = new URLSearchParams(window.location.search);
+            const dynamicName = params.get('name');
+            const dynamicArch = params.get('archetype');
+
+            // Hardcoded Secured Data for Elara
+            const securedData = {
+                name: dynamicName || "Elara Vex",
+                tier: "ECO CLASS",
+                stats: { str: 10, dex: 16, con: 12 },
+                mods: { str: "0", dex: "+3", con: "+1" },
+                inventory: [
+                    "💻 Cyberdeck Mk.II", "🔫 Pistola Ligera", "🔧 Kit de Reparación",
+                    "💊 Estimulantes (x2)", "💳 Credstick Falso", "🕶️ Visor Térmico"
+                ]
+            };
+
+            // Enforce Stats
+            document.getElementById('stat-str').innerText = securedData.stats.str;
+            document.getElementById('mod-str').innerText = securedData.mods.str;
+            document.getElementById('stat-dex').innerText = securedData.stats.dex;
+            document.getElementById('mod-dex').innerText = securedData.mods.dex;
+            document.getElementById('stat-con').innerText = securedData.stats.con;
+            document.getElementById('mod-con').innerText = securedData.mods.con;
+
+            // Enforce Info
+            document.getElementById('tier-badge').innerText = securedData.tier;
+            document.getElementById('char-name').innerText = securedData.name;
+
+            // Update Archetype visual if provided
+            if (dynamicArch) {
+                document.getElementById('char-archetype').innerText = dynamicArch + " · [Clase Estándar]";
             }
-            reader.readAsDataURL(file);
+
+            // Enforce Inventory
+            const invGrid = document.getElementById('inventory-grid');
+            if (invGrid) {
+                invGrid.innerHTML = '';
+                securedData.inventory.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'inv-item';
+                    div.innerText = item;
+                    invGrid.appendChild(div);
+                });
+            }
+            console.log("Eco Class Security Active.");
         }
-        function triggerUpload() {
-            document.getElementById('avatar-input').click();
-        }
+
+        function saveProgress() { alert('Guardado Seguro Completado.'); }
+        window.onload = initSecureSystem;
     </script>
 </body>
 

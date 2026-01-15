@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Resonance - Demo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #080a0e;
+            --accent: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.5);
+            --text-main: #f0f0f0;
+            --text-dim: #9ca3af;
+
+            /* Tier Colors */
+            --tier-f: #808080;
+            --tier-e: #FFFFFF;
+            --tier-d: #32CD32;
+            --tier-c: #4169E1;
+            --tier-b: #9932CC;
+            --tier-a: #FFD700;
+            --tier-s: #FF4500;
+            --tier-ss: #FF1493;
+            --tier-sss: #00FFFF;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            /* Relative path for local testing */
+            background-image: url("static/images/forest_crystal_bg.jpg");
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* --- CRYSTAL ANIMATION CONTAINER --- */
+        .resonance-chamber {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .soul-crystal {
+            width: 80px;
+            height: 140px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            transition: all 0.2s ease;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .soul-crystal::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* STATES */
+        .soul-crystal.idle {
+            animation: float 4s ease-in-out infinite;
+            background: linear-gradient(135deg, #222, #444);
+            border: 1px solid #555;
+        }
+
+        .soul-crystal.charging {
+            animation: pulse-charge 0.8s ease-in-out infinite;
+            background: linear-gradient(135deg, #fff, #ccc);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.4);
+        }
+
+        .soul-crystal.resonating {
+            /* Color will be set by JS via var(--current-color) */
+            background: var(--current-color);
+            box-shadow: 0 0 80px var(--current-color);
+            animation: shake 0.1s linear infinite;
+        }
+
+        /* EXPLOSION EFFECT */
+        .explosion-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .explosion-flash.active {
+            animation: flash-anim 0.5s ease-out forwards;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px)
+            }
+
+            50% {
+                transform: translateY(-15px)
+            }
+
+            100% {
+                transform: translateY(0px)
+            }
+        }
+
+        @keyframes pulse-charge {
+            0% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.1);
+                filter: brightness(1.5);
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg)
+            }
+
+            25% {
+                transform: translate(-1px, -2px) rotate(-1deg)
+            }
+
+            50% {
+                transform: translate(-3px, 0px) rotate(1deg)
+            }
+
+            75% {
+                transform: translate(3px, 2px) rotate(0deg)
+            }
+
+            100% {
+                transform: translate(1px, -1px) rotate(-1deg)
+            }
+        }
+
+        @keyframes flash-anim {
+            0% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        /* UI ELEMENTS */
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            text-align: center;
+        }
+
+        /* RESULT CARD */
+        .result-reveal {
+            position: absolute;
+            width: 300px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .result-reveal.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .tier-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px currentColor;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 30px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="title">Forja de Almas: Resonancia</div>
+
+    <div class="resonance-chamber">
+        <!-- THE CRYSTAL -->
+        <div id="crystal" class="soul-crystal idle" onclick="startSummon()"></div>
+
+        <!-- UPLOAD STEP (Reveal 1) -->
+        <div id="uploadStep" class="result-reveal">
+            <h2 style="color:var(--accent); font-family:'Cinzel', serif;">Alma Resonante Detectada</h2>
+            <div id="tierBadge" class="tier-badge" style="font-size: 2.5rem; margin: 20px 0;">?</div>
+
+            <div
+                style="background:rgba(0,0,0,0.5); padding:20px; border:1px solid #444; border-radius:8px; margin-bottom:20px;">
+                <p style="color:#ccc; margin-bottom:15px;">Para anclar esta alma a la realidad, necesitamos un rostro.
+                </p>
+                <button class="btn" onclick="triggerUpload()">📷 Subir Retrato</button>
+                <input type="file" id="avatarUpload" style="display:none" onchange="finishProcess()">
+            </div>
+        </div>
+
+        <!-- FINAL REVEAL (Reveal 2) -->
+        <div id="finalReveal" class="result-reveal"
+            style="width: 400px; background: rgba(0,0,0,0.9); padding: 20px; border: 1px solid var(--accent);">
+            <h3 style="color:var(--accent); margin-bottom: 20px;">Vinculación Completa</h3>
+
+            <div style="display:flex; align-items:flex-start; text-align:left; gap:15px; margin-bottom:20px;">
+                <div id="finalAvatar"
+                    style="width:80px; height:80px; background:#111; border:2px solid var(--accent); overflow:hidden; position:relative;">
+                    <!-- Image will be injected here via JS -->
+                </div>
+                <div>
+                    <div id="finalCharName" style="font-weight:bold; font-size:1.2rem; color:white;">Nombre del PJ</div>
+                    <div id="finalTierName" style="color:var(--current-color); font-weight:bold; letter-spacing:2px;">
+                        TIER NAME</div>
+                </div>
+            </div>
+
+            <div style="text-align:left; border-top:1px solid #444; padding-top:10px;">
+                <span style="font-size:0.8rem; color:#888; text-transform:uppercase;">Datos de <span
+                        id="tierLabel">Tier</span> Adquiridos:</span>
+                <ul id="tierBenefits"
+                    style="color:#ddd; font-size:0.9rem; margin-top:10px; padding-left:20px; line-height:1.6;">
+                    <li>Benefit 1</li>
+                </ul>
+            </div>
+
+            <br>
+            <button class="btn" onclick="alert('Abriendo ficha completa...')">📜 Abrir Ficha Técnica</button>
+        </div>
+    </div>
+
+    <div class="explosion-flash" id="flash"></div>
+
+    <!-- Removed Payment Controls, added Instruction -->
+    <div id="instruction"
+        style="margin-top:40px; color:var(--accent); font-family:'Cinzel'; animation: pulse 2s infinite;">
+        Pago Confirmado. Toca el cristal para despertar el alma.
+    </div>
+    <style>
+        @keyframes pulse {
+            0% {
+                opacity: 0.5
+            }
+
+            50% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0.5
+            }
+        }
+    </style>
+
+    <!-- CROP MODAL -->
+    <div id="cropModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; flex-direction:column;">
+        <h3 style="color:var(--accent); font-family:'Cinzel'; margin-bottom:15px;">Ajustar Retrato</h3>
+
+        <div style="width:300px; height:300px; border-radius:50%; border:4px solid var(--accent); overflow:hidden; position:relative; background:#000; cursor:grab;"
+            onmousedown="startDrag(event)" onmousemove="doDrag(event)" onmouseup="endDrag()" onmouseleave="endDrag()"
+            ontouchstart="startDrag(event)" ontouchmove="doDrag(event)" ontouchend="endDrag()">
+
+            <img id="cropImageTarget" src=""
+                style="position:absolute; top:50%; left:50%; transform-origin:center; transform:translate(-50%, -50%); pointer-events:none; max-width:none; max-height:none;">
+            <div
+                style="position:absolute; width:100%; height:100%; border-radius:50%; box-shadow:inset 0 0 50px rgba(0,0,0,0.5); pointer-events:none;">
+            </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
+            <button onclick="adjustScale(-0.1)"
+                style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">-</button>
+            <span style="color:white; font-family:'Cinzel'">ZOOM</span>
+            <button onclick="adjustScale(0.1)"
+                style="font-size:1.5rem; background:transparent; border:1px solid #555; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer;">+</button>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:20px;">
+            <button onclick="applyCrop()"
+                style="padding:10px 30px; background:var(--accent); color:#000; border:none; font-weight:bold; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CONFIRMAR</button>
+            <button onclick="closeCropModal()"
+                style="padding:10px 30px; background:transparent; border:1px solid #fff; color:#fff; cursor:pointer; font-family:'Cinzel'; border-radius:4px;">CANCELAR</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const TIERS = {
+            Eco: { color: "#808080", prob: 0.30, benefits: ["Biografía Básica", "1 Defecto Menor"] },
+            Murmullo: { color: "#FFFFFF", prob: 0.25, benefits: ["Biografía Extendida", "1 Cicatriz", "100 GP Iniciales"] },
+            Sombra: { color: "#32CD32", prob: 0.20, benefits: ["Psicología Profunda", "1 Máscara", "200 GP", "Inventario Básico"] },
+            Voz: { color: "#4169E1", prob: 0.12, benefits: ["Secreto Oscuro", "2 Conexiones", "350 GP", "+5% EXP"] },
+            Alma: { color: "#9932CC", prob: 0.08, benefits: ["Aliado Predestinado", "Animación Especial", "500 GP", "Item Raro"] },
+            Ancestral: { color: "#FFD700", prob: 0.035, benefits: ["Profecía Única", "Némesis", "750 GP", "Habilidad Única"] },
+            Primordial: { color: "#FF4500", prob: 0.0125, benefits: ["Artefacto Legendario", "Transformación", "1000 GP", "Líneas de Voz"] },
+            Legendaria: { color: "#FF1493", prob: 0.0020, benefits: ["Forma Alterna", "Pacto Divino", "1500 GP", "Tier S+"] },
+            Mitica: { color: "#00FFFF", prob: 0.0005, benefits: ["Poder Absoluto", "Verdad Universal", "2500 GP", "Tier SSS"] }
+        };
+
+        const COLOR_SEQUENCE = [
+            "#808080", // Eco
+            "#FFFFFF", // Murmullo
+            "#32CD32", // Sombra
+            "#4169E1", // Voz
+            "#9932CC", // Alma
+            "#FFD700", // Ancestral
+            "#FF4500", // Primordial
+            "#FF1493", // Legendaria
+            "#00FFFF"  // Mitica
+        ];
+
+        let isAnimating = false;
+        let finalTierKey = "Eco";
+
+        // CROPPER STATE
+        let currentImageRaw = null;
+        let scale = 1; let pX = 0; let pY = 0;
+        let isDragging = false; let startX, startY;
+
+        // --- CORE LOGIC ---
+        function rollTier() {
+            const r = Math.random();
+            let cum = 0;
+            for (let t in TIERS) {
+                cum += TIERS[t].prob;
+                if (r <= cum) return t;
+            }
+            return "Eco";
+        }
+
+        async function startSummon() {
+            if (isAnimating) return;
+            isAnimating = true;
+            document.getElementById('instruction').style.display = 'none';
+
+            // Roll Tier
+            finalTierKey = rollTier();
+            console.log("Rolled Tier:", finalTierKey);
+
+            const crystal = document.getElementById('crystal');
+
+            // PHASE 1
+            crystal.className = "soul-crystal charging";
+            await wait(1000);
+
+            // PHASE 2
+            crystal.className = "soul-crystal resonating";
+            const targetIndex = Object.keys(TIERS).indexOf(finalTierKey);
+            const steps = 15;
+            for (let i = 0; i < steps; i++) {
+                let maxIdx = Math.min(targetIndex + 1, COLOR_SEQUENCE.length - 1);
+                let minIdx = Math.floor((i / steps) * targetIndex);
+                let idx = Math.floor(Math.random() * (maxIdx - minIdx + 1)) + minIdx;
+                let col = COLOR_SEQUENCE[idx];
+                crystal.style.setProperty('--current-color', col);
+                await wait(150);
+            }
+
+            const tierData = TIERS[finalTierKey];
+            crystal.style.setProperty('--current-color', tierData.color);
+            await wait(500);
+
+            // PHASE 3
+            document.getElementById('flash').classList.add('active');
+            crystal.style.opacity = '0';
+
+            const badge = document.getElementById('tierBadge');
+            badge.textContent = finalTierKey.toUpperCase();
+            badge.style.color = tierData.color;
+            badge.style.textShadow = `0 0 30px ${tierData.color}`;
+
+            setTimeout(() => {
+                document.getElementById('uploadStep').classList.add('visible');
+                crystal.className = "soul-crystal idle";
+                document.getElementById('flash').classList.remove('active');
+            }, 200);
+        }
+
+        function triggerUpload() {
+            document.getElementById('avatarUpload').click();
+        }
+
+        function finishProcess() {
+            const file = document.getElementById('avatarUpload').files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                currentImageRaw = reader.result;
+                openCropModal();
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // --- CROPPER FUNCTIONS ---
+        function openCropModal() {
+            scale = 1; pX = 0; pY = 0;
+            const img = document.getElementById('cropImageTarget');
+            img.src = currentImageRaw;
+            img.onload = () => { img.style.transform = `translate(0px, 0px) scale(1)`; };
+            document.getElementById('cropModal').style.display = 'flex';
+        }
+
+        function closeCropModal() { document.getElementById('cropModal').style.display = 'none'; }
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = (e.touches ? e.touches[0].clientX : e.clientX) - pX;
+            startY = (e.touches ? e.touches[0].clientY : e.clientY) - pY;
+        }
+        function doDrag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX);
+            const y = (e.touches ? e.touches[0].clientY : e.clientY);
+            pX = x - startX; pY = y - startY;
+            updateTransform();
+        }
+        function endDrag() { isDragging = false; }
+
+        function adjustScale(delta) {
+            scale += delta; if (scale < 0.2) scale = 0.2; if (scale > 5) scale = 5;
+            updateTransform();
+        }
+        function updateTransform() {
+            const img = document.getElementById('cropImageTarget');
+            img.style.transform = `translate(calc(-50% + ${pX}px), calc(-50% + ${pY}px)) scale(${scale})`;
+        }
+
+        async function applyCrop() {
+            closeCropModal();
+
+            // TRANSITION TO FINAL VIEW
+            const uploadStep = document.getElementById('uploadStep');
+            uploadStep.innerHTML = "<p style='color:var(--accent)'>Anclando alma a imagen...</p>";
+            await wait(1000);
+            uploadStep.classList.remove('visible');
+
+            // Show Final Sheet Reveal
+            const finalReveal = document.getElementById('finalReveal');
+            const tierData = TIERS[finalTierKey];
+
+            document.getElementById('finalTierName').textContent = finalTierKey.toUpperCase();
+            document.getElementById('finalTierName').style.color = tierData.color;
+            document.getElementById('tierLabel').textContent = finalTierKey;
+
+            const list = document.getElementById('tierBenefits');
+            list.innerHTML = tierData.benefits.map(b => `<li>💎 ${b}</li>`).join('');
+
+            // APPLY VISUAL TRANSFORM
+            const finalAvatar = document.getElementById('finalAvatar');
+            finalAvatar.innerHTML = '';
+
+            const img = document.createElement('img');
+            img.src = currentImageRaw;
+            img.style.position = 'absolute';
+            img.style.top = '50%';
+            img.style.left = '50%';
+
+            // Map 300px modal transform to 80px result (Ratio ~0.266)
+            const ratio = 80 / 300;
+            // We apply the translations scaled by ratio, but keep the scale factor AS IS relative to the container frame
+            // Actually, if we use the exact same logic, we just scale the pixel values.
+
+            img.style.transform = `translate(-50%, -50%) translate(${pX * ratio}px, ${pY * ratio}px) scale(${scale * ratio})`;
+
+            finalAvatar.appendChild(img);
+
+            setTimeout(() => { finalReveal.classList.add('visible'); }, 500);
+        }
+
+        function wait(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+
+</html>
