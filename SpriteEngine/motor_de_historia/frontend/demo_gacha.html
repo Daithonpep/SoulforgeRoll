@@ -56,44 +56,38 @@
         }
 
         .soul-crystal {
-            width: 80px;
-            height: 140px;
-            background: rgba(255, 255, 255, 0.1);
+            width: 180px;
+            height: auto;
             position: relative;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            transition: all 0.2s ease;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
             cursor: pointer;
             z-index: 10;
+            filter: drop-shadow(0 0 20px rgba(0, 200, 255, 0.5));
         }
 
-        .soul-crystal::before {
-            content: '';
-            position: absolute;
-            inset: 5px;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            background: rgba(255, 255, 255, 0.05);
+        .soul-crystal img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* STATES */
         .soul-crystal.idle {
-            animation: float 4s ease-in-out infinite;
-            background: linear-gradient(135deg, #222, #444);
-            border: 1px solid #555;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 200, 255, 0.5));
         }
 
         .soul-crystal.charging {
-            animation: pulse-charge 0.8s ease-in-out infinite;
-            background: linear-gradient(135deg, #fff, #ccc);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.4);
+            animation: pulse-charge 0.6s ease-in-out infinite;
+            filter: drop-shadow(0 0 50px rgba(255, 230, 100, 0.8)) drop-shadow(0 0 80px rgba(255, 200, 50, 0.5));
         }
 
         .soul-crystal.resonating {
-            /* Color will be set by JS via var(--current-color) */
-            background: var(--current-color);
-            box-shadow: 0 0 80px var(--current-color);
-            animation: shake 0.1s linear infinite;
+            animation: shake 0.08s linear infinite;
+            filter: drop-shadow(0 0 60px var(--current-color)) drop-shadow(0 0 100px var(--current-color));
         }
+
+
 
         /* EXPLOSION EFFECT */
         .explosion-flash {
@@ -176,11 +170,14 @@
         /* UI ELEMENTS */
         .title {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--accent);
             margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            text-shadow: 2px 2px 4px #000, 0 0 20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
             text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px 40px;
+            border-radius: 8px;
         }
 
         /* RESULT CARD */
@@ -203,11 +200,11 @@
 
         .tier-badge {
             font-family: 'Cinzel', serif;
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: 900;
             line-height: 1;
             margin-bottom: 10px;
-            text-shadow: 0 0 30px currentColor;
+            text-shadow: 3px 3px 6px #000, 0 0 30px currentColor, 0 0 60px currentColor;
         }
 
         .btn {
@@ -231,23 +228,33 @@
 
 <body>
 
-    <div class="title">Forja de Almas: Resonancia</div>
+    <!-- TITLE IMAGE -->
+    <img src="static/images/forja_title.png" alt="Forja de Almas"
+        style="max-width: 400px; height: auto; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));">
+
 
     <div class="resonance-chamber">
         <!-- THE CRYSTAL -->
-        <div id="crystal" class="soul-crystal idle" onclick="startSummon()"></div>
+        <div id="crystal" class="soul-crystal idle" onclick="startSummon()">
+            <img src="static/images/soul_crystal.png" alt="Soul Crystal">
+        </div>
 
         <!-- UPLOAD STEP (Reveal 1) -->
         <div id="uploadStep" class="result-reveal">
-            <h2 style="color:var(--accent); font-family:'Cinzel', serif;">Alma Resonante Detectada</h2>
-            <div id="tierBadge" class="tier-badge" style="font-size: 2.5rem; margin: 20px 0;">?</div>
+            <div style="background:rgba(0,0,0,0.85); padding:30px; border-radius:12px; border:1px solid var(--accent);">
+                <h2
+                    style="color:var(--accent); font-family:'Cinzel', serif; text-shadow: 2px 2px 4px #000; margin-bottom:10px;">
+                    Alma Resonante Detectada</h2>
+                <div id="tierBadge" class="tier-badge" style="font-size: 3rem; margin: 15px 0;">?</div>
 
-            <div
-                style="background:rgba(0,0,0,0.5); padding:20px; border:1px solid #444; border-radius:8px; margin-bottom:20px;">
-                <p style="color:#ccc; margin-bottom:15px;">Para anclar esta alma a la realidad, necesitamos un rostro.
-                </p>
-                <button class="btn" onclick="triggerUpload()">📷 Subir Retrato</button>
-                <input type="file" id="avatarUpload" style="display:none" onchange="finishProcess()">
+                <div
+                    style="background:rgba(0,0,0,0.5); padding:20px; border:1px solid #555; border-radius:8px; margin-top:15px;">
+                    <p style="color:#ddd; margin-bottom:15px; text-shadow: 1px 1px 2px #000;">Para anclar esta alma a la
+                        realidad, necesitamos un rostro.</p>
+                    <button class="btn" onclick="triggerUpload()">📷 Subir Retrato</button>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display:none"
+                        onchange="finishProcess()">
+                </div>
             </div>
         </div>
 
@@ -284,10 +291,10 @@
 
     <div class="explosion-flash" id="flash"></div>
 
-    <!-- Removed Payment Controls, added Instruction -->
+    <!-- Instruction -->
     <div id="instruction"
-        style="margin-top:40px; color:var(--accent); font-family:'Cinzel'; animation: pulse 2s infinite;">
-        Pago Confirmado. Toca el cristal para despertar el alma.
+        style="margin-top:40px; color:var(--accent); font-family:'Cinzel'; animation: pulse 2s infinite; background:rgba(0,0,0,0.6); padding:12px 30px; border-radius:8px; text-shadow: 2px 2px 4px #000;">
+        Toca el cristal para despertar el alma.
     </div>
     <style>
         @keyframes pulse {
@@ -483,44 +490,279 @@
         async function applyCrop() {
             closeCropModal();
 
-            // TRANSITION TO FINAL VIEW
+            // TRANSITION MESSAGE
             const uploadStep = document.getElementById('uploadStep');
-            uploadStep.innerHTML = "<p style='color:var(--accent)'>Anclando alma a imagen...</p>";
+            uploadStep.innerHTML = "<div style='background:rgba(0,0,0,0.85); padding:30px; border-radius:12px;'><p style='color:var(--accent); text-shadow: 2px 2px 4px #000;'>⚡ Cristalizando alma...</p></div>";
+            await wait(1500);
+            uploadStep.innerHTML = "<div style='background:rgba(0,0,0,0.85); padding:30px; border-radius:12px;'><p style='color:#4ade80; text-shadow: 2px 2px 4px #000;'>✓ Vinculación Completa</p><p style='color:#888; font-size:0.9rem; margin-top:10px;'>Descargando ficha...</p></div>";
             await wait(1000);
-            uploadStep.classList.remove('visible');
 
-            // Show Final Sheet Reveal
-            const finalReveal = document.getElementById('finalReveal');
+            // GENERATE CHARACTER DATA
             const tierData = TIERS[finalTierKey];
+            const characterData = {
+                id: 'SOUL-' + Date.now().toString(36).toUpperCase(),
+                name: 'Personaje Forjado',
+                tier: finalTierKey,
+                tierColor: tierData.color,
+                benefits: tierData.benefits,
+                avatar: currentImageRaw,
+                avatarCrop: { scale: scale, x: pX, y: pY },
+                createdAt: new Date().toISOString(),
+                stats: generateStats(finalTierKey)
+            };
 
-            document.getElementById('finalTierName').textContent = finalTierKey.toUpperCase();
-            document.getElementById('finalTierName').style.color = tierData.color;
-            document.getElementById('tierLabel').textContent = finalTierKey;
+            // ENCRYPT DATA (Base64 + simple obfuscation)
+            const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(characterData))));
 
-            const list = document.getElementById('tierBenefits');
-            list.innerHTML = tierData.benefits.map(b => `<li>💎 ${b}</li>`).join('');
+            // GENERATE HTML FILE
+            const htmlContent = generateCharacterHTML(characterData, encryptedPayload);
 
-            // APPLY VISUAL TRANSFORM
-            const finalAvatar = document.getElementById('finalAvatar');
-            finalAvatar.innerHTML = '';
+            // AUTO-DOWNLOAD HTML
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Ficha_${finalTierKey}_${characterData.id}.html`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
 
-            const img = document.createElement('img');
-            img.src = currentImageRaw;
-            img.style.position = 'absolute';
-            img.style.top = '50%';
-            img.style.left = '50%';
+            // Show success and redirect to main page
+            uploadStep.innerHTML = "<div style='background:rgba(0,0,0,0.85); padding:30px; border-radius:12px;'><p style='color:#4ade80; font-size:1.3rem; text-shadow: 2px 2px 4px #000;'>🎉 ¡Ficha Descargada!</p><p style='color:#ddd; font-size:0.9rem; margin-top:15px;'>Redirigiendo a la página principal...</p></div>";
 
-            // Map 300px modal transform to 80px result (Ratio ~0.266)
-            const ratio = 80 / 300;
-            // We apply the translations scaled by ratio, but keep the scale factor AS IS relative to the container frame
-            // Actually, if we use the exact same logic, we just scale the pixel values.
-
-            img.style.transform = `translate(-50%, -50%) translate(${pX * ratio}px, ${pY * ratio}px) scale(${scale * ratio})`;
-
-            finalAvatar.appendChild(img);
-
-            setTimeout(() => { finalReveal.classList.add('visible'); }, 500);
+            // Redirect to index after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000);
         }
+
+
+        function generateStats(tier) {
+            const baseStats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+            const bonusMap = {
+                'Eco': 0, 'Murmullo': 2, 'Sombra': 4, 'Voz': 6,
+                'Alma': 8, 'Ancestral': 12, 'Primordial': 16, 'Legendaria': 20, 'Mitica': 30
+            };
+            const bonus = bonusMap[tier] || 0;
+            const stats = {};
+            for (let key in baseStats) {
+                stats[key] = baseStats[key] + Math.floor(Math.random() * (bonus + 2));
+            }
+            return stats;
+        }
+
+
+        function generateCharacterHTML(data, encryptedPayload) {
+            // Generate rich content based on tier
+            const tierContent = getTierContent(data.tier);
+
+            return `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.name} - Ficha de Personaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --panel-dark: #111;
+            --paper: #e3dac9;
+            --ink: #1a1a1a;
+            --tier-color: ${data.tierColor};
+            --accent: ${data.tierColor};
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-dark); margin: 0; padding: 40px 20px; font-family: 'Crimson Text', serif; color: var(--ink); display: flex; justify-content: center; min-height: 100vh; }
+        .rpg-sheet { width: 100%; max-width: 1100px; background-color: var(--paper); background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); box-shadow: 0 0 60px rgba(0,0,0,0.5); display: grid; grid-template-columns: 340px 1fr; min-height: 1000px; border-radius: 4px; overflow: hidden; border: 2px solid var(--tier-color); }
+        .sidebar { background: linear-gradient(180deg, #0a110a 0%, #050805 100%); color: #ccc; padding: 30px 25px; border-right: 4px solid var(--tier-color); display: flex; flex-direction: column; gap: 20px; }
+        .avatar-container { width: 180px; height: 180px; margin: 0 auto; border-radius: 50%; background: #000; position: relative; overflow: hidden; border: 4px solid var(--tier-color); box-shadow: 0 0 30px ${data.tierColor}40; }
+        .avatar-img { position: absolute; top: 50%; left: 50%; }
+        .tension-wrapper { text-align: center; margin-top: 10px; }
+        .tension-label { font-family: 'Cinzel'; font-size: 0.7rem; color: var(--tier-color); margin-bottom: 5px; }
+        .tension-track { height: 8px; background: #222; border-radius: 4px; border: 1px solid #444; overflow: hidden; }
+        .tension-fill { height: 100%; width: 20%; background: linear-gradient(90deg, var(--tier-color), #4ade80); }
+        .economy-box { text-align: center; border: 1px solid var(--tier-color); padding: 12px; background: rgba(0,0,0,0.4); border-radius: 6px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-medallion { position: relative; width: 100%; height: 80px; background: linear-gradient(135deg, #1a1a1a, #0a0a0a); border: 1px solid #444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+        .stat-value { font-family: 'Cinzel'; font-size: 1.5rem; color: #fff; font-weight: 700; }
+        .stat-name { font-size: 0.6rem; text-transform: uppercase; color: #888; }
+        .stat-mod { position: absolute; bottom: -6px; background: var(--tier-color); color: #000; border: 1px solid var(--tier-color); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; }
+        .skills-section { border-top: 1px solid #333; padding-top: 15px; }
+        .skill-item { background: rgba(255,255,255,0.03); border-left: 3px solid var(--tier-color); padding: 10px; margin-bottom: 10px; }
+        .skill-name { color: #eee; font-weight: bold; font-size: 0.9rem; }
+        .skill-desc { color: #888; font-size: 0.8rem; margin-top: 4px; }
+        .main-content { padding: 40px 50px; position: relative; }
+        .tier-badge { display: inline-block; background: var(--tier-color); color: #000; padding: 3px 12px; border-radius: 4px; font-family: 'Cinzel'; font-weight: 700; font-size: 0.75rem; margin-bottom: 8px; }
+        h1 { font-family: 'Cinzel'; font-size: 2.8rem; color: var(--ink); margin: 0; line-height: 1.1; }
+        .subtitle { font-family: 'Metamorphous'; font-size: 1rem; color: var(--tier-color); margin-top: 5px; font-style: italic; }
+        .quote-block { border-left: 4px solid var(--tier-color); background: rgba(0,0,0,0.05); padding: 15px 20px; margin: 25px 0; font-style: italic; font-size: 1.1rem; color: #333; }
+        .section-title { font-family: 'Cinzel'; font-size: 1.3rem; color: #333; border-bottom: 2px solid var(--tier-color); padding-bottom: 8px; margin: 25px 0 12px 0; }
+        p { font-size: 1.05rem; line-height: 1.7; text-align: justify; margin-bottom: 12px; }
+        .psych-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
+        .psych-item { background: rgba(0,0,0,0.04); border: 1px solid #ccc; padding: 12px; border-radius: 6px; }
+        .psych-label { font-weight: bold; color: var(--tier-color); font-size: 0.85rem; margin-bottom: 4px; }
+        .psych-text { font-style: italic; color: #444; font-size: 0.95rem; }
+        .inv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .inv-item { background: rgba(0,0,0,0.05); border: 1px solid #bbb; padding: 8px; font-size: 0.85rem; border-radius: 4px; }
+        .log-section { margin-top: 25px; border-top: 2px solid var(--tier-color); padding-top: 15px; }
+        .log-entry { background: rgba(0,0,0,0.02); border-bottom: 1px dashed #ccc; padding: 10px; margin-bottom: 6px; font-size: 0.95rem; }
+        .log-entry[contenteditable]:focus { background: rgba(0,100,0,0.1); outline: none; }
+        .download-btn { display: block; width: fit-content; margin: 25px auto 0; background: var(--ink); color: var(--paper); border: 2px solid var(--tier-color); padding: 12px 30px; font-family: 'Cinzel'; font-size: 0.95rem; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .download-btn:hover { background: var(--tier-color); color: #000; }
+        .footer { margin-top: 20px; text-align: center; color: #888; font-size: 0.75rem; }
+        @media (max-width: 900px) { .rpg-sheet { grid-template-columns: 1fr; } .sidebar { border-right: none; border-bottom: 4px solid var(--tier-color); } .stats-grid { grid-template-columns: repeat(3, 1fr); } .main-content { padding: 20px; } .psych-matrix { grid-template-columns: 1fr; } .inv-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="rpg-sheet">
+        <div class="sidebar">
+            <div class="avatar-container">
+                <img src="${data.avatar}" class="avatar-img" style="transform: translate(-50%, -50%) translate(${data.avatarCrop.x * 0.6}px, ${data.avatarCrop.y * 0.6}px) scale(${data.avatarCrop.scale * 0.6});">
+            </div>
+            <div class="tension-wrapper">
+                <div class="tension-label">TENSIÓN INTERIOR</div>
+                <div class="tension-track"><div class="tension-fill"></div></div>
+                <div style="font-size:0.55rem; color:#666; margin-top:4px;">20% - Estado Inicial</div>
+            </div>
+            <div class="economy-box">
+                <div style="font-size:0.55rem; color:#888;">MONEDAS</div>
+                <div style="font-family:'Cinzel'; font-size:1.3rem; color:var(--tier-color);">${tierContent.gold} <span style="font-size:0.75rem">GP</span></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-medallion"><span class="stat-value">${data.stats.str}</span><span class="stat-name">Fuerza</span><div class="stat-mod">${getModifier(data.stats.str)}</div></div>
+                <div class="stat-medallion"><span class="stat-value">${data.stats.dex}</span><span class="stat-name">Destreza</span><div class="stat-mod">${getModifier(data.stats.dex)}</div></div>
+                <div class="stat-medallion"><span class="stat-value">${data.stats.con}</span><span class="stat-name">Constitución</span><div class="stat-mod">${getModifier(data.stats.con)}</div></div>
+                <div class="stat-medallion"><span class="stat-value">${data.stats.int}</span><span class="stat-name">Inteligencia</span><div class="stat-mod">${getModifier(data.stats.int)}</div></div>
+                <div class="stat-medallion"><span class="stat-value">${data.stats.wis}</span><span class="stat-name">Sabiduría</span><div class="stat-mod">${getModifier(data.stats.wis)}</div></div>
+                <div class="stat-medallion"><span class="stat-value">${data.stats.cha}</span><span class="stat-name">Carisma</span><div class="stat-mod">${getModifier(data.stats.cha)}</div></div>
+            </div>
+            <div class="skills-section">
+                <div style="font-family:'Cinzel'; color:var(--tier-color); text-align:center; margin-bottom:10px; font-size:0.85rem;">✦ HABILIDADES</div>
+                ${tierContent.skills.map(s => '<div class="skill-item"><div class="skill-name">' + s.name + '</div><div class="skill-desc">' + s.desc + '</div></div>').join('')}
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="tier-badge">${data.tier.toUpperCase()} · NIVEL 1</div>
+            <h1 id="charName">${data.name}</h1>
+            <div class="subtitle">${tierContent.archetype} · Origen Desconocido · Tono: Neutral</div>
+            <div class="quote-block">"${tierContent.quote}"</div>
+            <h2 class="section-title">📜 Biografía</h2>
+            <p>${tierContent.bio}</p>
+            <h2 class="section-title">🧠 Psicología Profunda</h2>
+            <div class="psych-matrix">
+                <div class="psych-item"><div class="psych-label">Máscara</div><div class="psych-text">${tierContent.mask}</div></div>
+                <div class="psych-item"><div class="psych-label">Sombra</div><div class="psych-text">${tierContent.shadow}</div></div>
+                <div class="psych-item"><div class="psych-label">Herida</div><div class="psych-text">${tierContent.wound}</div></div>
+                <div class="psych-item"><div class="psych-label">Deseo</div><div class="psych-text">${tierContent.desire}</div></div>
+            </div>
+            <h2 class="section-title">🎒 Inventario</h2>
+            <div class="inv-grid">
+                ${tierContent.inventory.map(item => '<div class="inv-item">' + item + '</div>').join('')}
+            </div>
+            <div class="log-section">
+                <h2 class="section-title">📖 Bitácora de Aventuras</h2>
+                <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable)</p>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--tier-color)">[Sesión 1]</strong> La historia comienza...</div>
+                <div class="log-entry" contenteditable="true"><strong style="color:var(--tier-color)">[Sesión 2]</strong> ...</div>
+            </div>
+            <button class="download-btn" onclick="saveHTML()">💾 Guardar Cambios (HTML)</button>
+            <div class="footer">ID: ${data.id} | Generado por SoulForge Engine | ${data.createdAt}</div>
+        </div>
+    </div>
+    <script id="soul-payload" type="application/soul-data">${encryptedPayload}<\/script>
+    <script>
+        function saveHTML() {
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = 'Ficha_${data.tier}_Actualizada.html';
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+        (function() {
+            try {
+                const p = document.getElementById('soul-payload').textContent;
+                const d = JSON.parse(decodeURIComponent(escape(atob(p))));
+                document.getElementById('charName').textContent = d.name;
+            } catch(e) {}
+        })();
+    <\/script>
+<\/body>
+<\/html>`;
+        }
+
+        function getModifier(stat) {
+            const mod = Math.floor((stat - 10) / 2);
+            return mod >= 0 ? '+' + mod : mod.toString();
+        }
+
+        function getTierContent(tier) {
+            const contents = {
+                'Eco': {
+                    gold: 50, archetype: 'Sobreviviente',
+                    quote: 'A veces sobrevivir es la mayor victoria.',
+                    bio: 'Un alma recién despertada en un mundo hostil. Sin recuerdos claros del pasado, solo fragmentos que emergen en sueños. Deberá forjar su propio camino desde la nada.',
+                    mask: 'Pretende ser fuerte e independiente.',
+                    shadow: 'Teme profundamente estar solo.',
+                    wound: 'Abandono en la infancia.',
+                    desire: 'Encontrar un lugar al que pertenecer.',
+                    skills: [{ name: 'Supervivencia', desc: '+2 a tiradas de supervivencia básica.' }],
+                    inventory: ['🗡️ Daga Oxidada', '🎒 Mochila Vieja', '🍞 Raciones (x3)', '💰 Monedas (50 GP)', '📜 Mapa Incompleto', '🔥 Pedernal']
+                },
+                'Murmullo': {
+                    gold: 100, archetype: 'Viajero',
+                    quote: 'El viento susurra secretos a quien sabe escuchar.',
+                    bio: 'Alguien que ha visto más de lo que aparenta. Sus ojos guardan historias que prefiere no contar. Viaja ligero porque aprendió que los apegos duelen.',
+                    mask: 'Aparenta desinterés por todo.',
+                    shadow: 'Anhela conexiones profundas.',
+                    wound: 'Traición de un ser querido.',
+                    desire: 'Redención o venganza silenciosa.',
+                    skills: [{ name: 'Sigilo', desc: '+3 a moverse sin ser detectado.' }, { name: 'Percepción', desc: '+2 a notar detalles ocultos.' }],
+                    inventory: ['🗡️ Espada Corta', '🎒 Equipaje de Viaje', '🧭 Brújula', '💰 Monedas (100 GP)', '📜 Carta Sellada', '🔮 Amuleto Misterioso']
+                },
+                'Sombra': {
+                    gold: 200, archetype: 'Agente',
+                    quote: 'En las sombras se ocultan verdades que la luz teme mostrar.',
+                    bio: 'Entrenado en artes que pocos conocen. Sirve a intereses que cambian como el viento, pero siempre tiene sus propios objetivos ocultos.',
+                    mask: 'Profesional y desapegado.',
+                    shadow: 'Culpa por actos pasados.',
+                    wound: 'Obligado a hacer algo terrible.',
+                    desire: 'Libertad de sus ataduras.',
+                    skills: [{ name: 'Infiltración', desc: '+4 a entrar en lugares protegidos.' }, { name: 'Combate Oculto', desc: '+3 daño desde las sombras.' }],
+                    inventory: ['⚔️ Dagas Gemelas', '🧥 Capa de Sombras', '💊 Veneno Suave', '💰 Monedas (200 GP)', '🗝️ Ganzúas', '📜 Contrato', '🎭 Máscara', '💉 Antídoto', '🕯️ Tinta Invisible']
+                },
+                'Voz': {
+                    gold: 350, archetype: 'Orador',
+                    quote: 'Las palabras correctas pueden mover montañas... o destruir imperios.',
+                    bio: 'Posee un don para la persuasión que roza lo sobrenatural. Su voz puede calmar bestias o incitar multitudes. Un arma que prefiere a cualquier espada.',
+                    mask: 'Carismático y confiable.',
+                    shadow: 'Manipula sin escrúpulos.',
+                    wound: 'Usó su don para causar una tragedia.',
+                    desire: 'Ser escuchado y recordado.',
+                    skills: [{ name: 'Persuasión', desc: '+5 a convencer a otros.' }, { name: 'Intimidar', desc: '+4 a amedrentar.' }, { name: 'Historia', desc: '+3 a conocer el pasado.' }],
+                    inventory: ['📿 Collar de Autoridad', '📚 Tomos Antiguos', '🎭 Disfraces', '💰 Monedas (350 GP)', '✒️ Pluma Encantada', '📜 Cartas de Recomendación', '🍷 Vino Fino', '💎 Anillo de Sello', '🕯️ Incienso Calmante']
+                },
+                'Alma': {
+                    gold: 500, archetype: 'Elegido',
+                    quote: 'El destino me llamó, y yo respondí.',
+                    bio: 'Marcado desde el nacimiento por señales que pocos entienden. Los profetas susurran su nombre y los espíritus lo reconocen. Su camino está escrito en las estrellas.',
+                    mask: 'Humilde y servicial.',
+                    shadow: 'Orgullo desmedido oculto.',
+                    wound: 'La carga del destino no elegido.',
+                    desire: 'Cumplir su propósito... o escapar de él.',
+                    skills: [{ name: 'Aura Sagrada', desc: 'Aliados cercanos +2 a moral.' }, { name: 'Visión', desc: 'Sueños proféticos ocasionales.' }, { name: 'Sanación', desc: 'Cura 1d6 HP una vez por día.' }],
+                    inventory: ['✨ Reliquia Familiar', '📿 Símbolo Sagrado', '📚 Evangelio Personal', '💰 Monedas (500 GP)', '🔮 Cristal de Visión', '💊 Bálsamos Curativos', '🕯️ Velas Rituales', '📜 Profecía Incompleta', '🦋 Amuleto del Alma']
+                },
+                'Ancestral': { gold: 750, archetype: 'Heredero', quote: 'La sangre de reyes corre por mis venas.', bio: 'Descendiente de una línea antigua. Poderes dormidos despiertan gradualmente. Los ancestros observan cada decisión.', mask: 'Noble y diplomático.', shadow: 'Miedo a no estar a la altura del legado.', wound: 'La caída de su casa.', desire: 'Restaurar la gloria familiar.', skills: [{ name: 'Sangre Noble', desc: '+4 a tratos con nobleza.' }, { name: 'Legado', desc: 'Acceso a conocimientos antiguos.' }, { name: 'Comando', desc: '+3 a liderar tropas.' }], inventory: ['👑 Corona Ancestral', '⚔️ Espada del Linaje', '📜 Árbol Genealógico', '💰 Monedas (750 GP)', '🏰 Título de Tierras', '💎 Joyas Familiares', '📚 Historia del Clan', '🛡️ Escudo Heráldico', '🕯️ Sello Real'] },
+                'Primordial': { gold: 1000, archetype: 'Fuerza de la Naturaleza', quote: 'Yo era antes de que el tiempo tuviera nombre.', bio: 'Una entidad que trasciende la mortalidad común. Sus recuerdos abarcan eras. Camina entre mortales pero no es uno de ellos.', mask: 'Distante y observador.', shadow: 'Soledad cósmica.', wound: 'Ha visto todo destruirse.', desire: 'Encontrar algo digno de proteger.', skills: [{ name: 'Inmortalidad', desc: 'Resistencia a muerte.' }, { name: 'Conocimiento Antiguo', desc: '+6 a cualquier tirada de historia.' }, { name: 'Poder Elemental', desc: '2d8 daño elemental.' }], inventory: ['🌟 Orbe Primordial', '⚡ Manto de Energía', '📜 Textos Prohibidos', '💰 Monedas (1000 GP)', '🔮 Fragmento de Estrella', '💀 Reliquia de Era Olvidada', '🌙 Lágrima de Luna', '☀️ Escama de Sol', '🌍 Piedra del Mundo'] },
+                'Legendaria': { gold: 1500, archetype: 'Mito Viviente', quote: 'Los bardos cantan mi nombre en tierras que aún no he pisado.', bio: 'Una leyenda encarnada. Sus hazañas son conocidas en todos los reinos. Cada paso resuena en la historia.', mask: 'Héroe incuestionable.', shadow: 'El peso de las expectativas.', wound: 'Falló cuando más importaba.', desire: 'Una muerte digna de su leyenda.', skills: [{ name: 'Fama', desc: 'Reconocido en todas partes.' }, { name: 'Inspiración', desc: 'Aliados +4 a todas las tiradas.' }, { name: 'Golpe Legendario', desc: '3d10 daño, una vez por combate.' }], inventory: ['⚔️ Arma Legendaria', '🛡️ Armadura de Mito', '📜 Canción en tu Honor', '💰 Monedas (1500 GP)', '💎 Tesoro de Dragón', '👑 Favor de Reyes', '🏆 Trofeos de Bestias', '🌟 Bendición Divina', '📚 Tu Biografía'] },
+                'Mitica': { gold: 2500, archetype: 'Dios Entre Mortales', quote: 'La realidad se dobla ante mi voluntad.', bio: 'Trasciende toda categoría. Su existencia misma altera las leyes del universo. Dioses y demonios le temen por igual.', mask: 'Todo y nada a la vez.', shadow: 'La eternidad es soledad absoluta.', wound: 'Ha perdido su humanidad.', desire: 'Recordar qué era ser mortal.', skills: [{ name: 'Omnisciencia', desc: 'Conoce todas las respuestas.' }, { name: 'Creación', desc: 'Puede alterar la realidad.' }, { name: 'Inmortalidad Absoluta', desc: 'No puede morir.' }], inventory: ['🌌 Esencia del Vacío', '⚡ Rayo Capturado', '🔮 Ojo del Universo', '💰 Monedas (2500 GP)', '📜 Contrato con el Destino', '💀 Muerte en Cadenas', '⏳ Fragmento del Tiempo', '🌟 Estrella Personal', '∞ El Infinito'] }
+            };
+            return contents[tier] || contents['Eco'];
+        }
+
+
 
         function wait(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
