@@ -1,14 +1,11 @@
 {
   "version": 2,
+  "buildCommand": "",
+  "outputDirectory": "SpriteEngine/motor_de_historia/frontend",
   "rewrites": [
     {
       "source": "/api/:match*",
       "destination": "https://soulforge.up.railway.app/api/:match*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
-  ],
-  "trailingSlash": false
+  ]
 }
