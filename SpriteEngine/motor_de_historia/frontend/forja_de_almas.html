@@ -581,8 +581,27 @@
             const cBio = data.narrative_arc ? data.narrative_arc.origin : (data.biografia || tierContent.bio);
             const cQuote = data.frase || data.meta_line || tierContent.quote;
 
-            const cMask = (data.psicologia && data.psicologia.mascara) || (data.mechanics && data.mechanics.moral_matrix && data.mechanics.moral_matrix.current_stage) || tierContent.mask;
-            const cShadow = (data.psicologia && data.psicologia.sombra) || (data.mechanics && data.mechanics.soul_tension) || tierContent.shadow;
+            // PSYCHOLOGY FIXES
+            // 1. Mask
+            let cMask = tierContent.mask;
+            if (data.psicologia && data.psicologia.mascara) cMask = data.psicologia.mascara;
+            else if (data.mechanics && data.mechanics.moral_matrix && data.mechanics.moral_matrix.current_stage) {
+                // Convert stage to mask description
+                const stage = data.mechanics.moral_matrix.current_stage;
+                cMask = `Oculta su verdadero ser bajo una capa de ${stage.toLowerCase()}, temiendo ser descubierto.`;
+            }
+
+            // 2. Shadow (Avoid raw numbers)
+            let cShadow = tierContent.shadow;
+            if (data.psicologia && data.psicologia.sombra) cShadow = data.psicologia.sombra;
+            else if (data.mechanics && data.mechanics.soul_tension) {
+                const tension = data.mechanics.soul_tension;
+                // Narrative description of tension
+                if (tension > 70) cShadow = `Una tensión oscura (${tension}%) bullendo bajo la piel, lista para estallar en violencia.`;
+                else if (tension > 40) cShadow = `Una inquietud constante (${tension}%) que le impide confiar plenamente.`;
+                else cShadow = `Una calma aparente (${tension}%), aunque los demonios internos siguen susurrando.`;
+            }
+
             const cWound = (data.psicologia && data.psicologia.herida) || (data.narrative_arc && data.narrative_arc.turning_point) || tierContent.wound;
             const cDesire = (data.psicologia && data.psicologia.deseo) || (data.narrative_arc && data.narrative_arc.moment_of_light) || tierContent.desire;
 
