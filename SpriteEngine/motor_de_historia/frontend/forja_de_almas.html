@@ -498,17 +498,35 @@
             await wait(1000);
 
             // GENERATE CHARACTER DATA
+            // MERGE WITH SESSION STORAGE (REAL BACKEND DATA)
+            let realData = {};
+            try {
+                const sessionData = sessionStorage.getItem('lastForgedCharacter');
+                if (sessionData) {
+                    realData = JSON.parse(sessionData);
+                    console.log("Using real backend data:", realData);
+                }
+            } catch (e) {
+                console.error("Error reading session data:", e);
+            }
+
             const tierData = TIERS[finalTierKey];
             const characterData = {
+                // Default fallback
                 id: 'SOUL-' + Date.now().toString(36).toUpperCase(),
                 name: 'Personaje Forjado',
                 tier: finalTierKey,
                 tierColor: tierData.color,
                 benefits: tierData.benefits,
+                stats: generateStats(finalTierKey),
+                createdAt: new Date().toISOString(),
+                // Merge real data
+                ...realData,
+                // Force overrides that must be visual/local
                 avatar: currentImageRaw,
                 avatarCrop: { scale: scale, x: pX, y: pY },
-                createdAt: new Date().toISOString(),
-                stats: generateStats(finalTierKey)
+                tier: finalTierKey, // Visual tier overrides calculation for consistency with animation
+                tierColor: tierData.color
             };
 
             // ENCRYPT DATA (Base64 + simple obfuscation)
@@ -556,6 +574,27 @@
         function generateCharacterHTML(data, encryptedPayload) {
             // Generate rich content based on tier
             const tierContent = getTierContent(data.tier);
+
+            // PREFER DYNAMIC DATA IF AVAILABLE
+            const cName = data.nombre || data.name || "Personaje Forjado";
+            const cArchetype = data.arquetipo || data.clase || data.rol || tierContent.archetype;
+            const cBio = data.narrative_arc ? data.narrative_arc.origin : (data.biografia || tierContent.bio);
+            const cQuote = data.frase || data.meta_line || tierContent.quote;
+
+            const cMask = (data.psicologia && data.psicologia.mascara) || (data.mechanics && data.mechanics.moral_matrix && data.mechanics.moral_matrix.current_stage) || tierContent.mask;
+            const cShadow = (data.psicologia && data.psicologia.sombra) || (data.mechanics && data.mechanics.soul_tension) || tierContent.shadow;
+            const cWound = (data.psicologia && data.psicologia.herida) || (data.narrative_arc && data.narrative_arc.turning_point) || tierContent.wound;
+            const cDesire = (data.psicologia && data.psicologia.deseo) || (data.narrative_arc && data.narrative_arc.moment_of_light) || tierContent.desire;
+
+            const cInventory = data.inventory || tierContent.inventory;
+
+            // Render Skills from Mechanics or Tier
+            let skillsHTML = '';
+            if (data.mechanics && data.mechanics.soul_perks) {
+                skillsHTML = data.mechanics.soul_perks.map(s => `<div class="skill-item"><div class="skill-name">${s.name}</div><div class="skill-desc">${s.flavor || s.type}</div></div>`).join('');
+            } else {
+                skillsHTML = tierContent.skills.map(s => `<div class="skill-item"><div class="skill-name">${s.name}</div><div class="skill-desc">${s.desc}</div></div>`).join('');
+            }
 
             return `<!DOCTYPE html>
 <html lang="es">
@@ -640,26 +679,26 @@
             </div>
             <div class="skills-section">
                 <div style="font-family:'Cinzel'; color:var(--tier-color); text-align:center; margin-bottom:10px; font-size:0.85rem;">✦ HABILIDADES</div>
-                ${tierContent.skills.map(s => '<div class="skill-item"><div class="skill-name">' + s.name + '</div><div class="skill-desc">' + s.desc + '</div></div>').join('')}
+                ${skillsHTML}
             </div>
         </div>
         <div class="main-content">
             <div class="tier-badge">${data.tier.toUpperCase()} · NIVEL 1</div>
-            <h1 id="charName">${data.name}</h1>
-            <div class="subtitle">${tierContent.archetype} · Origen Desconocido · Tono: Neutral</div>
-            <div class="quote-block">"${tierContent.quote}"</div>
+            <h1 id="charName">${cName}</h1>
+            <div class="subtitle">${cArchetype} · Origen Desconocido · Tono: Neutral</div>
+            <div class="quote-block">"${cQuote}"</div>
             <h2 class="section-title">📜 Biografía</h2>
-            <p>${tierContent.bio}</p>
+            <p>${cBio}</p>
             <h2 class="section-title">🧠 Psicología Profunda</h2>
             <div class="psych-matrix">
-                <div class="psych-item"><div class="psych-label">Máscara</div><div class="psych-text">${tierContent.mask}</div></div>
-                <div class="psych-item"><div class="psych-label">Sombra</div><div class="psych-text">${tierContent.shadow}</div></div>
-                <div class="psych-item"><div class="psych-label">Herida</div><div class="psych-text">${tierContent.wound}</div></div>
-                <div class="psych-item"><div class="psych-label">Deseo</div><div class="psych-text">${tierContent.desire}</div></div>
+                <div class="psych-item"><div class="psych-label">Máscara</div><div class="psych-text">${cMask}</div></div>
+                <div class="psych-item"><div class="psych-label">Sombra</div><div class="psych-text">${cShadow}</div></div>
+                <div class="psych-item"><div class="psych-label">Herida</div><div class="psych-text">${cWound}</div></div>
+                <div class="psych-item"><div class="psych-label">Deseo</div><div class="psych-text">${cDesire}</div></div>
             </div>
             <h2 class="section-title">🎒 Inventario</h2>
             <div class="inv-grid">
-                ${tierContent.inventory.map(item => '<div class="inv-item">' + item + '</div>').join('')}
+                ${cInventory.map(item => '<div class="inv-item">' + item + '</div>').join('')}
             </div>
             <div class="log-section">
                 <h2 class="section-title">📖 Bitácora de Aventuras</h2>
