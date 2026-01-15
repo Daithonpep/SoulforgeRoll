@@ -73,7 +73,7 @@
             gap: 25px;
         }
 
-        /* KINTSUGI AVATAR (Beautiful Brokenness) */
+        /* AVATAR (Premium Style) */
         .avatar-container {
             width: 200px;
             height: 200px;
@@ -88,12 +88,12 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
 
-        .avatar-container.kintsugi {
+        .avatar-container.legendary {
             border-color: var(--tier-sss-primary);
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
         }
 
-        .avatar-container.kintsugi::after {
+        .avatar-container.legendary::after {
             content: '';
             position: absolute;
             top: 0;
@@ -466,7 +466,7 @@
     <div class="rpg-sheet">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar-container kintsugi" onclick="triggerUpload()">
+            <div class="avatar-container legendary" onclick="triggerUpload()">
                 <div id="avatar-placeholder"
                     style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#FFD700; font-size:3rem;">
                     ◈
@@ -480,9 +480,9 @@
             <input type="file" id="avatar-input" accept="image/*" style="display:none"
                 onchange="encodeImageFileAsURL(this)">
 
-            <!-- PHILOSOPHY: PAIN = POWER -->
-            <div class="tension-wrapper" title="El dolor es el precio del poder.">
-                <div class="tension-label-mini">SOBRECARGA DE TRAUMA</div>
+            <!-- TENSION BAR -->
+            <div class="tension-wrapper" title="Nivel de tensión narrativa.">
+                <div class="tension-label-mini">TENSIÓN INTERIOR</div>
                 <div class="risk-meter">
                     <div class="risk-fill"></div>
                 </div>
@@ -498,9 +498,9 @@
                         style="font-size:0.8rem">GP</span></div>
             </div>
 
-            <!-- CICATRICES DE GLORIA -->
+            <!-- HISTORIAL DE CONFLICTOS -->
             <div class="scars-section">
-                <div class="scars-title">🩸 CICATRICES DE GLORIA</div>
+                <div class="scars-title">⚔️ HISTORIAL DE BATALLAS</div>
 
                 <div class="scar-slot filled" title="Cicatriz inicial por el ritual de invocación">
                     <div style="display:flex; flex-direction:column;">

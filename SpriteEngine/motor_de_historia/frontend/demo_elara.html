@@ -4,32 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elara Vex - Ficha Eco (Secured)</title>
+    <title>Elara Vex - Ficha de Personaje</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
         rel="stylesheet">
     <style>
-        /* ECO TIER THEME (Green/Bronze/Cyber) */
         :root {
-            --bg-dark: #050a05;
-            /* Dark Greenish Black */
-            --panel-dark: #0a110a;
-            --paper: #e3e8da;
-            /* Greenish tint paper */
+            --bg-dark: #0a0a0f;
+            --panel-dark: #111;
+            --paper: #e3dac9;
             --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-            --ink: #0a1a0f;
-
-            /* ECO Tier Colors */
-            --tier-eco-primary: #2E8B57;
-            /* SeaGreen */
-            --tier-eco-secondary: #CD7F32;
-            /* Bronze */
-
-            --gold: var(--tier-eco-secondary);
-            --gold-bright: #98FB98;
-            /* Pale Green */
-            --blood: #8a3b3b;
+            --ink: #1a1a1a;
+            --gold: #c5a059;
+            --gold-bright: #ffd700;
+            --blood: #8a0b0b;
             --accent: #2E8B57;
+            --accent-light: #3CB371;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -48,27 +44,27 @@
             max-width: 1100px;
             background-color: var(--paper);
             background-image: var(--paper-texture);
-            box-shadow: 0 0 50px rgba(46, 139, 87, 0.2);
+            box-shadow: 0 0 60px rgba(46, 139, 87, 0.3);
             display: grid;
             grid-template-columns: 340px 1fr;
-            min-height: 1200px;
+            min-height: 1400px;
             border-radius: 4px;
             overflow: hidden;
-            border: 2px solid var(--tier-eco-secondary);
+            border: 2px solid var(--accent);
         }
 
         /* SIDEBAR */
         .sidebar {
-            background-color: var(--panel-dark);
+            background: linear-gradient(180deg, #0a110a 0%, #050805 100%);
             color: #ccc;
             padding: 30px 25px;
-            border-right: 4px solid var(--tier-eco-secondary);
+            border-right: 4px solid var(--accent);
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
         }
 
-        /* AVATAR (Standard - Not Kintsugi Gold, but "Scavenger" Style) */
+        /* AVATAR */
         .avatar-container {
             width: 200px;
             height: 200px;
@@ -76,17 +72,8 @@
             border-radius: 50%;
             background: #000;
             position: relative;
-            transition: all 0.5s ease;
-            cursor: pointer;
             overflow: hidden;
-            border: 4px solid #555;
-            /* Base iron look */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-        }
-
-        /* If damaged (Kintsugi logic applied to Eco) */
-        .avatar-container.damaged {
-            border-color: var(--tier-eco-primary);
+            border: 4px solid var(--accent);
             box-shadow: 0 0 30px rgba(46, 139, 87, 0.4);
         }
 
@@ -96,122 +83,86 @@
             object-fit: cover;
         }
 
-        .upload-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            opacity: 0;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+        /* TENSION BAR */
+        .tension-wrapper {
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .avatar-container:hover .upload-overlay {
-            opacity: 1;
+        .tension-label {
+            font-family: 'Cinzel';
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .tension-track {
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            border: 1px solid #444;
+            overflow: hidden;
+        }
+
+        .tension-fill {
+            height: 100%;
+            width: 35%;
+            background: linear-gradient(90deg, var(--accent), #4ade80);
         }
 
         /* ECONOMY */
         .economy-box {
             text-align: center;
-            border: 1px solid var(--tier-eco-secondary);
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        /* ANTI-PORCELAIN MECHANIC: SYSTEM INSTABILITY */
-        .tension-wrapper {
-            margin-top: 5px;
-            text-align: center;
-        }
-
-        .risk-meter {
-            height: 6px;
-            background: #222;
-            border-radius: 3px;
-            border: 1px solid #444;
-            overflow: hidden;
-        }
-
-        .risk-fill {
-            height: 100%;
-            width: 10%;
-            background: linear-gradient(90deg, #555, #2E8B57);
-        }
-
-        /* SCARS LOG */
-        .scars-section {
-            border-top: 1px solid #444;
-            padding-top: 15px;
-        }
-
-        .scars-title {
-            color: var(--tier-eco-secondary);
-            font-family: 'Cinzel';
-            text-align: center;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        .scar-slot {
-            border: 1px dashed #444;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 8px;
-            margin-bottom: 5px;
-            font-size: 0.8rem;
-            color: #888;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .scar-slot.filled {
-            border: 1px solid var(--tier-eco-secondary);
-            color: var(--tier-eco-primary);
-            background: rgba(46, 139, 87, 0.1);
+            border: 1px solid var(--accent);
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
         }
 
         /* STATS */
-        .stats-container {
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            justify-items: center;
+            gap: 12px;
         }
 
         .stat-medallion {
             position: relative;
-            width: 80px;
-            height: 90px;
+            width: 100%;
+            height: 85px;
             background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
             border: 1px solid #444;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-top: 8px;
+            padding-top: 10px;
+            transition: 0.2s;
         }
 
-        .stat-value-big {
+        .stat-medallion:hover {
+            border-color: var(--accent);
+            transform: scale(1.03);
+        }
+
+        .stat-value {
             font-family: 'Cinzel';
             font-size: 1.6rem;
-            color: #eee;
+            color: #fff;
             font-weight: 700;
-            line-height: 1;
         }
 
-        .stat-mod-seal {
+        .stat-name {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        .stat-mod {
             position: absolute;
             bottom: -8px;
-            background: #222;
+            background: #333;
             color: #aaa;
             border: 1px solid #555;
             width: 24px;
@@ -224,32 +175,43 @@
             font-weight: bold;
         }
 
-        /* High Stat Highlight */
         .stat-medallion.primary {
-            border-color: var(--tier-eco-primary);
-            box-shadow: 0 0 10px rgba(46, 139, 87, 0.2);
+            border-color: var(--accent);
         }
 
-        .stat-medallion.primary .stat-value-big {
-            color: var(--tier-eco-primary);
+        .stat-medallion.primary .stat-value {
+            color: var(--accent-light);
         }
 
-        .stat-medallion.primary .stat-mod-seal {
-            background: var(--tier-eco-primary);
+        .stat-medallion.primary .stat-mod {
+            background: var(--accent);
             color: #000;
-            border-color: var(--tier-eco-primary);
+            border-color: var(--accent);
         }
 
-        /* PERKS */
-        .soul-perk {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid #555;
+        /* SKILLS */
+        .skills-section {
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent);
             padding: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .soul-perk.unlocked {
-            border-left-color: var(--tier-eco-primary);
+        .skill-name {
+            color: #eee;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .skill-desc {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 4px;
         }
 
         /* MAIN CONTENT */
@@ -258,49 +220,143 @@
             position: relative;
         }
 
-        .tier-stamp {
+        .tier-badge {
             display: inline-block;
-            background: var(--tier-eco-secondary);
+            background: var(--accent);
             color: #000;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 4px;
             font-family: 'Cinzel';
-            font-weight: 900;
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            border: 1px solid #000;
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
         }
 
         h1 {
             font-family: 'Cinzel';
-            font-size: 3.5rem;
+            font-size: 3rem;
             color: var(--ink);
             margin: 0;
-            line-height: 1;
+            line-height: 1.1;
         }
 
-        .sub-header {
+        .subtitle {
             font-family: 'Metamorphous';
             font-size: 1.1rem;
-            color: var(--tier-eco-primary);
+            color: var(--accent);
             margin-top: 5px;
             font-style: italic;
         }
 
-        .inv-section {
+        .quote-block {
+            border-left: 4px solid var(--accent);
+            background: rgba(46, 139, 87, 0.08);
+            padding: 15px 20px;
+            margin: 25px 0;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: #333;
+        }
+
+        .section-title {
+            font-family: 'Cinzel';
+            font-size: 1.4rem;
+            color: #333;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
+            margin: 30px 0 15px 0;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        /* PSYCHOLOGY MATRIX */
+        .psych-matrix {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .psych-item {
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .psych-label {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .psych-text {
+            font-style: italic;
+            color: #444;
+        }
+
+        /* TIMELINE */
+        .timeline {
+            margin: 20px 0;
+        }
+
+        .timeline-event {
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+
+        .timeline-year {
+            font-family: 'Cinzel';
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .timeline-content {
+            color: #333;
+            margin-top: 3px;
+        }
+
+        /* INVENTORY */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .inv-item {
-            border: 1px solid #aaa;
-            padding: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid #bbb;
+            padding: 10px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
+            border-radius: 4px;
+        }
+
+        /* ADVENTURE LOG */
+        .log-section {
+            margin-top: 30px;
+            border-top: 2px solid var(--accent);
+            padding-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px dashed #ccc;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .log-entry[contenteditable]:focus {
+            background: rgba(46, 139, 87, 0.1);
+            outline: none;
         }
 
         .download-btn {
@@ -309,196 +365,244 @@
             margin: 30px auto 0;
             background: var(--ink);
             color: var(--paper);
-            border: 2px solid var(--tier-eco-secondary);
-            padding: 15px 30px;
+            border: 2px solid var(--accent);
+            padding: 15px 35px;
             font-family: 'Cinzel';
+            font-size: 1rem;
             cursor: pointer;
+            border-radius: 8px;
             transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: var(--accent);
+            color: #000;
         }
 
         @media (max-width: 900px) {
             .rpg-sheet {
                 grid-template-columns: 1fr;
-                border: none;
             }
 
             .sidebar {
                 border-right: none;
-                border-bottom: 4px solid var(--tier-eco-secondary);
+                border-bottom: 4px solid var(--accent);
             }
 
-            .stats-container {
+            .stats-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
 
             .main-content {
                 padding: 20px;
             }
+
+            .psych-matrix {
+                grid-template-columns: 1fr;
+            }
+
+            .inv-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
-<body onload="initSecureSystem()">
-
+<body>
     <div class="rpg-sheet">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar-container damaged">
-                <img src="static/images/elara_thumb.png" class="avatar-img" alt="Elara">
-                <div class="upload-overlay"><span>LOCKED</span></div>
+            <div class="avatar-container">
+                <img src="static/images/elara_thumb.png" class="avatar-img" alt="Elara Vex">
             </div>
 
-            <!-- RISK METER -->
             <div class="tension-wrapper">
-                <div class="tension-label-mini">ESTABILIDAD DEL NEURO-LINK</div>
-                <div class="risk-meter">
-                    <div class="risk-fill"></div>
+                <div class="tension-label">TENSIÓN INTERIOR</div>
+                <div class="tension-track">
+                    <div class="tension-fill"></div>
                 </div>
-                <div style="font-size:0.6rem; color:#666; margin-top:3px;">Estado: Vulnerable</div>
+                <div style="font-size:0.6rem; color:#666; margin-top:4px;">35% - Alerta Controlada</div>
             </div>
 
             <div class="economy-box">
                 <div style="font-size:0.6rem; color:#888;">CRÉDITOS</div>
-                <div style="font-family:'Cinzel'; font-size:1.4rem; color:var(--tier-eco-secondary);">150 <span
+                <div style="font-family:'Cinzel'; font-size:1.5rem; color:var(--accent);">1,250 <span
                         style="font-size:0.8rem">cr</span></div>
             </div>
 
-            <div class="scars-section">
-                <div class="scars-title">⚙️ DAÑOS DE SISTEMA (SCARS)</div>
-                <div class="scar-slot filled">
-                    <span>Implante Rechazado</span>
-                    <span style="font-weight:bold; color:var(--tier-eco-primary)">-1 INT / +2 CON</span>
+            <div class="stats-grid">
+                <div class="stat-medallion">
+                    <span class="stat-value">10</span>
+                    <span class="stat-name">Fuerza</span>
+                    <div class="stat-mod">0</div>
                 </div>
-                <div class="scar-slot"><span>[Ranura Disponible]</span></div>
+                <div class="stat-medallion primary">
+                    <span class="stat-value">16</span>
+                    <span class="stat-name">Destreza</span>
+                    <div class="stat-mod">+3</div>
+                </div>
+                <div class="stat-medallion">
+                    <span class="stat-value">12</span>
+                    <span class="stat-name">Constitución</span>
+                    <div class="stat-mod">+1</div>
+                </div>
+                <div class="stat-medallion primary">
+                    <span class="stat-value">17</span>
+                    <span class="stat-name">Inteligencia</span>
+                    <div class="stat-mod">+3</div>
+                </div>
+                <div class="stat-medallion">
+                    <span class="stat-value">13</span>
+                    <span class="stat-name">Sabiduría</span>
+                    <div class="stat-mod">+1</div>
+                </div>
+                <div class="stat-medallion">
+                    <span class="stat-value">14</span>
+                    <span class="stat-name">Carisma</span>
+                    <div class="stat-mod">+2</div>
+                </div>
             </div>
 
-            <div class="stats-container">
-                <!-- Data populated by JS -->
-                <div class="stat-medallion" id="div-str">
-                    <span class="stat-value-big" id="stat-str">--</span>
-                    <span class="stat-name-tiny">Fuerza</span>
-                    <div class="stat-mod-seal" id="mod-str">--</div>
+            <div class="skills-section">
+                <div style="font-family:'Cinzel'; color:var(--accent); text-align:center; margin-bottom:12px;">✦
+                    HABILIDADES</div>
+                <div class="skill-item">
+                    <div class="skill-name">Protocolo Fantasma</div>
+                    <div class="skill-desc">Invisible a sistemas de seguridad por 10 minutos.</div>
                 </div>
-                <div class="stat-medallion primary" id="div-dex">
-                    <span class="stat-value-big" id="stat-dex">--</span>
-                    <span class="stat-name-tiny">Destreza</span>
-                    <div class="stat-mod-seal" id="mod-dex">--</div>
+                <div class="skill-item">
+                    <div class="skill-name">Jackear Red</div>
+                    <div class="skill-desc">+5 a tiradas de intrusión en sistemas corporativos.</div>
                 </div>
-                <!-- Other stats simplified -->
-                <div class="stat-medallion" id="div-con">
-                    <span class="stat-value-big" id="stat-con">--</span>
-                    <span class="stat-name-tiny">Humanidad</span>
-                    <div class="stat-mod-seal" id="mod-con">--</div>
-                </div>
-            </div>
-
-            <div class="resonance-section" style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
-                <div class="scars-title">🛠️ HABILIDADES (ECO)</div>
-                <div class="soul-perk unlocked">
-                    <span style="color:#eee; font-weight:bold;">Protocolo Fantasma</span>
-                    <div style="font-size:0.8rem; color:#888; margin-top:5px;">
-                        Invisible a cámaras de seguridad por 10min.
-                    </div>
+                <div class="skill-item">
+                    <div class="skill-name">Ojo de Halcón Digital</div>
+                    <div class="skill-desc">Detecta cámaras ocultas en un radio de 30 metros.</div>
                 </div>
             </div>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
-            <div class="char-header">
-                <div class="tier-stamp" id="tier-badge">LOADING...</div>
-                <h1 id="char-name">Undisclosed</h1>
-                <div class="sub-header" id="char-archetype">Hacker Corporativa · Renegada de Arcadia · Nivel 3</div>
-            </div>
+            <div class="tier-badge">CYBERPUNK · NIVEL 5</div>
+            <h1>Elara Vex</h1>
+            <div class="subtitle">Hacker Corporativa · Renegada de Arcadia · 27 Años · Tono: Gris</div>
 
-            <div class="quote-box"
-                style="border-left:4px solid var(--tier-eco-primary); font-style:italic; padding:10px; background:rgba(0,0,0,0.05);">
+            <div class="quote-block">
                 "La información quiere ser libre. Yo solo le cobro el alquiler."
             </div>
 
-            <h2>Biografía & Expediente</h2>
+            <h2 class="section-title">📜 Biografía</h2>
             <p>
-                <span style="font-weight:bold; color:var(--tier-eco-primary)">[BUSCADA]</span>
-                <span id="bio-intro">Sujeto identificado como renegado.</span>
-                Aprendió código antes que a leer. Su filosofía es pragmática:
-                sobrevive hoy, hackea mañana. A diferencia de las Entidades Primordiales, ella sangra, se cansa y
-                necesita créditos para comer.
+                Elara nació en los suburbios de Neo-Arcadia, hija de un técnico de mantenimiento y una contadora que
+                trabajaba
+                para la megacorporación Arasaka. Aprendió a programar antes que a leer, devorando terminales abandonadas
+                en los vertederos tecnológicos cerca de su casa.
+            </p>
+            <p>
+                A los 16 años, mientras intentaba hackear los registros médicos para conseguir medicinas para su madre
+                enferma, descubrió un secreto corporativo que la convirtió en objetivo. La megacorporación envió agentes
+                para silenciarla. Su madre murió en el tiroteo. Elara escapó, pero perdió su inocencia esa noche.
+            </p>
+            <p>
+                Hoy trabaja como "fantasma digital" independiente, vendiendo información al mejor postor. No confía en
+                nadie excepto en su gato cibernético, Pixel, y en el código que ella misma escribe. Dice que el dinero
+                es su único motivo, pero los que la conocen saben que guarda una lista de nombres corporativos...
+                y que los va tachando uno por uno.
             </p>
 
-            <h2>🎒 Inventario Estándar</h2>
-            <div class="inv-section" id="inventory-grid">
-                <!-- JS Populated -->
-            </div>
-
-            <h2>📖 Bitácora (Solo Lectura)</h2>
-            <div class="timeline-item" style="border-left:3px solid #888; padding-left:10px; margin-bottom:10px;">
-                <div style="font-weight:bold; color:#555;">Última Misión</div>
-                <div style="font-style:italic; color:#333;">
-                    Extracción de datos en Torre Arasaka. Éxito parcial. Brazo izquierdo dañado por fuego supresivo.
+            <h2 class="section-title">🧠 Psicología Profunda</h2>
+            <div class="psych-matrix">
+                <div class="psych-item">
+                    <div class="psych-label">Máscara (Lo que muestra)</div>
+                    <div class="psych-text">Mercenaria cínica que solo trabaja por créditos.</div>
+                </div>
+                <div class="psych-item">
+                    <div class="psych-label">Sombra (Lo que oculta)</div>
+                    <div class="psych-text">Miedo profundo a perder a alguien que ame otra vez.</div>
+                </div>
+                <div class="psych-item">
+                    <div class="psych-label">Herida Core</div>
+                    <div class="psych-text">La muerte de su madre por su culpa.</div>
+                </div>
+                <div class="psych-item">
+                    <div class="psych-label">Deseo Profundo</div>
+                    <div class="psych-text">Destruir Arasaka desde adentro.</div>
                 </div>
             </div>
 
-            <button class="download-btn" onclick="saveProgress()">💾 GUARDAR FICHA</button>
+            <h2 class="section-title">🎭 Mentira & Verdad</h2>
+            <p><strong>Mentira que cree:</strong> "Si no me importa nadie, nadie puede herirme."</p>
+            <p><strong>Verdad que necesita:</strong> "La conexión humana es lo que nos hace fuertes, no débiles."</p>
+
+            <h2 class="section-title">📅 Línea Temporal</h2>
+            <div class="timeline">
+                <div class="timeline-event">
+                    <div class="timeline-year">Año 0</div>
+                    <div class="timeline-content">Nace en los suburbios de Neo-Arcadia. Entorno de pobreza tecnológica.
+                    </div>
+                </div>
+                <div class="timeline-event">
+                    <div class="timeline-year">Año 12</div>
+                    <div class="timeline-content">Primer hackeo exitoso: desbloquea un terminal educativo para toda su
+                        comunidad.</div>
+                </div>
+                <div class="timeline-event">
+                    <div class="timeline-year">Año 16</div>
+                    <div class="timeline-content">El Incidente. Muerte de su madre. Huye de Arasaka. Cicatriz emocional
+                        permanente.</div>
+                </div>
+                <div class="timeline-event">
+                    <div class="timeline-year">Año 22</div>
+                    <div class="timeline-content">Se establece como "fantasma digital". Fama en el submundo por sus
+                        extracciones limpias.</div>
+                </div>
+                <div class="timeline-event">
+                    <div class="timeline-year">Actualidad (Año 27)</div>
+                    <div class="timeline-content">Acepta un trabajo que la llevará de vuelta a las entrañas de
+                        Arasaka...</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">🎒 Inventario</h2>
+            <div class="inv-grid">
+                <div class="inv-item">💻 Cyberdeck Mk.III</div>
+                <div class="inv-item">🔫 Pistola Ligera (15 balas)</div>
+                <div class="inv-item">🔧 Kit de Reparación</div>
+                <div class="inv-item">💊 Estimulantes (x3)</div>
+                <div class="inv-item">💳 Credstick Falso</div>
+                <div class="inv-item">🕶️ Visor Térmico</div>
+                <div class="inv-item">🐱 Pixel (gato cibernético)</div>
+                <div class="inv-item">📡 Antena de Escaneo</div>
+                <div class="inv-item">🗝️ Llave Maestra Digital</div>
+            </div>
+
+            <div class="log-section">
+                <h2 class="section-title">📖 Bitácora de Aventuras</h2>
+                <p style="font-size:0.85rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus sesiones)
+                </p>
+                <div class="log-entry" contenteditable="true">
+                    <strong style="color:var(--accent)">[Sesión 1]</strong> Extracción de datos en Torre Arasaka.
+                    Éxito parcial. Encontré archivos sobre el Proyecto Génesis. Algo grande está pasando...
+                </div>
+                <div class="log-entry" contenteditable="true">
+                    <strong style="color:var(--accent)">[Sesión 2]</strong> ...
+                </div>
+            </div>
+
+            <button class="download-btn" onclick="saveProgress()">💾 Guardar Ficha (HTML)</button>
         </div>
     </div>
 
-    <!-- PROTECTED PAYLOAD -->
-    <script id="protected-core" type="application/json">
-        "IGNORED_IN_DEMO_BUT_STRUCTURE_EXISTS"
-    </script>
-
     <script>
-        function initSecureSystem() {
-            // PARAM READING
-            const params = new URLSearchParams(window.location.search);
-            const dynamicName = params.get('name');
-            const dynamicArch = params.get('archetype');
-
-            // Hardcoded Secured Data for Elara
-            const securedData = {
-                name: dynamicName || "Elara Vex",
-                tier: "ECO CLASS",
-                stats: { str: 10, dex: 16, con: 12 },
-                mods: { str: "0", dex: "+3", con: "+1" },
-                inventory: [
-                    "💻 Cyberdeck Mk.II", "🔫 Pistola Ligera", "🔧 Kit de Reparación",
-                    "💊 Estimulantes (x2)", "💳 Credstick Falso", "🕶️ Visor Térmico"
-                ]
-            };
-
-            // Enforce Stats
-            document.getElementById('stat-str').innerText = securedData.stats.str;
-            document.getElementById('mod-str').innerText = securedData.mods.str;
-            document.getElementById('stat-dex').innerText = securedData.stats.dex;
-            document.getElementById('mod-dex').innerText = securedData.mods.dex;
-            document.getElementById('stat-con').innerText = securedData.stats.con;
-            document.getElementById('mod-con').innerText = securedData.mods.con;
-
-            // Enforce Info
-            document.getElementById('tier-badge').innerText = securedData.tier;
-            document.getElementById('char-name').innerText = securedData.name;
-
-            // Update Archetype visual if provided
-            if (dynamicArch) {
-                document.getElementById('char-archetype').innerText = dynamicArch + " · [Clase Estándar]";
-            }
-
-            // Enforce Inventory
-            const invGrid = document.getElementById('inventory-grid');
-            if (invGrid) {
-                invGrid.innerHTML = '';
-                securedData.inventory.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'inv-item';
-                    div.innerText = item;
-                    invGrid.appendChild(div);
-                });
-            }
-            console.log("Eco Class Security Active.");
+        function saveProgress() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Elara_Vex_Ficha.html";
+            document.body.appendChild(a); a.click(); a.remove();
         }
-
-        function saveProgress() { alert('Guardado Seguro Completado.'); }
-        window.onload = initSecureSystem;
     </script>
 </body>
 
