@@ -684,6 +684,58 @@
             text-transform: uppercase;
             font-weight: 600;
         }
+
+        .btn-view-demo {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-view-demo:hover {
+            background: var(--gold-bright);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            color: #000;
+        }
+
+        /* FAQ Section Styles */
+        .faq-section {
+            width: 100%;
+            max-width: 900px;
+            margin: 80px auto;
+        }
+
+        .faq-item {
+            background: linear-gradient(90deg, rgba(20, 20, 25, 0.8) 0%, rgba(20, 20, 25, 0.4) 100%);
+            border-left: 3px solid var(--accent);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .faq-q {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .faq-a {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
     </style>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -697,8 +749,8 @@
         <div class="logo-container">
             <img src="/static/images/logo_web.png" alt="SoulForge - Forja de Almas" class="logo-img">
         </div>
-        <div class="tagline" data-i18n="hero_tagline">Soul Forging System</div>
-        <span class="version">v4.0 - Complete System</span>
+        <div class="tagline" data-i18n="hero_tagline">Sistema de Forja de Almas</div>
+        <span class="version">v4.0 - Sistema Completo</span>
 
         <!-- Credits Display -->
         <div id="creditsDisplay"
@@ -709,9 +761,10 @@
 
     <div class="container">
         <div class="header" style="grid-column: 1 / -1; margin-bottom: 20px;">
-            <h1 class="title" data-i18n="index_title">SoulForge Engine</h1>
+            <h1 class="title" data-i18n="index_title">Motor SoulForge</h1>
 
-            <p class="subtitle" data-i18n="index_subtitle">Procedural Narrative Generation & Deep Psychology System</p>
+            <p class="subtitle" data-i18n="index_subtitle">Generación Narrativa Procedural & Sistema de Psicología
+                Profunda</p>
             <div class="lang-selector"
                 style="margin-top: 25px; background: rgba(0,0,0,0.4); display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border);">
                 <a href="#es" onclick="changeLanguage('es')"
@@ -740,126 +793,126 @@
 
         <!-- PERSONAJE ÚNICO -->
         <div class="card">
-            <h2 class="card-title" data-i18n="card_alma_title">⚔️ Forge Soul</h2>
-            <p class="card-desc" data-i18n="card_alma_desc">Create a unique character with psychological depth.</p>
+            <h2 class="card-title" data-i18n="card_alma_title">⚔️ Forjar Alma</h2>
+            <p class="card-desc" data-i18n="card_alma_desc">Crea un personaje único con profundidad psicológica.</p>
 
             <form id="formPersonaje" onsubmit="return handleForjarAlma(event)">
                 <input type="hidden" name="lang" id="inputLangPersonaje" value="es">
                 <div class="form-group">
-                    <label data-i18n="label_nombre">CHARACTER NAME</label>
+                    <label data-i18n="label_nombre">NOMBRE DEL PERSONAJE</label>
                     <input type="text" name="nombre" id="inputNombre" data-i18n-placeholder="label_nombre_placeholder"
-                        placeholder="Ex: Kael (empty = random)">
+                        placeholder="Ej: Kael (vacío = aleatorio)">
                 </div>
 
                 <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
-                        <label data-i18n="genero">GENDER</label>
+                        <label data-i18n="genero">GÉNERO</label>
                         <select name="genero">
-                            <option value="">-- Random --</option>
-                            <option value="Masculino">Masculino/Male</option>
-                            <option value="Femenino">Femenino/Female</option>
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label data-i18n="rol">ROLE</label>
+                        <label data-i18n="rol">ROL</label>
                         <select name="rol" id="rolSelect" onchange="toggleRaceField()">
-                            <option value="">-- Random --</option>
-                            <option value="Heroe">Hero</option>
-                            <option value="Villano">Villain</option>
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Heroe">Héroe</option>
+                            <option value="Villano">Villano</option>
                             <option value="Mentor">Mentor</option>
-                            <option value="Aliado">Ally</option>
-                            <option value="Jugador">✨ Player (D&D/RPG)</option>
-                            <option value="Bufon">Jester</option>
-                            <option value="Victima">Victim</option>
-                            <option value="Profeta">Prophet</option>
-                            <option value="Guardian">Guardian</option>
-                            <option value="Embaucador">Trickster</option>
+                            <option value="Aliado">Aliado</option>
+                            <option value="Jugador">✨ Jugador (D&D/RPG)</option>
+                            <option value="Bufon">Bufón</option>
+                            <option value="Victima">Víctima</option>
+                            <option value="Profeta">Profeta</option>
+                            <option value="Guardian">Guardián</option>
+                            <option value="Embaucador">Embaucador</option>
                         </select>
                     </div>
 
                     <!-- NEW CLASS SELECTOR -->
                     <div class="form-group">
-                        <label data-i18n="label_clase">CLASS / JOB</label>
+                        <label data-i18n="label_clase">CLASE / OFICIO</label>
                         <select name="clase" id="claseSelect">
-                            <option value="">-- Random / Surprise --</option>
-                            <option value="Guerrero">Warrior / Guerrero</option>
-                            <option value="Mago">Mage / Mago</option>
-                            <option value="Picaro">Rogue / Pícaro</option>
-                            <option value="Clerigo">Cleric / Clérigo</option>
-                            <option value="Paladin">Paladin / Paladín</option>
-                            <option value="Barbaro">Barbarian / Bárbaro</option>
-                            <option value="Bardo">Bard / Bardo</option>
-                            <option value="Druida">Druid / Druida</option>
-                            <option value="Monje">Monk / Monje</option>
-                            <option value="Artificiero">Artificer / Artificiero</option>
-                            <option value="Cazador">Ranger / Cazador</option>
-                            <option value="Brujo">Warlock / Brujo</option>
-                            <option value="Hechicero">Sorcerer / Hechicero</option>
-                            <option value="Necromancer">Necromancer / Nigromante</option>
+                            <option value="">-- Aleatorio / Sorpresa --</option>
+                            <option value="Guerrero">Guerrero</option>
+                            <option value="Mago">Mago</option>
+                            <option value="Picaro">Pícaro</option>
+                            <option value="Clerigo">Clérigo</option>
+                            <option value="Paladin">Paladín</option>
+                            <option value="Barbaro">Bárbaro</option>
+                            <option value="Bardo">Bardo</option>
+                            <option value="Druida">Druida</option>
+                            <option value="Monje">Monje</option>
+                            <option value="Artificiero">Artificiero</option>
+                            <option value="Cazador">Cazador</option>
+                            <option value="Brujo">Brujo</option>
+                            <option value="Hechicero">Hechicero</option>
+                            <option value="Necromancer">Nigromante</option>
                         </select>
                     </div>
 
                     <div class="form-group" id="razaGroup" style="display: none;">
                         <label>Raza (D&D)</label>
                         <select name="raza">
-                            <option value="">-- Random --</option>
-                            <option value="Humano">Human</option>
-                            <option value="Elfo">Elf</option>
-                            <option value="Enano">Dwarf</option>
+                            <option value="">-- Aleatorio --</option>
+                            <option value="Humano">Humano</option>
+                            <option value="Elfo">Elfo</option>
+                            <option value="Enano">Enano</option>
                             <option value="Halfling">Halfling</option>
                             <option value="Dragonborn">Dragonborn</option>
-                            <option value="Gnomo">Gnome</option>
+                            <option value="Gnomo">Gnomo</option>
                             <option value="Tiefling">Tiefling</option>
-                            <option value="Orco">Orc</option>
+                            <option value="Orco">Orco</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="edad">AGE</label>
-                    <input type="number" name="edad_fija" placeholder="30 (Optional)" min="5" max="900">
+                    <label data-i18n="edad">EDAD</label>
+                    <input type="number" name="edad_fija" placeholder="30 (Opcional)" min="5" max="900">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="label_mundo">WORLD</label>
+                    <label data-i18n="label_mundo">MUNDO</label>
                     <select name="mundo">
-                        <option value="FantasiaMedieval">Medieval Fantasy</option>
-                        <option value="FantasiaOscura">Dark Fantasy</option>
-                        <option value="FantasiaUrbana">Urban Fantasy</option>
+                        <option value="FantasiaMedieval">Fantasía Medieval</option>
+                        <option value="FantasiaOscura">Fantasía Oscura</option>
+                        <option value="FantasiaUrbana">Fantasía Urbana</option>
                         <option value="SciFiCyberpunk">Cyberpunk</option>
                         <option value="SciFiSpace">Sci-Fi Space Opera</option>
-                        <option value="SciFiPostApocaliptico">Post-Apocalyptic</option>
+                        <option value="SciFiPostApocaliptico">Post-Apocalíptico</option>
                         <option value="Steampunk">Steampunk</option>
                         <option value="Western">Western</option>
-                        <option value="Noir">Noir / Detective</option>
-                        <option value="Realista">Realistic</option>
-                        <option value="JaponFeudal">Feudal Japan</option>
-                        <option value="ChinaImperial">Imperial China</option>
-                        <option value="CoreaHistorica">Historical Korea</option>
-                        <option value="MitologiaAsiatica">Asian Mythology</option>
-                        <option value="AnimeFantasia">Anime Fantasy</option>
+                        <option value="Noir">Noir / Detectives</option>
+                        <option value="Realista">Realista</option>
+                        <option value="JaponFeudal">Japón Feudal</option>
+                        <option value="ChinaImperial">China Imperial</option>
+                        <option value="CoreaHistorica">Corea Histórica</option>
+                        <option value="MitologiaAsiatica">Mitología Asiática</option>
+                        <option value="AnimeFantasia">Anime Fantasía</option>
                         <option value="Wuxia">Wuxia</option>
-                        <option value="Victoriano">Victorian Era</option>
-                        <option value="MitologiaGriega">Greek Mythology</option>
-                        <option value="MitologiaNordica">Norse Mythology</option>
-                        <option value="PiratasCaribe">Pirates</option>
+                        <option value="Victoriano">Era Victoriana</option>
+                        <option value="MitologiaGriega">Mitología Griega</option>
+                        <option value="MitologiaNordica">Mitología Nórdica</option>
+                        <option value="PiratasCaribe">Piratas</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="label_tono">TONE</label>
+                    <label data-i18n="label_tono">TONO</label>
                     <select name="tono_moral">
-                        <option value="">-- Random --</option>
-                        <option value="Luminoso">Luminous/Good</option>
-                        <option value="Gris">Grey/Moral Ambiguity</option>
-                        <option value="Oscuro">Dark</option>
+                        <option value="">-- Aleatorio --</option>
+                        <option value="Luminoso">Luminoso/Bueno</option>
+                        <option value="Gris">Gris/Moral Ambigua</option>
+                        <option value="Oscuro">Oscuro</option>
                     </select>
                 </div>
 
                 <div style="margin-top: 30px; text-align: center;">
                     <button type="submit" id="btnPersonaje" class="btn-forge">
-                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_alma">FORGE SOUL</span>
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_alma">FORJAR ALMA</span>
                     </button>
                 </div>
             </form>
@@ -867,8 +920,8 @@
 
         <!-- CONSTELACIÓN -->
         <div class="card">
-            <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forge Constellation</h2>
-            <p class="card-desc" data-i18n="card_constelacion_desc">Generate a group of interconnected characters.</p>
+            <h2 class="card-title" data-i18n="card_constelacion_title">🌌 Forjar Constelación</h2>
+            <p class="card-desc" data-i18n="card_constelacion_desc">Genera un grupo de personajes interconectados.</p>
 
             <form id="formConstelacion" onsubmit="return handleForjarConstelacion(event)">
                 <input type="hidden" name="lang" id="inputLangConstelacion" value="es">
@@ -878,7 +931,7 @@
 
                 <!-- Slider de cantidad -->
                 <div class="form-group">
-                    <label data-i18n="label_tamano_grupo">GROUP SIZE</label>
+                    <label data-i18n="label_tamano_grupo">TAMAÑO DEL GRUPO</label>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <input type="range" name="cantidad" id="cantidadSlider" min="2" max="4" value="3"
                             oninput="updateCharacterFields()" style="flex: 1;">
@@ -889,7 +942,7 @@
 
                 <!-- Campos dinámicos de personajes -->
                 <div class="character-builder" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
-                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalize
+                    <h4 style="color: var(--text-dim); margin-bottom: 15px;" data-i18n="label_personalizar">Personalizar
                     </h4>
                     <div id="characterFields">
                         <!-- JS llenará esto -->
@@ -899,69 +952,69 @@
                 <!-- Opciones avanzadas -->
                 <div class="mobile-grid-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
-                        <label data-i18n="label_motivacion_villano">VILLAIN MOTIVATION</label>
+                        <label data-i18n="label_motivacion_villano">MOTIVACIÓN DEL VILLANO</label>
                         <select name="tipo_villano">
-                            <option value="None">Random / None</option>
-                            <option value="Envidia">Envy</option>
-                            <option value="Ideologia">Ideology</option>
-                            <option value="Obstaculo">Obstacle</option>
-                            <option value="PuraMaldad">Pure Evil</option>
+                            <option value="None">Aleatorio / Ninguna</option>
+                            <option value="Envidia">Envidia</option>
+                            <option value="Ideologia">Ideología</option>
+                            <option value="Obstaculo">Obstáculo</option>
+                            <option value="PuraMaldad">Pura Maldad</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label data-i18n="label_romance">ROMANCE</label>
                         <select name="modo_romance">
-                            <option value="None">Random / None</option>
-                            <option value="Pareja">Couple</option>
-                            <option value="Triangulo">Triangle</option>
-                            <option value="AmorProhibido">Forbidden Love</option>
+                            <option value="None">Aleatorio / Ninguno</option>
+                            <option value="Pareja">Pareja</option>
+                            <option value="Triangulo">Triángulo</option>
+                            <option value="AmorProhibido">Amor Prohibido</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label data-i18n="label_mundo">WORLD</label>
+                        <label data-i18n="label_mundo">MUNDO</label>
                         <select name="mundo">
-                            <option value="FantasiaMedieval">Medieval Fantasy</option>
-                            <option value="FantasiaOscura">Dark Fantasy</option>
-                            <option value="FantasiaUrbana">Urban Fantasy</option>
+                            <option value="FantasiaMedieval">Fantasía Medieval</option>
+                            <option value="FantasiaOscura">Fantasía Oscura</option>
+                            <option value="FantasiaUrbana">Fantasía Urbana</option>
                             <option value="SciFiCyberpunk">Cyberpunk</option>
                             <option value="SciFiSpace">Sci-Fi Space Opera</option>
-                            <option value="SciFiPostApocaliptico">Post-Apocalyptic</option>
+                            <option value="SciFiPostApocaliptico">Post-Apocalíptico</option>
                             <option value="Steampunk">Steampunk</option>
                             <option value="Western">Western</option>
-                            <option value="Noir">Noir / Detective</option>
-                            <option value="Realista">Realistic</option>
-                            <option value="JaponFeudal">Feudal Japan</option>
-                            <option value="ChinaImperial">Imperial China</option>
-                            <option value="CoreaHistorica">Historical Korea</option>
-                            <option value="MitologiaAsiatica">Asian Mythology</option>
-                            <option value="AnimeFantasia">Anime Fantasy</option>
+                            <option value="Noir">Noir / Detectives</option>
+                            <option value="Realista">Realista</option>
+                            <option value="JaponFeudal">Japón Feudal</option>
+                            <option value="ChinaImperial">China Imperial</option>
+                            <option value="CoreaHistorica">Corea Histórica</option>
+                            <option value="MitologiaAsiatica">Mitología Asiática</option>
+                            <option value="AnimeFantasia">Anime Fantasía</option>
                             <option value="Wuxia">Wuxia</option>
-                            <option value="Victoriano">Victorian Era</option>
-                            <option value="MitologiaGriega">Greek Mythology</option>
-                            <option value="MitologiaNordica">Norse Mythology</option>
-                            <option value="PiratasCaribe">Pirates</option>
+                            <option value="Victoriano">Era Victoriana</option>
+                            <option value="MitologiaGriega">Mitología Griega</option>
+                            <option value="MitologiaNordica">Mitología Nórdica</option>
+                            <option value="PiratasCaribe">Piratas</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label data-i18n="label_densidad">DENSITY</label>
+                        <label data-i18n="label_densidad">DENSIDAD</label>
                         <select name="densidad_relaciones">
                             <option value="Normal">Normal</option>
-                            <option value="Densa">Dense</option>
-                            <option value="Dispersa">Sparse</option>
+                            <option value="Densa">Densa</option>
+                            <option value="Dispersa">Dispersa</option>
                         </select>
                     </div>
                 </div>
 
                 <div style="margin-top: 30px; text-align: center;">
                     <button type="submit" id="btnConstelacion" class="btn-forge" onclick="prepareSubmit()">
-                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORGE
-                            CONSTELLATION</span>
+                        <span style="font-size: 1.2rem;">⚡</span> <span data-i18n="btn_forjar_constelacion">FORJAR
+                            CONSTELACIÓN</span>
                     </button>
                     <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">
-                        The process starts immediately.
+                        El proceso inicia inmediatamente.
                     </p>
                 </div>
             </form>
@@ -972,32 +1025,32 @@
     <div style="width: 100%; max-width: 1200px; margin-top: 80px;">
         <div style="text-align: center; margin-bottom: 50px;">
             <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
-                data-i18n="how_it_works_title">How Does It Work?</h2>
-            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Your journey from
-                idea to character.</p>
+                data-i18n="how_it_works_title">¿Cómo Funciona?</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="how_it_works_subtitle">Tu viaje de la
+                idea al personaje.</p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
             <div
                 style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">⚙️</div>
-                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step1_title">1. Configure</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Select gender, setting... or
-                    leave it random.</p>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step1_title">1. Configura</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step1_desc">Elige género, mundo... o
+                    déjalo al azar.</p>
             </div>
             <div
                 style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">🔥</div>
-                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step2_title">2. Forge</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">The AI generates deep
-                    psychology and history.</p>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step2_title">2. Forja</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step2_desc">La IA genera psicología
+                    profunda e historia.</p>
             </div>
             <div
                 style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border);">
                 <div style="font-size: 3rem; margin-bottom: 20px;">📥</div>
-                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step3_title">3. Download</h3>
-                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Get a premium HTML file
-                    ready to use.</p>
+                <h3 style="color: var(--text-main); margin-bottom: 15px;" data-i18n="step3_title">3. Descarga</h3>
+                <p style="color: var(--text-dim); line-height: 1.6;" data-i18n="step3_desc">Obtén una ficha HTML premium
+                    lista para usar.</p>
             </div>
         </div>
     </div>
@@ -1007,9 +1060,9 @@
     <div style="width: 100%; max-width: 1200px; margin-top: 100px;">
         <div style="text-align: center; margin-bottom: 50px;">
             <h2 style="font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"
-                data-i18n="demos_title">Character Examples</h2>
-            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="demos_subtitle">See the depth and
-                complexity.</p>
+                data-i18n="demos_title">Ejemplos de Personajes</h2>
+            <p style="color: var(--text-dim); font-size: 1.1rem;" data-i18n="demos_subtitle">Mira la profundidad y
+                complejidad.</p>
         </div>
 
         <div class="demo-card-container">
@@ -1022,13 +1075,14 @@
                 <div class="demo-content">
                     <h3 class="demo-name" data-i18n="demo_1_name">Aric, The Fallen Paladin</h3>
                     <div class="demo-tags">
-                        <span class="demo-tag">Human</span>
-                        <span class="demo-tag">Level 5</span>
-                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;">Oathbreaker</span>
+                        <span class="demo-tag" data-i18n="tag_human">Human</span>
+                        <span class="demo-tag" data-i18n="tag_lvl5">Level 5</span>
+                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;"
+                            data-i18n="tag_oathbreaker">Oathbreaker</span>
                     </div>
                     <!-- Button removed, entire card is link -->
                     <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
-                        <span data-i18n="demo_btn">CLICK TO VIEW SHEET</span> 📜
+                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> 📜
                     </p>
                 </div>
             </a>
@@ -1039,34 +1093,37 @@
                     <img src="/static/images/preview_ficha_elara.png" class="demo-img" alt="Elara Sheet Preview">
                 </div>
                 <div class="demo-content">
-                    <h3 class="demo-name" data-i18n="demo_2_name">Elara, The Sorceress</h3>
+                    <h3 class="demo-name" data-i18n="demo_2_name">Elara, The Cyber-Hacker</h3>
                     <div class="demo-tags">
-                        <span class="demo-tag">Elf</span>
-                        <span class="demo-tag">Level 3</span>
-                        <span class="demo-tag" style="border-color: #b026ff; color:#e0afff;">Netrunner</span>
+                        <span class="demo-tag" data-i18n="tag_elf">Elf</span>
+                        <span class="demo-tag" data-i18n="tag_lvl3">Level 3</span>
+                        <span class="demo-tag" style="border-color: #b026ff; color:#e0afff;"
+                            data-i18n="tag_netrunner">Netrunner</span>
                     </div>
                     <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
-                        <span data-i18n="demo_btn">CLICK TO VIEW SHEET</span> ⚡
+                        <span data-i18n="demo_click_cta">CLICK TO VIEW SHEET</span> ⚡
                     </p>
                 </div>
             </a>
         </div>
     </div>
-
-
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    </div>
     <!-- DISCLAIMER & FOOTER -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <div
         style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
         <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;"
             data-i18n="aviso_legal_titulo">
-            Legal Notice
+            Aviso Legal
         </strong>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge is an assisted creation tool.</p>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_2">Characters are dynamically generated.</p>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_3">It is user responsibility to download the file.</p>
-        <p data-i18n="aviso_legal_4">Usage implies results may vary.</p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge es una herramienta de creación
+            asistida.</p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_2">Los personajes son generados dinámicamente.
+        </p>
+        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_3">Es responsabilidad del usuario descargar el
+            archivo.
+        </p>
+        <p data-i18n="aviso_legal_4">El uso implica que los resultados varían.</p>
     </div>
 
     <div class="footer" id="top">
@@ -1110,6 +1167,13 @@
                 "demo_1_name": "Aric, The Fallen Paladin",
                 "demo_2_name": "Elara, The Cyber-Hacker",
                 "demo_btn": "Preview Character",
+                "demo_click_cta": "CLICK TO VIEW SHEET",
+                "tag_human": "Human",
+                "tag_elf": "Elf",
+                "tag_lvl5": "Level 5",
+                "tag_lvl3": "Level 3",
+                "tag_oathbreaker": "Oathbreaker",
+                "tag_netrunner": "Netrunner",
                 "faq_title": "Frequently Asked Questions",
                 "faq_q1": "Is SoulForge really free?",
                 "faq_a1": "Yes. We offer a generous free tier. We use a token system for advanced features or heavy volume.",
@@ -1160,6 +1224,13 @@
                 "demo_1_name": "アリック（堕ちた聖騎士）",
                 "demo_2_name": "エララ（サイバーハッカー）",
                 "demo_btn": "キャラクターをプレビュー",
+                "demo_click_cta": "シートを表示するにはクリック",
+                "tag_human": "人間",
+                "tag_elf": "エルフ",
+                "tag_lvl5": "レベル 5",
+                "tag_lvl3": "レベル 3",
+                "tag_oathbreaker": "誓いを破る者",
+                "tag_netrunner": "ネットランナー",
                 "faq_title": "よくある質問",
                 "faq_q1": "SoulForgeは本当に無料ですか？",
                 "faq_a1": "はい。寛大な無料枠を提供しています。高度な機能や大量生成にはトークンシステムを使用します。",
@@ -1210,6 +1281,13 @@
                 "demo_1_name": "Aric, El Paladín Caído",
                 "demo_2_name": "Elara, La Cyber-Hacker",
                 "demo_btn": "Ver Personaje",
+                "demo_click_cta": "VER FICHA DE PERSONAJE",
+                "tag_human": "Humano",
+                "tag_elf": "Elfo",
+                "tag_lvl5": "Nivel 5",
+                "tag_lvl3": "Nivel 3",
+                "tag_oathbreaker": "Rompejuramentos",
+                "tag_netrunner": "Netrunner",
                 "faq_title": "Preguntas Frecuentes",
                 "faq_q1": "¿Es SoulForge realmente gratis?",
                 "faq_a1": "Sí. Ofrecemos un nivel gratuito generoso. Usamos un sistema de tokens para funciones avanzadas o alto volumen.",
@@ -1335,8 +1413,11 @@
             }
 
             // 4. Update hidden inputs for form submission
-            document.getElementById('inputLangPersonaje').value = lang;
-            document.getElementById('inputLangConstelacion').value = lang;
+            const langInputP = document.getElementById('inputLangPersonaje');
+            if (langInputP) langInputP.value = lang;
+
+            const langInputC = document.getElementById('inputLangConstelacion');
+            if (langInputC) langInputC.value = lang;
 
             // 5. Update Opacity of Selectors
             document.querySelectorAll('.lang-selector a').forEach(a => {
@@ -1369,20 +1450,29 @@
         }
 
         function updateCharacterFields() {
-            const cantidad = document.getElementById('cantidadSlider').value;
-            document.getElementById('cantidadValue').textContent = cantidad;
+            const slider = document.getElementById('cantidadSlider');
+            if (!slider) return;
+
+            const cantidad = slider.value;
+            const valDisplay = document.getElementById('cantidadValue');
+            if (valDisplay) valDisplay.textContent = cantidad;
 
             const container = document.getElementById('characterFields');
+            if (!container) return;
 
             // Capture current values to preserve them
             const currentValues = {};
             container.querySelectorAll('.character-row').forEach(row => {
                 const idx = row.querySelector('.num') ? row.querySelector('.num').textContent.replace('#', '') : null;
                 if (idx) {
+                    const nInput = row.querySelector(`input[id^="nombre"]`);
+                    const eInput = row.querySelector(`input[id^="edad"]`);
+                    const gSelect = row.querySelector(`select[id^="genero"]`);
+
                     currentValues[idx] = {
-                        nombre: row.querySelector(`input[id^="nombre"]`).value,
-                        edad: row.querySelector(`input[id^="edad"]`).value,
-                        genero: row.querySelector(`select[id^="genero"]`).value
+                        nombre: nInput ? nInput.value : '',
+                        edad: eInput ? eInput.value : '',
+                        genero: gSelect ? gSelect.value : ''
                     };
                 }
             });
@@ -1390,7 +1480,9 @@
             container.innerHTML = '';
 
             // Get current lang for labels
-            let lang = document.getElementById('inputLangConstelacion').value || 'es';
+            const langInput = document.getElementById('inputLangConstelacion');
+            let lang = langInput ? langInput.value : 'es';
+
             // Simple label mapping for dynamic fields
             const lblName = (lang === 'jp') ? '名前' : (lang === 'en' ? 'Name' : 'Nombre');
             const lblAge = (lang === 'jp') ? '年齢' : (lang === 'en' ? 'Age' : 'Edad');
@@ -1419,19 +1511,22 @@
         }
 
         function prepareSubmit() {
-            const cantidad = document.getElementById('cantidadSlider').value;
+            const slider = document.getElementById('cantidadSlider');
+            if (!slider) return;
+            const cantidad = slider.value;
+
             const nombres = [];
             const generos = [];
             const edades = [];
 
             for (let i = 1; i <= cantidad; i++) {
-                const nombre = document.getElementById(`nombre${i}`).value.trim();
-                const genero = document.getElementById(`genero${i}`).value;
-                const edad = document.getElementById(`edad${i}`).value;
+                const nInput = document.getElementById(`nombre${i}`);
+                const gInput = document.getElementById(`genero${i}`);
+                const eInput = document.getElementById(`edad${i}`);
 
-                nombres.push(nombre || '');
-                generos.push(genero || '');
-                edades.push(edad || '');
+                nombres.push(nInput ? nInput.value.trim() : '');
+                generos.push(gInput ? gInput.value : '');
+                edades.push(eInput ? eInput.value : '');
             }
 
             document.getElementById('nombresHidden').value = nombres.join(',');
@@ -1848,6 +1943,20 @@
                 `;
             });
 
+            // Build Meta Tags HTML
+            const metaTagsHTML = p.meta_tags.map(t =>
+                `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`
+            ).join('');
+
+            // Build Inventory HTML
+            const inventoryHTML = p.inventory.map(item => `
+        <div style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
+            <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
+            <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
+            <div style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">x${item.qty}</div>
+        </div>
+    `).join('');
+
             // Quotes derived from psychology
             const quote = `"${p.psicologia.mentira || "El mundo es cruel, pero yo lo soy más."}"`;
 
@@ -2028,8 +2137,7 @@
                     <div style="margin-top:20px;">
                         <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div>
                         <!-- Renamed -->
-                        ${p.meta_tags.map(t => `<span
-                            style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
+                        ${metaTagsHTML}
                     </div>
                 </div>
 
@@ -2074,16 +2182,7 @@
                     </div>
 
                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
-                        ${p.inventory.map(item => `
-                        <div
-                            style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
-                            <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
-                            <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
-                            <div
-                                style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">
-                                x${item.qty}</div>
-                        </div>
-                        `).join('')}
+                        ${inventoryHTML}
                         <!-- Empty Slots filler -->
                         <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
                         <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
@@ -2137,143 +2236,10 @@
             reader.readAsDataURL(file);
         }
     <\/script>
-</head>
-<body>
-    <div class="rpg-sheet">
-        <div class="sheet-container">
-        <!-- SIDE PANEL -->
-        <div class="side-panel">
-            <div class="avatar-frame ${p.mechanics.soul_tension > 75 ? 'corrupted' : ''}" onclick="triggerUpload()">
-                <div id="avatar-display" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%;">
-                    👤
-                </div>
-                <div class="upload-overlay">
-                    <span style="font-size:1.5rem">📷</span>
-                    <span>Subir Rostro</span>
-                </div>
-            </div>
-            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="encodeImageFileAsURL(this)">
-            
-            <!-- TENSION BAR (Sidebar) -->
-            <div class="tension-wrapper">
-                <div style="font-size:0.7rem; color:#888; margin-bottom:5px; font-family:'Cinzel';">Tensión: ${p.mechanics.soul_tension}%</div>
-                <div class="tension-track">
-                    <div class="tension-fill" style="width:${p.mechanics.soul_tension}%"></div>
-                </div>
-            </div>
-
-            <!-- ECONOMY (New) -->
-            <div style="background:#000; border:1px solid #444; padding:10px; margin-top:20px; text-align:center; border-radius:4px;">
-                <span style="font-size:1.5rem;">🪙</span>
-                <span style="font-family:'Cinzel'; font-size:1.2rem; color:#ffd700; margin-left:10px;">${p.economy.currency} GP</span>
-                <div style="font-size:0.6rem; color:#666; margin-top:3px;">ESTADO: ${p.economy.status}</div>
-            </div>
-
-            <div class="stats-grid">
-                ${statsHTML}
-            </div>
-            <div style="margin-top:20px;">
-                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">ETIQUETAS DINÁMICAS</div> <!-- Renamed -->
-                ${p.meta_tags.map(t => `<span style="color:var(--gold); border:1px solid #444; padding:2px 6px; font-size:0.7rem; margin:2px; display:inline-block; border-radius:3px;">${t}</span>`).join('')}
-            </div>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
-            <!-- Removed top tension bar -->
-
-            <h1>${p.nombre}</h1>
-            <div class="meta-line">${p.raza} ${p.clase || p.rol} · ${p.edad} Años · ${p.tono}</div>
-
-            <p>${p.resumen}</p>
-
-            <div class="section-title">🧠 Psico-Matriz Evolutiva</div>
-            <div class="moral-matrix">
-                <p><strong>La Mentira (Estado Inicial):</strong> ${p.mechanics.moral_matrix.conflict}</p>
-                <div style="text-align:center; margin:10px; font-size:1.5rem;">⬇️</div>
-                <p><strong>La Verdad (Objetivo):</strong> ${p.mechanics.moral_matrix.resolution}</p>
-                <div style="margin-top:10px; background:#ccc; height:5px; border-radius:2px; overflow:hidden;">
-                    <div style="width:${p.mechanics.moral_matrix.progress}%; background:var(--gold); height:100%;"></div>
-                </div>
-                <p style="text-align:right; font-size:0.8rem;">Progreso de Redención: ${p.mechanics.moral_matrix.progress}%</p>
-            </div>
-
-            <div class="section-title">📜 Historias & Cicatrices</div>
-            
-            <p><strong>📜 Origen:</strong> ${p.narrative_arc ? p.narrative_arc.origin : ""}</p>
-            <p><strong>⚡ Quiebre:</strong> ${p.narrative_arc ? p.narrative_arc.turning_point : ""}</p>
-            <p style="background:rgba(212,175,55,0.1); padding:5px;"><strong>✨ Luz:</strong> ${p.narrative_arc ? p.narrative_arc.moment_of_light : ""}</p>
-
-            ${timelineHTML}
-
-            <!-- INVENTORY GRID (New) -->
-            <div class="section-title">🎒 Equipo & Inventario</div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-family:'Cinzel'; font-size:0.9rem; color:#444;">
-                <div>⚔️ <strong>Mano Princ:</strong> ${p.equipment.main_hand}</div>
-                <div>🛡️ <strong>Armadura:</strong> ${p.equipment.armor}</div>
-            </div>
-            
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
-                ${p.inventory.map(item => `
-                <div style="background:rgba(0,0,0,0.05); border:1px solid #aaa; padding:10px; border-radius:4px; position:relative;">
-                    <div style="font-weight:bold; font-size:0.9rem; color:#222;">${item.name}</div>
-                    <div style="font-size:0.75rem; color:#666;">${item.effect}</div>
-                    <div style="position:absolute; top:5px; right:5px; background:#222; color:#fff; font-size:0.7rem; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%;">x${item.qty}</div>
-                </div>
-                `).join('')}
-                <!-- Empty Slots filler -->
-                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
-                <div style="border:1px dashed #ccc; height:60px; opacity:0.5;"></div>
-            </div>
-
-            <!-- BITÁCORA -->
-            <div class="adventure-log">
-                <h2>📖 Bitácora de Aventuras</h2>
-                <p style="font-size:0.8rem; color:#777; font-style:italic;">(Zona Editable: Registra aquí tus sesiones)</p>
-                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 1]</strong> ...</div>
-                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Sesión 2]</strong> ...</div>
-                <div class="log-entry" contenteditable="true"><strong style="color:var(--blood)">[Notas / Inventario]</strong> ...</div>
-            </div>
-
-            <button class="btn-download" onclick='saveProgress()'>💾 Guardar Ficha Viva (HTML)</button>
-        </div>
-    </div>
-
-    <script>
-        function saveProgress() {
-             // Clone entire HTML to save edits
-             const htmlContent = document.documentElement.outerHTML;
-             const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
-             const url = URL.createObjectURL(blob);
-             const a = document.createElement('a');
-             a.href = url;
-             a.download = "${p.nombre}_Viva.html";
-             document.body.appendChild(a); a.click(); a.remove();
-        }
-
-        function triggerUpload() { document.getElementById('avatar-input').click(); }
-        
-        function encodeImageFileAsURL(element) {
-            const file = element.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                // Replace the placeholder with the real image
-                const display = document.getElementById('avatar-display');
-                display.innerHTML = '<img src="' + reader.result + '" style="width:100%; height:100%; object-fit:cover;">';
-                
-                // Visual feedback
-                const frame = document.querySelector('.avatar-frame');
-                frame.style.borderColor = "#fff";
-                setTimeout(() => { frame.style.borderColor = "var(--gold)"; }, 500);
-            }
-            reader.readAsDataURL(file);
-        }
     <\/script>
 </body>
-
-</html>
-`;
+</html>`;
+            `;
 
             const newWindow = window.open();
             newWindow.document.write(htmlContent);
@@ -2288,7 +2254,7 @@
             if (getTokens() <= 0) { showPayPalModal('alma'); return false; } // Use a token useToken(); // Get form data const
             form = document.getElementById('formPersonaje'); const formData = new FormData(form); const params = new
                 URLSearchParams(formData).toString(); showLoading('Forjando alma...'); // FETCH & GENERATE try { const
-            response = await fetch(`${API_BASE}/api/v1/personaje?${params}`); if (!response.ok) throw new Error('Error del
+            response = await fetch(`${ API_BASE } /api/v1 / personaje ? ${ params } `); if (!response.ok) throw new Error('Error del
     servidor'); let personaje=await response.json(); // CHECK IF RPG MODE IS ACTIVE // We assume "rol_jugador" or
     similar option triggers this. // For now, let's treat "player" role or specific selection logic. // Assuming the
     user selects "Jugador de Rol" in a dropdown we haven't seen explicitly yet, // but we can infer or force it for
@@ -2318,7 +2284,7 @@
     data const form = document.getElementById('formConstelacion'); const formData = new FormData(form); const params = new
                 URLSearchParams(formData).toString(); showLoading('Forjando constelación...'); try {
                     const response = await
-                        fetch(`${API_BASE}/api/v1/constelacion?${params}`); if (!response.ok) throw new Error('Error del servidor'); const
+                        fetch(`${ API_BASE } /api/v1 / constelacion ? ${ params } `); if (!response.ok) throw new Error('Error del servidor'); const
                             constelacion = await response.json(); hideLoading(); // Generate and show HTML showConstelacionHTML(constelacion); }
     catch (error) {
                         hideLoading(); alert('Error al forjar: ' + error.message);
@@ -2333,7 +2299,7 @@
         function openDemo(name) {
                 const langInput = document.getElementById('inputLangPersonaje');
                 const lang = langInput ? langInput.value : 'es';
-                window.open(`demo_${name}.html?lang=${lang}`, '_blank');
+                window.open(`demo_${ name }.html ? lang = ${ lang } `, '_blank');
             }
 
             // --- HTML GENERATORS ---
@@ -2346,131 +2312,140 @@
             }
 
             function generatePersonajeHTML(p, lang) {
-                return `<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${p.nombre || 'Personaje'} - SoulForge</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; line-height: 1.7; padding: 40px 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 30px; }
-        .name { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
-        .meta { color: var(--dim); font-size: 1rem; }
-        .section { background: var(--card); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #222; }
-        .section-title { font-family: 'Cinzel', serif; color: var(--accent); font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .section p { margin-bottom: 12px; }
-        .tag { display: inline-block; background: #1a1a25; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; border: 1px solid #333; }
-        .psychology-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .psychology-item { background: #0a0a10; padding: 15px; border-radius: 8px; }
-        .psychology-label { color: var(--accent); font-size: 0.9rem; margin-bottom: 5px; }
-        .footer { text-align: center; color: var(--dim); font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; }
-        .download-btn { display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
-        @media print { .download-btn { display: none; } body { background: white; color: black; } .section { border: 1px solid #ccc; } }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1 class="name">${p.nombre || 'Sin Nombre'}</h1>
-            <p class="meta">${p.genero || ''} · ${p.edad || '?'} años · ${p.mundo || 'Fantasía'}</p>
-            <p class="meta">${p.rol || ''} · ${p.tono_moral || ''}</p>
-        </div>
+                // Build Attributes HTML safely
+                let atributosHTML = '';
+                if (p.atributos) {
+                    const attrs = Object.entries(p.atributos)
+                        .map(([k, v]) => `< span class="tag" > ${ k }: ${ v }</span > `)
+                        .join('');
+                    atributosHTML = `
+                < div class="section" >
+                            <h2 class="section-title">⚔️ Atributos (D&D)</h2>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                                ${attrs}
+                            </div>
+                        </div >
+                `;
+                }
 
-        <div class="section">
-            <h2 class="section-title">📜 Biografía</h2>
-            <p>${p.biografia || p.bio || 'Historia por descubrir...'}</p>
-        </div>
+                return `< !DOCTYPE html >
+                <html lang="${lang}">
+                    <head>
+                        <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>${p.nombre || 'Personaje'} - SoulForge</title>
+                                <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+                                    <style>
+                                        :root {--accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+                                        * {margin: 0; padding: 0; box-sizing: border-box; }
+                                        body {background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; line-height: 1.7; padding: 40px 20px; }
+                                        .container {max - width: 800px; margin: 0 auto; }
+                                        .header {text - align: center; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 30px; }
+                                        .name {font - family: 'Cinzel', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
+                                        .meta {color: var(--dim); font-size: 1rem; }
+                                        .section {background: var(--card); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #222; }
+                                        .section-title {font - family: 'Cinzel', serif; color: var(--accent); font-size: 1.3rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+                                        .section p {margin - bottom: 12px; }
+                                        .tag {display: inline-block; background: #1a1a25; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; border: 1px solid #333; }
+                                        .psychology-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+                                        .psychology-item {background: #0a0a10; padding: 15px; border-radius: 8px; }
+                                        .psychology-label {color: var(--accent); font-size: 0.9rem; margin-bottom: 5px; }
+                                        .footer {text - align: center; color: var(--dim); font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; }
+                                        .download-btn {display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
+                                        @media print { .download - btn {display: none; } body {background: white; color: black; } .section {border: 1px solid #ccc; } }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                        <div class="header">
+                                            <h1 class="name">${p.nombre || 'Sin Nombre'}</h1>
+                                            <p class="meta">${p.genero || ''} · ${p.edad || '?'} años · ${p.mundo || 'Fantasía'}</p>
+                                            <p class="meta">${p.rol || ''} · ${p.tono_moral || ''}</p>
+                                        </div>
 
-        <div class="section">
-            <h2 class="section-title">🧠 Psicología Profunda</h2>
-            <div class="psychology-grid">
-                <div class="psychology-item"><div class="psychology-label">Máscara (Lo que muestra)</div><p>${p.mascara || p.psicologia?.mascara || '—'}</p></div>
-                <div class="psychology-item"><div class="psychology-label">Sombra (Lo que oculta)</div><p>${p.sombra || p.psicologia?.sombra || '—'}</p></div>
-                <div class="psychology-item"><div class="psychology-label">Herida Core</div><p>${p.herida || p.psicologia?.herida || '—'}</p></div>
-                <div class="psychology-item"><div class="psychology-label">Deseo Profundo</div><p>${p.deseo || p.psicologia?.deseo || '—'}</p></div>
-            </div>
-        </div>
+                                        <div class="section">
+                                            <h2 class="section-title">📜 Biografía</h2>
+                                            <p>${p.biografia || p.bio || 'Historia por descubrir...'}</p>
+                                        </div>
 
-        <div class="section">
-            <h2 class="section-title">🎭 Mentira & Verdad</h2>
-            <p><strong>Mentira que cree:</strong> ${p.mentira || p.psicologia?.mentira || '—'}</p>
-            <p><strong>Verdad que necesita:</strong> ${p.verdad || p.psicologia?.verdad || '—'}</p>
-        </div>
+                                        <div class="section">
+                                            <h2 class="section-title">🧠 Psicología Profunda</h2>
+                                            <div class="psychology-grid">
+                                                <div class="psychology-item"><div class="psychology-label">Máscara (Lo que muestra)</div><p>${p.mascara || p.psicologia?.mascara || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Sombra (Lo que oculta)</div><p>${p.sombra || p.psicologia?.sombra || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Herida Core</div><p>${p.herida || p.psicologia?.herida || '—'}</p></div>
+                                                <div class="psychology-item"><div class="psychology-label">Deseo Profundo</div><p>${p.deseo || p.psicologia?.deseo || '—'}</p></div>
+                                            </div>
+                                        </div>
 
-        <div class="section">
-            <h2 class="section-title">📈 Arco Narrativo</h2>
-            <p>${p.arco_narrativo || p.arco || 'Arco por definir...'}</p>
-        </div>
+                                        <div class="section">
+                                            <h2 class="section-title">🎭 Mentira & Verdad</h2>
+                                            <p><strong>Mentira que cree:</strong> ${p.mentira || p.psicologia?.mentira || '—'}</p>
+                                            <p><strong>Verdad que necesita:</strong> ${p.verdad || p.psicologia?.verdad || '—'}</p>
+                                        </div>
 
-        ${p.atributos ? `
-        <div class="section">
-            <h2 class="section-title">⚔️ Atributos (D&D)</h2>
-            <div style="display:flex;flex-wrap:wrap;gap:10px;">
-                ${Object.entries(p.atributos).map(([k, v]) => `<span class="tag">${k}: ${v}</span>`).join('')}
-            </div>
-        </div>
-        ` : ''}
+                                        <div class="section">
+                                            <h2 class="section-title">📈 Arco Narrativo</h2>
+                                            <p>${p.arco_narrativo || p.arco || 'Arco por definir...'}</p>
+                                        </div>
 
-        <div class="footer">
-            <p>Generado por SoulForge Engine · ${new Date().toLocaleDateString()}</p>
-            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
-        </div>
-    </div>
-</body>
-</html>`;
+                                        ${atributosHTML}
+
+                                        <div class="footer">
+                                            <p>Generado por SoulForge Engine · ${new Date().toLocaleDateString()}</p>
+                                            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+                                        </div>
+                                    </div>
+                                </body>
+                            </html>`;
             }
 
-            function showConstelacionHTML(c) {
+                            function showConstelacionHTML(c) {
                 const lang = document.getElementById('inputLangConstelacion').value || 'es';
-                const html = generateConstelacionHTML(c, lang);
-                const win = window.open('', '_blank');
-                win.document.write(html);
-                win.document.close();
+                            const html = generateConstelacionHTML(c, lang);
+                            const win = window.open('', '_blank');
+                            win.document.write(html);
+                            win.document.close();
             }
 
-            function generateConstelacionHTML(c, lang) {
+                            function generateConstelacionHTML(c, lang) {
                 const personajes = c.personajes || c.characters || [];
                 const personajesHTML = personajes.map((p, i) => `
-<div class="character-card">
-    <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
-    <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
-    <p>${p.biografia || p.bio || ''}</p>
-</div>
-`).join('');
+                            <div class="character-card">
+                                <h3 style="color:var(--accent);font-family:'Cinzel',serif;">${p.nombre || 'Personaje ' + (i + 1)}</h3>
+                                <p style="color:var(--dim);">${p.genero || ''} · ${p.edad || '?'} años</p>
+                                <p>${p.biografia || p.bio || ''}</p>
+                            </div>
+                            `).join('');
 
-                return `<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-    <meta charset="UTF-8">
-    <title>Constelación - SoulForge</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; padding: 40px 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        h1 { font-family: 'Cinzel', serif; color: var(--accent); text-align: center; margin-bottom: 40px; }
-        .character-card { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #222; }
-        .footer { text-align: center; color: var(--dim); margin-top: 40px; }
-        .download-btn { display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🌌 Constelación de Personajes</h1>
-        ${personajesHTML}
-        <div class="footer">
-            <p>Generado por SoulForge Engine</p>
-            <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
-        </div>
-    </div>
-</body>
-</html>`;
+                            return `<!DOCTYPE html>
+                            <html lang="${lang}">
+                                <head>
+                                    <meta charset="UTF-8">
+                                        <title>Constelación - SoulForge</title>
+                                        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text&display=swap" rel="stylesheet">
+                                            <style>
+                                                :root {--accent: #d4af37; --bg: #0a0a0f; --card: #12121a; --text: #e8e6e3; --dim: #888; }
+                                                * {margin: 0; padding: 0; box-sizing: border-box; }
+                                                body {background: var(--bg); color: var(--text); font-family: 'Crimson Text', serif; padding: 40px 20px; }
+                                                .container {max - width: 1000px; margin: 0 auto; }
+                                                h1 {font - family: 'Cinzel', serif; color: var(--accent); text-align: center; margin-bottom: 40px; }
+                                                .character-card {background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #222; }
+                                                .footer {text - align: center; color: var(--dim); margin-top: 40px; }
+                                                .download-btn {display: inline-block; background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <div class="container">
+                                                <h1>🌌 Constelación de Personajes</h1>
+                                                ${personajesHTML}
+                                                <div class="footer">
+                                                    <p>Generado por SoulForge Engine</p>
+                                                    <button class="download-btn" onclick="window.print()">📥 Guardar como PDF</button>
+                                                </div>
+                                            </div>
+                                        </body>
+                                    </html>`;
             }
 
             // --- INIT ---
