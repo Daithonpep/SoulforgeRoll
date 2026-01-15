@@ -608,6 +608,82 @@
                 display: none;
             }
         }
+
+        /* New Demo Card Style */
+        .demo-card-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .demo-card {
+            width: 380px;
+            background: rgba(16, 18, 23, 0.95);
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent);
+        }
+
+        .demo-img-wrapper {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 2px solid var(--accent-dim);
+        }
+
+        .demo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .demo-card:hover .demo-img {
+            transform: scale(1.05);
+        }
+
+        .demo-content {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .demo-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: #fff;
+            margin: 0;
+        }
+
+        .demo-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .demo-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
     </style>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -936,89 +1012,44 @@
                 complexity.</p>
         </div>
 
-        <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;">
-            <!-- Demo 1 -->
-            <div
-                style="background: linear-gradient(145deg, rgba(20,20,25,0.9), rgba(10,10,15,0.95)); padding: 25px; border-radius: 12px; border: 1px solid var(--border); width: 350px;">
-                <div
-                    style="height: 200px; background: #000; border-radius: 8px; margin-bottom: 20px; border: 2px solid var(--accent); overflow:hidden; position:relative;">
-                    <img src="aric_thumb.png"
-                        style="width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease;"
-                        onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <div class="demo-card-container">
+            <!-- Demo 1: Eldric -->
+            <a href="demo_aric.html" target="_blank" class="demo-card" style="text-decoration: none;">
+                <div class="demo-img-wrapper">
+                    <!-- Showing HTML Sheet Preview as requested -->
+                    <img src="/static/images/preview_ficha_eldric.png" class="demo-img" alt="Aric Sheet Preview">
                 </div>
-                <h3 style="color: var(--text-main); margin-bottom: 10px;" data-i18n="demo_1_name">Aric, The Fallen
-                    Paladin</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <span
-                        style="background: #331010; color: #ff8888; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid #552020;">Dark
-                        Fantasy</span>
-                    <span
-                        style="background: #333; color: #ccc; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid #444;">Human</span>
+                <div class="demo-content">
+                    <h3 class="demo-name" data-i18n="demo_1_name">Aric, The Fallen Paladin</h3>
+                    <div class="demo-tags">
+                        <span class="demo-tag">Human</span>
+                        <span class="demo-tag">Level 5</span>
+                        <span class="demo-tag" style="border-color: #8a3b3b; color:#cd5c5c;">Oathbreaker</span>
+                    </div>
+                    <!-- Button removed, entire card is link -->
+                    <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
+                        <span data-i18n="demo_btn">CLICK TO VIEW SHEET</span> 📜
+                    </p>
                 </div>
-                <!-- FIXED BUTTON -->
-                <button class="btn-forge" style="width: 100%; font-size: 0.9rem; padding: 10px;"
-                    onclick="openDemo('aric')">
-                    <span data-i18n="demo_btn">View Example</span> 📄
-                </button>
-            </div>
+            </a>
 
-            <!-- Demo 2 -->
-            <div
-                style="background: linear-gradient(145deg, rgba(20,20,25,0.9), rgba(10,10,15,0.95)); padding: 25px; border-radius: 12px; border: 1px solid var(--border); width: 350px;">
-                <div
-                    style="height: 200px; background: #000; border-radius: 8px; margin-bottom: 20px; border: 2px solid #b026ff; overflow:hidden; position:relative;">
-                    <img src="elara_thumb.png"
-                        style="width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease;"
-                        onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <!-- Demo 2: Elara -->
+            <a href="demo_elara.html" target="_blank" class="demo-card" style="text-decoration: none;">
+                <div class="demo-img-wrapper">
+                    <img src="/static/images/preview_ficha_elara.png" class="demo-img" alt="Elara Sheet Preview">
                 </div>
-                <h3 style="color: var(--text-main); margin-bottom: 10px;" data-i18n="demo_2_name">Elara, The Sorceress
-                </h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <span
-                        style="background: #101033; color: #8888ff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid #202055;">High
-                        Magic</span>
-                    <span
-                        style="background: #333; color: #ccc; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid #444;">Elf</span>
+                <div class="demo-content">
+                    <h3 class="demo-name" data-i18n="demo_2_name">Elara, The Sorceress</h3>
+                    <div class="demo-tags">
+                        <span class="demo-tag">Elf</span>
+                        <span class="demo-tag">Level 3</span>
+                        <span class="demo-tag" style="border-color: #b026ff; color:#e0afff;">Netrunner</span>
+                    </div>
+                    <p style="text-align:center; color:var(--accent); margin-top:10px; font-size:0.9rem;">
+                        <span data-i18n="demo_btn">CLICK TO VIEW SHEET</span> ⚡
+                    </p>
                 </div>
-                <!-- FIXED BUTTON -->
-                <button class="btn-forge" style="width: 100%; font-size: 0.9rem; padding: 10px;"
-                    onclick="openDemo('elara')">
-                    <span data-i18n="demo_btn">View Example</span> 📄
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- FAQ SECTION -->
-    <div style="width: 100%; max-width: 800px; margin-top: 100px; margin-bottom: 50px;">
-        <h2 style="font-family: 'Cinzel', serif; font-size: 2rem; color: var(--accent); margin-bottom: 40px; text-align: center;"
-            data-i18n="faq_title">Preguntas Frecuentes</h2>
-
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-            <!-- Q1 -->
-            <div
-                style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q1">¿Es
-                    gratuito?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a1">Sí. Ofrecemos un nivel gratuito
-                    generoso. Usamos tokens para volumen alto.</p>
-            </div>
-            <!-- Q2 -->
-            <div
-                style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q2">
-                    ¿Uso comercial?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a2">Sí, los personajes generados son
-                    tuyos.</p>
-            </div>
-            <!-- Q3 -->
-            <div
-                style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent);">
-                <h3 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 10px;" data-i18n="faq_q3">¿Se
-                    guardan mis personajes?</h3>
-                <p style="color: var(--text-dim); line-height: 1.5;" data-i18n="faq_a3">Depende del modo. RPG guarda
-                    datos para VTT, Novelas no.</p>
-            </div>
+            </a>
         </div>
     </div>
 
