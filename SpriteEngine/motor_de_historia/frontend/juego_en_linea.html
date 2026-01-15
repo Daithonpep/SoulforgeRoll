@@ -529,21 +529,67 @@
     <!-- LOBBY -->
     <div id="lobby-container">
         <div class="soul-orbit" id="orbit"></div>
-        <div class="void-core" id="drop-zone" style="position: relative; z-index: 10002;">
 
+        <!-- CONNECTION FORM -->
+        <div class="connection-panel"
+            style="z-index: 10005; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <h1
+                style="font-family: 'Cinzel'; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(201, 169, 89, 0.5);">
+                THE WAR ROOM</h1>
+
+            <div class="input-group">
+                <input type="text" id="user-name" placeholder="Tu Nombre" class="void-input">
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="room-code" placeholder="Código de Sala (Vacío para crear)" class="void-input"
+                    style="letter-spacing: 3px; text-transform: uppercase;">
+            </div>
+
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                <button class="gold-button ready" id="btn-create" onclick="WarRoomUI.createRoom()">CREAR SALA</button>
+                <button class="gold-button ready" id="btn-join" onclick="WarRoomUI.joinRoom()">UNIRSE</button>
+            </div>
+        </div>
+
+        <!-- CHARACTER UPLOAD (Hidden initially) -->
+        <div class="void-core hidden" id="drop-zone" style="position: relative; z-index: 10002; display: none;">
             <label for="file-input" style="position: absolute; inset: 0; cursor: pointer; z-index: 10005;"></label>
             <div style="font-size: 3rem; color: #444;">✦</div>
             <div class="void-text">
-                <span style="color:white; font-size:1.4rem;">ARRASTRA TUS ALMAS</span><br>
+                <span id="upload-text" style="color:white; font-size:1.4rem;">ARRASTRA TUS ALMAS</span><br>
                 <span style="font-size: 0.8em; color: #666;">Archivos JSON generados</span>
             </div>
-            <input type="file" id="file-input" multiple accept=".json"
+            <input type="file" id="file-input" accept=".html,.json"
                 style="opacity: 0; position: absolute; width: 1px; height: 1px;">
         </div>
-        <button class="gold-button" id="start-btn" onclick="Director.startGame()">
-            <span>INICIAR CRÓNICA</span>
-        </button>
     </div>
+
+    <style>
+        .void-input {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #555;
+            color: var(--gold-accent);
+            padding: 15px 25px;
+            font-family: 'Cinzel';
+            font-size: 1.2rem;
+            text-align: center;
+            width: 300px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .void-input:focus {
+            border-color: var(--gold-accent);
+            box-shadow: 0 0 15px rgba(201, 169, 89, 0.2);
+            background: rgba(10, 10, 10, 0.9);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 
     <!-- GAME UI -->
     <div id="game-ui">
@@ -586,10 +632,67 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { getRoomManager } from './js/warroom/room-manager.js';
+
+        // GLOBAL UI CONTROLLER
+        window.WarRoomUI = {
+            manager: null,
+
+            init() {
+                console.log("⚔️ War Room Interface Initialized");
+                this.manager = getRoomManager({
+                    onStateChange: state => this.renderState(state),
+                    onChatMessage: msg => Director.log(`<b>${msg.from}:</b> ${msg.message}`, msg.isDm ? 'dm' : 'chat'),
+                    onSystemMessage: (msg, type) => Director.log(msg, 'system'),
+                    onPlayerAction: (action, data) => {
+                        if (action === 'joined') Director.log(`${data.user_name} ha entrado.`, 'system');
+                    },
+                    onTokenMoved: (id, pos) => Director.updateTokenPos(id, pos)
+                });
+            },
+
+            async createRoom() {
+                const name = document.getElementById('user-name').value || "Invitado";
+                const roomCode = await this.manager.createRoom("Campaña Nueva");
+                if (roomCode) {
+                    await this.manager.joinRoom(roomCode, name, "dungeon_master");
+                }
+            },
+
+            async joinRoom() {
+                const name = document.getElementById('user-name').value || "Invitado";
+                const code = document.getElementById('room-code').value.toUpperCase();
+                if (!code) return alert("Ingresa un código de sala");
+
+                await this.manager.joinRoom(code, name, "player");
+            },
+
+            renderState(state) {
+                if (state.status === 'connected') {
+                    // Hide Lobby, Show Game
+                    document.getElementById('lobby-container').classList.add('hidden');
+                    document.getElementById('game-ui').classList.add('active');
+
+                    // Show upload if player
+                    if (state.localCharacter) {
+                        // Character ready
+                    } else {
+                        // Show upload zone somewhere? Or keep it separate
+                    }
+                }
+            }
+        };
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            window.WarRoomUI.init();
+            Director.init();
+        });
+
         // CRITICAL ERROR HANDLER
         window.onerror = function (msg, url, line) {
-            alert("Error JS: " + msg + "\nLine: " + line);
+            console.error("Error JS: " + msg + "\nLine: " + line);
             return false;
         };
 
@@ -1261,7 +1364,8 @@
             }
         });
 
-        window.onload = () => Director.init();
+        // Expose Director to Global Scope for HTML onclicks
+        window.Director = Director;
     </script>
 </body>
 

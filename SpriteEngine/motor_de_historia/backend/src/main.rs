@@ -1,63 +1,75 @@
-use actix_web::{web, App, HttpServer, middleware};
-use actix_cors::Cors;
-use tera::Tera;
-use soulforge::api;
+mod room;
+mod protocol;
+mod handlers;
 
-use actix_files as fs;
+use std::env;
+use std::sync::Arc;
+use warp::Filter;
+use tracing_subscriber;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    // Configurar logging visual
-    std::env::set_var("RUST_LOG", "actix_web=info");
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+use crate::room::RoomManager;
+use crate::handlers::{ws_handler, create_room_handler, room_info_handler};
 
-    imprimir_banner();
-
-    // Cargar Templates HTML (REMOVIDO PARA API-ONLY)
-    // println!("🎨 Cargando templates desde ../frontend/...");
-    // let tera = match Tera::new("../frontend/**/*.html") ...
-
-    // Puerto desde variable de entorno (Railway) o 8080 por defecto
-    let port: u16 = std::env::var("PORT")
+#[tokio::main]
+async fn main() {
+    // Inicializar logging
+    tracing_subscriber::fmt::init();
+    
+    // Puerto desde variable de entorno (Railway lo proporciona)
+    let port: u16 = env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
         .parse()
-        .expect("PORT debe ser un número válido");
-
-    println!("\n🚀 SoulForge API v2.1 escuchando en http://0.0.0.0:{}", port);
-    println!("   > Modo:          API JSON Only (Backend)");
-    println!("   > Endpoint API:  /api/v1/personaje");
-    println!("   > Presiona Ctrl+C para detener.\n");
-
-    HttpServer::new(move || {
-        // En producción, configura esto con la URL real de Vercel/Netlify
-        let cors = Cors::permissive(); 
-
-        App::new()
-            .wrap(cors)
-            .wrap(middleware::Logger::default()) // Logger de requests
-            // .app_data(web::Data::new(tera.clone())) // No se necesita Tera
-            // .service(fs::Files::new("/static", "../frontend/static").show_files_listing()) // No se sirven estáticos
-            .configure(api::routes::config)
-    })
-    .bind(("0.0.0.0", port))?
-    .run()
-    .await
-}
-
-fn imprimir_banner() {
-    println!(r#"
-    ╔═══════════════════════════════════════════════════════════════════════╗
-    ║                                                                       ║
-    ║   ███████╗ ██████╗ ██╗   ██╗██╗     ███████╗ ██████╗ ██████╗  ██████╗ ║
-    ║   ██╔════╝██╔═══██╗██║   ██║██║     ██╔════╝██╔═══██╗██╔══██╗██╔════╝ ║
-    ║   ███████╗██║   ██║██║   ██║██║     █████╗  ██║   ██║██████╔╝██║  ███╗║
-    ║   ╚════██║██║   ██║██║   ██║██║     ██╔══╝  ██║   ██║██╔══██╗██║   ██║║
-    ║   ███████║╚██████╔╝╚██████╔╝███████╗██║     ╚██████╔╝██║  ██║╚██████╔╝║
-    ║   ╚══════╝ ╚═════╝  ╚═════╝ ╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ║
-    ║                                                                       ║
-    ║                            SERVER v2.1                                ║
-    ║         Generador de Personajes con Constelaciones de Almas           ║
-    ║                                                                       ║
-    ╚═══════════════════════════════════════════════════════════════════════╝
-    "#);
+        .expect("PORT must be a number");
+    
+    // Estado compartido
+    let room_manager = Arc::new(RoomManager::new());
+    
+    // Clonar para cada filtro
+    let rm_ws = room_manager.clone();
+    let rm_create = room_manager.clone();
+    let rm_info = room_manager.clone();
+    
+    // CORS para Vercel
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "OPTIONS"])
+        .allow_headers(vec!["Content-Type"]);
+    
+    // === RUTAS ===
+    
+    // WebSocket: /ws/{room_id}
+    let ws_route = warp::path("ws")
+        .and(warp::path::param::<String>())
+        .and(warp::ws())
+        .and(warp::any().map(move || rm_ws.clone()))
+        .and_then(ws_handler);
+    
+    // Crear sala: POST /api/rooms
+    let create_route = warp::path!("api" / "rooms")
+        .and(warp::post())
+        .and(warp::body::json())
+        .and(warp::any().map(move || rm_create.clone()))
+        .and_then(create_room_handler);
+    
+    // Info de sala: GET /api/rooms/{room_id}
+    let info_route = warp::path!("api" / "rooms" / String)
+        .and(warp::get())
+        .and(warp::any().map(move || rm_info.clone()))
+        .and_then(room_info_handler);
+    
+    // Health check
+    let health = warp::path!("health")
+        .map(|| warp::reply::json(&serde_json::json!({"status": "alive"})));
+    
+    let routes = ws_route
+        .or(create_route)
+        .or(info_route)
+        .or(health)
+        .with(cors);
+    
+    tracing::info!("SoulForge Server starting on port {}", port);
+    
+    warp::serve(routes)
+        .run(([0, 0, 0, 0], port))
+        .await;
 }
