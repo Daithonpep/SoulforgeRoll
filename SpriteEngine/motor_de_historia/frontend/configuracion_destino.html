@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablero del Destino - Configuración de Partida</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <!-- CSS Module -->
+    <link rel="stylesheet" href="lobby-rpg/css/destiny-config.css">
+</head>
+
+<body>
+    <!-- Background Layers -->
+    <div class="background-layer">
+        <div class="background-image"></div>
+    </div>
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="destiny-board">
+        <!-- Header -->
+        <header class="header-destino">
+            <h1>Tablero del Destino</h1>
+            <p class="subtitle">Configura el tejido de la realidad antes de que comience la partida</p>
+        </header>
+
+        <!-- Personajes Activos -->
+        <section class="personajes-activos">
+            <h2 class="seccion-titulo">Almas en la Partida</h2>
+            <div class="personajes-grid" id="personajes-grid">
+                <!-- JS generará contenido aquí -->
+            </div>
+            <div id="personajes-info"></div> <!-- Contenedor para info detallada -->
+        </section>
+
+        <!-- Intensidad Emocional -->
+        <section class="intensidad-panel">
+            <h2 class="seccion-titulo">Intensidad del Destino</h2>
+            <div class="intensidad-container">
+                <div class="intensidad-nivel table-cell" data-nivel="1">
+                    <span class="intensidad-icono">
+                        <!-- Brisa SVG -->
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 18h16v-2H4v2zm0-5h16v-2H4v2zm0-7v2h16V6H4z" />
+                        </svg>
+                    </span>
+                    <div class="intensidad-nombre">Brisa</div>
+                </div>
+                <div class="intensidad-nivel" data-nivel="2">
+                    <span class="intensidad-icono">
+                        <!-- Marea SVG -->
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.94-7-4.24-7-8.93 0-.6.06-1.19.16-1.76l6.84 10.69zm1.09-2.02l-6.8-10.63c.53-.29 1.1-.53 1.71-.69V17.91z" />
+                        </svg>
+                    </span>
+                    <div class="intensidad-nombre">Marea</div>
+                </div>
+                <div class="intensidad-nivel" data-nivel="3">
+                    <span class="intensidad-icono">
+                        <!-- Tormenta SVG -->
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 14l5-10v8h5l-5 10v-8z" />
+                        </svg>
+                    </span>
+                    <div class="intensidad-nombre">Tormenta</div>
+                </div>
+                <div class="intensidad-nivel" data-nivel="4">
+                    <span class="intensidad-icono">
+                        <!-- Abismo SVG -->
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10" />
+                            <circle cx="12" cy="12" r="4" fill="#000" />
+                        </svg>
+                    </span>
+                    <div class="intensidad-nombre">Abismo</div>
+                </div>
+            </div>
+            <!-- Info detallada se inyectará aquí via JS -->
+        </section>
+
+        <!-- Modo de Generación -->
+        <section class="generacion-panel">
+            <h2 class="seccion-titulo">Naturaleza del Mundo</h2>
+            <div class="generacion-modos">
+                <div class="modo-card" data-modo="sombra">
+                    <span class="modo-icono">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                            <circle cx="12" cy="12" r="5" opacity="0.5" />
+                        </svg>
+                    </span>
+                    <div class="modo-nombre">Sombra Dominante</div>
+                </div>
+                <div class="modo-card" data-modo="trauma">
+                    <span class="modo-icono">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            <path d="M12 7.5l-1.5 3h3l-1.5 3" stroke="black" stroke-width="1" />
+                        </svg>
+                    </span>
+                    <div class="modo-nombre">Trauma Resonante</div>
+                </div>
+                <div class="modo-card" data-modo="luz">
+                    <span class="modo-icono">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                        </svg>
+                    </span>
+                    <div class="modo-nombre">Luz Buscada</div>
+                </div>
+                <div class="modo-card" data-modo="tejido">
+                    <span class="modo-icono">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 22h20L12 2zm0 3.8l6.8 14.2H5.2L12 5.8z" />
+                            <circle cx="12" cy="14" r="2" />
+                        </svg>
+                    </span>
+                    <div class="modo-nombre">Tejido Grupal</div>
+                </div>
+            </div>
+            <!-- Info detallada se inyectará aquí via JS -->
+        </section>
+
+        <!-- Constelación de Almas -->
+        <section class="constelacion-panel">
+            <h2 class="seccion-titulo">Constelación de Almas</h2>
+            <p class="seccion-desc">Conecta a los personajes con hilos del destino. Selecciona un tipo de hilo, luego
+                haz clic en dos personajes para enlazarlos.</p>
+            <div class="hilos-selector">
+                <button class="hilo-btn" data-tipo="conflicto" onclick="seleccionarHiloUI('conflicto')">
+                    <span class="hilo-icono">
+                        <!-- Icono Espadas -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
+                            <path d="M13 19l6-6" />
+                            <path d="M16 16l4 4" />
+                            <path d="M19 21l2-2" />
+                            <path d="M9.5 6.5L21 18v3h-3L6.5 9.5" />
+                            <path d="M11 5l-6 6" />
+                            <path d="M8 8l-4-4" />
+                            <path d="M5 3L3 5" />
+                        </svg>
+                    </span>
+                    <span class="hilo-nombre">Conflicto</span>
+                </button>
+                <button class="hilo-btn" data-tipo="alianza" onclick="seleccionarHiloUI('alianza')">
+                    <span class="hilo-icono">
+                        <!-- Icono Nudo/Alianza -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 11l2 2a4 4 0 0 1 0 5.66l-1 1" />
+                            <path d="M15 11l-2 2a4 4 0 0 1-5.66 0l-1-1" />
+                            <path d="M10.5 6.5l4 4" />
+                            <path d="M13.5 17.5l-4-4" />
+                        </svg>
+                    </span>
+                    <span class="hilo-nombre">Alianza</span>
+                </button>
+                <button class="hilo-btn" data-tipo="destino" onclick="seleccionarHiloUI('destino')">
+                    <span class="hilo-icono">
+                        <!-- Icono Estrella Destino -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                    </span>
+                    <span class="hilo-nombre">Destino</span>
+                </button>
+                <button class="hilo-btn" data-tipo="secreto" onclick="seleccionarHiloUI('secreto')">
+                    <span class="hilo-icono">
+                        <!-- Icono Ojo Secreto -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                        </svg>
+                    </span>
+                    <span class="hilo-nombre">Secreto</span>
+                </button>
+                <button class="hilo-btn borrar" data-tipo="borrar" onclick="seleccionarHiloUI('borrar')"
+                    style="border-color: #666;">
+                    <span class="hilo-icono">
+                        <!-- Icono Tijeras -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="6" cy="6" r="3" />
+                            <circle cx="6" cy="18" r="3" />
+                            <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                            <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                            <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                        </svg>
+                    </span>
+                    <span class="hilo-nombre">Cortar</span>
+                </button>
+            </div>
+
+            <!-- PANEL DE INFORMACIÓN DINÁMICA -->
+            <div id="hilo-info-panel" class="info-desplegable" style="display:none; margin-bottom:20px;">
+                <h4 id="hilo-info-titulo">Título del Hilo</h4>
+                <p id="hilo-info-desc">Descripción del efecto...</p>
+            </div>
+            <div class="constelacion-container">
+                <canvas id="constelacion-canvas"></canvas>
+            </div>
+        </section>
+
+        <!-- Presión del Alma -->
+        <section class="presion-panel">
+            <h2 class="seccion-titulo">Presión del Alma Inicial</h2>
+            <p class="seccion-desc">Define el nivel de estrés o corrupción con el que inicia cada personaje.
+                <br><strong>0% (Zen):</strong> Inmune a efectos mentales.
+                <br><strong>100% (Quiebre):</strong> Inicia con una desventaja permanente o locura.
+            </p>
+            <div class="presion-grid" id="presion-grid">
+                <!-- JS generará contenido -->
+            </div>
+        </section>
+
+        <!-- Semillas Narrativas -->
+        <section class="semillas-panel">
+            <h2 class="seccion-titulo">Semillas del Destino</h2>
+            <p class="seccion-desc">Elige eventos inevitables. El Director de Juego (IA) forzará que estas situaciones
+                ocurran durante la campaña. Selecciona qué personajes serán los protagonistas de cada evento.</p>
+            <div class="semillas-container" id="semillas-container">
+                <!-- JS generará contenido -->
+            </div>
+        </section>
+
+        <!-- Forjador de Tentaciones -->
+        <section class="tentaciones-panel">
+            <h2 class="seccion-titulo">⚗️ Forjador de Tentaciones</h2>
+            <p class="seccion-desc">Analiza la psique de tus personajes. El sistema genera ganchos de trama
+                personalizados basados en sus Mentiras, Heridas y Deseos.</p>
+            <div class="forjador-selector" id="forjador-selector"></div>
+            <div class="forjador-workspace">
+                <div class="forjador-datos" id="forjador-datos"></div>
+                <div class="forjador-sugerencias">
+                    <div class="sugerencia-titulo" style="color:var(--trauma); font-family:'Cinzel';">Sugerencias del
+                        Sistema</div>
+                    <div id="sugerencias-lista">
+                        <!-- JS Llenará esto -->
+                        <div style="opacity:0.5; padding:10px;">Selecciona un personaje para ver sugerencias...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumen Final -->
+        <section>
+            <h2 class="seccion-titulo">Resumen de la Configuración</h2>
+            <div class="resumen-panel">
+                <div class="resumen-item">
+                    <div class="resumen-label">PERSONAJES</div>
+                    <div class="resumen-valor" id="resumen-personajes">0</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-label">INTENSIDAD</div>
+                    <div class="resumen-valor" id="resumen-intensidad">-</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-label">MODO</div>
+                    <div class="resumen-valor" id="resumen-modo">-</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-label">HILOS</div>
+                    <div class="resumen-valor" id="resumen-hilos">0</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-label">SEMILLAS</div>
+                    <div class="resumen-valor" id="resumen-semillas">0</div>
+                </div>
+            </div>
+            <button class="btn-iniciar" id="btn-iniciar">Forjar el Destino</button>
+        </section>
+    </div>
+    <div class="notification" id="notification">
+        <span class="notification-icon">✨</span>
+        <span class="notification-text" id="notification-text"></span>
+    </div>
+
+    <!-- JS Module -->
+    <script src="js/warroom/destiny-config.js"></script>
+</body>
+
+</html>

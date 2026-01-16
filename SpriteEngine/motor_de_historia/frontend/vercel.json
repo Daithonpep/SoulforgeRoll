@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/dm-setup",
+      "destination": "/configuracion_destino.html"
+    },
+    {
       "source": "/api/:match*",
       "destination": "https://soulforge.up.railway.app/api/:match*"
     }

@@ -1,0 +1,1101 @@
+/* ============ VARIABLES ============ */
+:root {
+    --oro-antiguo: #b8860b;
+    --luz: #ffd700;
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    /* Fuente base mucho más legible */
+    background: #050505;
+    color: #e0e0e0;
+    /* Color base más claro */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-size: 16px;
+    /* Base sólida */
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Cinzel', serif;
+    /* Títulos decorativos se mantienen */
+}
+
+/* ============ ESTRUCTURA PRINCIPAL ============ */
+.destiny-board {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header-destino {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.header-destino h1 {
+    font-size: 3.5rem;
+    color: #dac592;
+    text-shadow: 0 0 20px rgba(184, 134, 11, 0.5);
+    margin: 0;
+}
+
+.subtitle {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.4rem;
+    /* Más grande */
+    color: #bbb;
+    /* Más claro */
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* ============ PANELES LIMPIOS (SIN TEXTURA DE FONDO INVASIVA) ============ */
+section {
+    margin-bottom: 50px;
+    background: transparent;
+    /* Limpieza visual */
+}
+
+.seccion-titulo {
+    font-size: 1.8rem;
+    color: var(--oro-antiguo);
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+    padding-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ============ PERSONAJES (GRID LIMPIO HORIZONTAL) ============ */
+.personajes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.personaje-card {
+    background: linear-gradient(145deg, rgba(20, 20, 25, 0.95), rgba(10, 10, 12, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.personaje-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--luz);
+}
+
+.personaje-card.selected {
+    border-color: var(--luz);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+/* IMAGEN DEL PERSONAJE - STRICT SIZING */
+.personaje-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--oro-antiguo);
+    object-fit: cover;
+    background: #000;
+    flex-shrink: 0;
+}
+
+.personaje-info h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #f0e6d2;
+}
+
+.personaje-clase {
+    font-family: 'Crimson Text', serif;
+    color: #888;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* Tags de Sombra y Trauma */
+.personaje-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.tag {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tag.sombra {
+    border-color: #6a1b9a;
+    color: #ce93d8;
+}
+
+.tag.trauma {
+    border-color: #b71c1c;
+    color: #ef9a9a;
+}
+
+
+/* ============ INTENSIDAD Y MODOS (TEXTURAS COMO PROTAGONISTAS) ============ */
+/* Contenedor flexible que ocupa todo el ancho */
+.intensidad-container,
+.generacion-modos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 Columnas exactas */
+    gap: 20px;
+    width: 100%;
+}
+
+@media (max-width: 1000px) {
+
+    .intensidad-container,
+    .generacion-modos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* TARJETA GENÉRICA DE OPCIÓN */
+.intensidad-nivel,
+.modo-card {
+    height: 200px;
+    /* Altura generosa para lucir la textura */
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Texto abajo */
+    padding: 20px;
+}
+
+/* CAPA DE TEXTURA DE FONDO (Full size) */
+.intensidad-nivel::before,
+.modo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s ease, filter 0.5s ease;
+    filter: brightness(0.6) grayscale(0.3);
+    /* Un poco apagado por defecto para contraste */
+    z-index: 0;
+}
+
+/* ESTADOS DE TEXTURA */
+.intensidad-nivel:hover,
+.modo-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.intensidad-nivel:hover::before,
+.modo-card:hover::before {
+    filter: brightness(1) grayscale(0);
+    /* Full color al hover */
+    transform: scale(1.1);
+}
+
+.intensidad-nivel.active,
+.modo-card.active {
+    border-color: var(--luz);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+}
+
+.intensidad-nivel.active::before,
+.modo-card.active::before {
+    filter: brightness(1.2) grayscale(0);
+}
+
+/* ASIGNACIÓN DE TEXTURAS (Ruta Relativa Correcta) */
+/* Intensidades */
+.intensidad-nivel[data-nivel="1"]::before {
+    background-image: url('../assets/breeze_texture.png');
+}
+
+.intensidad-nivel[data-nivel="2"]::after {
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    opacity: 0.6;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Fallback marea bonito */
+.intensidad-nivel[data-nivel="3"]::before {
+    background-image: url('../assets/storm_bg_texture.png');
+}
+
+.intensidad-nivel[data-nivel="4"]::before {
+    background-image: url('../assets/abyss_bg_texture.png');
+}
+
+/* Modos */
+.modo-card[data-modo="sombra"]::before {
+    background-image: url('../assets/abyss_bg_texture.png');
+}
+
+.modo-card[data-modo="trauma"]::before {
+    background-image: url('../assets/trauma_mode_texture.png');
+}
+
+.modo-card[data-modo="luz"]::before {
+    background-image: url('../assets/light_mode_texture.png');
+}
+
+.modo-card[data-modo="tejido"]::before {
+    background-image: url('../assets/weave_mode_texture.png');
+}
+
+/* TEXTO SOBRE LA TEXTURA */
+.intensidad-nombre,
+.modo-nombre {
+    position: relative;
+    z-index: 2;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.8);
+    /* Doble sombra para legibilidad máxima */
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    background: rgba(0, 0, 0, 0.4);
+    /* Fondo sutil detrás del texto */
+    padding: 5px 0;
+}
+
+/* OCULTAR ICONOS SVG, LA TEXTURA ES EL HÉROE */
+.intensidad-icono,
+.modo-icono {
+    display: none !important;
+}
+
+/* ============ FORJADOR DE TENTACIONES (RICO EN DATOS) ============ */
+.forjador-personaje-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.forjador-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--oro-antiguo);
+    object-fit: cover;
+}
+
+.forjador-personaje-header h3 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: #f0e6d2;
+}
+
+.forjador-clase {
+    color: #888;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.matriz-psicologica {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(184, 134, 11, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.matriz-psicologica h4 {
+    margin: 0 0 15px 0;
+    color: var(--oro-antiguo);
+    font-family: 'Cinzel';
+}
+
+.matriz-item {
+    margin-bottom: 15px;
+    padding-left: 15px;
+    border-left: 3px solid;
+}
+
+.matriz-item.mentira {
+    border-color: #8b0000;
+}
+
+.matriz-item.herida {
+    border-color: #6a1b9a;
+}
+
+.matriz-item.deseo {
+    border-color: #ffd700;
+}
+
+.matriz-label {
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.matriz-item.mentira .matriz-label {
+    color: #ef5350;
+}
+
+.matriz-item.herida .matriz-label {
+    color: #ba68c8;
+}
+
+.matriz-item.deseo .matriz-label {
+    color: #ffd700;
+}
+
+.matriz-valor {
+    font-style: italic;
+    color: #ddd;
+    /* Mucho más claro */
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.sombra-trauma-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.dato-item {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.dato-label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.sombra-dato {
+    border-left: 3px solid #6a1b9a;
+}
+
+.sombra-dato .dato-label {
+    color: #ba68c8;
+}
+
+.trauma-dato {
+    border-left: 3px solid #c62828;
+}
+
+.trauma-dato .dato-label {
+    color: #ef5350;
+}
+
+.dato-valor {
+    font-weight: 600;
+    color: #e0d0c0;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.dato-desc {
+    font-size: 0.9rem;
+    color: #999;
+    font-style: italic;
+}
+
+.perks-section {
+    margin-top: 20px;
+}
+
+.perks-section h4 {
+    color: var(--oro-antiguo);
+    margin-bottom: 15px;
+    font-family: 'Cinzel';
+}
+
+.perk-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--oro-antiguo);
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.perk-nombre {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.perk-tipo {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #aaa;
+}
+
+.perk-efecto {
+    width: 100%;
+    font-size: 1rem;
+    /* Más grande */
+    color: #ccc;
+    /* Más claro */
+    margin-top: 5px;
+}
+
+/* Forjador workspace layout */
+.forjador-workspace {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.forjador-sugerencias {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.sugerencia-titulo {
+    font-family: 'Cinzel';
+    margin-bottom: 15px;
+}
+
+/* Sugerencias Cards */
+.sugerencia-card {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 4px solid #444;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
+
+.sugerencia-card:hover {
+    transform: translateX(5px);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Tipos de Sugerencia coloded */
+.sugerencia-card:nth-child(1) {
+    border-color: #ffd700;
+}
+
+/* Gancho - Oro */
+.sugerencia-card:nth-child(2) {
+    border-color: #9c27b0;
+}
+
+/* Sombra - Púrpura */
+.sugerencia-card:nth-child(3) {
+    border-color: #f44336;
+}
+
+/* Giro - Rojo */
+
+.sugerencia-tipo {
+    font-family: 'Cinzel';
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sugerencia-card:nth-child(1) .sugerencia-tipo {
+    color: #ffe082;
+}
+
+.sugerencia-card:nth-child(2) .sugerencia-tipo {
+    color: #ce93d8;
+}
+
+.sugerencia-card:nth-child(3) .sugerencia-tipo {
+    color: #ffab91;
+}
+
+.sugerencia-texto {
+    font-family: 'Roboto', sans-serif;
+    /* Cambio a sans-serif para lectura fácil */
+    font-size: 1.05rem;
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+.sugerencia-texto strong {
+    color: #fff;
+    text-decoration: underline decoration-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ============ PRESIÓN DEL ALMA (CORRECCIÓN IMÁGENES) ============ */
+.presion-personaje {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.presion-avatar-mini {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.presion-avatar-mini img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--oro-antiguo);
+}
+
+.presion-info {
+    flex: 1;
+}
+
+.presion-nombre {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #e0d5c7;
+}
+
+.presion-barra-container {
+    height: 10px;
+    background: #333;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+.presion-marcador {
+    width: 20px;
+    height: 20px;
+    background: var(--luz);
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    cursor: grab;
+}
+
+.presion-marcador:active {
+    cursor: grabbing;
+    scale: 1.2;
+}
+
+.presion-valor {
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--luz);
+}
+
+
+/* ============ SEMILLAS (CORRECCIÓN IMÁGENES) ============ */
+.semillas-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.semilla-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #444;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.semilla-card:hover {
+    border-color: #666;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.semilla-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.semilla-icono {
+    font-size: 1.5rem;
+}
+
+.semilla-nombre {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e0d5c7;
+    /* Color hueso brillante */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.semilla-desc {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    color: #d0d0d0;
+    /* Gris muy claro */
+    margin-bottom: 15px;
+    min-height: 40px;
+    line-height: 1.5;
+    font-weight: 400;
+    /* Asegurar que no sea demasiado delgada */
+}
+
+.semilla-aplicar {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.semilla-target {
+    cursor: pointer;
+    opacity: 0.4;
+    transition: all 0.2s;
+    width: 35px;
+    height: 35px;
+    /* TAMAÑO FIJO PEQUEÑO */
+}
+
+.semilla-target img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+}
+
+.semilla-target:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.semilla-target.selected {
+    opacity: 1;
+}
+
+.semilla-target.selected img {
+    border-color: var(--luz);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* Background Fix - Lobby */
+.background-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    background-image: url('../../lobby.png');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.35) blur(2px);
+}
+
+/* ============ CONSTELACION - BOTONES DE HILO (ESTILO MEDIEVAL) ============ */
+.seccion-desc {
+    font-family: 'Cinzel', serif;
+    /* Cambio a Cinzel para títulos/descripciones importantes, o Roboto para lectura */
+    font-family: 'Roboto', sans-serif;
+    /* Mejor lectura en pantalla */
+    color: #e0e0e0;
+    /* Mucho más claro */
+    font-size: 1.15rem;
+    /* Más grande */
+    line-height: 1.6;
+    margin-bottom: 25px;
+    background: rgba(0, 0, 0, 0.6);
+    /* Fondo oscuro para contraste */
+    padding: 15px;
+    border-left: 4px solid var(--oro-antiguo);
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.seccion-desc strong {
+    color: var(--luz);
+    font-weight: bold;
+}
+
+.hilos-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+@media (max-width: 800px) {
+    .hilos-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ============ CONSTELACION - BOTONES DE HILO (ESTILO MEDIEVAL) ============ */
+.hilo-btn {
+    background: linear-gradient(145deg, rgba(30, 25, 20, 0.95), rgba(15, 12, 10, 0.98));
+    border: 2px solid rgba(139, 90, 43, 0.4);
+    color: #c4a76c;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    /* Título decorativo */
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.hilo-icono svg {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+    transition: all 0.3s ease;
+}
+
+.hilo-nombre {
+    font-size: 1.1rem;
+    /* Texto legible */
+    font-weight: bold;
+    color: #e0d5c7;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Efectos Hover */
+.hilo-btn:hover .hilo-icono svg {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+.hilo-btn.active {
+    border-color: var(--luz);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), inset 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+/* COLORES POR TIPO */
+.hilo-btn[data-tipo="conflicto"] svg {
+    color: #dc143c;
+}
+
+.hilo-btn[data-tipo="conflicto"]:hover,
+.hilo-btn[data-tipo="conflicto"].active {
+    border-color: #dc143c;
+}
+
+.hilo-btn[data-tipo="alianza"] svg {
+    color: #1e90ff;
+}
+
+.hilo-btn[data-tipo="alianza"]:hover,
+.hilo-btn[data-tipo="alianza"].active {
+    border-color: #1e90ff;
+}
+
+.hilo-btn[data-tipo="destino"] svg {
+    color: #ffd700;
+}
+
+.hilo-btn[data-tipo="destino"]:hover,
+.hilo-btn[data-tipo="destino"].active {
+    border-color: #ffd700;
+}
+
+.hilo-btn[data-tipo="secreto"] svg {
+    color: #8b008b;
+}
+
+.hilo-btn[data-tipo="secreto"]:hover,
+.hilo-btn[data-tipo="secreto"].active {
+    border-color: #8b008b;
+}
+
+.hilo-btn[data-tipo="borrar"] svg {
+    color: #aaa;
+}
+
+.hilo-btn[data-tipo="borrar"]:hover,
+.hilo-btn[data-tipo="borrar"].active {
+    border-color: #aaa;
+    color: #fff;
+}
+
+/* PANEL DE INFO DINAMICO */
+#hilo-info-panel {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 25, 0.9));
+    border-left: 5px solid var(--luz);
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+#hilo-info-titulo {
+    color: var(--luz);
+    font-size: 1.3rem;
+    margin: 0 0 10px 0;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+}
+
+#hilo-info-desc {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1rem;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ============ CANVAS CONSTELACION ============ */
+#constelacion-canvas {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(10, 10, 20, 0.7) 100%);
+    border: 1px solid rgba(184, 134, 11, 0.3);
+    border-radius: 10px;
+}
+
+.constelacion-container {
+    margin-top: 10px;
+}
+
+/* ============ FORJADOR LAYOUT ============ */
+.forjador-panel {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.forjador-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.forjador-personaje-btn {
+    background: linear-gradient(145deg, #1a1a2e, #0f0f15);
+    border: 2px solid #333;
+    color: #ccc;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.forjador-personaje-btn:hover {
+    border-color: #666;
+    color: #fff;
+}
+
+.forjador-personaje-btn.active {
+    border-color: var(--luz);
+    color: var(--luz);
+    background: linear-gradient(145deg, #2a2a3e, #15151f);
+}
+
+.forjador-personaje-btn img {
+    border-radius: 50%;
+    border: 1px solid var(--oro-antiguo);
+}
+
+.forjador-datos {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.sugerencias-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.sugerencias-titulo {
+    font-family: 'Cinzel', serif;
+    color: var(--oro-antiguo);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+    padding-bottom: 10px;
+}
+
+/* ============ RESUMEN DE CONFIGURACION ============ */
+.resumen-panel {
+    background: linear-gradient(145deg, rgba(20, 20, 25, 0.95), rgba(10, 10, 12, 0.98));
+    border: 2px solid var(--oro-antiguo);
+    border-radius: 12px;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.resumen-item {
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.resumen-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ccc;
+    /* Más claro */
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.resumen-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--luz);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* ============ BOTON INICIAR PARTIDA ============ */
+.btn-iniciar {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 30px auto 0;
+    padding: 18px 40px;
+    background: linear-gradient(145deg, #b8860b, #8b6914);
+    border: 2px solid var(--luz);
+    border-radius: 30px;
+    color: #000;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.btn-iniciar:hover {
+    background: linear-gradient(145deg, #daa520, #b8860b);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+/* ============ INFO DESPLEGABLE ============ */
+.info-desplegable {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-left: 4px solid var(--luz);
+    padding: 20px;
+    border-radius: 0 10px 10px 0;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.info-desplegable h4 {
+    color: var(--luz);
+    margin: 0 0 10px 0;
+    font-family: 'Cinzel', serif;
+}
+
+.info-desplegable p {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #ccc;
+}
+
+/* ============ NOTIFICACION ============ */
+#notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(145deg, #1a1a2e, #0f0f15);
+    border: 2px solid var(--luz);
+    border-radius: 10px;
+    padding: 15px 25px;
+    color: var(--luz);
+    font-family: 'Cinzel', serif;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+#notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
