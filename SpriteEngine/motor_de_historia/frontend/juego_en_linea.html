@@ -3,516 +3,380 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soulforge: The Living Chronicle (V6 - Witcher Style)</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
 
+    <!-- CSS NUCLEAR & REACTIVE SYSTEM (V3) -->
+    <style>
+        /* ============ RESET & BASE ============ */
         :root {
-            --bg-void: #050505;
-            --gold-accent: #c9a959;
-            --gold-dim: #6d5c32;
-            --soul-blue: #a3c4db;
-            --blood-red: #8a1c1c;
-            --glass-bg: rgba(10, 12, 16, 0.9);
-            --border-light: rgba(255, 255, 255, 0.08);
-            --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+            --gold: #c9a959;
+            --black: #050505;
+            --cyan-ether: #00f3ff;
+            --blood-mist: rgba(130, 0, 0, 0.4);
         }
 
         body {
             margin: 0;
-            overflow: hidden;
-            background-color: var(--bg-void);
-            font-family: 'Cormorant Garamond', serif;
-            color: #e0e0e0;
-            user-select: none;
-        }
-
-        /* ═══════════════════════════════════════
-           LAYER 0: WORLD RENDER (Zoomable Container)
-           ═══════════════════════════════════════ */
-        #world-container {
-            position: absolute;
-            inset: 0;
-            transform-origin: center center;
-            transition: transform 0.1s ease-out;
-            will-change: transform;
-        }
-
-        #world-canvas {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-        }
-
-        #fog-canvas {
-            position: absolute;
-            inset: 0;
-            z-index: 20;
-            mix-blend-mode: multiply;
-            pointer-events: none;
-        }
-
-        #map-tokens-layer {
-            position: absolute;
-            inset: 0;
-            z-index: 30;
-            pointer-events: none;
-        }
-
-        .map-token {
-            pointer-events: auto;
-        }
-
-        .particle-layer {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 25;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            background: var(--gold-accent);
-            box-shadow: 0 0 10px var(--gold-accent);
-        }
-
-        /* ═══════════════════════════════════════
-           LAYER 1: LOBBY
-           ═══════════════════════════════════════ */
-        #lobby-container {
-            position: absolute;
-            inset: 0;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: auto;
-            /* Changed from none to ensure interaction */
-            transition: transform 1.5s var(--ease-cinematic), opacity 1s ease;
-            background: radial-gradient(circle at center, rgba(10, 12, 16, 0.95) 0%, #000 100%);
-        }
-
-        #lobby-container.hidden {
-            display: none !important;
-            opacity: 0 !important;
-            z-index: -1 !important;
-            pointer-events: none !important;
-        }
-
-        .void-core,
-        .soul-card,
-        .gold-button {
-            pointer-events: auto;
-        }
-
-        .void-core {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            background: radial-gradient(circle, rgba(20, 20, 25, 1) 0%, rgba(0, 0, 0, 0) 70%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .void-core:hover {
-            border-color: var(--gold-accent);
-            box-shadow: 0 0 80px rgba(201, 169, 89, 0.2);
-        }
-
-        .void-text {
-            font-family: 'Cinzel';
-            color: #666;
-            letter-spacing: 2px;
-            text-align: center;
-            font-size: 1rem;
-            margin-top: 15px;
-        }
-
-        .void-core input {
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .void-core:hover .void-text {
-            color: var(--gold-accent);
-        }
-
-        .soul-orbit {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            animation: slowRotate 120s linear infinite;
-            pointer-events: none;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 50%;
-        }
-
-        @keyframes slowRotate {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .soul-card {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #111;
-            border: 2px solid #444;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 101;
-        }
-
-        .soul-card:hover {
-            border-color: var(--gold-accent);
-            transform: scale(1.2);
-            box-shadow: 0 0 20px rgba(201, 169, 89, 0.3);
-        }
-
-        .soul-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-size: cover;
-        }
-
-        .gold-button {
-            position: absolute;
-            bottom: 100px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #555;
-            color: #777;
-            padding: 18px 50px;
-            font-family: 'Cinzel';
-            font-size: 1.1rem;
-            cursor: not-allowed;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-        }
-
-        .gold-button.ready {
-            border-color: var(--gold-accent);
-            color: var(--gold-accent);
-            cursor: pointer;
-            background: rgba(20, 20, 20, 0.9);
-            box-shadow: 0 0 30px rgba(201, 169, 89, 0.1);
-        }
-
-        .gold-button.ready:hover {
-            transform: scale(1.05);
-            background: rgba(201, 169, 89, 0.15);
-            box-shadow: 0 0 60px rgba(201, 169, 89, 0.4);
-        }
-
-        /* ═══════════════════════════════════════
-           LAYER 2: GAME UI (OMNI-COCKPIT)
-           ═══════════════════════════════════════ */
-        #game-ui {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s ease 1s;
-            z-index: 200;
-        }
-
-        #game-ui.active {
-            opacity: 1;
-        }
-
-        /* DM CONSOLE - Top Right Overlay */
-        .dm-console {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            width: 220px;
-            background: rgba(5, 5, 8, 0.95);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 20px;
-            pointer-events: auto;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            transform: translateX(350px);
-            transition: transform 0.6s var(--ease-cinematic);
-        }
-
-        #game-ui.active .dm-console {
-            transform: translateX(0);
-        }
-
-        .console-header {
-            font-family: 'Cinzel';
-            color: #fff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-        }
-
-        .console-list {
-            font-family: 'Inter';
-            font-size: 0.85rem;
-            color: #aaa;
-            line-height: 1.8;
-            list-style: none;
             padding: 0;
-            margin: 0;
-        }
-
-        .console-list li::before {
-            content: "•";
-            color: var(--gold-accent);
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
-        }
-
-        .console-list li {
-            padding-left: 1em;
-        }
-
-        .console-cmd {
-            color: var(--soul-blue);
-            font-family: 'Consolas', monospace;
-            font-size: 0.8rem;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* The Quill (Input) */
-        .the-quill {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 10, 12, 0.8);
-            border: 1px solid var(--border-light);
-            backdrop-filter: blur(12px);
-            padding: 15px 30px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 600px;
-            pointer-events: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .the-quill:focus-within {
-            background: rgba(15, 15, 20, 0.95);
-            border-color: var(--gold-accent);
-            box-shadow: 0 0 30px rgba(201, 169, 89, 0.15);
-        }
-
-        .quill-input {
-            background: transparent;
-            border: none;
-            color: white;
-            flex: 1;
-            outline: none;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-        }
-
-        /* Left Panel - Characters */
-        .panel-left {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            width: 220px;
-            background: rgba(5, 5, 8, 0.9);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 20px;
-            pointer-events: auto;
-            backdrop-filter: blur(10px);
-            transform: translateX(-350px);
-            transition: transform 0.6s var(--ease-cinematic);
-        }
-
-        #game-ui.active .panel-left {
-            transform: translateX(0);
-        }
-
-        .entity-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid transparent;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .entity-card:hover {
-            border-color: var(--gold-dim);
-            background: rgba(201, 169, 89, 0.05);
-        }
-
-        .entity-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-size: cover;
-            border: 2px solid #555;
-        }
-
-        .entity-name {
-            font-family: 'Cinzel';
-            font-weight: 700;
-            color: #ddd;
-            font-size: 0.95rem;
-        }
-
-        .entity-role {
-            font-family: 'Inter';
-            font-size: 0.75rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Map Token */
-        .map-token {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--gold-accent);
-            background-size: cover;
-            cursor: grab;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
-            transition: transform 0.2s ease, border-color 0.2s;
-            z-index: 50;
-        }
-
-        .map-token:active {
-            cursor: grabbing;
-            transform: scale(0.95);
-        }
-
-        .map-token:hover {
-            border-color: #fff;
-            z-index: 100;
-        }
-
-        /* Speech Bubble */
-        .speech-bubble {
-            position: absolute;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: rgba(255, 255, 255, 0.95);
-            color: #111;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-family: 'Cormorant Garamond';
-            font-weight: 600;
-            font-size: 1.1rem;
-            text-align: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s var(--ease-cinematic);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            min-width: 140px;
-            z-index: 200;
-        }
-
-        .speech-bubble.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
-        }
-
-        /* Weather Overlay */
-        .weather-overlay {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 25;
-            background: linear-gradient(to bottom, rgba(20, 30, 40, 0.4), transparent);
-            opacity: 0;
-            transition: opacity 2s ease;
-        }
-
-        .weather-title {
-            position: absolute;
-            top: 20%;
-            width: 100%;
-            text-align: center;
-            font-family: 'Cinzel';
-            font-size: 4rem;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 20px;
-            text-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-        }
-
-        #weather-layer,
-        #fog-canvas,
-        .particle-layer {
-            pointer-events: none;
-        }
-
-        #lobby-container {
-            z-index: 99999;
+            background-color: var(--black);
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
             width: 100vw;
             height: 100vh;
-            display: flex;
+            transition: background 1s ease;
+        }
+
+        /* ============ BACKGROUND ============ */
+        .background-layer {
             position: fixed;
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
         }
 
-        transform: scale(0.9);
-        transition: all 3s ease;
+        .background-image {
+            width: 100%;
+            height: 100%;
+            background-image: url('lobby.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(2px) brightness(0.3);
+            transition: all 1s ease;
         }
 
-        .active-weather .weather-overlay {
-            opacity: 1;
+        /* AMBIENTE REACTIVO */
+        .atmosphere-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: transparent;
+            transition: background 2s ease;
+            mix-blend-mode: overlay;
         }
 
-        .active-weather .weather-title {
-            opacity: 1;
-            transform: scale(1);
+        /* ============ MASSIVE PANEL (SPLASH) ============ */
+        #connection-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .panel-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .war-room-title {
+            font-family: 'Cinzel', serif;
+            font-size: 10vw !important;
+            font-weight: 700;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1vw;
+            text-shadow: 0 0.5vh 2vh rgba(0, 0, 0, 0.9);
+            margin: 0 0 8vh 0;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .premium-input {
+            width: 60vw !important;
+            height: 10vh !important;
+            font-size: 4vh !important;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border: 0.4vh solid #555;
+            border-radius: 1vh;
+            color: #fff;
+            margin-bottom: 4vh;
+        }
+
+        .premium-input::placeholder {
+            font-size: 3vh;
+            letter-spacing: 0.2vw;
+            color: #666;
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 2vw;
+            width: 80vw;
+            justify-content: center;
+        }
+
+        .btn-large {
+            height: 10vh !important;
+            padding: 0 4vw;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5vh !important;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 1vh;
+            border-width: 0.4vh;
+            flex: 1;
+            max-width: 30vw;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: black;
+            border-color: var(--gold);
+            box-shadow: 0 0 3vh rgba(201, 169, 89, 0.4);
+            border-style: solid;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gold);
+            border-color: var(--gold);
+            border-style: solid;
+        }
+
+        .divider-text {
+            color: #666;
+            font-family: 'Cinzel';
+            font-size: 4vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============ LOBBY REACTIVO (CIRCULAR GRID) ============ */
+        #lobby-ui {
+            z-index: 100;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .lobby-header {
+            padding: 4vh;
+            text-align: center;
+        }
+
+        .lobby-status {
+            font-family: 'Cinzel';
+            color: #888;
+            letter-spacing: 2px;
+            font-size: 2vh;
+            margin-top: 1vh;
+        }
+
+        .soul-counter {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        /* GRID DE RETRATOS (CIRCULAR TOKENS) */
+        .soul-grid-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3vw;
+            padding: 0 5vw;
+        }
+
+        .soul-card {
+            width: 18vw;
+            height: 18vw;
+            /* Square for circle */
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px dashed #444;
+            border-radius: 50%;
+            /* CIRCULO PERFECTO */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .soul-card.empty::after {
+            content: '?';
+            font-family: 'Cinzel';
+            font-size: 5vw;
+            color: #333;
+        }
+
+        .soul-card.filled {
+            background-color: black;
+            border: 4px solid #666;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .soul-card.filled img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .soul-info {
+            position: absolute;
+            bottom: -5vh;
+            width: 150%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel';
+            color: #ccc;
+            font-size: 1.5vw;
+            font-weight: bold;
+            text-shadow: 0 2px 5px black;
+            background: transparent;
+        }
+
+        /* UPLOAD ZONE */
+        .upload-zone {
+            border: 2px dashed var(--gold);
+            background: rgba(0, 0, 0, 0.6);
+            width: 60vw;
+            height: 30vh;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            background: rgba(201, 169, 89, 0.2);
+            transform: scale(1.02);
+        }
+
+        50% {
+            box-shadow: 0 0 50px #9d00ff;
+            transform: scale(1.02);
+        }
+        }
+
+        .soul-card.ready-flash {
+            animation: flashReady 0.5s ease-out;
+        }
+
+        @keyframes pulseAura {
+            0% {
+                box-shadow: 0 0 20px var(--cyan-ether);
+            }
+
+            50% {
+                box-shadow: 0 0 50px var(--cyan-ether);
+            }
+
+            100% {
+                box-shadow: 0 0 20px var(--cyan-ether);
+            }
+        }
+
+        @keyframes flashReady {
+            0% {
+                filter: brightness(1);
+                transform: scale(1);
+            }
+
+            50% {
+                filter: brightness(2);
+                transform: scale(1.1);
+            }
+
+            100% {
+                filter: brightness(1);
+                transform: scale(1);
+            }
+        }
+
+        /* CONTROLES */
+        .lobby-controls {
+            padding: 4vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .mute-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #555;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mute-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        /* Game UI */
+        .game-ui {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .dm-console {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            display: none;
+        }
+
+        .the-quill {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #game-ui.active .dm-console,
+        #game-ui.active .the-quill {
+            display: block;
         }
     </style>
 </head>
 
 <body>
-    <!-- World Container for Zoom -->
+    <!-- World Container -->
     <div id="world-container">
         <canvas id="world-canvas"></canvas>
         <div id="map-tokens-layer"></div>
@@ -520,852 +384,229 @@
         <canvas id="fog-canvas"></canvas>
     </div>
 
-    <!-- Weather Effects -->
-    <div id="weather-layer" class="">
+    <!-- Weather & Atmosphere -->
+    <div id="weather-layer">
         <div class="weather-overlay"></div>
-        <div class="weather-title">TORMENTA</div>
+    </div>
+    <div id="atmosphere-overlay" class="atmosphere-overlay"></div>
+
+    <!-- Background Layers -->
+    <div class="background-layer">
+        <div class="background-image"></div>
     </div>
 
-    <!-- LOBBY -->
-    <div id="lobby-container">
-        <div class="soul-orbit" id="orbit"></div>
-
-        <!-- CONNECTION FORM -->
-        <div class="connection-panel"
-            style="z-index: 10005; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-            <h1
-                style="font-family: 'Cinzel'; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(201, 169, 89, 0.5);">
-                THE WAR ROOM</h1>
-
-            <div class="input-group">
-                <input type="text" id="user-name" placeholder="Tu Nombre" class="void-input">
+    <!-- CONNECTION PANEL (Paso 1: Login) -->
+    <div id="connection-panel">
+        <div class="panel-content">
+            <h1 class="war-room-title">THE WAR ROOM</h1>
+            <input type="text" id="room-code-input" class="premium-input" placeholder="CÓDIGO DE SALA (SOLO JUGADORES)">
+            <div class="action-row">
+                <button class="btn-large btn-gold" onclick="WarRoomUI.createRoom()">CREAR NUEVA SALA</button>
+                <div class="divider-text">O</div>
+                <button class="btn-large btn-outline" onclick="WarRoomUI.joinRoom()">UNIRSE A PARTIDA</button>
             </div>
-
-            <div class="input-group">
-                <input type="text" id="room-code" placeholder="Código de Sala (Vacío para crear)" class="void-input"
-                    style="letter-spacing: 3px; text-transform: uppercase;">
-            </div>
-
-            <div style="display: flex; gap: 20px; margin-top: 10px;">
-                <button class="gold-button ready" id="btn-create" onclick="WarRoomUI.createRoom()">CREAR SALA</button>
-                <button class="gold-button ready" id="btn-join" onclick="WarRoomUI.joinRoom()">UNIRSE</button>
-            </div>
-        </div>
-
-        <!-- CHARACTER UPLOAD (Hidden initially) -->
-        <div class="void-core hidden" id="drop-zone" style="position: relative; z-index: 10002; display: none;">
-            <label for="file-input" style="position: absolute; inset: 0; cursor: pointer; z-index: 10005;"></label>
-            <div style="font-size: 3rem; color: #444;">✦</div>
-            <div class="void-text">
-                <span id="upload-text" style="color:white; font-size:1.4rem;">ARRASTRA TUS ALMAS</span><br>
-                <span style="font-size: 0.8em; color: #666;">Archivos JSON generados</span>
-            </div>
-            <input type="file" id="file-input" accept=".html,.json"
-                style="opacity: 0; position: absolute; width: 1px; height: 1px;">
         </div>
     </div>
 
-    <style>
-        .void-input {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #555;
-            color: var(--gold-accent);
-            padding: 15px 25px;
-            font-family: 'Cinzel';
-            font-size: 1.2rem;
-            text-align: center;
-            width: 300px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
+    <!-- UPLOAD CHARACTER UI (Paso 2: Identificación) -->
+    <div id="character-upload-ui" class="hidden"
+        style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <h1 class="war-room-title" style="font-size: 6vw !important; margin-bottom: 4vh;">IDENTIFÍCATE</h1>
 
-        .void-input:focus {
-            border-color: var(--gold-accent);
-            box-shadow: 0 0 15px rgba(201, 169, 89, 0.2);
-            background: rgba(10, 10, 10, 0.9);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-    </style>
-
-    <!-- GAME UI -->
-    <div id="game-ui">
-        <!-- DM TOOLBAR (Top Right) -->
-        <div class="dm-toolbar" id="dm-toolbar">
-            <div class="tool-btn" onclick="Director.spawnNPC()" title="Spawn NPC">👤</div>
-            <div class="tool-btn" onclick="Director.spawnMonster()" title="Spawn Monster">👹</div>
-            <div class="tool-btn" onclick="Director.openForge()" title="The Blacksmith">⚒️</div>
-            <div class="tool-btn" onclick="Director.findLoot()" title="Generate Loot">💎</div>
+        <div class="upload-zone" onclick="document.getElementById('char-file-input').click()">
+            <span style="font-size:4vw; display:block; margin-bottom:2vh;">📜</span>
+            <span style="font-family:'Cinzel'; font-size:2vw; color:#ccc;">CLICK PARA SELECCIONAR TU FICHA
+                (.JSON)</span>
+            <input type="file" id="char-file-input" style="display:none" accept=".json"
+                onchange="WarRoomUI.handleFileUpload(this)">
         </div>
-        <!-- DM Console (Right) -->
-        <div class="dm-console">
-            <div class="console-header">CONTROLES DE CAMPAÑA</div>
-            <ul class="console-list">
-                <li>Escribe en la barra inferior (The Quill):</li>
-                <li><span class="console-cmd">/rain</span> - Lluvia ambiental dinámica.</li>
-                <li><span class="console-cmd">/danger</span> - Modo combate (Música/Tono).</li>
-                <li><span class="console-cmd">/calm</span> - Resetear ambiente.</li>
-                <li><span class="console-cmd">/reveal</span> - Despejar niebla completa.</li>
-                <li><span class="console-cmd">/roll 1d20</span> - Tirada pública.</li>
-                <li><span class="console-cmd">/say [msg]</span> - Narrador omnisciente.</li>
-            </ul>
-            <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
-                <span style="font-size:0.7rem; color:#666; font-family:'Inter';">ZOOM: Rueda del Ratón / DOBLE CLICK:
-                    Reset Camara</span>
+    </div>
+
+    <!-- LOBBY UI (Paso 3: Espera y Sintonización Circulares) -->
+    <div id="lobby-ui" class="lobby-ui hidden">
+        <!-- Header Info -->
+        <div class="lobby-header">
+            <h2 style="font-family:'Cinzel'; color:white; font-size:3vw; margin:0;">SINTONIZANDO ALMAS</h2>
+            <div class="lobby-status">
+                ALMAS SINTONIZADAS: <span id="soul-counter" class="soul-counter">0/4</span> | SALA: <span
+                    id="code-display-lobby">---</span>
             </div>
         </div>
 
-        <!-- Character List (Left) -->
-        <div class="panel-left">
-            <div class="console-header" style="color:var(--gold-accent);">DRAMATIS PERSONAE</div>
-            <div id="minis-list" style="display: flex; flex-direction: column; margin-top:15px;"></div>
+        <!-- The Portrait Grid (Circular) -->
+        <div class="soul-grid-container" id="soul-grid">
+            <div class="soul-card empty"></div>
+            <div class="soul-card empty"></div>
+            <div class="soul-card empty"></div>
+            <div class="soul-card empty"></div>
         </div>
 
-        <!-- The Quill -->
+        <!-- Bottom Controls -->
+        <div class="lobby-controls">
+            <button class="mute-btn" onclick="WarRoomUI.toggleMute()" title="Silenciar Música">🔊</button>
+        </div>
+    </div>
+
+    <!-- GAME UI (Initial Hidden State) -->
+    <div id="game-ui" class="game-ui hidden">
+        <div class="dm-toolbar"></div>
+        <div class="dm-console"></div>
         <div class="the-quill">
-            <span style="color: var(--gold-accent); font-size: 1.5rem;">✦</span>
-            <input type="text" class="quill-input"
-                placeholder="Escribe un comando (/rain, /danger) o narra la escena..." id="cmd-input">
+            <input type="text" id="cmd-input" placeholder="Escribe comandos..." style="width:100%; padding: 10px;">
         </div>
     </div>
 
+    <!-- SCRIPT LOGIC (WarRoomUI V3) -->
+    <script>
+        const WarRoomUI = {
+            bgm: null,
+            myCharacter: null,
+
+            createRoom: () => {
+                const code = 'ROOM-' + Math.floor(Math.random() * 9000 + 1000);
+                localStorage.setItem('soulforge_role', 'DM');
+                localStorage.setItem('soulforge_room', code);
+
+                const btn = document.querySelector('.btn-gold');
+                btn.innerText = "FORJANDO SALA...";
+                btn.style.opacity = 0.8;
+
+                setTimeout(() => {
+                    window.location.href = `configuracion_destino.html?room=${code}&dm=true`;
+                }, 800);
+            },
+
+            joinRoom: () => {
+                const code = document.getElementById('room-code-input').value.trim();
+                if (!code) return alert("Por favor, introduce el CÓDIGO DE LA SALA.");
+
+                localStorage.setItem('soulforge_role', 'PLAYER');
+                localStorage.setItem('soulforge_room', code);
+
+                // PASO 1: Ir a Upload
+                document.getElementById('connection-panel').classList.add('hidden');
+                document.getElementById('character-upload-ui').classList.remove('hidden');
+
+                // Audio
+                this.bgm = new Audio('lobby_theme.wav');
+                this.bgm.loop = true;
+                this.bgm.volume = 0.5;
+                this.bgm.play().catch(e => console.log("Audio requires interaction"));
+            },
+
+            handleFileUpload: (input) => {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const json = JSON.parse(e.target.result);
+                            WarRoomUI.myCharacter = json;
+
+                            // PASO 2: Ir a Lobby
+                            document.getElementById('character-upload-ui').classList.add('hidden');
+                            document.getElementById('lobby-ui').classList.remove('hidden');
+
+                            document.getElementById('code-display-lobby').innerText = localStorage.getItem('soulforge_room');
+                            WarRoomUI.renderMyToken(json);
+
+                        } catch (err) {
+                            alert("Error: El archivo no es un JSON válido.");
+                        }
+                    };
+                    reader.readAsText(input.files[0]);
+                }
+            },
+
+            renderMyToken: (charData) => {
+                const name = charData.identidad ? charData.identidad.nombre : "Desconocido";
+                const imgUrl = charData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
+
+                // Determine Tier
+                let tierClass = 'tier-d'; // Default: Bronce
+
+                // 1. Explicit Tier in JSON
+                if (charData.tier) {
+                    const t = charData.tier.toLowerCase();
+                    if (['e', 'd', 'c', 'b', 'a', 's', 'ss', 'sss'].includes(t)) {
+                        tierClass = `tier-${t}`;
+                    }
+                }
+                // 2. Fallback: Calculate from attributes (Power)
+                else if (charData.attributes && charData.attributes.power) {
+                    const p = charData.attributes.power;
+                    if (p >= 99) tierClass = 'tier-sss';
+                    else if (p >= 95) tierClass = 'tier-ss';
+                    else if (p >= 90) tierClass = 'tier-s';
+                    else if (p >= 80) tierClass = 'tier-a';
+                    else if (p >= 60) tierClass = 'tier-b';
+                    else if (p >= 40) tierClass = 'tier-c';
+                }
+
+                // Fill first empty slot
+                const slot = document.querySelector('#soul-grid .soul-card.empty');
+                if (slot) {
+                    slot.className = `soul-card filled ready-flash ${tierClass}`;
+                    slot.innerHTML = `<img src="${imgUrl}"><div class="soul-info">${name}</div>`;
+
+                    // Update counter (Simulated increment)
+                    const current = parseInt(document.getElementById('soul-counter').innerText.split('/')[0]) || 0;
+                    document.getElementById('soul-counter').innerText = `${current + 1}/4`;
+                }
+            },
+
+            toggleMute: () => {
+                if (!WarRoomUI.bgm) return;
+                WarRoomUI.bgm.muted = !WarRoomUI.bgm.muted;
+            }
+        };
+    </script>
+
+    <!-- Legacy Director Logic -->
     <script type="module">
-        import { getRoomManager } from './js/warroom/room-manager.js';
-
-        // GLOBAL UI CONTROLLER
-        window.WarRoomUI = {
-            manager: null,
-
-            init() {
-                console.log("⚔️ War Room Interface Initialized");
-                this.manager = getRoomManager({
-                    onStateChange: state => this.renderState(state),
-                    onChatMessage: msg => Director.log(`<b>${msg.from}:</b> ${msg.message}`, msg.isDm ? 'dm' : 'chat'),
-                    onSystemMessage: (msg, type) => Director.log(msg, 'system'),
-                    onPlayerAction: (action, data) => {
-                        if (action === 'joined') Director.log(`${data.user_name} ha entrado.`, 'system');
-                    },
-                    onTokenMoved: (id, pos) => Director.updateTokenPos(id, pos)
-                });
-            },
-
-            async createRoom() {
-                const name = document.getElementById('user-name').value || "Invitado";
-                const roomCode = await this.manager.createRoom("Campaña Nueva");
-                if (roomCode) {
-                    await this.manager.joinRoom(roomCode, name, "dungeon_master");
-                }
-            },
-
-            async joinRoom() {
-                const name = document.getElementById('user-name').value || "Invitado";
-                const code = document.getElementById('room-code').value.toUpperCase();
-                if (!code) return alert("Ingresa un código de sala");
-
-                await this.manager.joinRoom(code, name, "player");
-            },
-
-            renderState(state) {
-                if (state.status === 'connected') {
-                    // Hide Lobby, Show Game
-                    document.getElementById('lobby-container').classList.add('hidden');
-                    document.getElementById('game-ui').classList.add('active');
-
-                    // Show upload if player
-                    if (state.localCharacter) {
-                        // Character ready
-                    } else {
-                        // Show upload zone somewhere? Or keep it separate
-                    }
-                }
-            }
+        // Basic Director Logic to prevent errors if files missing
+        window.Director = {
+            init: () => console.log("Director initialized"),
+            processCommand: (cmd) => console.log("CMD:", cmd)
         };
+    </script>
+    <!-- Override Logic for Lore Tiers -->
+    <script>
+        // Redefinir renderMyToken para asegurar lógica de Lore
+        if (window.WarRoomUI) {
+            WarRoomUI.renderMyToken = (charData) => {
+                const name = charData.identidad ? charData.identidad.nombre : "Desconocido";
+                const imgUrl = charData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
 
-        // Initialize on load
-        window.addEventListener('load', () => {
-            window.WarRoomUI.init();
-            Director.init();
-        });
+                // Determine Tier (Lore System)
+                let tierClass = 'tier-eco'; // Default: Eco
 
-        // CRITICAL ERROR HANDLER
-        window.onerror = function (msg, url, line) {
-            console.error("Error JS: " + msg + "\nLine: " + line);
-            return false;
-        };
-
-        // ═══════════════════════════════════════════════════════════════
-        // MAP RENDERER - WITCHER STYLE
-        // ═══════════════════════════════════════════════════════════════
-
-        class WitcherStyleMap {
-            constructor(canvas, world) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.world = world;
-
-                // Configuración visual
-                this.style = {
-                    parchment: { base: '#e8dcc4', dark: '#c4b59d', veryDark: '#8b7355', aged: '#d4c4a8' },
-                    ink: { black: '#2a2118', brown: '#4a3728', red: '#8b3a3a', blue: '#3a4a6b', gold: '#8b7355' },
-                    biomes: {
-                        DeepOcean: '#6b8ba8', Ocean: '#8ba8c4', Coast: '#a8c4d4', Beach: '#e8dcc4',
-                        Plains: '#c8d4a8', Forest: '#7a9a68', DenseForest: '#4a6a48', Hills: '#a8b088',
-                        Mountains: '#888888', SnowPeaks: '#e8e8f0', Desert: '#d4c4a0', Swamp: '#6a7a58', Tundra: '#c8d0d8'
-                    }
-                };
-
-                this.render();
-            }
-
-            render() {
-                const { width, height } = this.canvas;
-                this.ctx.clearRect(0, 0, width, height);
-                this.renderParchmentBase();
-                this.renderTerrain();
-                this.renderBiomeIcons();
-                this.renderPaths();
-                this.renderPOIs();
-                this.renderRegionNames();
-                this.renderDecorations();
-                this.renderBorder();
-                this.renderAgingEffects();
-            }
-
-            renderParchmentBase() {
-                const { width, height } = this.canvas;
-                const ctx = this.ctx;
-                const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) / 2);
-                gradient.addColorStop(0, this.style.parchment.base);
-                gradient.addColorStop(0.7, this.style.parchment.aged);
-                gradient.addColorStop(1, this.style.parchment.dark);
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, width, height);
-                // Simple noise
-                const idata = ctx.getImageData(0, 0, width, height);
-                for (let i = 0; i < idata.data.length; i += 4) {
-                    const n = (Math.random() - 0.5) * 10;
-                    idata.data[i] += n; idata.data[i + 1] += n; idata.data[i + 2] += n;
-                }
-                ctx.putImageData(idata, 0, 0);
-            }
-
-            renderTerrain() {
-                const ctx = this.ctx;
-                const cells = this.world.cells;
-                const cw = this.canvas.width / cells[0].length;
-                const ch = this.canvas.height / cells.length;
-
-                for (let y = 0; y < cells.length; y++) {
-                    for (let x = 0; x < cells[y].length; x++) {
-                        const cell = cells[y][x];
-                        if (cell.is_water) {
-                            ctx.fillStyle = cell.biome === 'DeepOcean' ? this.style.biomes.DeepOcean : this.style.biomes.Ocean;
-                            ctx.fillRect(Math.floor(x * cw), Math.floor(y * ch), Math.ceil(cw), Math.ceil(ch));
-                        }
+                // 1. Explicit Tier in JSON
+                if (charData.tier) {
+                    const t = charData.tier.toLowerCase().replace(' ', '_'); // "alma primordial" -> "alma_primordial"
+                    if (['eco', 'sombra', 'alma', 'alma_primordial'].includes(t)) {
+                        tierClass = `tier-${t}`;
                     }
                 }
-                // Coastline
-                ctx.strokeStyle = this.style.ink.brown;
-                ctx.lineWidth = 1;
-                // Simplified coast rendering for performance
-            }
-
-            renderBiomeIcons() {
-                const ctx = this.ctx;
-                const cells = this.world.cells;
-                const cw = this.canvas.width / cells[0].length;
-                const ch = this.canvas.height / cells.length;
-                const density = 8; // Draw every Nth cell
-
-                for (let y = 0; y < cells.length; y += 1) {
-                    for (let x = 0; x < cells[y].length; x += 1) {
-                        // Pseudo-random deterministic check
-                        if ((x * 37 + y * 13) % density !== 0) continue;
-                        const cell = cells[y][x];
-                        if (cell.is_water) continue;
-
-                        const px = x * cw + cw / 2;
-                        const py = y * ch + ch / 2;
-
-                        if (cell.biome.includes('Forest')) this.drawTreeIcon(px, py, cell.biome === 'DenseForest');
-                        else if (cell.biome.includes('Mountain') || cell.biome === 'SnowPeaks') this.drawMountainIcon(px, py, cell.biome === 'SnowPeaks');
-                        else if (cell.biome === 'Hills') this.drawHillIcon(px, py);
-                    }
+                // 2. Fallback: Calculate from Power Attribute
+                else if (charData.attributes && charData.attributes.power) {
+                    const p = charData.attributes.power;
+                    if (p >= 90) tierClass = 'tier-alma-primordial';
+                    else if (p >= 50) tierClass = 'tier-alma';
+                    else if (p >= 20) tierClass = 'tier-sombra';
+                    else tierClass = 'tier-eco';
                 }
-            }
 
-            drawTreeIcon(x, y, dense) {
-                const ctx = this.ctx;
-                const size = dense ? 8 : 6;
-                ctx.fillStyle = dense ? '#3a5a38' : '#5a7a58';
-                ctx.beginPath(); ctx.moveTo(x, y - size); ctx.lineTo(x - size / 2, y + size / 2); ctx.lineTo(x + size / 2, y + size / 2); ctx.fill();
-            }
+                const slot = document.querySelector('#soul-grid .soul-card.empty');
+                if (slot) {
+                    slot.className = `soul-card filled ready-flash ${tierClass}`;
+                    slot.innerHTML = `<img src="${imgUrl}"><div class="soul-info">${name}</div>`;
 
-            drawMountainIcon(x, y, snowy) {
-                const ctx = this.ctx;
-                const size = 12;
-                ctx.fillStyle = snowy ? '#e8e8f0' : '#888';
-                ctx.beginPath(); ctx.moveTo(x, y - size); ctx.lineTo(x - size, y + size / 2); ctx.lineTo(x + size, y + size / 2); ctx.fill();
-                ctx.stroke();
-            }
-
-            drawHillIcon(x, y) {
-                const ctx = this.ctx;
-                ctx.beginPath(); ctx.arc(x, y, 5, Math.PI, 0); ctx.stroke();
-            }
-
-            renderPaths() {
-                const ctx = this.ctx;
-                ctx.strokeStyle = '#5c4033'; // Darker brown
-                ctx.lineWidth = 3;
-                ctx.setLineDash([5, 5]);
-                this.world.paths.forEach(path => {
-                    ctx.beginPath();
-                    if (path.points.length > 0) ctx.moveTo(path.points[0][0], path.points[0][1]);
-                    for (let i = 1; i < path.points.length; i++) ctx.lineTo(path.points[i][0], path.points[i][1]);
-                    ctx.stroke();
-                });
-            }
-
-            renderPOIs() {
-                const ctx = this.ctx;
-                this.world.pois.forEach(poi => {
-                    ctx.font = '20px serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(this.getIcon(poi.poi_type), poi.x, poi.y);
-
-                    ctx.font = '12px Cinzel';
-                    ctx.fillStyle = '#2a2118';
-                    ctx.fillText(poi.name, poi.x, poi.y + 20);
-                });
-            }
-
-            getIcon(type) {
-                const map = {
-                    'Origin': '⭐', 'City': '🏰', 'Village': '🏘️', 'Castle': '🏰',
-                    'Ruins': '🏚️', 'Temple': '⛪', 'Cave': '🕳️', 'Landmark': '🗿',
-                    'DangerZone': '☠️'
-                };
-                return map[type] || '📍';
-            }
-
-            renderRegionNames() {
-                const ctx = this.ctx;
-                ctx.font = 'bold 24px Cinzel';
-                ctx.fillStyle = 'rgba(74, 55, 40, 0.4)';
-                this.world.regions.forEach(reg => {
-                    ctx.save();
-                    ctx.translate(reg.center_x, reg.center_y - 40);
-                    ctx.fillText(reg.name.toUpperCase(), 0, 0);
-                    ctx.restore();
-                });
-            }
-
-            renderDecorations() {
-                // Compass
-                const ctx = this.ctx;
-                ctx.save();
-                ctx.translate(this.canvas.width - 60, this.canvas.height - 60);
-                ctx.beginPath(); ctx.arc(0, 0, 30, 0, Math.PI * 2); ctx.strokeStyle = '#8b7355'; ctx.stroke();
-                ctx.fillText('N', 0, -15);
-                ctx.restore();
-            }
-
-            renderBorder() {
-                const ctx = this.ctx;
-                ctx.strokeStyle = '#4a3728';
-                ctx.lineWidth = 10;
-                ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            renderAgingEffects() {
-                const ctx = this.ctx;
-                // Vignette
-                const g = ctx.createRadialGradient(this.canvas.width / 2, this.canvas.height / 2, this.canvas.width * 0.4, this.canvas.width / 2, this.canvas.height / 2, this.canvas.width * 0.8);
-                g.addColorStop(0, 'rgba(0,0,0,0)');
-                g.addColorStop(1, 'rgba(60,40,20,0.4)');
-                ctx.fillStyle = g;
-                ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            }
+                    const elCounter = document.getElementById('soul-counter');
+                    const current = parseInt(elCounter.innerText.split('/')[0]) || 0;
+                    elCounter.innerText = `${current + 1}/4`;
+                }
+            };
         }
-
-        const Cartographer = {
-            ctx: null, width: 0, height: 0,
-            init(id) {
-                const c = document.getElementById(id);
-                this.ctx = c.getContext('2d');
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-            },
-            resize() {
-                this.width = window.innerWidth;
-                this.height = window.innerHeight;
-                this.ctx.canvas.width = this.width;
-                this.ctx.canvas.height = this.height;
-            },
-            generate() {
-                const ctx = this.ctx;
-                ctx.fillStyle = '#1a1614';
-                ctx.fillRect(0, 0, this.width, this.height);
-                for (let i = 0; i < 30000; i++) {
-                    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(40,30,25,0.3)' : 'rgba(10,5,5,0.3)';
-                    const x = Math.random() * this.width;
-                    const y = Math.random() * this.height;
-                    ctx.beginPath(); ctx.arc(x, y, Math.random() * 4, 0, Math.PI * 2); ctx.fill();
-                }
-                ctx.font = "30px Cinzel"; ctx.fillStyle = "white"; ctx.textAlign = "center";
-                ctx.fillText("Map Generation Failed - Fallback Mode", this.width / 2, this.height / 2);
-            }
-        };
-
-        /* --- CLIENT & DIRECTOR --- */
-        const GameClient = {
-            async generateWorld(characters, w, h) {
-                try {
-                    const res = await fetch('/api/v1/generate-world', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            characters: characters,
-                            config: { width: w, height: h, seed: Math.floor(Math.random() * 100000) }
-                        }),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    if (!res.ok) throw new Error();
-                    return await res.json();
-                } catch (e) { return null; }
-            },
-            async getLoot() {
-                try {
-                    const res = await fetch('/api/v1/loot');
-                    return await res.json();
-                } catch (e) { return null; }
-            },
-            async forge(type, quality, skill) {
-                try {
-                    const res = await fetch('/api/v1/forge', {
-                        method: 'POST',
-                        body: JSON.stringify({ item_type: type, quality, skill }),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    return await res.json();
-                } catch (e) { return null; }
-            }
-        };
-
-        const Director = {
-            souls: [],
-            scale: 1, x: 0, y: 0,
-
-            init() {
-                this.setupInputs();
-                Fog.init();
-                this.setupMapNav();
-            },
-
-            setupMapNav() {
-                const container = document.getElementById('world-container');
-                let isDragging = false;
-                let lastX = 0, lastY = 0;
-
-                container.addEventListener('mousedown', e => {
-                    // Only drag if clicking on background (not on tokens)
-                    if (e.target === container || e.target.id === 'world-canvas' || e.target.id === 'fog-canvas') {
-                        isDragging = true;
-                        lastX = e.clientX;
-                        lastY = e.clientY;
-                        container.style.cursor = 'grabbing';
-                    }
-                });
-
-                window.addEventListener('mousemove', e => {
-                    if (!isDragging) return;
-                    e.preventDefault();
-
-                    const dx = e.clientX - lastX;
-                    const dy = e.clientY - lastY;
-                    lastX = e.clientX;
-                    lastY = e.clientY;
-
-                    World.x += dx;
-                    World.y += dy;
-                    World.updateTransform();
-                });
-
-                window.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    container.style.cursor = 'default';
-                });
-            },
-
-            setupInputs() {
-                const inp = document.getElementById('cmd-input');
-                inp.addEventListener('keypress', e => { if (e.key === 'Enter') Director.processCommand(e.target.value); });
-
-                const dz = document.getElementById('drop-zone');
-                const fi = document.getElementById('file-input');
-
-
-
-                // DRAG EVENTS
-                dz.addEventListener('dragover', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    dz.style.borderColor = 'white';
-                    dz.style.background = 'rgba(255,255,255,0.05)';
-                });
-                dz.addEventListener('dragleave', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    dz.style.borderColor = 'rgba(255,255,255,0.1)';
-                    dz.style.background = 'transparent';
-                });
-                dz.addEventListener('drop', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    dz.style.borderColor = 'rgba(255,255,255,0.1)';
-                    dz.style.background = 'transparent';
-                    if (e.dataTransfer.files.length > 0) {
-                        Array.from(e.dataTransfer.files).forEach(f => Director.readFile(f));
-                    }
-                });
-
-                // INPUT EVENT
-                fi.addEventListener('change', (e) => {
-                    if (e.target.files.length > 0) {
-                        Array.from(e.target.files).forEach(f => Director.readFile(f));
-                        e.target.value = '';
-                    }
-                });
-            },
-
-            readFile(file) {
-                const dzText = document.querySelector('.void-text span:first-child');
-                if (dzText) dzText.innerText = "INVOCANDO...";
-
-                const r = new FileReader();
-                r.onload = async ev => {
-                    try {
-                        const localJson = JSON.parse(ev.target.result);
-                        console.log("JSON Parsed:", localJson);
-
-                        // Validate minimal structure
-                        if (!localJson.identidad) throw new Error("Formato inválido (Falta Identidad)");
-
-                        let finalJson = localJson;
-
-                        // If allowed, validate with server
-                        if (localJson.id) {
-                            try {
-                                const res = await fetch(`/api/v1/character/${localJson.id}`);
-                                if (res.ok) {
-                                    finalJson = await res.json();
-                                    console.log("Validated with server:", finalJson.identidad.nombre);
-                                }
-                            } catch (e) {
-                                console.warn("Validation skipped (Offline/Error)");
-                            }
-                        }
-
-                        // Add to state
-                        Director.souls.push(finalJson);
-                        Director.renderLobby();
-
-                        if (dzText) dzText.innerText = "ALMA INVOCADA";
-                        setTimeout(() => { if (dzText) dzText.innerText = "ARRASTRA TUS ALMAS"; }, 2000);
-
-                    } catch (e) {
-                        console.error(e);
-                        alert("Error: " + e.message);
-                        if (dzText) dzText.innerText = "ERROR";
-                    }
-                };
-                r.readAsText(file);
-            },
-
-            renderLobby() {
-                const orb = document.getElementById('orbit');
-                orb.innerHTML = '';
-
-                const count = Director.souls.length;
-                if (count === 0) return;
-
-                const step = 360 / count;
-                Director.souls.forEach((s, i) => {
-                    const el = document.createElement('div');
-                    el.className = 'soul-card';
-                    el.style.backgroundImage = `url('https://api.dicebear.com/7.x/avataaars/svg?seed=${s.identidad.nombre}')`;
-                    el.style.backgroundSize = 'cover';
-
-                    // Position in circle
-                    const a = (i * step) * (Math.PI / 180);
-                    const r = 260; // Radius
-                    const cx = 300; // Center X of orbit container (approx) 
-                    const cy = 300; // Center Y
-
-                    // Note: The lobby container is centered on screen. 
-                    // We need to position relative to the 'orbit' div center.
-                    // css: .soul-orbit { width: 600px; height: 600px; ... }
-
-                    const x = 300 + Math.cos(a) * r - 40; // -40 for half size
-                    const y = 300 + Math.sin(a) * r - 40;
-
-                    el.style.left = x + 'px';
-                    el.style.top = y + 'px';
-
-                    orb.appendChild(el);
-                });
-
-                const btn = document.getElementById('start-btn');
-                btn.classList.add('ready');
-                btn.querySelector('span').innerText = `INICIAR CRÓNICA (${count})`;
-            },
-
-            async startGame() {
-                if (!Director.souls.length) return alert("¡Invoca al least one soul!");
-
-                const lobby = document.getElementById('lobby-container');
-                lobby.style.transition = "all 1s ease";
-                lobby.style.transform = "scale(2)";
-                lobby.style.opacity = "0";
-
-                setTimeout(async () => {
-                    lobby.style.display = 'none';
-                    document.getElementById('game-ui').classList.add('active');
-
-                    const canvas = document.getElementById('world-canvas');
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-
-                    // Generate World
-                    const worldData = await GameClient.generateWorld(Director.souls, canvas.width, canvas.height);
-
-                    if (worldData) {
-                        new WitcherStyleMap(canvas, worldData);
-                    } else {
-                        // Fallback
-                        Cartographer.init('world-canvas');
-                        Cartographer.generate();
-                    }
-
-                    Fog.resize();
-                    Fog.clear(window.innerWidth / 2, window.innerHeight / 2, 180);
-
-                    Director.souls.forEach(s => Director.spawnToken(s, worldData));
-
-                }, 1000);
-
-                World.init();
-            },
-
-            spawnToken(entity, world, customIcon = null) {
-                let startX = window.innerWidth / 2 + (Math.random() - 0.5) * 150;
-                let startY = window.innerHeight / 2 + (Math.random() - 0.5) * 150;
-
-                // Try to find origin POI
-                if (world && world.pois && entity.id) {
-                    const origin = world.pois.find(p => p.owner_character === entity.id);
-                    if (origin) {
-                        startX = origin.x;
-                        startY = origin.y;
-                    }
-                }
-
-                const name = entity.identidad ? entity.identidad.nombre : (entity.name || "Unknown");
-                const icon = customIcon || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
-
-                const t = document.createElement('div');
-                t.className = 'map-token';
-                t.id = 't-' + name.replace(/\s+/g, '');
-                t.style.backgroundImage = `url('${icon}')`;
-                t.style.left = startX + 'px';
-                t.style.top = startY + 'px';
-
-                // Add Speech Bubble
-                t.innerHTML = `<div class="speech-bubble" id="bubble-${name.replace(/\s+/g, '')}"></div>`;
-
-                // Name Tag
-                const tag = document.createElement('div');
-                tag.style.position = 'absolute';
-                tag.style.top = '-20px';
-                tag.style.left = '50%';
-                tag.style.transform = 'translateX(-50%)';
-                tag.style.background = 'rgba(0,0,0,0.7)';
-                tag.style.padding = '2px 5px';
-                tag.style.borderRadius = '4px';
-                tag.style.fontSize = '10px';
-                tag.style.whiteSpace = 'nowrap';
-                tag.innerText = name;
-                t.appendChild(tag);
-
-                // Draggable
-                let drag = false;
-                t.addEventListener('mousedown', (e) => {
-                    drag = true;
-                    e.stopPropagation();
-                    t.style.zIndex = 1000;
-                });
-
-                window.addEventListener('mouseup', () => {
-                    drag = false;
-                    t.style.zIndex = '';
-                });
-
-                window.addEventListener('mousemove', e => {
-                    if (drag) {
-                        // Adjust for token center (20px offset)
-                        t.style.left = (e.clientX - 20) + 'px';
-                        t.style.top = (e.clientY - 20) + 'px';
-                        if (typeof Fog !== 'undefined') Fog.clear(e.clientX, e.clientY, 120);
-                    }
-                });
-
-                document.getElementById('map-tokens-layer').appendChild(t);
-
-                // Add to sidebar list
-                const role = entity.rol || entity.type || 'Unknown';
-                const card = document.createElement('div');
-                card.className = 'entity-card';
-                card.innerHTML = `<div class="entity-avatar" style="background-image:url('${icon}')"></div>
-                                      <div><div class="entity-name">${name}</div><div class="entity-role">${role}</div></div>`;
-
-                const list = document.getElementById('minis-list');
-                if (list) list.appendChild(card);
-            },
-
-            spawnMonster() {
-                const name = prompt("Tipo de Monstruo:");
-                if (!name) return;
-                const icon = `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
-                this.spawnToken({ name: name, type: 'MONSTER' }, null, icon);
-            },
-
-            async findLoot() {
-                const item = await GameClient.getLoot();
-                if (item) {
-                    this.log(`💎 Has encontrado: <b>${item.name}</b> (${item.rarity} ${item.item_type}). <br><i>${item.description}</i>`);
-                }
-            },
-
-            async openForge() {
-                const type = prompt("¿Qué quieres forjar? (weapon, armor, potion)");
-                if (!type) return;
-                const skill = prompt("Nivel de habilidad del herrero (1-100):") || 50;
-
-                this.log(`🔨 Forjando ${type}...`, 'system');
-                const item = await GameClient.forge(type, 100, parseInt(skill));
-
-                if (item) {
-                    this.log(`🔥 ÉXITO! Se ha creado: <b>${item.name}</b> (${item.rarity}). <br><i>${item.description}</i>`);
-                }
-            },
-
-            log(msg, type = 'info') {
-                const consoleList = document.querySelector('.console-list');
-                if (consoleList) {
-                    const li = document.createElement('li');
-                    li.innerHTML = msg;
-                    if (type === 'system') li.style.color = 'var(--gold-accent)';
-                    consoleList.appendChild(li);
-                    consoleList.scrollTop = consoleList.scrollHeight;
-                }
-            },
-
-            processCommand(txt) {
-                const i = document.getElementById('cmd-input'); i.value = '';
-                const cmd = txt.trim().toLowerCase();
-
-                if (cmd === '/rain') document.getElementById('weather-layer').className = 'active-weather';
-                else if (cmd === '/calm') document.getElementById('weather-layer').className = '';
-                else if (cmd === '/reveal') Fog.toggle();
-                else if (txt.startsWith('/say ')) alert("Narrador: " + txt.replace('/say ', ''));
-            }
-        };
-
-        const World = {
-            scale: 1, x: 0, y: 0, zoomSpeed: 0.1,
-            init() {
-                window.addEventListener('wheel', e => {
-                    const delta = Math.sign(e.deltaY) * -1;
-                    const newScale = Math.max(0.5, Math.min(3.0, this.scale + delta * this.zoomSpeed));
-                    this.scale = newScale;
-                    this.updateTransform();
-                });
-                window.addEventListener('dblclick', () => { this.scale = 1; this.x = 0; this.y = 0; this.updateTransform(); });
-            },
-            updateTransform() {
-                const el = document.getElementById('world-container');
-                el.style.transform = `scale(${this.scale}) translate(${this.x}px, ${this.y}px)`;
-            }
-        };
-
-        const Fog = {
-            ctx: null, width: 0, height: 0, active: true,
-            init() {
-                const c = document.getElementById('fog-canvas');
-                this.ctx = c.getContext('2d');
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-            },
-            resize() {
-                this.width = window.innerWidth; this.height = window.innerHeight;
-                this.ctx.canvas.width = this.width; this.ctx.canvas.height = this.height;
-                if (this.active) this.fill();
-            },
-            fill() {
-                if (!this.active) return;
-                this.ctx.globalCompositeOperation = 'source-over';
-                this.ctx.fillStyle = 'black';
-                this.ctx.fillRect(0, 0, this.width, this.height);
-            },
-            clear(x, y, radius) {
-                if (!this.active) return;
-                this.ctx.globalCompositeOperation = 'destination-out';
-                const g = this.ctx.createRadialGradient(x, y, radius * 0.5, x, y, radius);
-                g.addColorStop(0, 'rgba(0,0,0,1)');
-                g.addColorStop(1, 'rgba(0,0,0,0)');
-                this.ctx.fillStyle = g;
-                this.ctx.beginPath(); this.ctx.arc(x, y, radius, 0, Math.PI * 2); this.ctx.fill();
-                this.ctx.globalCompositeOperation = 'source-over';
-            },
-            toggle() {
-                this.active = !this.active;
-                this.active ? this.fill() : this.ctx.clearRect(0, 0, this.width, this.height);
-            }
-        };
-
-        // GLOBAL DRAG PROTECTION
-        // This prevents the browser from opening the file (navigating away) if the user misses the drop zone
-        const preventDefault = (e) => { e.preventDefault(); e.stopPropagation(); };
-        window.addEventListener('dragenter', preventDefault);
-        window.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Optional: visual cue on the whole body
-            document.getElementById('lobby-container').style.boxShadow = "inset 0 0 50px rgba(255, 215, 0, 0.2)";
-        });
-
-        window.addEventListener('dragleave', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.getElementById('lobby-container').style.boxShadow = "none";
-        });
-
-        window.addEventListener('drop', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.getElementById('lobby-container').style.boxShadow = "none";
-
-            // Check if we are in the lobby
-            const lobby = document.getElementById('lobby-container');
-            if (lobby.style.display !== 'none' && !lobby.classList.contains('hidden')) {
-                if (e.dataTransfer.files.length > 0) {
-                    Array.from(e.dataTransfer.files).forEach(f => Director.readFile(f));
-                }
-            }
-        });
-
-        // Expose Director to Global Scope for HTML onclicks
-        window.Director = Director;
     </script>
 </body>
 

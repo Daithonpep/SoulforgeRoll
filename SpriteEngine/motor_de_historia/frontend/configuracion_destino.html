@@ -25,6 +25,33 @@
         <header class="header-destino">
             <h1>Tablero del Destino</h1>
             <p class="subtitle">Configura el tejido de la realidad antes de que comience la partida</p>
+
+            <!-- DISPLAY CÓDIGO DE SALA -->
+            <div id="room-code-badge"
+                style="display:none; margin-top:15px; background:rgba(0,0,0,0.6); padding:10px 20px; border:1px solid #ffd700; border-radius:4px; display:inline-block;">
+                <span style="color:#aaa; font-family:'Cinzel'; margin-right:10px;">CÓDIGO DE SALA:</span>
+                <span id="current-room-code"
+                    style="color:#ffd700; font-family:'Cinzel'; font-size:1.5rem; font-weight:bold; letter-spacing:2px;">----</span>
+                <button
+                    onclick="navigator.clipboard.writeText(document.getElementById('current-room-code').innerText); this.innerText='¡Copiado!'"
+                    style="background:transparent; border:none; color:#aaa; cursor:pointer; margin-left:10px; font-size:1.2rem;"
+                    title="Copiar Código">📋</button>
+            </div>
+
+            <script>
+                // Auto-detect room code from URL
+                document.addEventListener('DOMContentLoaded', () => {
+                    const params = new URLSearchParams(window.location.search);
+                    const roomCode = params.get('room') || localStorage.getItem('soulforge_room');
+                    const badge = document.getElementById('room-code-badge');
+                    const codeSpan = document.getElementById('current-room-code');
+
+                    if (roomCode) {
+                        badge.style.display = 'inline-block';
+                        codeSpan.innerText = roomCode;
+                    }
+                });
+            </script>
         </header>
 
         <!-- Personajes Activos -->

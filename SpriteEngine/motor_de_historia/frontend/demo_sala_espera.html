@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEMO VISUAL V2 - Sala Reactiva</title>
+    <!-- CSS NUCLEAR & REACTIVE SYSTEM (DEMO VERSION) -->
+    <style>
+        /* ============ RESET & BASE ============ */
+        :root {
+            --gold: #c9a959;
+            --black: #050505;
+            --cyan-ether: #00f3ff;
+            --blood-mist: rgba(130, 0, 0, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--black);
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            color: white;
+            transition: background 1s ease;
+        }
+
+        /* ============ BACKGROUND ============ */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            background-image: url('lobby.png');
+            /* Asegurate de tener la imagen */
+            background-size: cover;
+            background-position: center;
+            filter: blur(2px) brightness(0.3);
+            transition: all 1s ease;
+        }
+
+        /* AMBIENTE REACTIVO */
+        .atmosphere-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: transparent;
+            transition: background 2s ease;
+            mix-blend-mode: overlay;
+        }
+
+        /* ============ LOBBY UI (GRID SYSTEM) ============ */
+        #lobby-ui {
+            z-index: 100;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .lobby-header {
+            padding: 4vh;
+            text-align: center;
+        }
+
+        .lobby-status {
+            font-family: 'Cinzel', serif;
+            color: #888;
+            letter-spacing: 2px;
+            font-size: 2vh;
+            margin-top: 10px;
+        }
+
+        .soul-counter {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        /* GRID DE RETRATOS */
+        .soul-grid-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2vw;
+            padding: 0 5vw;
+        }
+
+        .soul-card {
+            width: 18vw;
+            height: 18vw;
+            /* Square for circle */
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px dashed #444;
+            /* Silueta vacía */
+            border-radius: 50%;
+            /* CIRCULAR */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        /* Estado VACÍO */
+        .soul-card.empty::after {
+            content: '?';
+            font-family: 'Cinzel', serif;
+            font-size: 5vw;
+            color: #333;
+        }
+
+        /* Estado LLENO */
+        .soul-card.filled {
+            background-color: black;
+            border: 4px solid #666;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .soul-card.filled img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .soul-info {
+            position: absolute;
+            bottom: -5vh;
+            width: 150%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            color: #ccc;
+            font-size: 1.5vw;
+            font-weight: bold;
+            text-shadow: 0 2px 5px black;
+            background: transparent;
+        }
+
+        /* TIERS & AURAS */
+        .soul-card.tier-sss {
+            border-color: var(--cyan-ether);
+            box-shadow: 0 0 30px var(--cyan-ether), inset 0 0 20px var(--cyan-ether);
+            animation: pulseAura 3s infinite;
+        }
+
+        .soul-card.ready-flash {
+            animation: flashReady 0.5s ease-out;
+        }
+
+        @keyframes pulseAura {
+            0% {
+                box-shadow: 0 0 20px var(--cyan-ether);
+            }
+
+            50% {
+                box-shadow: 0 0 50px var(--cyan-ether);
+            }
+
+            100% {
+                box-shadow: 0 0 20px var(--cyan-ether);
+            }
+        }
+
+        @keyframes flashReady {
+            0% {
+                filter: brightness(1);
+                transform: scale(1);
+            }
+
+            50% {
+                filter: brightness(2);
+                transform: scale(1.1);
+            }
+
+            100% {
+                filter: brightness(1);
+                transform: scale(1);
+            }
+        }
+
+        /* CONTROLES INFERIORES */
+        .lobby-controls {
+            padding: 4vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .mute-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #555;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mute-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        .drop-zone-hint {
+            color: #666;
+            font-family: 'Roboto';
+            font-size: 1.5vh;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px dashed #444;
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        /* DEMO TOOLS PANEL (Solo para esta demo) */
+        .demo-tools {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid gold;
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 9999;
+            display: flex;
+            gap: 10px;
+        }
+
+        .demo-btn {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .demo-btn:hover {
+            background: #555;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+    </style>
+</head>
+
+<body>
+
+    <!-- START OVERLAY -->
+    <div id="start-overlay" onclick="startDemo()"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:99999; display:flex; justify-content:center; align-items:center; cursor:pointer;">
+        <h1 style="color:white; font-family: sans-serif;">CLICK PARA INICIAR DEMO V2</h1>
+    </div>
+
+    <!-- Background Layers -->
+    <div class="background-layer">
+        <div class="background-image"></div>
+    </div>
+
+    <!-- Atmosphere -->
+    <div id="atmosphere-overlay" class="atmosphere-overlay"></div>
+
+    <!-- UI -->
+    <div id="lobby-ui" class="lobby-ui">
+        <!-- Header -->
+        <div class="lobby-header">
+            <h2 style="font-family:'Cinzel', serif; color:white; font-size:3vw; margin:0;">SINTONIZANDO ALMAS</h2>
+            <div class="lobby-status">
+                ALMAS SINTONIZADAS: <span id="soul-counter" class="soul-counter">0/4</span> | SALA: <span
+                    style="color:white;">DEMO-2026</span>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="soul-grid-container" id="soul-grid">
+            <div class="soul-card empty" id="slot-0"></div>
+            <div class="soul-card empty" id="slot-1"></div>
+            <div class="soul-card empty" id="slot-2"></div>
+            <div class="soul-card empty" id="slot-3"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="lobby-controls">
+            <div class="drop-zone-hint">VERSIÓN DEMO - USA LOS BOTONES ABAJO</div>
+            <button class="mute-btn" onclick="toggleMute()">🔊</button>
+        </div>
+    </div>
+
+    <!-- DEMO CONTROLS -->
+    <div class="demo-tools">
+        <button class="demo-btn" onclick="addSoul('normal')">+ Normal</button>
+        <button class="demo-btn" onclick="addSoul('sss')">+ Tier SSS</button>
+        <button class="demo-btn" onclick="toggleAtmosphere()" style="color:red;">⚠ Atmósfera</button>
+        <button class="demo-btn" onclick="resetGrid()">Limpiar</button>
+    </div>
+
+    <script>
+        let bgm = null;
+        let isMuted = false;
+        let filledSlots = 0;
+
+        function startDemo() {
+            document.getElementById('start-overlay').style.display = 'none';
+            bgm = new Audio('lobby_theme.wav');
+            bgm.loop = true;
+            bgm.volume = 0.5;
+            bgm.play().catch(e => console.log("Audio file missing or blocked"));
+        }
+
+        function toggleMute() {
+            if (!bgm) return;
+            isMuted = !isMuted;
+            bgm.muted = isMuted;
+            document.querySelector('.mute-btn').innerText = isMuted ? '🔇' : '🔊';
+        }
+
+        function addSoul(type) {
+            if (filledSlots >= 4) return alert("Sala llena");
+
+            const slot = document.getElementById(`slot-${filledSlots}`);
+            filledSlots++;
+
+            // Create fake data
+            const seeds = ['Garfield', 'Caleb', 'Annie', 'Felix', 'Willow'];
+            const name = seeds[Math.floor(Math.random() * seeds.length)];
+            const img = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name + Math.random()}`;
+
+            slot.className = 'soul-card filled ready-flash';
+            if (type === 'sss') slot.classList.add('tier-sss');
+
+            slot.innerHTML = `<img src="${img}"><div class="soul-info">${type === 'sss' ? '⭐ ' + name : name}</div>`;
+
+            updateCounter();
+        }
+
+        function toggleAtmosphere() {
+            const at = document.getElementById('atmosphere-overlay');
+            if (at.style.background === 'transparent' || at.style.background === '') {
+                at.style.background = 'linear-gradient(to bottom, rgba(50,0,0,0.2), rgba(130,0,0,0.5))';
+            } else {
+                at.style.background = 'transparent';
+            }
+        }
+
+        function resetGrid() {
+            filledSlots = 0;
+            for (let i = 0; i < 4; i++) {
+                const s = document.getElementById(`slot-${i}`);
+                s.className = 'soul-card empty';
+                s.innerHTML = '';
+            }
+            updateCounter();
+            document.getElementById('atmosphere-overlay').style.background = 'transparent';
+        }
+
+        function updateCounter() {
+            document.getElementById('soul-counter').innerText = `${filledSlots}/4`;
+        }
+    </script>
+</body>
+
+</html>
