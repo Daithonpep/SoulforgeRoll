@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Director del Destino</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-panel: #12121a;
+            --bg-card: #1a1a25;
+            --oro: #b8860b;
+            --oro-claro: #daa520;
+            --oro-glow: rgba(184, 134, 11, 0.5);
+            --sombra: #8b1a8b;
+            --trauma: #dc143c;
+            --luz: #ffd700;
+            --azul: #4169e1;
+            --verde: #228b22;
+            --cyan: #00f3ff;
+            --texto: #e0d5c7;
+            --texto-dim: #888;
+            --borde: rgba(184, 134, 11, 0.3);
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: #1a0f05;
+            color: var(--texto);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .dm-layout {
+            display: grid;
+            grid-template-columns: 80px 300px 1fr 380px;
+            grid-template-rows: 60px auto 1fr 80px;
+            height: 100vh;
+            gap: 2px;
+            background: #000;
+        }
+
+        /* HEADER */
+        .dm-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(180deg, rgba(42, 26, 10, 0.95), rgba(18, 18, 26, 0.95));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 2px solid var(--oro);
+        }
+
+        .dm-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dm-logo-icon {
+            font-size: 1.6rem;
+        }
+
+        .dm-logo h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--oro), var(--luz));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tension-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--borde);
+        }
+
+        .tension-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+        }
+
+        .tension-bar {
+            width: 100px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .tension-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: all 0.5s;
+        }
+
+        .tension-fill.low {
+            background: var(--verde);
+        }
+
+        .tension-fill.medium {
+            background: var(--oro);
+        }
+
+        .tension-fill.high {
+            background: var(--trauma);
+        }
+
+        .tension-fill.critical {
+            background: #8b0000;
+            animation: pulse 1s infinite;
+        }
+
+        .tension-value {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--oro);
+        }
+
+        @keyframes pulse {
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .dm-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--borde);
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--texto);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-btn:hover {
+            background: var(--oro);
+            color: #000;
+        }
+
+        .header-btn.primary {
+            background: linear-gradient(135deg, var(--verde), #1a6b1a);
+            border-color: var(--verde);
+        }
+
+        /* BARRA DE AMBIENTACIÓN */
+        .ambience-bar {
+            grid-column: 3 / 4;
+            background: rgba(18, 18, 26, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .ambience-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0 10px;
+            border-right: 1px solid var(--borde);
+        }
+
+        .ambience-group:last-child {
+            border-right: none;
+        }
+
+        .ambience-label {
+            font-size: 0.7rem;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+            margin-right: 5px;
+        }
+
+        .ambience-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--borde);
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--texto);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .ambience-btn:hover {
+            background: var(--oro);
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .ambience-btn.active {
+            background: var(--oro);
+            color: #000;
+            box-shadow: 0 0 10px var(--oro-glow);
+        }
+
+        /* TOOLBAR */
+        .dm-toolbar {
+            grid-row: 2 / 5;
+            background: rgba(26, 15, 5, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 4px;
+            border-right: 1px solid var(--borde);
+        }
+
+        .toolbar-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: transparent;
+            color: var(--texto-dim);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            transition: all 0.3s;
+        }
+
+        .toolbar-btn:hover {
+            color: var(--texto);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .toolbar-btn.active {
+            color: var(--oro);
+            background: rgba(184, 134, 11, 0.15);
+        }
+
+        .toolbar-btn .icon {
+            font-size: 1.4rem;
+        }
+
+        .toolbar-btn .label {
+            font-size: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .toolbar-divider {
+            width: 35px;
+            height: 1px;
+            background: var(--borde);
+            margin: 6px 0;
+        }
+
+        /* BIBLIOTECA */
+        .dm-biblioteca {
+            grid-row: 2 / 5;
+            background: rgba(18, 18, 26, 0.95);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--borde);
+            overflow: hidden;
+        }
+
+        .biblioteca-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .biblioteca-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--oro);
+            margin-bottom: 10px;
+        }
+
+        .biblioteca-search {
+            display: flex;
+            gap: 8px;
+        }
+
+        .biblioteca-search input {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            color: var(--texto);
+            font-size: 0.85rem;
+        }
+
+        .biblioteca-search input:focus {
+            outline: none;
+            border-color: var(--oro);
+        }
+
+        .biblioteca-categorias {
+            display: flex;
+            gap: 4px;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--borde);
+            flex-wrap: wrap;
+        }
+
+        .categoria-tab {
+            padding: 5px 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 15px;
+            color: var(--texto-dim);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .categoria-tab:hover {
+            color: var(--texto);
+        }
+
+        .categoria-tab.active {
+            background: rgba(184, 134, 11, 0.2);
+            border-color: var(--oro);
+            color: var(--oro);
+        }
+
+        .biblioteca-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            align-content: start;
+        }
+
+        .biblioteca-item {
+            background: var(--bg-card);
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .biblioteca-item:hover {
+            border-color: var(--oro);
+            transform: translateY(-2px);
+        }
+
+        .item-icono {
+            font-size: 1.8rem;
+            text-align: center;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .item-nombre {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .item-tipo {
+            font-size: 0.6rem;
+            text-align: center;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+        }
+
+        .item-rango {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+
+        .item-rango.comun {
+            background: #666;
+        }
+
+        .item-rango.raro {
+            background: var(--azul);
+        }
+
+        .item-rango.epico {
+            background: var(--sombra);
+        }
+
+        .item-rango.legendario {
+            background: var(--oro);
+            color: #000;
+        }
+
+        /* MAPA */
+        .dm-mapa-container {
+            background: #0d0d12;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+        }
+
+        .mapa-canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #mapa-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #fog-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .mapa-grid-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(184, 134, 11, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(184, 134, 11, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .mapa-controles {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: rgba(18, 18, 26, 0.95);
+            padding: 8px 15px;
+            border-radius: 25px;
+            border: 1px solid var(--borde);
+        }
+
+        .mapa-control-btn {
+            width: 35px;
+            height: 35px;
+            border: 1px solid var(--borde);
+            background: transparent;
+            color: var(--texto);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .mapa-control-btn:hover {
+            background: var(--oro);
+            color: #000;
+        }
+
+        .mapa-zoom-info {
+            padding: 0 10px;
+            color: var(--texto-dim);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .mapa-coords {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            color: var(--texto-dim);
+        }
+
+        /* Elementos en mapa */
+        .mapa-elemento {
+            position: absolute;
+            cursor: move;
+            z-index: 10;
+        }
+
+        .mapa-elemento:hover {
+            z-index: 100;
+        }
+
+        .mapa-elemento.selected::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border: 2px dashed var(--oro);
+            border-radius: 50%;
+            animation: rotate 8s linear infinite;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .elemento-visual {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border: 3px solid;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .elemento-visual.npc {
+            background: linear-gradient(145deg, #2d4a2d, #1a2e1a);
+            border-color: var(--verde);
+        }
+
+        .elemento-visual.monstruo {
+            background: linear-gradient(145deg, #4a2d2d, #2e1a1a);
+            border-color: var(--trauma);
+        }
+
+        .elemento-visual.jefe {
+            background: linear-gradient(145deg, #4a2d4a, #2e1a2e);
+            border-color: var(--sombra);
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+        }
+
+        .elemento-visual.estructura {
+            background: linear-gradient(145deg, #3d3d2d, #252518);
+            border-color: var(--oro);
+            border-radius: 8px;
+        }
+
+        .elemento-nombre {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.7rem;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .elemento-nivel {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--oro);
+            color: #000;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Texto flotante en mapa */
+        .floating-text {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            color: var(--oro);
+            text-shadow: 0 0 20px var(--oro), 0 2px 10px black;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: fadeFloat 6s forwards;
+            z-index: 500;
+            white-space: nowrap;
+        }
+
+        @keyframes fadeFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        /* PROPIEDADES */
+        .dm-propiedades {
+            grid-row: 2 / 5;
+            background: rgba(18, 18, 26, 0.95);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--borde);
+            overflow: hidden;
+        }
+
+        .propiedades-header {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--borde);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .propiedades-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--oro);
+        }
+
+        .propiedades-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .prop-tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--texto-dim);
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+        }
+
+        .prop-tab.active {
+            color: var(--oro);
+            border-bottom: 2px solid var(--oro);
+        }
+
+        .propiedades-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .prop-section {
+            margin-bottom: 15px;
+        }
+
+        .prop-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--oro);
+            margin-bottom: 10px;
+        }
+
+        .prop-group {
+            margin-bottom: 10px;
+        }
+
+        .prop-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--texto-dim);
+            margin-bottom: 5px;
+        }
+
+        .prop-input {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            color: var(--texto);
+            font-size: 0.85rem;
+        }
+
+        .prop-input:focus {
+            outline: none;
+            border-color: var(--oro);
+        }
+
+        .prop-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 1rem;
+        }
+
+        .stat-input {
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--oro);
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+        }
+
+        .stat-name {
+            font-size: 0.6rem;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+        }
+
+        /* Jugadores */
+        .jugadores-section {
+            border-top: 1px solid var(--borde);
+            padding: 12px;
+            margin-top: auto;
+        }
+
+        .jugadores-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--oro);
+            margin-bottom: 10px;
+        }
+
+        .jugador-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .jugador-card:hover {
+            border-color: var(--oro);
+        }
+
+        .jugador-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .jugador-info {
+            flex: 1;
+        }
+
+        .jugador-nombre {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+        }
+
+        .jugador-tension {
+            font-size: 0.65rem;
+            color: var(--texto-dim);
+        }
+
+        /* CONSOLA DE NARRACIÓN */
+        .dm-console {
+            grid-column: 2 / 4;
+            background: rgba(18, 18, 26, 0.95);
+            border-top: 1px solid var(--borde);
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .console-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .console-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--borde);
+            border-radius: 25px;
+            color: var(--texto);
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .console-input:focus {
+            outline: none;
+            border-color: var(--oro);
+        }
+
+        .console-input::placeholder {
+            color: var(--texto-dim);
+        }
+
+        .console-prefix {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--oro);
+            font-size: 1.2rem;
+        }
+
+        .console-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--oro), #8b6914);
+            border: none;
+            border-radius: 20px;
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .console-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--oro-glow);
+        }
+
+        .console-type-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .console-type-btn {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--borde);
+            border-radius: 15px;
+            color: var(--texto-dim);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .console-type-btn:hover {
+            color: var(--texto);
+        }
+
+        .console-type-btn.active {
+            background: rgba(184, 134, 11, 0.2);
+            border-color: var(--oro);
+            color: var(--oro);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--bg-panel);
+            border: 1px solid var(--oro);
+            border-radius: 8px;
+            padding: 5px 0;
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .context-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .context-item.danger {
+            color: var(--trauma);
+        }
+
+        .context-divider {
+            height: 1px;
+            background: var(--borde);
+            margin: 5px 0;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            background: var(--bg-panel);
+            border: 1px solid var(--oro);
+            border-radius: 10px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1003;
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--borde);
+            border-radius: 3px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .drop-zone-active {
+            background: rgba(184, 134, 11, 0.1) !important;
+        }
+
+        /* SISTEMA DE TURNOS */
+        .turn-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--borde);
+        }
+
+        .turn-phase {
+            font-size: 0.75rem;
+            color: var(--oro);
+            font-family: 'Cinzel', serif;
+        }
+
+        .turn-phase-btn {
+            padding: 5px 12px;
+            border: 1px solid var(--borde);
+            background: transparent;
+            color: var(--texto);
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+
+        .turn-phase-btn:hover {
+            background: var(--oro);
+            color: #000;
+        }
+
+        .turn-phase-btn.active {
+            background: var(--trauma);
+            border-color: var(--trauma);
+            color: #fff;
+        }
+
+        .turn-phase-btn.combat-end {
+            background: var(--verde);
+            border-color: var(--verde);
+        }
+
+        .jugador-card {
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .jugador-card.has-turn {
+            border-color: var(--oro) !important;
+            box-shadow: 0 0 15px var(--oro-glow);
+            animation: pulse-turn 2s infinite;
+        }
+
+        .jugador-card.turn-done {
+            opacity: 0.4;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .jugador-card.turn-done::after {
+            content: '✓';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--verde);
+            font-size: 1.2rem;
+        }
+
+        @keyframes pulse-turn {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--oro-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 25px var(--oro);
+            }
+        }
+
+        .jugador-card.tension-critical {
+            animation: pulse-danger 1s infinite;
+            border-color: var(--trauma) !important;
+        }
+
+        @keyframes pulse-danger {
+
+            0%,
+            100% {
+                background: rgba(220, 20, 60, 0.1);
+            }
+
+            50% {
+                background: rgba(220, 20, 60, 0.3);
+            }
+        }
+
+        .turn-btn {
+            padding: 4px 10px;
+            border: 1px solid var(--oro);
+            background: transparent;
+            color: var(--oro);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            transition: all 0.2s;
+        }
+
+        .turn-btn:hover {
+            background: var(--oro);
+            color: #000;
+        }
+
+        .turn-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .ronda-indicator {
+            text-align: center;
+            padding: 5px;
+            font-size: 0.7rem;
+            color: var(--texto-dim);
+            border-top: 1px solid var(--borde);
+            margin-top: 10px;
+        }
+
+        .ronda-indicator span {
+            color: var(--oro);
+            font-family: 'Cinzel', serif;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--oro), #8b6914);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px var(--oro-glow);
+        }
+
+        .continue-btn:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dm-layout">
+        <!-- HEADER -->
+        <header class="dm-header">
+            <div class="dm-logo"><span class="dm-logo-icon">🎭</span>
+                <h1>Panel del Director</h1>
+            </div>
+            <div class="tension-indicator">
+                <span class="tension-label">Tensión Sala</span>
+                <div class="tension-bar">
+                    <div class="tension-fill medium" id="tension-fill" style="width: 48%;"></div>
+                </div>
+                <span class="tension-value" id="tension-value">48%</span>
+            </div>
+            <div class="dm-header-actions">
+                <button class="header-btn">💾 Guardar</button>
+                <button class="header-btn primary">▶️ Iniciar</button>
+            </div>
+        </header>
+
+        <!-- BARRA AMBIENTACIÓN (sobre el mapa) -->
+        <div class="ambience-bar">
+            <div class="ambience-group">
+                <span class="ambience-label">Clima</span>
+                <button class="ambience-btn active" data-clima="despejado" title="Despejado">☀️</button>
+                <button class="ambience-btn" data-clima="nublado" title="Nublado">☁️</button>
+                <button class="ambience-btn" data-clima="lluvia" title="Lluvia">🌧️</button>
+                <button class="ambience-btn" data-clima="tormenta" title="Tormenta">⛈️</button>
+                <button class="ambience-btn" data-clima="nieve" title="Nieve">❄️</button>
+            </div>
+            <div class="ambience-group">
+                <span class="ambience-label">Hora</span>
+                <button class="ambience-btn" data-hora="amanecer" title="Amanecer">🌅</button>
+                <button class="ambience-btn active" data-hora="dia" title="Día">🌞</button>
+                <button class="ambience-btn" data-hora="atardecer" title="Atardecer">🌇</button>
+                <button class="ambience-btn" data-hora="noche" title="Noche">🌙</button>
+            </div>
+            <div class="ambience-group">
+                <span class="ambience-label">Música</span>
+                <button class="ambience-btn" data-musica="tension" title="Tensión">🎵</button>
+                <button class="ambience-btn" data-musica="combate" title="Combate">⚔️</button>
+                <button class="ambience-btn" data-musica="misterio" title="Misterio">🔮</button>
+                <button class="ambience-btn" data-musica="stop" title="Silencio">🔇</button>
+            </div>
+            <div class="ambience-group">
+                <span class="ambience-label">Niebla</span>
+                <button class="ambience-btn" id="fog-toggle" title="Toggle Niebla">🌫️</button>
+                <button class="ambience-btn" id="fog-clear" title="Despejar Todo">☀️</button>
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <nav class="dm-toolbar">
+            <button class="toolbar-btn active" data-tool="seleccionar"><span class="icon">👆</span><span
+                    class="label">Select</span></button>
+            <button class="toolbar-btn" data-tool="mover"><span class="icon">✋</span><span
+                    class="label">Mover</span></button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" data-tool="npc"><span class="icon">👤</span><span
+                    class="label">NPCs</span></button>
+            <button class="toolbar-btn" data-tool="monstruo"><span class="icon">👹</span><span
+                    class="label">Criatura</span></button>
+            <button class="toolbar-btn" data-tool="jefe"><span class="icon">💀</span><span
+                    class="label">Jefes</span></button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" data-tool="estructura"><span class="icon">🏰</span><span
+                    class="label">Edificio</span></button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" data-tool="niebla"><span class="icon">🌫️</span><span
+                    class="label">Niebla</span></button>
+            <button class="toolbar-btn" data-tool="borrar"><span class="icon">🗑️</span><span
+                    class="label">Borrar</span></button>
+        </nav>
+
+        <!-- BIBLIOTECA -->
+        <aside class="dm-biblioteca">
+            <div class="biblioteca-header">
+                <h2>📚 Biblioteca</h2>
+                <div class="biblioteca-search"><input type="text" placeholder="Buscar..." id="biblioteca-search"></div>
+            </div>
+            <div class="biblioteca-categorias">
+                <button class="categoria-tab active" data-categoria="todos">Todos</button>
+                <button class="categoria-tab" data-categoria="npcs">NPCs</button>
+                <button class="categoria-tab" data-categoria="criaturas">Criaturas</button>
+                <button class="categoria-tab" data-categoria="jefes">Jefes</button>
+                <button class="categoria-tab" data-categoria="estructuras">Edificios</button>
+            </div>
+            <div class="biblioteca-items" id="biblioteca-items"></div>
+        </aside>
+
+        <!-- MAPA -->
+        <main class="dm-mapa-container" id="mapa-container">
+            <div class="mapa-canvas-container" id="canvas-container">
+                <canvas id="mapa-canvas"></canvas>
+                <canvas id="fog-canvas"></canvas>
+                <div class="mapa-grid-overlay"></div>
+            </div>
+            <div class="mapa-controles">
+                <button class="mapa-control-btn" id="zoom-out">−</button>
+                <div class="mapa-zoom-info"><span id="zoom-level">100%</span></div>
+                <button class="mapa-control-btn" id="zoom-in">+</button>
+                <button class="mapa-control-btn" id="toggle-grid">▦</button>
+            </div>
+            <div class="mapa-coords" id="mapa-coords">X: 0 | Y: 0</div>
+        </main>
+
+        <!-- PROPIEDADES -->
+        <aside class="dm-propiedades">
+            <div class="propiedades-header">
+                <h2>⚙️ Propiedades</h2><span id="elemento-info">-</span>
+            </div>
+            <div class="propiedades-tabs">
+                <button class="prop-tab active">General</button>
+                <button class="prop-tab">IA</button>
+                <button class="prop-tab">Loot</button>
+            </div>
+            <div class="propiedades-content">
+                <div class="prop-section">
+                    <div class="prop-section-title">Identidad</div>
+                    <div class="prop-group"><label class="prop-label">Nombre</label><input type="text"
+                            class="prop-input" id="prop-nombre"></div>
+                    <div class="prop-row">
+                        <div class="prop-group"><label class="prop-label">Nivel</label><input type="number"
+                                class="prop-input" id="prop-nivel" value="1"></div>
+                        <div class="prop-group"><label class="prop-label">Rareza</label><select class="prop-input"
+                                id="prop-rareza">
+                                <option>Común</option>
+                                <option>Raro</option>
+                                <option>Épico</option>
+                                <option>Legendario</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="prop-section">
+                    <div class="prop-section-title">Estadísticas</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">❤️</div><input type="number" class="stat-input" value="100">
+                            <div class="stat-name">Vida</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">⚔️</div><input type="number" class="stat-input" value="10">
+                            <div class="stat-name">Ataque</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🛡️</div><input type="number" class="stat-input" value="5">
+                            <div class="stat-name">Def</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="jugadores-section">
+                <div class="jugadores-title">⚔️ Control de Turnos</div>
+
+                <div class="turn-controls">
+                    <span class="turn-phase">Fase:</span>
+                    <button class="turn-phase-btn" id="phase-narrativa">📖 Narrativa</button>
+                    <button class="turn-phase-btn active" id="phase-combate">⚔️ Combate</button>
+                    <button class="turn-phase-btn combat-end" id="combat-end">✓ Fin Combate</button>
+                </div>
+
+                <div id="jugadores-lista">
+                    <div class="jugador-card" data-jugador="1">
+                        <div class="jugador-avatar">🧙</div>
+                        <div class="jugador-info">
+                            <div class="jugador-nombre">Aldric</div>
+                            <div class="jugador-tension">Tensión: 62%</div>
+                        </div>
+                        <button class="turn-btn" data-jugador="1">Dar Turno</button>
+                    </div>
+                    <div class="jugador-card" data-jugador="2">
+                        <div class="jugador-avatar">⚔️</div>
+                        <div class="jugador-info">
+                            <div class="jugador-nombre">Kira</div>
+                            <div class="jugador-tension">Tensión: 35%</div>
+                        </div>
+                        <button class="turn-btn" data-jugador="2">Dar Turno</button>
+                    </div>
+                    <div class="jugador-card tension-critical" data-jugador="3">
+                        <div class="jugador-avatar">✨</div>
+                        <div class="jugador-info">
+                            <div class="jugador-nombre">Vesper</div>
+                            <div class="jugador-tension">⚠️ Tensión: 88%</div>
+                        </div>
+                        <button class="turn-btn" data-jugador="3">Dar Turno</button>
+                    </div>
+                </div>
+
+                <div class="ronda-indicator">Ronda: <span id="ronda-num">1</span></div>
+                <button class="continue-btn" id="continue-story" disabled>Continuar Historia →</button>
+            </div>
+        </aside>
+
+        <!-- CONSOLA DE NARRACIÓN -->
+        <div class="dm-console">
+            <div class="console-type-btns">
+                <button class="console-type-btn active" data-type="narrar">📜 Narrar</button>
+                <button class="console-type-btn" data-type="susurro">👁️ Susurro</button>
+                <button class="console-type-btn" data-type="evento">⚡ Evento</button>
+            </div>
+            <div class="console-input-wrap">
+                <input type="text" class="console-input" id="console-input"
+                    placeholder="Escribe algo para mostrar en el mapa... (Ej: Inicia la cacería del lobo)">
+            </div>
+            <button class="console-btn" id="console-send">Enviar ✨</button>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-item" data-action="editar">✏️ Editar</div>
+        <div class="context-item" data-action="duplicar">📋 Duplicar</div>
+        <div class="context-divider"></div>
+        <div class="context-item danger" data-action="eliminar">🗑️ Eliminar</div>
+    </div>
+
+    <div class="notification" id="notification"><span id="notif-text"></span></div>
+
+    <script src="js/shared/turn-manager.js"></script>
+    <script src="js/dm-panel/dm-panel-core.js"></script>
+</body>
+
+</html>

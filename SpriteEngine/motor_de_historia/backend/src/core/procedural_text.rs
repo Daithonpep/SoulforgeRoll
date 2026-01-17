@@ -44,17 +44,25 @@ impl ProceduralTextGenerator {
         format!("{} {} {}", sujeto, accion, objeto)
     }
     
-    /// Genera una descripción de herida emocional en inglés
+    /// Genera una descripción de herida emocional en inglés (natural y literaria)
     pub fn generar_herida_en(&mut self) -> String {
-        let sujetos = ["He never", "She could never", "They were unable to", "Never managed to"];
-        let acciones = ["forgive himself", "forget", "move past", "let go of", "accept"];
-        let objetos = ["what happened", "the past", "that betrayal", "the mistake", "the truth"];
+        // Frases completas que suenan naturales, no mecánicas
+        let heridas = [
+            "A wound that time refuses to heal",
+            "Guilt clings to them like a second shadow",
+            "The echoes of loss never truly fade",
+            "Some scars run deeper than skin",
+            "Haunted by choices that cannot be undone",
+            "Carries a weight no one else can see",
+            "The past is a ghost that won't rest",
+            "Trust shattered beyond repair",
+            "A betrayal that rewrote their soul",
+            "Forever marked by what was taken",
+            "The memory burns like an open flame",
+            "Broken in ways words cannot capture",
+        ];
         
-        let sujeto = sujetos.choose(&mut self.rng).unwrap();
-        let accion = acciones.choose(&mut self.rng).unwrap();
-        let objeto = objetos.choose(&mut self.rng).unwrap();
-        
-        format!("{} {} {}", sujeto, accion, objeto)
+        heridas.choose(&mut self.rng).unwrap().to_string()
     }
     
     /// Genera una descripción de herida emocional en japonés (corto y natural)
@@ -90,15 +98,23 @@ impl ProceduralTextGenerator {
     }
     
     pub fn generar_mascara_en(&mut self) -> String {
-        let adjetivos = ["Confident", "Cold", "Cheerful", "Helpful", "Cynical", "Distant"];
-        let conectores = ["and", "yet"];
-        let adjetivos2 = ["charismatic", "calculating", "carefree", "selfless", "sarcastic", "watchful"];
+        // Máscaras como descripciones naturales de persona
+        let mascaras = [
+            "Projects confidence to hide inner doubt",
+            "Wears a smile that never reaches their eyes",
+            "The helpful friend everyone relies on",
+            "Cool and detached, always in control",
+            "Charm personified, hiding darker depths",
+            "The cynic who secretly hopes to be proven wrong",
+            "Quiet observer, rarely revealing true thoughts",
+            "Life of the party, lonely in the crowd",
+            "The reliable rock others lean on",
+            "Sharp wit masking vulnerability",
+            "Unshakeable calm that conceals inner storms",
+            "The peacekeeper avoiding their own conflicts",
+        ];
         
-        let adj1 = adjetivos.choose(&mut self.rng).unwrap();
-        let conector = conectores.choose(&mut self.rng).unwrap();
-        let adj2 = adjetivos2.choose(&mut self.rng).unwrap();
-        
-        format!("{} {} {}", adj1, conector, adj2)
+        mascaras.choose(&mut self.rng).unwrap().to_string()
     }
     
     pub fn generar_mascara_jp(&mut self) -> String {
@@ -135,17 +151,23 @@ impl ProceduralTextGenerator {
     }
     
     pub fn generar_frase_tipica_en(&mut self) -> String {
-        let patrones = [
-            ("There's no", vec!["problem", "situation", "crisis"], vec!["without a solution", "I can't handle", "worth worrying about"]),
-            ("Everything", vec!["will be", "turns out", "ends up"], vec!["fine", "as it should", "in its place"]),
-            ("Why", vec!["worry", "complicate things", "think so much"], vec!["?", " about it?", " now?"]),
+        // Frases que un personaje diría naturalmente
+        let frases = [
+            "I've handled worse.",
+            "Trust me, I know what I'm doing.",
+            "No need to worry about that.",
+            "Everything works out in the end.",
+            "We'll cross that bridge when we get there.",
+            "Is that supposed to scare me?",
+            "I've got this under control.",
+            "Don't mistake kindness for weakness.",
+            "People see what they want to see.",
+            "The truth has a way of surfacing.",
+            "Some things are better left unsaid.",
+            "Actions speak louder than words.",
         ];
         
-        let patron = patrones.choose(&mut self.rng).unwrap();
-        let medio = patron.1.choose(&mut self.rng).unwrap();
-        let final_parte = patron.2.choose(&mut self.rng).unwrap();
-        
-        format!("{} {} {}", patron.0, medio, final_parte)
+        frases.choose(&mut self.rng).unwrap().to_string()
     }
     
     pub fn generar_frase_tipica_jp(&mut self) -> String {
@@ -182,17 +204,23 @@ impl ProceduralTextGenerator {
     }
     
     pub fn generar_biografia_fragmento_en(&mut self) -> String {
-        let inicios = ["Born in", "Raised in", "Spent childhood in", "Early years were in"];
-        let lugares = ["a forgotten place", "the shadows", "midst of chaos", "poverty", "a broken home"];
-        let conectores = ["where", "in which", "there"];
-        let eventos = ["learned to survive", "lost innocence", "forged character", "knew pain"];
+        // Fragmentos biográficos que suenan como de una novela
+        let fragmentos = [
+            "Childhood was a lesson in survival",
+            "The streets taught what schools couldn't",
+            "Raised by circumstance more than by family",
+            "Early years forged in hardship and resilience",
+            "Grew up learning to read people, not books",
+            "The past is a country they rarely visit",
+            "Home was wherever felt safe enough to sleep",
+            "Youth spent chasing something always out of reach",
+            "Learned early that trust is earned, not given",
+            "The formative years left marks that don't show",
+            "Came from nothing, determined to become something",
+            "A childhood that ended too soon",
+        ];
         
-        let inicio = inicios.choose(&mut self.rng).unwrap();
-        let lugar = lugares.choose(&mut self.rng).unwrap();
-        let conector = conectores.choose(&mut self.rng).unwrap();
-        let evento = eventos.choose(&mut self.rng).unwrap();
-        
-        format!("{} {} {} {}", inicio, lugar, conector, evento)
+        fragmentos.choose(&mut self.rng).unwrap().to_string()
     }
     
     pub fn generar_biografia_fragmento_jp(&mut self) -> String {
@@ -282,7 +310,123 @@ impl ProceduralTextGenerator {
     }
 
     /// ═══════════════════════════════════════════════════════════════════════════
-    /// FALLBACK UNIVERSAL (La red de seguridad)
+    /// GENERACIÓN DE NECESIDADES Y DESEOS (ENGLISH)
+    /// ═══════════════════════════════════════════════════════════════════════════
+    
+    pub fn generar_necesidad_en(&mut self) -> String {
+        let necesidades = [
+            // Necesidades profundas escritas como una persona
+            "To finally let go of the need to control everything",
+            "To accept that they are worthy of love",
+            "To make peace with who they once were",
+            "To learn that asking for help is not weakness",
+            "To forgive themselves for past mistakes",
+            "To trust that not everyone will leave",
+            "To find worth beyond their achievements",
+            "To embrace imperfection as part of being human",
+            "To stop running from their own reflection",
+            "To believe they deserve a second chance",
+            "To understand that vulnerability is strength",
+            "To realize they don't have to carry this burden alone",
+        ];
+        necesidades.choose(&mut self.rng).unwrap().to_string()
+    }
+
+    /// ═══════════════════════════════════════════════════════════════════════════
+    /// GENERACIÓN DE ARCOS NARRATIVOS (ENGLISH)
+    /// ═══════════════════════════════════════════════════════════════════════════
+
+    pub fn generar_arco_inicio_en(&mut self) -> String {
+        let inicios = [
+            "They haven't yet discovered what they're capable of",
+            "Living behind walls they built long ago",
+            "Going through the motions, but not truly living",
+            "Trapped in patterns that feel impossible to break",
+            "Searching for meaning in all the wrong places",
+            "Holding onto a version of themselves that no longer exists",
+            "Afraid to take the first step toward change",
+            "Convinced that this is as good as it gets",
+        ];
+        inicios.choose(&mut self.rng).unwrap().to_string()
+    }
+
+    pub fn generar_arco_quiebre_en(&mut self) -> String {
+        let quiebres = [
+            "The world forces them to finally confront the truth",
+            "A moment that changes everything they thought they knew",
+            "When the cost of staying the same becomes too high",
+            "A crisis that strips away every pretense",
+            "The point where there's no going back",
+            "Everything they've built comes crashing down",
+            "A betrayal that forces them to question everything",
+            "The moment when running is no longer an option",
+        ];
+        quiebres.choose(&mut self.rng).unwrap().to_string()
+    }
+
+    pub fn generar_arco_resolucion_en(&mut self) -> String {
+        let resoluciones = [
+            "They emerge transformed, scarred but stronger",
+            "Finally at peace with who they've become",
+            "The past no longer holds power over them",
+            "They find strength they never knew they had",
+            "A new chapter begins, written on their own terms",
+            "They learn to carry the weight without being crushed",
+            "Broken pieces reassembled into something new",
+            "The journey continues, but they're no longer alone",
+        ];
+        resoluciones.choose(&mut self.rng).unwrap().to_string()
+    }
+
+    /// ═══════════════════════════════════════════════════════════════════════════
+    /// GENERACIÓN DE GANCHOS DE HISTORIA (ENGLISH)
+    /// ═══════════════════════════════════════════════════════════════════════════
+
+    pub fn generar_gancho_en(&mut self) -> String {
+        let ganchos = [
+            // Ganchos de historia que suenan como sinopsis de novela
+            "A letter arrives bearing news that changes everything",
+            "Someone from the past reappears with unfinished business",
+            "A dying confession reveals a long-buried secret",
+            "An old debt comes due at the worst possible time",
+            "A stranger knows things they shouldn't possibly know",
+            "The discovery of a hidden room, and what it contains",
+            "A chance encounter that proves to be anything but chance",
+            "Whispers of a conspiracy that reaches higher than imagined",
+            "A mysterious package with no return address",
+            "The realization that they've been watched all along",
+        ];
+        ganchos.choose(&mut self.rng).unwrap().to_string()
+    }
+    
+    /// ═══════════════════════════════════════════════════════════════════════════
+    /// FALLBACK UNIVERSAL (La red de seguridad) - INGLÉS
+    /// ═══════════════════════════════════════════════════════════════════════════
+    
+    /// Genera una frase abstracta/profunda en inglés cuando falla la traducción específica.
+    pub fn generar_fallback_en(&mut self) -> String {
+        let abstracciones = [
+            // Frases evocadoras y literarias para cuando todo lo demás falla
+            "Fate has a way of finding those who try to hide",
+            "The soul holds secrets even the mind cannot reach",
+            "Some truths are felt before they are known",
+            "A fire burns that no darkness can extinguish",
+            "Walking the line between shadow and light",
+            "Carrying a purpose that has yet to reveal itself",
+            "Time will tell what words cannot",
+            "A promise that echoes through the years",
+            "The road ahead is uncertain, but the will is not",
+            "What lies beneath the surface runs deeper than expected",
+            "Eyes that have seen too much, and forgotten nothing",
+            "A story still being written, one choice at a time",
+            "Strength forged in fires that never fully died",
+            "The silence speaks volumes to those who listen",
+        ];
+        abstracciones.choose(&mut self.rng).unwrap().to_string()
+    }
+    
+    /// ═══════════════════════════════════════════════════════════════════════════
+    /// FALLBACK UNIVERSAL (La red de seguridad) - JAPONÉS
     /// ═══════════════════════════════════════════════════════════════════════════
     
     /// Genera una frase abstracta/profunda en japonés cuando falla la traducción específica.
@@ -300,7 +444,6 @@ impl ProceduralTextGenerator {
         ];
         abstracciones.choose(&mut self.rng).unwrap().to_string()
     }
-    
     /// ═══════════════════════════════════════════════════════════════════════════
     /// ADAPTACIÓN INTELIGENTE DE TEXTO ACTUALIZADA
     /// ═══════════════════════════════════════════════════════════════════════════
@@ -313,10 +456,49 @@ impl ProceduralTextGenerator {
         
         match target_lang {
             "en" => {
-                // Implementación simple para inglés (se puede expandir igual)
-                if t.contains("nunca") || t.contains("jamás") { self.generar_herida_en() }
-                else if t.contains("confiado") || t.contains("frío") { self.generar_mascara_en() }
-                else { texto_es.to_string() } // Fallback a original para inglés por ahora
+                // Heridas
+                if t.contains("nunca") || t.contains("jamás") || t.contains("dolor") || t.contains("culpa") || t.contains("perdon") {
+                    return self.generar_herida_en();
+                }
+                
+                // Máscaras
+                if t.contains("confiado") || t.contains("frío") || t.contains("alegre") || t.contains("imagen") || t.contains("aparenta") {
+                    return self.generar_mascara_en();
+                }
+                
+                // Frases típicas
+                if t.contains("problema") || t.contains("preocup") || t.contains("todo está") || t.contains("importa") {
+                    return self.generar_frase_tipica_en();
+                }
+                
+                // Biografía
+                if t.contains("nació") || t.contains("creció") || t.contains("infancia") || t.contains("pasó") {
+                    return self.generar_biografia_fragmento_en();
+                }
+                
+                // Necesidades / Deseos / Mentiras
+                if t.contains("aceptar") || t.contains("necesita") || t.contains("desea") || t.contains("cree que") || t.contains("control") {
+                    return self.generar_necesidad_en();
+                }
+                
+                // Arcos Narrativos
+                if t.contains("posibilidad") || t.contains("potencial") || t.contains("incompleto") || t.contains("perdido") {
+                    return self.generar_arco_inicio_en();
+                }
+                if t.contains("momento") || t.contains("decisión") || t.contains("elegir") || t.contains("quiebre") || t.contains("confronta") {
+                    return self.generar_arco_quiebre_en();
+                }
+                if t.contains("aprende") || t.contains("finalmente") || t.contains("paz") || t.contains("resolución") || t.contains("nuevo") {
+                    return self.generar_arco_resolucion_en();
+                }
+                
+                // Ganchos
+                if t.contains("oportunidad") || t.contains("forzado") || t.contains("debe") || t.contains("misión") || t.contains("encargo") {
+                    return self.generar_gancho_en();
+                }
+                
+                // FALLBACK RADICAL: Si nada coincide, devolver algo en inglés genérico
+                self.generar_fallback_en()
             },
             "jp" => {
                 // Detección heurística mejorada

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soulforge - Consola del Jugador</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-panel: #12121a;
+            --bg-card: #1a1a25;
+            --oro: #b8860b;
+            --oro-claro: #daa520;
+            --oro-glow: rgba(184, 134, 11, 0.5);
+            --sombra: #8b1a8b;
+            --trauma: #dc143c;
+            --verde: #228b22;
+            --cyan: #00f3ff;
+            --texto: #e0d5c7;
+            --texto-dim: #888;
+            --borde: rgba(184, 134, 11, 0.3);
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: var(--bg-dark);
+            color: var(--texto);
+            overflow: hidden;
+            height: 100vh;
+            font-size: 1.1vw;
+        }
+
+        .player-layout {
+            display: grid;
+            grid-template-columns: 22vw 1fr 26vw;
+            grid-template-rows: 6vh 1fr 18vh;
+            height: 100vh;
+            gap: 2px;
+            background: #000;
+        }
+
+        /* HEADER */
+        .player-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(180deg, var(--bg-panel), var(--bg-dark));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2vw;
+            border-bottom: 2px solid var(--oro);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2vw;
+        }
+
+        .room-code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.8vh 1.5vw;
+            border-radius: 2vh;
+            border: 1px solid var(--borde);
+            font-family: 'Cinzel', serif;
+            font-size: 1.2vw;
+        }
+
+        .room-code span {
+            color: var(--oro);
+        }
+
+        .tension-display {
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+        }
+
+        .tension-label {
+            font-size: 1vw;
+            color: var(--texto-dim);
+        }
+
+        .tension-orb {
+            width: 5vh;
+            height: 5vh;
+            border-radius: 50%;
+            border: 3px solid var(--trauma);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3vw;
+            color: var(--trauma);
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .tension-orb.low {
+            border-color: var(--verde);
+            color: var(--verde);
+            background: rgba(34, 139, 34, 0.1);
+        }
+
+        .tension-orb.medium {
+            border-color: var(--oro);
+            color: var(--oro);
+            background: rgba(184, 134, 11, 0.1);
+        }
+
+        .tension-orb.high {
+            border-color: var(--trauma);
+            animation: pulse-tension 2s infinite;
+        }
+
+        @keyframes pulse-tension {
+            50% {
+                box-shadow: 0 0 20px var(--trauma);
+            }
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1vw;
+        }
+
+        .header-btn {
+            padding: 1vh 1.5vw;
+            border: 1px solid var(--borde);
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--texto);
+            border-radius: 1vh;
+            cursor: pointer;
+            font-size: 1.1vw;
+            transition: all 0.3s;
+        }
+
+        .header-btn:hover {
+            background: var(--oro);
+            color: #000;
+        }
+
+        /* PANEL PERSONAJE - REDISEÑADO */
+        .character-panel {
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--borde);
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .char-header {
+            padding: 2vh 1.5vw;
+            border-bottom: 1px solid var(--borde);
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent);
+        }
+
+        .character-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6vw;
+            color: var(--oro);
+            margin-bottom: 0.5vh;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .character-title {
+            font-size: 0.9vw;
+            color: var(--texto-dim);
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        /* SECCIONES COMUNES */
+        .panel-section {
+            padding: 1.5vh 1.5vw;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1vw;
+            color: var(--oro-claro);
+            margin-bottom: 1vh;
+            display: flex;
+            align-items: center;
+            gap: 0.5vw;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--borde), transparent);
+        }
+
+        /* GRID DE ATRIBUTOS */
+        .stats-grid-compact {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8vw;
+            margin-bottom: 1.5vh;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--borde);
+            border-radius: 0.5vh;
+            padding: 0.8vh;
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.7vw;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+        }
+
+        .stat-val {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2vw;
+            color: var(--texto);
+            font-weight: bold;
+        }
+
+        .stat-bonus {
+            position: absolute;
+            top: -0.5vh;
+            right: -0.3vw;
+            background: var(--oro);
+            color: #000;
+            font-size: 0.6vw;
+            padding: 0.1vh 0.3vw;
+            border-radius: 0.3vh;
+            font-weight: bold;
+        }
+
+        /* BONUS ACTIVOS */
+        .active-bonuses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5vw;
+        }
+
+        .bonus-tag {
+            background: rgba(34, 139, 34, 0.15);
+            border: 1px solid var(--verde);
+            color: #90ee90;
+            padding: 0.4vh 0.8vw;
+            border-radius: 2vh;
+            font-size: 0.8vw;
+        }
+
+        /* PASIVAS */
+        .passives-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8vh;
+        }
+
+        .passive-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8vw;
+            padding: 0.8vh;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5vh;
+        }
+
+        .passive-icon {
+            color: var(--cyan);
+            font-size: 1vw;
+            margin-top: 0.2vh;
+        }
+
+        .passive-name {
+            font-size: 0.95vw;
+            color: var(--texto);
+            font-weight: bold;
+        }
+
+        .passive-desc {
+            font-size: 0.8vw;
+            color: var(--texto-dim);
+            line-height: 1.2;
+        }
+
+        /* BARRAS VITALES COMPACTAS */
+        .vital-bars-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8vh;
+        }
+
+        .stat-row-compact {
+            display: flex;
+            align-items: center;
+            gap: 0.5vw;
+        }
+
+        .stat-icon-mini {
+            width: 1.2vw;
+            text-align: center;
+        }
+
+        /* AJUSTES HABILIDADES - CORREGIDO */
+        .skill-slot {
+            margin-bottom: 0.8vh;
+            padding: 1.2vh 1vw;
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--borde);
+            border-radius: 1vh;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-slot:hover {
+            border-color: var(--oro);
+            background: rgba(184, 134, 11, 0.1);
+            transform: scale(1.02);
+        }
+
+        .skill-icon {
+            font-size: 1.8vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5vw;
+        }
+
+        .skill-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2vh;
+        }
+
+        .skill-name {
+            font-size: 1vw;
+            font-weight: bold;
+            color: var(--texto);
+        }
+
+        .skill-cost {
+            font-size: 0.85vw;
+        }
+
+        .skill-key {
+            font-size: 0.9vw;
+            opacity: 0.8;
+            border: 1px solid var(--oro);
+            color: var(--oro);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.2vh 0.6vw;
+            border-radius: 0.5vh;
+            min-width: 1.5vw;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Efecto Ripple para clicks */
+        .skill-ripple {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: 0;
+            animation: ripple-fade 0.5s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-fade {
+            to {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        /* ÁREA CENTRAL */
+        .game-view {
+            background: #0d0d12;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .dd-message {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 70%;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid var(--oro);
+            border-radius: 2vh;
+            padding: 3vh 4vw;
+            text-align: center;
+            animation: fadeInMessage 0.5s;
+            z-index: 100;
+            box-shadow: 0 0 40px var(--oro-glow);
+        }
+
+        @keyframes fadeInMessage {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+
+        .dd-message-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2vw;
+            color: var(--oro);
+            text-shadow: 0 0 20px var(--oro-glow);
+            line-height: 1.6;
+        }
+
+        .dd-message-type {
+            font-size: 1vw;
+            color: var(--texto-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1.5vh;
+        }
+
+        /* PANEL SOCIAL */
+        .social-panel {
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--borde);
+            overflow: hidden;
+        }
+
+        .party-section {
+            padding: 1.5vh 1.5vw;
+            border-bottom: 1px solid var(--borde);
+            max-height: 25vh;
+            overflow-y: auto;
+        }
+
+        .party-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2vw;
+            color: var(--oro);
+            margin-bottom: 1.5vh;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .party-member {
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+            padding: 1vh;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1vh;
+            margin-bottom: 1vh;
+        }
+
+        .member-avatar {
+            width: 5vh;
+            height: 5vh;
+            border-radius: 50%;
+            border: 2px solid var(--verde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5vw;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 1.1vw;
+        }
+
+        .member-status {
+            font-size: 0.9vw;
+            color: var(--texto-dim);
+        }
+
+        .member-hp {
+            width: 4vw;
+            height: 0.8vh;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0.4vh;
+            overflow: hidden;
+        }
+
+        .member-hp-fill {
+            height: 100%;
+            background: var(--verde);
+        }
+
+        /* CHAT - ARREGLADO */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .chat-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--borde);
+            flex-shrink: 0;
+        }
+
+        .chat-tab {
+            padding: 1.2vh 1vw;
+            background: transparent;
+            border: none;
+            color: var(--texto-dim);
+            cursor: pointer;
+            font-size: 0.95vw;
+            transition: all 0.3s;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .chat-tab.active {
+            color: var(--oro);
+            border-bottom: 2px solid var(--oro);
+        }
+
+        .chat-tab.secret {
+            color: var(--sombra);
+        }
+
+        .chat-tab.secret.active {
+            color: var(--cyan);
+            border-bottom-color: var(--cyan);
+        }
+
+        .chat-tab.has-new {
+            animation: tab-glow 1s infinite;
+        }
+
+        .chat-tab.has-new::after {
+            content: '●';
+            position: absolute;
+            top: 0.5vh;
+            right: 0.3vw;
+            font-size: 0.6vw;
+            color: var(--cyan);
+        }
+
+        @keyframes tab-glow {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(0, 243, 255, 0.2);
+            }
+        }
+
+        @keyframes pulse-danger {
+
+            0%,
+            100% {
+                background: rgba(220, 20, 60, 0.1);
+            }
+
+            50% {
+                background: rgba(220, 20, 60, 0.3);
+            }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5vh;
+            min-height: 0;
+        }
+
+        .chat-message {
+            margin-bottom: 1.5vh;
+        }
+
+        .chat-message.system {
+            color: var(--oro);
+            font-style: italic;
+            font-size: 1vw;
+            text-align: center;
+            padding: 0.8vh;
+            background: rgba(184, 134, 11, 0.1);
+            border-radius: 0.5vh;
+        }
+
+        .chat-message.dd {
+            background: rgba(184, 134, 11, 0.15);
+            border-left: 4px solid var(--oro);
+            padding: 1.2vh 1.5vw;
+            border-radius: 0 1vh 1vh 0;
+        }
+
+        .chat-message.player {
+            padding: 1vh 1.5vw;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1vh;
+        }
+
+        .chat-sender {
+            font-size: 1vw;
+            color: var(--oro);
+            margin-bottom: 0.5vh;
+            font-weight: bold;
+        }
+
+        .chat-text {
+            font-size: 1.1vw;
+            line-height: 1.4;
+        }
+
+        .chat-time {
+            font-size: 0.8vw;
+            color: var(--texto-dim);
+            margin-top: 0.5vh;
+        }
+
+        .chat-input-wrap {
+            padding: 1.5vh;
+            border-top: 1px solid var(--borde);
+            display: flex;
+            gap: 1vw;
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1.2vh 1.5vw;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--borde);
+            border-radius: 3vh;
+            color: var(--texto);
+            font-size: 1.1vw;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--oro);
+        }
+
+        .chat-send {
+            padding: 1.2vh 2vw;
+            background: var(--oro);
+            border: none;
+            border-radius: 3vh;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2vw;
+        }
+
+        /* BARRA DE ACCIONES - MÁS GRANDE */
+        .action-bar {
+            grid-column: 1 / -1;
+            background: linear-gradient(0deg, #1a1510, var(--bg-panel));
+            border-top: 2px solid var(--oro);
+            padding: 2vh 3vw;
+            display: flex;
+            align-items: center;
+            gap: 3vw;
+        }
+
+        .dice-section {
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+        }
+
+        .dice-btn {
+            width: 6vh;
+            height: 6vh;
+            border: 2px solid var(--borde);
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 1.5vh;
+            cursor: pointer;
+            font-size: 1.8vw;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            color: var(--texto);
+        }
+
+        .dice-btn:hover {
+            border-color: var(--oro);
+            transform: scale(1.15);
+            box-shadow: 0 0 20px var(--oro-glow);
+            background: rgba(184, 134, 11, 0.2);
+        }
+
+        .dice-btn.rolling {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+
+        .dice-result {
+            min-width: 8vw;
+            text-align: center;
+            padding: 0 1.5vw;
+        }
+
+        .dice-result-value {
+            font-family: 'Cinzel', serif;
+            font-size: 4vw;
+            color: var(--oro);
+            text-shadow: 0 0 15px var(--oro-glow);
+        }
+
+        .dice-result-type {
+            font-size: 1vw;
+            color: var(--texto-dim);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5vw;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 1.5vh 2.5vw;
+            border: 2px solid var(--borde);
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--texto);
+            border-radius: 4vh;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3vw;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.8vw;
+        }
+
+        .action-btn:hover {
+            background: var(--oro);
+            color: #000;
+            border-color: var(--oro);
+            transform: scale(1.05);
+        }
+
+        .action-btn.attack {
+            border-color: var(--trauma);
+        }
+
+        .action-btn.attack:hover {
+            background: var(--trauma);
+        }
+
+        .action-btn.defend {
+            border-color: var(--verde);
+        }
+
+        .action-btn.defend:hover {
+            background: var(--verde);
+        }
+
+        .end-turn-btn {
+            padding: 1.5vh 3vw;
+            background: linear-gradient(135deg, var(--oro), #8b6914);
+            border: none;
+            border-radius: 4vh;
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1.4vw;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .end-turn-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 30px var(--oro-glow);
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.5vw;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--borde);
+            border-radius: 0.25vw;
+        }
+
+        .notification {
+            position: fixed;
+            top: 10vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
+            background: var(--bg-panel);
+            border: 2px solid var(--oro);
+            border-radius: 1.5vh;
+            padding: 2vh 3vw;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s;
+            font-size: 1.3vw;
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="player-layout">
+        <header class="player-header">
+            <div class="header-left">
+                <div class="room-code">Sala: <span id="room-code">SOUL-7X9K</span></div>
+                <div class="tension-display">
+                    <span class="tension-label">Tu Tensión</span>
+                    <div class="tension-orb medium" id="tension-orb">48</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">⚙️ Config</button>
+                <button class="header-btn">🔇 Mute</button>
+            </div>
+        </header>
+
+        <aside class="character-panel">
+            <div class="char-header">
+                <div class="character-name" id="char-name">Aldric el Sombrío</div>
+                <div class="character-title" id="char-title">Hechicero de las Sombras • Nivel 5</div>
+            </div>
+
+            <!-- BARRAS VIDA/MANA -->
+            <div class="panel-section">
+                <div class="vital-bars-compact">
+                    <div class="stat-row-compact">
+                        <span class="stat-icon-mini">❤️</span>
+                        <div class="stat-bar-wrap">
+                            <div class="stat-bar vida" style="width: 75%"></div>
+                        </div>
+                        <span class="stat-value">75/100</span>
+                    </div>
+                    <div class="stat-row-compact">
+                        <span class="stat-icon-mini">🔷</span>
+                        <div class="stat-bar-wrap">
+                            <div class="stat-bar mana" style="width: 30%"></div>
+                        </div>
+                        <span class="stat-value">15/50</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATRIBUTOS Y BONUS -->
+            <div class="panel-section">
+                <div class="section-title">📊 Estadísticas</div>
+                <div class="stats-grid-compact">
+                    <div class="stat-box"><span class="stat-label">FUE</span><span class="stat-val">10</span></div>
+                    <div class="stat-box"><span class="stat-label">DES</span><span class="stat-val">14</span><span
+                            class="stat-bonus">+2</span></div>
+                    <div class="stat-box"><span class="stat-label">INT</span><span class="stat-val">18</span><span
+                            class="stat-bonus">+4</span></div>
+                    <div class="stat-box"><span class="stat-label">CON</span><span class="stat-val">12</span><span
+                            class="stat-bonus">+1</span></div>
+                    <div class="stat-box"><span class="stat-label">SAB</span><span class="stat-val">15</span><span
+                            class="stat-bonus">+2</span></div>
+                    <div class="stat-box"><span class="stat-label">CAR</span><span class="stat-val">8</span><span
+                            class="stat-bonus">-1</span></div>
+                </div>
+
+                <div class="section-title">💎 Bonus Activos</div>
+                <div class="active-bonuses">
+                    <span class="bonus-tag">⚔️ Daño Sombra +5</span>
+                    <span class="bonus-tag">🛡️ Aura Oscura</span>
+                    <span class="bonus-tag">👟 Sigilo +2</span>
+                </div>
+            </div>
+
+            <!-- PASIVAS -->
+            <div class="panel-section">
+                <div class="section-title">🧠 Talentos Pasivos</div>
+                <div class="passives-list">
+                    <div class="passive-item">
+                        <div class="passive-icon">🌑</div>
+                        <div class="passive-info">
+                            <div class="passive-name">Velo Nocturno</div>
+                            <div class="passive-desc">Invisible si no te mueves en oscuridad total.</div>
+                        </div>
+                    </div>
+                    <div class="passive-item">
+                        <div class="passive-icon">🩸</div>
+                        <div class="passive-info">
+                            <div class="passive-name">Sed de Sangre</div>
+                            <div class="passive-desc">Recuperas 2 HP al matar un enemigo.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HABILIDADES ACTIVAS -->
+            <div class="panel-section" style="border-bottom: none; flex: 1;">
+                <div class="section-title">⚡ Habilidades Activas</div>
+                <div class="skills-list">
+                    <div class="skill-slot" data-skill="fireball">
+                        <span class="skill-icon">🔥</span>
+                        <div class="skill-info">
+                            <div class="skill-name">Bola de Fuego</div>
+                            <div class="skill-cost">15 Mana • Daño en Área</div>
+                        </div>
+                        <span class="skill-key">1</span>
+                    </div>
+                    <div class="skill-slot" data-skill="shadow">
+                        <span class="skill-icon">👤</span>
+                        <div class="skill-info">
+                            <div class="skill-name">Paso Sombrío</div>
+                            <div class="skill-cost">10 Mana • Teletransporte</div>
+                        </div>
+                        <span class="skill-key">2</span>
+                    </div>
+                    <div class="skill-slot" data-skill="drain">
+                        <span class="skill-icon">💀</span>
+                        <div class="skill-info">
+                            <div class="skill-name">Drenar Vida</div>
+                            <div class="skill-cost">20 Mana • Robo de Vida</div>
+                        </div>
+                        <span class="skill-key">3</span>
+                    </div>
+                    <div class="skill-slot" data-skill="ultimate">
+                        <span class="skill-icon">🌀</span>
+                        <div class="skill-info">
+                            <div class="skill-name">Vórtice del Vacío</div>
+                            <div class="skill-cost">50 Mana • DEFINITIVA</div>
+                        </div>
+                        <span class="skill-key">4</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="game-view" id="game-view">
+            <canvas class="game-canvas" id="game-canvas"></canvas>
+            <div class="dd-message" id="dd-message" style="display: none;">
+                <div class="dd-message-type">El Director del Destino narra...</div>
+                <div class="dd-message-text" id="dd-message-text"></div>
+            </div>
+        </main>
+
+        <aside class="social-panel">
+            <div class="party-section">
+                <div class="party-title">👥 Tu Grupo <span>(3/4)</span></div>
+                <div class="party-member">
+                    <div class="member-avatar">🧙</div>
+                    <div class="member-info">
+                        <div class="member-name">Tú (Aldric)</div>
+                        <div class="member-status">Activo</div>
+                    </div>
+                    <div class="member-hp">
+                        <div class="member-hp-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                <div class="party-member">
+                    <div class="member-avatar">⚔️</div>
+                    <div class="member-info">
+                        <div class="member-name">Kira</div>
+                        <div class="member-status">Activo</div>
+                    </div>
+                    <div class="member-hp">
+                        <div class="member-hp-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <div class="party-member">
+                    <div class="member-avatar">✨</div>
+                    <div class="member-info">
+                        <div class="member-name">Vesper</div>
+                        <div class="member-status">Activo</div>
+                    </div>
+                    <div class="member-hp">
+                        <div class="member-hp-fill" style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-section">
+                <div class="chat-tabs" id="chat-tabs">
+                    <button class="chat-tab active" data-chat="grupo">👥 Grupo</button>
+                    <!-- Chats secretos se añaden dinámicamente cuando DD conecta jugadores -->
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-message system">— La partida ha comenzado —</div>
+                    <div class="chat-message dd">
+                        <div class="chat-sender">🎭 Director del Destino</div>
+                        <div class="chat-text">El bosque se oscurece. Un aullido resuena...</div>
+                        <div class="chat-time">hace 2 min</div>
+                    </div>
+                </div>
+                <div class="chat-input-wrap">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Escribe algo...">
+                    <button class="chat-send" id="chat-send">➤</button>
+                </div>
+            </div>
+        </aside>
+
+        <div class="action-bar">
+            <div class="dice-section">
+                <button class="dice-btn" data-dice="d4">d4</button>
+                <button class="dice-btn" data-dice="d6">d6</button>
+                <button class="dice-btn" data-dice="d10">d10</button>
+                <button class="dice-btn" data-dice="d20">d20</button>
+                <div class="dice-result">
+                    <div class="dice-result-value" id="dice-result">-</div>
+                    <div class="dice-result-type" id="dice-type">Tira un dado</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn attack">⚔️ Atacar</button>
+                <button class="action-btn defend">🛡️ Defender</button>
+                <button class="action-btn">✨ Habilidad</button>
+                <button class="action-btn">🔍 Explorar</button>
+            </div>
+
+            <button class="end-turn-btn" id="end-turn">Terminar Turno ✨</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"><span id="notif-text"></span></div>
+
+    <script src="js/player-console/player-console-core.js"></script>
+</body>
+
+</html>

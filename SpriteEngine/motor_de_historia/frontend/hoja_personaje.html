@@ -1,241 +1,481 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ lang }}">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ identidad.nombre }} - SoulForge Record</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #080a0e;
-            --bg-card: rgba(22, 25, 32, 0.7);
-            --accent: #d4af37;
-            --accent-glow: rgba(212, 175, 55, 0.3);
-            --accent-dim: #7a6625;
-            --text-main: #f0f0f0;
-            --text-dim: #9ca3af;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --font-main: 'Cinzel', serif;
-            --font-body: 'Inter', sans-serif;
+            --bg-dark: #0a0a0f;
+            --panel-dark: #111;
+            --paper: #e3dac9;
+            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            --ink: #1a1a1a;
+            --gold: #c5a059;
+            --gold-bright: #ffd700;
+            --blood: #8a0b0b;
+            --accent: #5d4037;
+            --tag-conflict: #8a3b3b;
+            --tag-combat: #3b5b8a;
+            --tag-roleplay: #8a3b86;
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap');
 
         body {
             background-color: var(--bg-dark);
-            background-image:
-                radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(100, 80, 20, 0.08) 0%, transparent 40%);
-            color: var(--text-main);
-            font-family: var(--font-body);
             margin: 0;
-            padding: 40px;
-            line-height: 1.6;
+            padding: 40px 20px;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink);
+            display: flex;
+            justify-content: center;
             min-height: 100vh;
         }
 
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-            background: rgba(15, 17, 21, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        .rpg-sheet {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--paper);
+            background-image: var(--paper-texture);
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9);
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 1200px;
             position: relative;
             overflow: hidden;
-            border-radius: 12px;
+            border-radius: 4px;
         }
 
-        /* Header Decorativo */
-        .header {
-            background: linear-gradient(180deg, rgba(20, 20, 30, 0.8) 0%, rgba(15, 17, 21, 0.9) 100%);
-            padding: 60px 40px;
+        /* SIDEBAR (STATS) */
+        .sidebar {
+            background-color: var(--panel-dark);
+            color: #ccc;
+            padding: 30px 25px;
+            border-right: 4px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* If no stats, sidebar can be thinner or different, but we keep structure for avatar */
+        .sidebar.no-stats {
+            grid-template-rows: auto 1fr;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(197, 160, 89, 0.4);
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .avatar-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 0.8rem;
             text-align: center;
-            border-bottom: 2px solid var(--accent);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Tension Bar */
+        .tension-wrapper {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .tension-label-mini {
+            font-family: 'Cinzel';
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .tension-track {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .tension-fill {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(90deg, var(--gold), var(--blood));
+            transition: width 0.3s;
+        }
+
+        /* Stats Design */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 10px;
+            justify-items: center;
+        }
+
+        .stat-medallion {
+            position: relative;
+            width: 90px;
+            height: 100px;
+            background: linear-gradient(135deg, #222, #111);
+            border: 2px solid #444;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 10px;
+            box-shadow: inset 0 0 10px #000;
+            transition: transform 0.2s;
+        }
+
+        .stat-medallion:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        .stat-value-big {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: #fff;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-name-tiny {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-top: 2px;
+            letter-spacing: 1px;
+        }
+
+        .stat-mod-seal {
+            position: absolute;
+            bottom: -8px;
+            background: var(--blood);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel';
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid #222;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Perks Section */
+        .resonance-section {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+        }
+
+        .resonance-title {
+            font-family: 'Cinzel';
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .soul-perk {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--gold);
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .perk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .perk-name {
+            color: var(--gold-bright);
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        /* DM Tags */
+        .mech-tag {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-combat {
+            background: rgba(59, 91, 138, 0.3);
+            color: #8ab0ff;
+            border: 1px solid #3b5b8a;
+        }
+
+        .tag-passive {
+            background: rgba(138, 138, 138, 0.2);
+            color: #ccc;
+            border: 1px solid #666;
+        }
+
+        .tag-trigger {
+            background: rgba(138, 59, 59, 0.3);
+            color: #ff8a8a;
+            border: 1px solid #8a3b3b;
+        }
+
+        .mech-row {
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-bottom: 4px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .mech-label {
+            color: #888;
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        .mech-narrative {
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+            border-top: 1px solid #333;
+            padding-top: 4px;
+            margin-top: 4px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 50px 60px;
             position: relative;
         }
 
-        .header::before {
-            content: "";
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            pointer-events: none;
-        }
-
-        h1 {
-            font-family: var(--font-main);
-            font-size: 3.5rem;
-            margin: 0;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            text-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-
-        .subtitle {
-            font-family: var(--font-main);
-            color: var(--text-dim);
-            font-size: 1.2rem;
-            margin-top: 10px;
-            letter-spacing: 2px;
-        }
-
-        .meta-tags {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .tag {
-            background: rgba(212, 175, 55, 0.1);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #e0e0e0;
-            font-weight: 600;
-        }
-
-        /* Grid Layout */
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 50px;
-        }
-
-        .section {
+        .char-header {
+            border-bottom: 3px double var(--accent);
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
 
-        .full-width {
-            grid-column: 1 / -1;
+        h1 {
+            font-family: 'Cinzel';
+            font-size: 3.5rem;
+            color: var(--ink);
+            margin: 0;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .sub-header {
+            font-family: 'Metamorphous', cursive;
+            font-size: 1.2rem;
+            color: var(--blood);
+            margin-top: 10px;
+            font-style: italic;
         }
 
         h2 {
-            font-family: var(--font-main);
-            color: var(--accent);
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-            margin-bottom: 25px;
+            font-family: 'Cinzel';
             font-size: 1.6rem;
+            color: var(--accent);
+            border-bottom: 1px solid #bbb;
+            padding-bottom: 5px;
+            margin-top: 35px;
         }
 
-        .card {
-            background: var(--bg-card);
-            padding: 25px;
-            border-left: 3px solid var(--accent-dim);
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            text-align: justify;
+            color: #222;
+            margin-bottom: 15px;
         }
 
-        .card-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            display: block;
-            letter-spacing: 1.5px;
-            font-weight: 600;
+        strong {
+            color: var(--blood);
+            font-weight: 700;
         }
 
-        .card-value {
+        /* Quote Box */
+        .quote-box {
+            border-left: 4px solid var(--accent);
+            background: rgba(93, 64, 55, 0.05);
+            padding: 15px 20px;
+            margin: 25px 0;
+            font-family: 'Cinzel';
             font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        .quote {
-            font-family: 'Cinzel', serif;
+            color: #444;
             font-style: italic;
-            color: #d1d5db;
-            border-left: 2px solid var(--accent);
-            padding-left: 25px;
-            margin: 30px 0;
-            font-size: 1.3rem;
-        }
-
-        .secret-box {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(20, 20, 30, 0.6));
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-left: 4px solid var(--danger);
-            padding: 25px;
-            border-radius: 8px;
-        }
-
-        .secret-box h3 {
-            color: var(--danger);
-            margin: 0 0 10px 0;
-            font-size: 1rem;
-            text-transform: uppercase;
-            font-family: var(--font-body);
-            letter-spacing: 1px;
-        }
-
-        .footer {
             text-align: center;
-            padding: 30px;
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            border-top: 1px solid var(--glass-border);
-            background: rgba(0, 0, 0, 0.2);
         }
 
-        /* Print adjust */
-        @media print {
-            body {
-                background-color: white;
-                color: black;
+        /* Matrix Box */
+        .matrix-box {
+            background: rgba(0, 0, 0, 0.03);
+            border: 2px solid var(--accent);
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: baseline;
+        }
+
+        .matrix-label {
+            font-weight: bold;
+            font-variant: small-caps;
+            color: var(--blood);
+            font-size: 1rem;
+            width: 140px;
+        }
+
+        .matrix-text {
+            font-style: italic;
+            color: #333;
+            flex: 1;
+        }
+
+        /* Adventure Log */
+        .adventure-log {
+            margin-top: 40px;
+            border-top: 2px solid var(--accent);
+            padding-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px dashed #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+            font-family: 'Crimson Text';
+            font-size: 1.1rem;
+        }
+
+        .log-date {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        .download-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Cinzel';
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: var(--blood);
+        }
+
+        .timeline-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .timeline-year {
+            font-weight: bold;
+            color: var(--accent);
+            min-width: 80px;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-scar {
+            color: var(--blood);
+            font-size: 0.85rem;
+            margin-left: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 900px) {
+            .rpg-sheet {
+                grid-template-columns: 1fr;
+                border-radius: 0;
             }
 
-            .container {
-                box-shadow: none;
-                border: 2px solid black;
+            .sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                border-right: none;
+                border-bottom: 4px solid var(--gold);
             }
 
-            h1,
-            h2,
-            .card-label {
-                color: black;
+            .stats-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                width: 100%;
             }
 
-            .card {
-                border: 1px solid #ccc;
-                border-left: 5px solid black;
-                background: #fff;
-            }
-
-            .header {
-                background: #eee;
-                -webkit-print-color-adjust: exact;
-            }
-
-            .tag {
-                border: 1px solid #000;
-                color: #000;
+            .main-content {
+                padding: 25px 20px;
             }
         }
 
-        /* PREMIUM PREVIEW STYLES */
-        .premium-locked .premium-content {
-            filter: blur(6px);
-            opacity: 0.4;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        /* Download Banner - Sticky at top, doesn't block content */
+        /* Unlock overlay for preview */
         #unlock-overlay {
             display: none;
             position: sticky;
@@ -245,335 +485,268 @@
             z-index: 1000;
             background: linear-gradient(135deg, rgba(15, 17, 21, 0.98), rgba(30, 30, 40, 0.98));
             padding: 20px 30px;
-            border-bottom: 2px solid var(--accent);
+            border-bottom: 2px solid var(--gold);
             text-align: center;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            color: white;
         }
 
         .on-preview #unlock-overlay {
             display: block;
         }
 
-        .btn-download {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent) 0%, #a08020 100%);
-            color: #000;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-family: var(--font-body);
-            margin: 10px;
+        .btn-overlay {
+            background: var(--gold);
+            color: black;
             border: none;
+            padding: 8px 16px;
+            margin: 5px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-size: 1rem;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-        }
-
-        /* Ensure print is clean: remove blur/overlay */
-        /* Ensure print is clean: remove blur/overlay */
-        @media print {
-            .premium-locked .premium-content {
-                filter: none !important;
-                opacity: 1 !important;
-            }
-
-            #unlock-overlay {
-                display: none !important;
-            }
-
-            .header,
-            .footer {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            /* Layout control for Multi-page PDF */
-            .biography-section {
-                page-break-before: always;
-                margin-top: 0 !important;
-                padding-top: 20px;
-            }
-
-            .bio-phase-card,
-            .card,
-            .section {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            body {
-                background: white !important;
-                color: black !important;
-            }
-
-            .container {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 20px !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
+            font-weight: bold;
         }
     </style>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Check if we are served via HTTP/HTTPS (Server) or File (Local)
-            // If HTTP, we show the Preview (Locked). If File, we show Full (Unlocked).
-            const isOnline = window.location.protocol.startsWith('http');
+        function triggerUpload() {
+            document.getElementById('avatar-input').click();
+        }
 
-            if (isOnline) {
-                document.body.classList.add('premium-locked');
-                document.body.classList.add('on-preview');
+        function encodeImageFileAsURL(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                document.getElementById('char-avatar').src = reader.result;
             }
-        });
+            reader.readAsDataURL(file);
+        }
 
         function downloadHTML() {
-            // Use the ID to download the PERSISTENT version
             window.location.href = '/api/v1/descargar/personaje/html?id={{ id }}&lang={{ lang }}';
         }
 
-        function downloadJSON() {
-            // Use the ID to download the PERSISTENT version
-            window.location.href = '/api/v1/descargar/personaje/json?id={{ id }}&lang={{ lang }}';
-        }
-
-        function downloadPDF() {
-            // Use native browser print to PDF - produces real text, not images
-            window.print();
+        function toggleLog() {
+            var x = document.getElementById("log-content");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
         }
     </script>
 </head>
 
 <body>
-    <!-- Download Banner for Preview Mode -->
+
     <div id="unlock-overlay">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
-            <span style="color: var(--accent); font-family: var(--font-main); font-size: 1.1rem;">
-                {{ t.banner_descarga }}
-            </span>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="downloadHTML()" class="btn-download" style="padding: 10px 20px; font-size: 0.9rem;">
-                    {{ t.btn_html }}
-                </button>
-                <button onclick="downloadPDF()" class="btn-download btn-secondary"
-                    style="padding: 10px 20px; font-size: 0.9rem;">
-                    {{ t.btn_pdf }}
-                </button>
-                <button onclick="downloadJSON()" class="btn-download btn-secondary"
-                    style="padding: 10px 20px; font-size: 0.9rem;">
-                    JSON
-                </button>
-            </div>
-        </div>
+        <div style="font-family: 'Cinzel'; margin-bottom: 10px;">{{ t.banner_descarga }}</div>
+        <button onclick="downloadHTML()" class="btn-overlay">{{ t.btn_html }}</button>
+        <button onclick="window.print()" class="btn-overlay">{{ t.btn_pdf }}</button>
     </div>
-    <div class="container">
-        <header class="header">
-            <h1>{{ identidad.nombre }}</h1>
-            {% if identidad.titulo %}
-            <div class="subtitle">"{{ identidad.titulo }}"</div>
+
+    <div class="rpg-sheet">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="avatar-container high-tension" onclick="triggerUpload()">
+                <img id="char-avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ semilla }}" alt="Avatar"
+                    class="avatar-img">
+                <div class="upload-overlay">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span>Upload</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none"
+                onchange="encodeImageFileAsURL(this)">
+
+            <!-- TENSION BAR -->
+            <div class="tension-wrapper">
+                <div class="tension-label-mini">{{ t.titulo_mascara_publica }}</div>
+                <div class="tension-track">
+                    <div class="tension-fill" style="width: 65%;"></div>
+                </div>
+            </div>
+
+            {% if ficha_tecnica %}
+            <!-- STATS (Only for RPG Roles) -->
+            <div class="stats-container">
+                <!-- STR -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M3,2 L21,20 L19,22 L16,14 L10,8 L2,6 L3,2 Z M18,6 L6,18 L8,20 L15,13 L19,9 L22,6 L18,6 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.fuerza }}</span>
+                    <span class="stat-name-tiny">STR</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.fuerza - 10) // 2 }}</div>
+                </div>
+                <!-- DEX -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L12,22 M2,12 L22,12 M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.destreza }}</span>
+                    <span class="stat-name-tiny">DEX</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.destreza - 10) // 2 }}</div>
+                </div>
+                <!-- CON -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L4,5 L4,11 C4,16.55 7.46,21.57 12,23 C16.54,21.57 20,16.55 20,11 L20,5 L12,2 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.constitucion }}</span>
+                    <span class="stat-name-tiny">CON</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.constitucion - 10) // 2 }}</div>
+                </div>
+                <!-- INT -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 C7.03,2 3,6.03 3,11 C3,16.55 12,22 12,22 C12,22 21,16.55 21,11 C21,6.03 16.97,2 12,2 Z M12,18 C9,18 9,16 9,14 C9,12 11,12 11,10 C11,9 12,9 12,9 C12,9 13,9 13,10 C13,12 15,12 15,14 C15,16 15,18 12,18 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.inteligencia }}</span>
+                    <span class="stat-name-tiny">INT</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.inteligencia - 10) // 2 }}</div>
+                </div>
+                <!-- WIS -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z M12,6 C13.66,6 15,7.34 15,9 C15,10.66 13.66,12 12,12 C10.34,12 9,10.66 9,9 C9,7.34 10.34,6 12,6 Z M12,20 C9.33,20 7,18.67 7,16 C7,14 10,14 12,14 C14,14 17,14 17,16 C17,18.67 14.67,20 12,20 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.sabiduria }}</span>
+                    <span class="stat-name-tiny">WIS</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.sabiduria - 10) // 2 }}</div>
+                </div>
+                <!-- CHA -->
+                <div class="stat-medallion">
+                    <svg class="stat-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12,2 L2,7 L2,17 L12,22 L22,17 L22,7 L12,2 Z M12,4 L19,7.5 L12,11 L5,7.5 L12,4 Z M4,15.7 L4,9.3 L11,12.8 L11,19.2 L4,15.7 Z M13,19.2 L13,12.8 L20,9.3 L20,15.7 L13,19.2 Z" />
+                    </svg>
+                    <span class="stat-value-big">{{ ficha_tecnica.carisma }}</span>
+                    <span class="stat-name-tiny">CHA</span>
+                    <div class="stat-mod-seal">+{{ (ficha_tecnica.carisma - 10) // 2 }}</div>
+                </div>
+            </div>
             {% endif %}
 
-            <div class="meta-tags">
-                <span class="tag">{{ rol }}</span>
-                <span class="tag">{{ tono_moral }}</span>
-                <span class="tag">{{ mundo }}</span>
-                <span class="tag">{{ nivel_conflicto }}</span>
-            </div>
-        </header>
+            <!-- RESONANCE (Visual only for story mode, technical for RPG) -->
+            <div class="resonance-section">
+                <div class="resonance-title">✨ {{ t.momentos_gracia }}</div>
 
-        <div class="content">
-            <!-- Columna Izquierda: Identidad y Apariencia -->
-            <div class="section">
-                <h2>{{ t.titulo_identidad }}</h2>
-                <div class="card">
-                    <span class="card-label">{{ t.lbl_apariencia }}</span>
-                    <div class="card-value">{{ identidad.vestimenta }}</div>
-                    <div style="margin-top: 10px; font-size: 0.9em; color: #888;">{{ identidad.rasgo_distintivo }}</div>
-                </div>
-
-                <div class="card">
-                    <span class="card-label">{{ t.lbl_personalidad }}</span>
-                    <div class="card-value">{{ identidad.voz }}</div>
-                    <div style="margin-top: 5px;">{{ identidad.manierismo }}</div>
-                </div>
-
-                <h2>{{ t.titulo_mascara_publica }}</h2>
-                <div class="card">
-                    <span class="card-label">{{ t.lbl_imagen }}</span>
-                    <div class="card-value">{{ capas.mascara.imagen_proyectada }}</div>
-                </div>
-                <div class="quote">"{{ capas.mascara.frase_tipica }}"</div>
-            </div>
-
-            <!-- Columna Derecha: Psicología Profunda -->
-            <div class="section premium-content">
-                <h2>{{ t.titulo_nucleo }}</h2>
-
-                <div class="card" style="border-left-color: var(--danger);">
-                    <span class="card-label">{{ t.herida }}</span>
-                    <div class="card-value">{{ capas.herida.tipo }}: {{ capas.herida.como_lo_cambio }}</div>
-                    <p style="font-size: 0.9rem; margin-top: 5px;">{{ capas.herida.causante }}</p>
-                </div>
-
-                <div class="card" style="border-left-color: var(--success);">
-                    <span class="card-label">{{ t.lbl_deseo }}</span>
-                    <div class="card-value">{{ capas.deseo_necesidad.deseo_consciente }}</div>
-                </div>
-
-                <div class="card" style="border-left-color: #50fa7b;">
-                    <span class="card-label">{{ t.lbl_necesidad }}</span>
-                    <div class="card-value">{{ capas.deseo_necesidad.necesidad_real }}</div>
-                </div>
-
-                <div class="secret-box">
-                    <h3>{{ t.lbl_mentira }}</h3>
-                    <p>{{ capas.mentira.la_mentira }}</p>
-                    <span class="card-label" style="color: #666;">{{ t.lbl_verdad }} {{ capas.mentira.verdad_necesaria
-                        }}</span>
-                </div>
-            </div>
-
-            <!-- Ancho completo: Arco y Ganchos -->
-            <div class="section full-width premium-content">
-                <h2>{{ t.titulo_arco }}</h2>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);">
-                        <span class="card-label">{{ t.lbl_inicio }}</span><br>
-                        {{ arco.estado_inicial }}
+                {% for gracia in biografia.momentos_gracia %}
+                <div class="soul-perk">
+                    <div class="perk-header">
+                        <span class="perk-name">{{ gracia.nombre }}</span>
                     </div>
-                    <div style="margin: 0 10px; color: var(--accent); font-size: 1.2rem;">&rarr;</div>
-                    <div style="flex: 1; text-align: center; padding: 10px; border: 1px solid var(--accent-dim);">
-                        <span class="card-label" style="color: var(--accent);">{{ t.lbl_quiebre }}</span><br>
-                        {{ arco.punto_de_quiebre }}
-                    </div>
-                    <div style="margin: 0 10px; color: var(--accent); font-size: 1.2rem;">&rarr;</div>
-                    <div style="flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);">
-                        <span class="card-label">{{ t.lbl_resolucion }}</span><br>
-                        {{ arco.resolucion_positiva }}
-                    </div>
-                </div>
-
-                <h2>{{ t.titulo_ganchos }}</h2>
-                <ul>
-                    {% for gancho in ganchos_narrativos %}
-                    <li style="margin-bottom: 10px;">{{ gancho }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- Momentos de Gracia y Conflictos -->
-            <div class="section full-width premium-content" style="margin-top: 30px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <!-- Momentos de Luz -->
-                    <div
-                        style="background: linear-gradient(135deg, rgba(80,250,123,0.05) 0%, transparent 100%); border: 1px solid rgba(80,250,123,0.3); padding: 20px;">
-                        <h2 style="color: var(--success); font-size: 1rem; margin-bottom: 15px;">✨ {{ t.momentos_gracia
-                            }}</h2>
-                        {% for gracia in biografia.momentos_gracia %}
-                        <div
-                            style="margin-bottom: 15px; padding-left: 15px; border-left: 2px solid rgba(80,250,123,0.5);">
-                            <div style="font-weight: 600; color: var(--success);">{{ gracia.nombre }}</div>
-                            <div style="font-size: 0.9rem; color: var(--text-dim); margin: 5px 0;">{{ gracia.descripcion
-                                }}</div>
-                            <div style="font-size: 0.85rem; font-style: italic;">{{ gracia.eco }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Conflictos Internos -->
-                    <div
-                        style="background: rgba(255,184,108,0.05); border: 1px solid rgba(255,184,108,0.3); padding: 20px;">
-                        <h2 style="color: #ffb86c; font-size: 1rem; margin-bottom: 15px;">⚖️ {{ t.conflictos }}</h2>
-                        {% for conflicto in biografia.conflictos %}
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.2);">
-                            <div style="font-weight: 600; color: #ffb86c;">{{ conflicto.nombre }}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-dim); margin: 5px 0;">
-                                {{ conflicto.polo_a }} ↔ {{ conflicto.polo_b }}
-                            </div>
-                            <div style="font-size: 0.85rem;">{{ conflicto.descripcion }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Biografía Procedural -->
-            <div class="section full-width premium-content biography-section" style="margin-top: 30px;">
-                <h2>📖 {{ t.titulo_biografia_header }}</h2>
-                {% for fase in biografia.fases %}
-                <div class="card bio-phase-card" style="margin-bottom: 15px; border-left-width: 4px;
-                    {% if fase.tonalidad == 'Radiante' %}border-left-color: var(--success);{% endif %}
-                    {% if fase.tonalidad == 'Calido' %}border-left-color: #ffb86c;{% endif %}
-                    {% if fase.tonalidad == 'Balanceado' %}border-left-color: #666;{% endif %}
-                    {% if fase.tonalidad == 'Melancolico' %}border-left-color: #8888ff;{% endif %}
-                    {% if fase.tonalidad == 'Sombrio' %}border-left-color: var(--danger);{% endif %}">
-                    <span class="card-label" style="color: var(--accent);">{{ fase.titulo }}</span>
-                    <div class="card-value" style="font-size: 0.95rem; line-height: 1.7; margin-top: 10px;">
-                        {{ fase.contenido }}
-                    </div>
+                    <div class="mech-narrative">{{ gracia.descripcion }}</div>
                 </div>
                 {% endfor %}
             </div>
-            <!-- Manual del Forjador / Guía del Portador -->
-            <div class="section full-width premium-content"
-                style="margin-top: 50px; border-top: 1px dashed var(--border); padding-top: 30px;">
-                <h3
-                    style="color: var(--accent); font-family: var(--font-main); text-align: center; margin-bottom: 20px;">
-                    {{ t.guia_titulo }}</h3>
-                <div
-                    style="background: rgba(20,20,30,0.5); padding: 25px; border-radius: 8px; border: 1px solid var(--border);">
-                    <div style="margin-bottom: 15px;">
-                        <strong style="color: var(--accent);">{{ t.guia_propiedad }}</strong>
-                        <span style="color: var(--text-dim);">{{ t.guia_propiedad_desc }}</span>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <strong style="color: var(--accent);">{{ t.guia_uso }}</strong>
-                        <span style="color: var(--text-dim);">{{ t.guia_uso_desc }}</span>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <strong style="color: var(--accent);">{{ t.guia_preservacion }}</strong>
-                        <span style="color: var(--text-dim);">{{ t.guia_preservacion_desc }}</span>
-                    </div>
-                    <div>
-                        <strong style="color: var(--accent);">{{ t.guia_version }}</strong>
-                        <span style="color: var(--text-dim);">SoulForge v2.4 - Núcleo de Procesamiento de Alta
-                            Velocidad.</span>
-                    </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="char-header">
+                <h1>{{ identidad.nombre }}</h1>
+                <div class="sub-header">
+                    {% if identidad.titulo %}{{ identidad.titulo }}{% endif %} · {{ rol }} · {{ mundo }}
                 </div>
             </div>
 
-        </div>
+            <!-- DEFINING QUOTE -->
+            <div class="quote-box">
+                "{{ capas.mascara.frase_tipica }}"
+            </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════════════ -->
-        <!-- DISCLAIMER & FOOTER -->
-        <!-- ═══════════════════════════════════════════════════════════════════════ -->
-        <div
-            style="width: 100%; max-width: 800px; margin: 40px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6; border-top: 1px solid var(--border); padding-top: 20px;">
-            <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;">
-                {{ t.aviso_legal_titulo }}
-            </strong>
-            <p style="margin-bottom: 10px;">{{ t.aviso_legal_1 }}</p>
-            <p style="margin-bottom: 10px;">{{ t.aviso_legal_2 }}</p>
-            <p style="margin-bottom: 10px;">{{ t.aviso_legal_3 }}</p>
-            <p>{{ t.aviso_legal_4 }}</p>
-        </div>
+            <h2>{{ t.titulo_identidad }}</h2>
+            <p>
+                <strong>{{ t.lbl_apariencia }}:</strong> {{ identidad.vestimenta }}
+            </p>
+            <p>
+                <strong>{{ t.lbl_personalidad }}:</strong> {{ identidad.voz }}. {{ identidad.manierismo }}
+            </p>
 
-        <div class="footer">
-            {{ t.footer_dev }} | {{ t.semilla }}: {{ semilla }} | ID: {{ id }}
+            <h2>{{ t.herida }}</h2>
+            <p>
+                <span class="dm-tag dm-conflict">Trauma</span>
+                {{ capas.herida.causante }}. {{ capas.herida.circunstancia }}.
+            </p>
+            <p>
+                <strong>{{ capas.herida.como_lo_cambio }}</strong>
+            </p>
+
+            <!-- PSYCHO MATRIX -->
+            <div class="matrix-box">
+                <div class="matrix-row">
+                    <span class="matrix-label">{{ t.lbl_mentira }}</span>
+                    <span class="matrix-text">"{{ capas.mentira.la_mentira }}"</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">{{ t.lbl_deseo }}</span>
+                    <span class="matrix-text">{{ capas.deseo_necesidad.deseo_consciente }}</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">{{ t.lbl_necesidad }}</span>
+                    <span class="matrix-text">{{ capas.deseo_necesidad.necesidad_real }}</span>
+                </div>
+            </div>
+
+            <h2>{{ t.titulo_biografia_header }}</h2>
+
+            {% for fase in biografia.fases %}
+            <div style="margin-bottom: 25px;">
+                <h3
+                    style="font-family: 'Cinzel'; color: var(--blood); font-size: 1.2rem; margin-bottom: 10px; border-bottom: 1px dotted var(--accent);">
+                    ✦ {{ fase.titulo }}
+                </h3>
+                <p style="text-align: justify; line-height: 1.8;">
+                    {% if fase.tonalidad == 'Sombrio' %}
+                    <span class="dm-tag dm-conflict">Darkness</span>
+                    {% elif fase.tonalidad == 'Radiante' %}
+                    <span class="dm-tag dm-roleplay">Light</span>
+                    {% endif %}
+                    {{ fase.contenido }}
+                </p>
+                <!-- Decorative separator for flow -->
+                {% if not loop.last %}
+                <div style="text-align: center; color: var(--accent); opacity: 0.5; margin: 15px 0;">❖</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <!-- Timeline Summary at the end instead of being the main thing -->
+            <h3 class="sub-header"
+                style="text-align: left; margin-top: 40px; border-top: 2px solid var(--accent); padding-top: 15px;">
+                {{ t.titulo_mascara_publica }} (Timeline)
+            </h3>
+            {% for fase in biografia.fases %}
+            <div class="timeline-item">
+                <div class="timeline-year">{{ fase.titulo }}</div>
+                <div class="timeline-content" style="font-size: 0.9rem; font-style: italic;">
+                    {{ fase.contenido | truncate(80) }}...
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Adventure Log -->
+            <div class="adventure-log" id="log-content">
+                <h2>📖 {{ t.titulo_ganchos }}</h2>
+                {% for gancho in ganchos_narrativos %}
+                <div class="log-entry">
+                    <span class="log-date">[Hook]</span>
+                    {{ gancho }}
+                </div>
+                {% endfor %}
+                <p style="font-size:0.9rem; color:#666; margin-top: 15px;">
+                    {{ t.guia_uso_desc }}
+                </p>
+            </div>
+
+            <button class="download-btn" onclick="downloadHTML()">
+                💾 {{ t.btn_html }}
+            </button>
         </div>
     </div>
 </body>

@@ -661,19 +661,17 @@ impl LiteraryAdapter {
             }
         }
         
-        // Si no hubo transformaciones significativas o queremos asegurar variedad,
-        // intentamos el generador procedural inteligente
-        if !transformed || self.rng.gen_bool(0.3) {
+        // SIEMPRE usar el generador procedural como fallback si el texto aún parece español
+        // Detección simple: si contiene caracteres típicos del español (ñ, á, é, í, ó, ú) o no fue transformado
+        let still_spanish = !transformed || result.chars().any(|c| "ñáéíóúüÑÁÉÍÓÚÜ¿¡".contains(c));
+        
+        if still_spanish {
             let seed = self.rng.next_u64();
             let mut proc_gen = ProceduralTextGenerator::with_seed(seed);
             
-            // Si el texto sigue siendo muy similar al original (se asume español), forzamos intento procedural
-            if result == text {
-                 let procedural = proc_gen.adaptar_inteligente(text, "en");
-                 if procedural != text {
-                     return procedural;
-                 }
-            }
+            let procedural = proc_gen.adaptar_inteligente(text, "en");
+            // El procedural ahora SIEMPRE devuelve inglés (tiene fallback garantizado)
+            return procedural;
         }
         
         result
@@ -693,16 +691,18 @@ impl LiteraryAdapter {
             }
         }
         
-        // Fallback procedural inteligente para japonés
-        // Priorizamos esto si no hubo match en el diccionario para evitar mezclar español con japonés
-        if !transformed {
+        // SIEMPRE usar el generador procedural si el texto aún parece español (no japonés)
+        // Detección: si no contiene caracteres japoneses y no fue transformado, es español
+        let has_japanese = result.chars().any(|c| c >= '\u{3000}' && c <= '\u{9FFF}');
+        let still_spanish = !transformed || !has_japanese;
+        
+        if still_spanish {
             let seed = self.rng.next_u64();
             let mut proc_gen = ProceduralTextGenerator::with_seed(seed);
             
             let procedural = proc_gen.adaptar_inteligente(text, "jp");
-            if procedural != text {
-                return procedural;
-            }
+            // El procedural ahora SIEMPRE devuelve japonés (tiene fallback garantizado)
+            return procedural;
         }
         
         result
