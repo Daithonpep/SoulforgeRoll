@@ -60,21 +60,20 @@ pub async fn ws_handler(
     ws: warp::ws::Ws,
     room_manager: Arc<RoomManager>,
 ) -> Result<impl Reply, warp::Rejection> {
-    // Verificar que la sala existe
-    if !room_manager.room_exists(&room_id) {
-        return Ok(ws.on_upgrade(|websocket| async {
-            let (mut tx, _) = websocket.split();
+    Ok(ws.on_upgrade(move |socket| async move {
+        // Verificar que la sala existe dentro del handler para tener un solo tipo de retorno
+        if !room_manager.room_exists(&room_id) {
+            let (mut tx, _) = socket.split();
             let _ = tx.send(Message::text(
                 serde_json::to_string(&ServerMessage::Error {
                     code: "room_not_found".to_string(),
                     message: "La sala no existe".to_string(),
                 }).unwrap()
             )).await;
-        }));
-    }
-    
-    Ok(ws.on_upgrade(move |socket| {
-        handle_connection(socket, room_id, room_manager)
+            return;
+        }
+
+        handle_connection(socket, room_id, room_manager).await
     }))
 }
 

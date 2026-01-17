@@ -134,7 +134,7 @@ pub struct WorldGenerator {
 impl WorldGenerator {
     pub fn new(config: WorldConfig) -> Self {
         let rng = ChaCha8Rng::seed_from_u64(config.seed);
-        let perlin = Perlin::new(config.seed as u32);
+        let perlin = Perlin::new().set_seed(config.seed as u32);
         
         Self { config, rng, perlin }
     }

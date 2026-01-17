@@ -392,24 +392,29 @@ impl RoomManager {
         let mut room = self.rooms.get_mut(room_id)
             .ok_or("Room not found")?;
         
-        let participant = room.participants.get_mut(&connection_id)
-            .ok_or("Participant not found")?;
-        
-        // Actualizar token con datos del personaje
-        if let Some(ref mut token) = participant.token {
-            token.name = character.name.clone();
-            token.portrait_url = character.portrait.clone();
-        }
-        
-        participant.character = Some(character);
-        participant.state = PlayerState::Ready;
-        participant.last_activity = Utc::now();
+        // Scope para soltar el borrow de participant después de actualizarlo
+        let user_name = {
+            let participant = room.participants.get_mut(&connection_id)
+                .ok_or("Participant not found")?;
+            
+            // Actualizar token con datos del personaje
+            if let Some(ref mut token) = participant.token {
+                token.name = character.name.clone();
+                token.portrait_url = character.portrait.clone();
+            }
+            
+            participant.character = Some(character);
+            participant.state = PlayerState::Ready;
+            participant.last_activity = Utc::now();
+            
+            participant.user_name.clone()
+        }; // participant se dropea aquí, liberando room
         
         room.session_log.push(SessionEvent {
             timestamp: Utc::now(),
             event_type: "character_loaded".to_string(),
-            description: format!("{} ha cargado su personaje", participant.user_name),
-            actor: Some(participant.user_name.clone()),
+            description: format!("{} ha cargado su personaje", user_name),
+            actor: Some(user_name),
         });
         
         Ok(())

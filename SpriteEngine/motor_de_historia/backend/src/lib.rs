@@ -15,8 +15,8 @@ pub mod core;
 pub mod relaciones;
 pub mod constelacion;
 pub mod exportadores;
-pub mod api;
-pub mod souls; // Registry of Souls System
+// pub mod api;
+// pub mod souls; // Registry of Souls System (Disabled due to unused SQLX dependencies)
 pub mod cartographer;
 
 // Re-exports principales
