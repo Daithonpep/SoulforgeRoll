@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copiar binario compilado
-COPY --from=builder /app/target/release/soulforge /app/soulforge
+COPY --from=builder /app/target/release/soulforge-server /app/soulforge-server
 
 # Templates y static removidos para Backend Only
 # COPY --from=builder /app/templates ./templates
@@ -40,4 +40,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Ejecutar servidor
-CMD ["./soulforge"]
+CMD ["./soulforge-server"]
