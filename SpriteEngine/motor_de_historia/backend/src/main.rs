@@ -4,11 +4,117 @@ mod handlers;
 
 use std::env;
 use std::sync::Arc;
+use std::collections::HashMap;
 use warp::Filter;
 use tracing_subscriber;
+use serde::{Deserialize, Serialize};
 
 use crate::room::RoomManager;
 use crate::handlers::{ws_handler, create_room_handler, room_info_handler};
+
+// Importar librería de generación
+use soulforge_server::{SoulForge, ParametrosGeneracion, ParametrosConstelacion, Mundo, Rol, TonoMoral, Language};
+
+#[derive(Debug, Deserialize)]
+struct CharacterQuery {
+    nombre: Option<String>,
+    genero: Option<String>,
+    rol: Option<String>,
+    mundo: Option<String>,
+    tono: Option<String>,
+    edad: Option<u32>,
+    lang: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ConstellationQuery {
+    num_personajes: Option<usize>,
+    mundo: Option<String>,
+    tono: Option<String>,
+    lang: Option<String>,
+}
+
+fn parse_mundo(s: &str) -> Mundo {
+    match s.to_lowercase().as_str() {
+        "fantasiamedieval" | "fantasia_medieval" | "fantasia medieval" => Mundo::FantasiaMedieval,
+        "fantasiaoscura" | "fantasia_oscura" | "fantasia oscura" => Mundo::FantasiaOscura,
+        "fantasiaurbana" | "fantasia_urbana" | "fantasia urbana" => Mundo::FantasiaUrbana,
+        "scifispace" | "scifi" | "ciencia_ficcion" | "scifi space" => Mundo::SciFiSpace,
+        "scificyberpunk" | "cyberpunk" => Mundo::SciFiCyberpunk,
+        "scifipostapocaliptico" | "postapocaliptico" => Mundo::SciFiPostApocaliptico,
+        "japonfeudal" | "japon_feudal" | "japon feudal" => Mundo::JaponFeudal,
+        "animefantasia" | "anime fantasia" => Mundo::AnimeFantasia,
+        "chinaimperial" | "china" => Mundo::ChinaImperial,
+        "wuxia" => Mundo::Wuxia,
+        "coreahistorica" | "corea" => Mundo::CoreaHistorica,
+        "anime" => Mundo::Anime,
+        "mitologiaasiatica" | "asia" => Mundo::MitologiaAsiatica,
+        "mitologiagriega" | "grecia" | "mitologia griega" => Mundo::MitologiaGriega,
+        "mitologianordica" | "nordica" | "mitologia nordica" => Mundo::MitologiaNordica,
+        "steampunk" => Mundo::Steampunk,
+        "western" => Mundo::Western,
+        "noir" => Mundo::Noir,
+        "piratascaribe" | "piratas" => Mundo::PiratasCaribe,
+        "victoriano" => Mundo::Victoriano,
+        "realista" => Mundo::Realista,
+        _ => Mundo::FantasiaMedieval,
+    }
+}
+
+fn parse_tono(s: &str) -> TonoMoral {
+    match s.to_lowercase().as_str() {
+        "luminoso" | "luminoso/bueno" => TonoMoral::Luminoso,
+        "claro" => TonoMoral::Claro,
+        "gris" | "neutral" => TonoMoral::Gris,
+        "oscuro" => TonoMoral::Oscuro,
+        "abismal" => TonoMoral::Abismal,
+        _ => TonoMoral::Gris,
+    }
+}
+
+fn parse_rol(s: &str) -> Rol {
+    match s.to_lowercase().as_str() {
+        "heroe" => Rol::Heroe,
+        "villano" => Rol::Villano,
+        "mentor" => Rol::Mentor,
+        "aliado" => Rol::Aliado,
+        "antagonista" => Rol::Villano,
+        "jugador" | "jugador (d&d/rpg)" => Rol::Jugador,
+        _ => Rol::Heroe,
+    }
+}
+
+async fn generate_character_handler(query: CharacterQuery) -> Result<impl warp::Reply, warp::Rejection> {
+    let mut forge = SoulForge::nuevo();
+    
+    let params = ParametrosGeneracion {
+        nombre_fijo: query.nombre,
+        mundo: query.mundo.as_deref().map(parse_mundo),
+        rol: query.rol.as_deref().map(parse_rol),
+        tono_moral: query.tono.as_deref().map(parse_tono),
+        edad_fija: query.edad,
+        idioma: query.lang.as_deref().map(Language::from_str),
+        ..Default::default()
+    };
+    
+    let alma = forge.forjar(params);
+    
+    Ok(warp::reply::json(&alma))
+}
+
+async fn generate_constellation_handler(query: ConstellationQuery) -> Result<impl warp::Reply, warp::Rejection> {
+    let mut forge = SoulForge::nuevo();
+    
+    let params = ParametrosConstelacion {
+        cantidad: query.num_personajes.unwrap_or(4),
+        mundo: query.mundo.as_deref().map(parse_mundo).unwrap_or(Mundo::FantasiaMedieval),
+        ..Default::default()
+    };
+    
+    let constelacion = forge.forjar_constelacion(params);
+    
+    Ok(warp::reply::json(&constelacion))
+}
 
 #[tokio::main]
 async fn main() {
@@ -57,6 +163,20 @@ async fn main() {
         .and(warp::any().map(move || rm_info.clone()))
         .and_then(room_info_handler);
     
+    // === GENERACIÓN DE PERSONAJES ===
+    
+    // GET /api/v1/personaje?nombre=...&mundo=...
+    let personaje_route = warp::path!("api" / "v1" / "personaje")
+        .and(warp::get())
+        .and(warp::query::<CharacterQuery>())
+        .and_then(generate_character_handler);
+    
+    // GET /api/v1/constelacion?num_personajes=...&mundo=...
+    let constelacion_route = warp::path!("api" / "v1" / "constelacion")
+        .and(warp::get())
+        .and(warp::query::<ConstellationQuery>())
+        .and_then(generate_constellation_handler);
+    
     // Health check
     let health = warp::path!("health")
         .map(|| warp::reply::json(&serde_json::json!({"status": "alive"})));
@@ -64,6 +184,8 @@ async fn main() {
     let routes = ws_route
         .or(create_route)
         .or(info_route)
+        .or(personaje_route)
+        .or(constelacion_route)
         .or(health)
         .with(cors);
     
