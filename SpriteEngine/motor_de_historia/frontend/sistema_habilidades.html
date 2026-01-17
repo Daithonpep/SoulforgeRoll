@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Talentos - SoulForge</title>
+    <meta name="description" content="Descubre cómo funciona el sistema de habilidades procedurales de SoulForge.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --wood: #3d2b1f;
+            --wood-light: #5c4033;
+            --paper: #f4ead5;
+            --paper-dark: #e8dcc8;
+            --ink: #1a1a1a;
+            --gold: #c5a059;
+            --blood: #722f37;
+            --seal: #8b0000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('https://www.transparenttextures.com/patterns/wood-pattern.png'),
+                linear-gradient(135deg, var(--wood) 0%, var(--wood-light) 50%, var(--wood) 100%);
+            background-color: var(--wood);
+            min-height: 100vh;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink);
+            padding: 40px 20px;
+        }
+
+        .lang-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 30px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-selector a {
+            font-size: 1.5rem;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+
+        .lang-selector a:hover,
+        .lang-selector a.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .scroll-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .parchment {
+            background: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/old-map.png');
+            padding: 50px 60px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 80px rgba(139, 90, 43, 0.1);
+            border-radius: 4px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--blood);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .decree-subtitle {
+            text-align: center;
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--blood);
+            margin: 35px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--ink);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        strong {
+            color: var(--blood);
+        }
+
+        .gold-text {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .philosophy-block {
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.1), rgba(114, 47, 55, 0.05));
+            border-left: 4px solid var(--gold);
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'IM Fell English', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+        }
+
+        .philosophy-block p {
+            margin-bottom: 10px;
+        }
+
+        .philosophy-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .tier-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            transition: transform 0.2s;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .tier-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .tier-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .tier-phrase {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .tier-stats {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .tier-eco {
+            border-color: #808080;
+        }
+
+        .tier-eco .tier-name {
+            color: #606060;
+        }
+
+        .tier-murmullo {
+            border-color: #a0a0a0;
+        }
+
+        .tier-murmullo .tier-name {
+            color: #707070;
+        }
+
+        .tier-sombra {
+            border-color: #32CD32;
+        }
+
+        .tier-sombra .tier-name {
+            color: #228B22;
+        }
+
+        .tier-voz {
+            border-color: #4169E1;
+        }
+
+        .tier-voz .tier-name {
+            color: #2850a0;
+        }
+
+        .tier-alma {
+            border-color: #9932CC;
+        }
+
+        .tier-alma .tier-name {
+            color: #7B2999;
+        }
+
+        .tier-ancestral {
+            border-color: #DAA520;
+        }
+
+        .tier-ancestral .tier-name {
+            color: #B8860B;
+        }
+
+        .tier-primordial {
+            border-color: #FF4500;
+        }
+
+        .tier-primordial .tier-name {
+            color: #CC3700;
+        }
+
+        .tier-legendaria {
+            border-color: #FF1493;
+        }
+
+        .tier-legendaria .tier-name {
+            color: #C71585;
+        }
+
+        .tier-mitica {
+            border-color: #00CED1;
+        }
+
+        .tier-mitica .tier-name {
+            color: #008B8B;
+        }
+
+        .highlight-block {
+            background: var(--paper-dark);
+            border: 3px double var(--gold);
+            padding: 30px;
+            margin: 35px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .highlight-block::before {
+            content: '💎';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            background: var(--paper);
+            padding: 0 15px;
+        }
+
+        .highlight-block h2 {
+            color: var(--gold);
+            border: none;
+            margin-top: 10px;
+        }
+
+        .highlight-block .tagline {
+            font-family: 'IM Fell English', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--blood);
+            margin: 15px 0;
+        }
+
+        .trauma-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .trauma-item {
+            background: rgba(0, 0, 0, 0.03);
+            padding: 10px 15px;
+            border-left: 3px solid var(--gold);
+            font-size: 0.95rem;
+        }
+
+        .trauma-item strong {
+            color: var(--ink);
+        }
+
+        .dnd-block {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid #ccc;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .dnd-block h2 {
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .formula-item {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        .formula-item h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: var(--blood);
+        }
+
+        .formula-item code {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .clarification {
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.1), transparent);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 3px solid var(--gold);
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+        }
+
+        .seal-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .seal {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--seal) 0%, #5a0000 100%);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .seal::before {
+            content: '⚡';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: var(--gold);
+        }
+
+        .seal-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--blood);
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #8b3030;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .parchment {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tier-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .trauma-list,
+            .formula-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .tier-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- LANGUAGE SELECTOR -->
+    <div class="lang-selector">
+        <a href="#" onclick="setLang('es')" id="lang-es" title="Español">🇪🇸</a>
+        <a href="#" onclick="setLang('en')" id="lang-en" title="English">🇺🇸</a>
+        <a href="#" onclick="setLang('jp')" id="lang-jp" title="日本語">🇯🇵</a>
+    </div>
+
+    <div class="scroll-container">
+
+        <!-- PERGAMINO 1: FILOSOFÍA -->
+        <div class="parchment">
+            <h1>⚡ <span data-i18n="title">El Forjador de Almas</span></h1>
+            <div class="decree-subtitle" data-i18n="subtitle">Decreto Oficial del Sistema de Talentos</div>
+
+            <div class="philosophy-block">
+                <p data-i18n="philosophy_1">
+                    Cada personaje forjado en SoulForge lleva consigo un conjunto único de
+                    <strong>talentos y habilidades</strong> que no se eligen ni se compran:
+                    <em>nacen de su historia</em>.
+                </p>
+                <p data-i18n="philosophy_2">
+                    Cuanto más ha vivido un alma —más batallas, más pérdidas, más decisiones imposibles—
+                    más profunda es su resonancia. Y de esa profundidad, emergen sus poderes.
+                </p>
+            </div>
+
+            <h2 data-i18n="tier_title">El Tier del Alma</h2>
+            <p data-i18n="tier_desc">
+                El <strong>Tier</strong> representa la <span class="gold-text">complejidad narrativa</span>
+                de un personaje. No es poder bruto ni nivel de combate: es la suma de todas las
+                experiencias que lo han forjado.
+            </p>
+
+            <div class="clarification" data-i18n="tier_examples">
+                Un anciano campesino que vivió en paz puede ser <strong>Eco</strong>.<br>
+                Un joven que sobrevivió a una guerra y perdió todo puede ser <strong>Ancestral</strong>.<br>
+                <em>La edad modifica las estadísticas base, pero no limita la profundidad del alma.</em>
+            </div>
+
+            <p data-i18n="power_note">
+                El valor de <strong>Poder</strong> representa la <em>intensidad emocional y narrativa</em>
+                del personaje, no una escala estricta de fuerza. Un Poder 6 en manos de un narrador
+                hábil puede ser más memorable que un Poder 10 mal interpretado.
+            </p>
+        </div>
+
+        <!-- PERGAMINO 2: TIERS -->
+        <div class="parchment">
+            <h2 data-i18n="nine_tiers">Los Nueve Tiers del Alma</h2>
+            <p data-i18n="nine_tiers_desc">Cada nivel representa un grado de profundidad en la historia del personaje.
+            </p>
+
+            <div class="tier-grid">
+                <div class="tier-card tier-eco">
+                    <div class="tier-icon">🌫️</div>
+                    <div class="tier-name">ECO</div>
+                    <div class="tier-phrase" data-i18n="tier_eco_phrase">"Una vida tranquila"</div>
+                    <div class="tier-stats" data-i18n="tier_eco_stats">1 Habilidad · Poder 3-4</div>
+                </div>
+
+                <div class="tier-card tier-murmullo">
+                    <div class="tier-icon">🌊</div>
+                    <div class="tier-name">MURMULLO</div>
+                    <div class="tier-phrase" data-i18n="tier_murmullo_phrase">"Historias a medias"</div>
+                    <div class="tier-stats" data-i18n="tier_murmullo_stats">2 Habilidades · Poder 4-5</div>
+                </div>
+
+                <div class="tier-card tier-sombra">
+                    <div class="tier-icon">🌑</div>
+                    <div class="tier-name">SOMBRA</div>
+                    <div class="tier-phrase" data-i18n="tier_sombra_phrase">"Un pasado que persigue"</div>
+                    <div class="tier-stats" data-i18n="tier_sombra_stats">3 Hab. + Firma · Poder 5-6</div>
+                </div>
+
+                <div class="tier-card tier-voz">
+                    <div class="tier-icon">🔊</div>
+                    <div class="tier-name">VOZ</div>
+                    <div class="tier-phrase" data-i18n="tier_voz_phrase">"Las palabras que cambian"</div>
+                    <div class="tier-stats" data-i18n="tier_voz_stats">3 Hab. + Firma · Poder 5-7</div>
+                </div>
+
+                <div class="tier-card tier-alma">
+                    <div class="tier-icon">💫</div>
+                    <div class="tier-name">ALMA</div>
+                    <div class="tier-phrase" data-i18n="tier_alma_phrase">"Marcado por el destino"</div>
+                    <div class="tier-stats" data-i18n="tier_alma_stats">4 Hab. + Ultimate · Poder 6-8</div>
+                </div>
+
+                <div class="tier-card tier-ancestral">
+                    <div class="tier-icon">👑</div>
+                    <div class="tier-name">ANCESTRAL</div>
+                    <div class="tier-phrase" data-i18n="tier_ancestral_phrase">"Sangre de linaje antiguo"</div>
+                    <div class="tier-stats" data-i18n="tier_ancestral_stats">4 Hab. + Ultimate · Poder 7-8</div>
+                </div>
+
+                <div class="tier-card tier-primordial">
+                    <div class="tier-icon">🔥</div>
+                    <div class="tier-name">PRIMORDIAL</div>
+                    <div class="tier-phrase" data-i18n="tier_primordial_phrase">"Fuerza de la naturaleza"</div>
+                    <div class="tier-stats" data-i18n="tier_primordial_stats">5 Hab. + Ultimate · Poder 7-9</div>
+                </div>
+
+                <div class="tier-card tier-legendaria">
+                    <div class="tier-icon">⭐</div>
+                    <div class="tier-name">LEGENDARIA</div>
+                    <div class="tier-phrase" data-i18n="tier_legendaria_phrase">"Nombre conocido en reinos"</div>
+                    <div class="tier-stats" data-i18n="tier_legendaria_stats">6 Hab. + Ultimate · Poder 8-9</div>
+                </div>
+
+                <div class="tier-card tier-mitica">
+                    <div class="tier-icon">🌟</div>
+                    <div class="tier-name">MÍTICA</div>
+                    <div class="tier-phrase" data-i18n="tier_mitica_phrase">"La realidad se dobla"</div>
+                    <div class="tier-stats" data-i18n="tier_mitica_stats">8 Hab. + Ultimate · Poder 9-10</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERGAMINO 3: FIRMA -->
+        <div class="parchment">
+            <div class="highlight-block">
+                <h2 data-i18n="signature_title">Habilidad de Firma</h2>
+                <div class="tagline" data-i18n="signature_tagline">La herida que nunca cerró… y ahora define quién eres.
+                </div>
+                <p data-i18n="signature_desc">
+                    La <strong>Habilidad de Firma</strong> no se aprende ni se elige.
+                    <em>Nace</em> del trauma más profundo del personaje. Es la cicatriz
+                    convertida en poder, el dolor transformado en propósito.
+                </p>
+            </div>
+
+            <h3 data-i18n="trauma_examples_title">Ejemplos según el Trauma:</h3>
+
+            <div class="trauma-list">
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_abandono">Abandono:</strong> <span data-i18n="skill_vinculo">Vínculo
+                        Irrompible</span><br>
+                    <em data-i18n="skill_vinculo_effect">+3 al proteger aliados</em>
+                </div>
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_traicion">Traición:</strong> <span data-i18n="skill_ojo">Ojo
+                        Vigilante</span><br>
+                    <em data-i18n="skill_ojo_effect">Detecta engaños automáticamente</em>
+                </div>
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_perdida">Pérdida:</strong> <span data-i18n="skill_duelo">Fuerza del
+                        Duelo</span><br>
+                    <em data-i18n="skill_duelo_effect">+2 poder cuando un aliado cae</em>
+                </div>
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_violencia">Violencia:</strong> <span data-i18n="skill_ira">Ira
+                        Contenida</span><br>
+                    <em data-i18n="skill_ira_effect">+4 daño cuando HP < 50%</em>
+                </div>
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_rechazo">Rechazo:</strong> <span data-i18n="skill_prueba">Prueba
+                        Constante</span><br>
+                    <em data-i18n="skill_prueba_effect">+2 a tiradas tras un fallo</em>
+                </div>
+                <div class="trauma-item">
+                    <strong data-i18n="trauma_culpa">Culpa:</strong> <span
+                        data-i18n="skill_redencion">Redención</span><br>
+                    <em data-i18n="skill_redencion_effect">+3 a acciones que ayuden inocentes</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERGAMINO 4: ULTIMATE -->
+        <div class="parchment">
+            <h2 data-i18n="ultimate_title">Habilidades Ultimate</h2>
+            <p data-i18n="ultimate_desc">
+                Las <strong>Ultimates</strong> son momentos culminantes en la narrativa del personaje.
+                Solo disponibles para Tiers <span class="gold-text">Alma</span> o superiores.
+            </p>
+
+            <div class="clarification" data-i18n="ultimate_note">
+                Las Ultimates <strong>no siempre causan daño</strong>. Algunas alteran el destino,
+                el entorno o la narrativa de la escena. Pueden ser sociales, mentales, o cambiar
+                el curso de una historia entera.
+            </div>
+
+            <h3 data-i18n="ultimate_types_title">Tipos de Ultimate:</h3>
+            <p data-i18n="ultimate_types">
+                <strong>⚔️ Combate:</strong> Ataques devastadores, transformaciones temporales.<br>
+                <strong>🎭 Social:</strong> Discursos que cambian lealtades, presencias que intimidan reinos.<br>
+                <strong>🔮 Arcano:</strong> Alteración de la realidad, visiones proféticas.<br>
+                <strong>📖 Narrativo:</strong> Revelar verdades ocultas, invocar el destino.
+            </p>
+        </div>
+
+        <!-- PERGAMINO 5: D&D -->
+        <div class="parchment">
+            <div class="dnd-block">
+                <h2 data-i18n="dnd_title">🎲 Compatible con Tu Sistema Favorito</h2>
+                <p data-i18n="dnd_desc">
+                    Si usas SoulForge para D&D, Pathfinder u otro sistema, estas son las
+                    <strong>fórmulas sugeridas</strong> para integrar las habilidades:
+                </p>
+
+                <div class="formula-grid">
+                    <div class="formula-item">
+                        <h4 data-i18n="formula_active">Habilidades Activas</h4>
+                        <code>d20 + (Poder ÷ 2)</code><br>
+                        <span data-i18n="formula_active_cost">Costo:</span> <code>5 + (Poder × 2) MP</code>
+                    </div>
+                    <div class="formula-item">
+                        <h4 data-i18n="formula_passive">Habilidades Pasivas</h4>
+                        <code>+(Poder ÷ 3) permanente</code><br>
+                        <span data-i18n="formula_passive_cost">Sin costo</span>
+                    </div>
+                    <div class="formula-item">
+                        <h4 data-i18n="formula_reaction">Reacciones</h4>
+                        <code>d20 + (Poder ÷ 2)</code><br>
+                        <span data-i18n="formula_reaction_limit">1 vez por turno</span>
+                    </div>
+                    <div class="formula-item">
+                        <h4>Ultimates</h4>
+                        <code>(Poder)d6 efecto</code><br>
+                        <span data-i18n="formula_ultimate_cost">Costo:</span> <code>15 + (Poder × 4) MP</code>
+                    </div>
+                </div>
+
+                <p style="margin-top: 20px; font-style: italic; color: #666;" data-i18n="dnd_footnote">
+                    Estas mecánicas son <strong>sugerencias</strong>. Adapta los valores a tu mesa
+                    o ignóralas si solo usas el personaje para narrativa pura.
+                </p>
+            </div>
+
+            <!-- SELLO -->
+            <div class="seal-section">
+                <div class="seal"></div>
+                <div class="seal-text">
+                    <span data-i18n="seal_text">Sellado y Decretado por el</span><br>
+                    <strong>Forjador de Almas · SoulForge Engine</strong>
+                </div>
+                <p style="margin-top: 25px; font-size: 1rem; color: #555; font-style: italic;" data-i18n="seal_tagline">
+                    Para tu historia, para tu juego de rol, para tu próxima gran aventura.
+                </p>
+                <a href="index.html" class="back-btn" data-i18n="back_btn">← Volver a Forjar un Alma</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const translations = {
+            es: {
+                title: "El Forjador de Almas",
+                subtitle: "Decreto Oficial del Sistema de Talentos",
+                philosophy_1: "Cada personaje forjado en SoulForge lleva consigo un conjunto único de <strong>talentos y habilidades</strong> que no se eligen ni se compran: <em>nacen de su historia</em>.",
+                philosophy_2: "Cuanto más ha vivido un alma —más batallas, más pérdidas, más decisiones imposibles— más profunda es su resonancia. Y de esa profundidad, emergen sus poderes.",
+                tier_title: "El Tier del Alma",
+                tier_desc: "El <strong>Tier</strong> representa la <span class=\"gold-text\">complejidad narrativa</span> de un personaje. No es poder bruto ni nivel de combate: es la suma de todas las experiencias que lo han forjado.",
+                tier_examples: "Un anciano campesino que vivió en paz puede ser <strong>Eco</strong>.<br>Un joven que sobrevivió a una guerra y perdió todo puede ser <strong>Ancestral</strong>.<br><em>La edad modifica las estadísticas base, pero no limita la profundidad del alma.</em>",
+                power_note: "El valor de <strong>Poder</strong> representa la <em>intensidad emocional y narrativa</em> del personaje, no una escala estricta de fuerza.",
+                nine_tiers: "Los Nueve Tiers del Alma",
+                nine_tiers_desc: "Cada nivel representa un grado de profundidad en la historia del personaje.",
+                tier_eco_phrase: "\"Una vida tranquila\"",
+                tier_eco_stats: "1 Habilidad · Poder 3-4",
+                tier_murmullo_phrase: "\"Historias a medias\"",
+                tier_murmullo_stats: "2 Habilidades · Poder 4-5",
+                tier_sombra_phrase: "\"Un pasado que persigue\"",
+                tier_sombra_stats: "3 Hab. + Firma · Poder 5-6",
+                tier_voz_phrase: "\"Las palabras que cambian\"",
+                tier_voz_stats: "3 Hab. + Firma · Poder 5-7",
+                tier_alma_phrase: "\"Marcado por el destino\"",
+                tier_alma_stats: "4 Hab. + Ultimate · Poder 6-8",
+                tier_ancestral_phrase: "\"Sangre de linaje antiguo\"",
+                tier_ancestral_stats: "4 Hab. + Ultimate · Poder 7-8",
+                tier_primordial_phrase: "\"Fuerza de la naturaleza\"",
+                tier_primordial_stats: "5 Hab. + Ultimate · Poder 7-9",
+                tier_legendaria_phrase: "\"Nombre conocido en reinos\"",
+                tier_legendaria_stats: "6 Hab. + Ultimate · Poder 8-9",
+                tier_mitica_phrase: "\"La realidad se dobla\"",
+                tier_mitica_stats: "8 Hab. + Ultimate · Poder 9-10",
+                signature_title: "Habilidad de Firma",
+                signature_tagline: "La herida que nunca cerró… y ahora define quién eres.",
+                signature_desc: "La <strong>Habilidad de Firma</strong> no se aprende ni se elige. <em>Nace</em> del trauma más profundo del personaje. Es la cicatriz convertida en poder, el dolor transformado en propósito.",
+                trauma_examples_title: "Ejemplos según el Trauma:",
+                trauma_abandono: "Abandono:", skill_vinculo: "Vínculo Irrompible", skill_vinculo_effect: "+3 al proteger aliados",
+                trauma_traicion: "Traición:", skill_ojo: "Ojo Vigilante", skill_ojo_effect: "Detecta engaños automáticamente",
+                trauma_perdida: "Pérdida:", skill_duelo: "Fuerza del Duelo", skill_duelo_effect: "+2 poder cuando un aliado cae",
+                trauma_violencia: "Violencia:", skill_ira: "Ira Contenida", skill_ira_effect: "+4 daño cuando HP < 50%",
+                trauma_rechazo: "Rechazo:", skill_prueba: "Prueba Constante", skill_prueba_effect: "+2 a tiradas tras un fallo",
+                trauma_culpa: "Culpa:", skill_redencion: "Redención", skill_redencion_effect: "+3 a acciones que ayuden inocentes",
+                ultimate_title: "Habilidades Ultimate",
+                ultimate_desc: "Las <strong>Ultimates</strong> son momentos culminantes en la narrativa del personaje. Solo disponibles para Tiers <span class=\"gold-text\">Alma</span> o superiores.",
+                ultimate_note: "Las Ultimates <strong>no siempre causan daño</strong>. Algunas alteran el destino, el entorno o la narrativa de la escena.",
+                ultimate_types_title: "Tipos de Ultimate:",
+                ultimate_types: "<strong>⚔️ Combate:</strong> Ataques devastadores, transformaciones temporales.<br><strong>🎭 Social:</strong> Discursos que cambian lealtades.<br><strong>🔮 Arcano:</strong> Alteración de la realidad, visiones proféticas.<br><strong>📖 Narrativo:</strong> Revelar verdades ocultas, invocar el destino.",
+                dnd_title: "🎲 Compatible con Tu Sistema Favorito",
+                dnd_desc: "Si usas SoulForge para D&D, Pathfinder u otro sistema, estas son las <strong>fórmulas sugeridas</strong> para integrar las habilidades:",
+                formula_active: "Habilidades Activas", formula_active_cost: "Costo:",
+                formula_passive: "Habilidades Pasivas", formula_passive_cost: "Sin costo",
+                formula_reaction: "Reacciones", formula_reaction_limit: "1 vez por turno",
+                formula_ultimate_cost: "Costo:",
+                dnd_footnote: "Estas mecánicas son <strong>sugerencias</strong>. Adapta los valores a tu mesa o ignóralas si solo usas el personaje para narrativa pura.",
+                seal_text: "Sellado y Decretado por el",
+                seal_tagline: "Para tu historia, para tu juego de rol, para tu próxima gran aventura.",
+                back_btn: "← Volver a Forjar un Alma"
+            },
+            en: {
+                title: "The Soul Forger",
+                subtitle: "Official Decree of the Talent System",
+                philosophy_1: "Every character forged in SoulForge carries a unique set of <strong>talents and abilities</strong> that are not chosen or bought: <em>they are born from their history</em>.",
+                philosophy_2: "The more a soul has lived —more battles, more losses, more impossible decisions— the deeper its resonance. And from that depth, its powers emerge.",
+                tier_title: "The Soul Tier",
+                tier_desc: "The <strong>Tier</strong> represents the <span class=\"gold-text\">narrative complexity</span> of a character. It's not raw power or combat level: it's the sum of all the experiences that forged them.",
+                tier_examples: "An elderly farmer who lived in peace might be <strong>Echo</strong>.<br>A young person who survived a war and lost everything might be <strong>Ancestral</strong>.<br><em>Age modifies base stats, but it does not limit the depth of the soul.</em>",
+                power_note: "The <strong>Power</strong> value represents the <em>emotional and narrative intensity</em> of the character, not a strict scale of strength.",
+                nine_tiers: "The Nine Soul Tiers",
+                nine_tiers_desc: "Each level represents a degree of depth in the character's story.",
+                tier_eco_phrase: "\"A quiet life\"",
+                tier_eco_stats: "1 Skill · Power 3-4",
+                tier_murmullo_phrase: "\"Half-told stories\"",
+                tier_murmullo_stats: "2 Skills · Power 4-5",
+                tier_sombra_phrase: "\"A haunting past\"",
+                tier_sombra_stats: "3 Skills + Signature · Power 5-6",
+                tier_voz_phrase: "\"Words that change\"",
+                tier_voz_stats: "3 Skills + Signature · Power 5-7",
+                tier_alma_phrase: "\"Marked by destiny\"",
+                tier_alma_stats: "4 Skills + Ultimate · Power 6-8",
+                tier_ancestral_phrase: "\"Blood of ancient lineage\"",
+                tier_ancestral_stats: "4 Skills + Ultimate · Power 7-8",
+                tier_primordial_phrase: "\"Force of nature\"",
+                tier_primordial_stats: "5 Skills + Ultimate · Power 7-9",
+                tier_legendaria_phrase: "\"Name known across realms\"",
+                tier_legendaria_stats: "6 Skills + Ultimate · Power 8-9",
+                tier_mitica_phrase: "\"Reality bends\"",
+                tier_mitica_stats: "8 Skills + Ultimate · Power 9-10",
+                signature_title: "Signature Ability",
+                signature_tagline: "The wound that never healed… and now defines who you are.",
+                signature_desc: "The <strong>Signature Ability</strong> is not learned or chosen. It is <em>born</em> from the character's deepest trauma. The scar turned into power, pain transformed into purpose.",
+                trauma_examples_title: "Examples by Trauma:",
+                trauma_abandono: "Abandonment:", skill_vinculo: "Unbreakable Bond", skill_vinculo_effect: "+3 when protecting allies",
+                trauma_traicion: "Betrayal:", skill_ojo: "Watchful Eye", skill_ojo_effect: "Automatically detects deception",
+                trauma_perdida: "Loss:", skill_duelo: "Strength of Grief", skill_duelo_effect: "+2 power when an ally falls",
+                trauma_violencia: "Violence:", skill_ira: "Contained Fury", skill_ira_effect: "+4 damage when HP < 50%",
+                trauma_rechazo: "Rejection:", skill_prueba: "Constant Proof", skill_prueba_effect: "+2 to rolls after a failure",
+                trauma_culpa: "Guilt:", skill_redencion: "Redemption", skill_redencion_effect: "+3 to actions helping innocents",
+                ultimate_title: "Ultimate Abilities",
+                ultimate_desc: "The <strong>Ultimates</strong> are climactic moments in the character's narrative. Only available for Tiers <span class=\"gold-text\">Soul</span> or higher.",
+                ultimate_note: "Ultimates <strong>don't always deal damage</strong>. Some alter fate, the environment, or the scene's narrative.",
+                ultimate_types_title: "Types of Ultimate:",
+                ultimate_types: "<strong>⚔️ Combat:</strong> Devastating attacks, temporary transformations.<br><strong>🎭 Social:</strong> Speeches that change loyalties.<br><strong>🔮 Arcane:</strong> Reality alteration, prophetic visions.<br><strong>📖 Narrative:</strong> Reveal hidden truths, invoke destiny.",
+                dnd_title: "🎲 Compatible with Your Favorite System",
+                dnd_desc: "If you use SoulForge for D&D, Pathfinder or another system, these are the <strong>suggested formulas</strong> to integrate the abilities:",
+                formula_active: "Active Abilities", formula_active_cost: "Cost:",
+                formula_passive: "Passive Abilities", formula_passive_cost: "No cost",
+                formula_reaction: "Reactions", formula_reaction_limit: "1 per turn",
+                formula_ultimate_cost: "Cost:",
+                dnd_footnote: "These mechanics are <strong>suggestions</strong>. Adapt the values to your table or ignore them if you only use the character for pure narrative.",
+                seal_text: "Sealed and Decreed by the",
+                seal_tagline: "For your story, for your role-playing game, for your next great adventure.",
+                back_btn: "← Return to Forge a Soul"
+            },
+            jp: {
+                title: "魂の鍛冶師",
+                subtitle: "才能システム公式布告",
+                philosophy_1: "SoulForgeで鍛えられたすべてのキャラクターは、選んだり購入したりするものではない<strong>才能と能力</strong>のユニークなセットを持っています：<em>それらは彼らの歴史から生まれます</em>。",
+                philosophy_2: "魂がより多くを生きるほど（より多くの戦い、より多くの喪失、より多くの不可能な決断）、その共鳴はより深くなります。そしてその深さから、力が現れるのです。",
+                tier_title: "ソウルティア",
+                tier_desc: "<strong>ティア</strong>はキャラクターの<span class=\"gold-text\">物語の複雑さ</span>を表します。それは生の力や戦闘レベルではなく、彼らを鍛えたすべての経験の総和です。",
+                tier_examples: "平和に暮らした老いた農民は<strong>エコー</strong>かもしれません。<br>戦争を生き延び、すべてを失った若者は<strong>アンセストラル</strong>かもしれません。<br><em>年齢は基本ステータスを変更しますが、魂の深さは制限されません。</em>",
+                power_note: "<strong>パワー</strong>の値はキャラクターの<em>感情的・物語的な強度</em>を表し、厳密な強さの尺度ではありません。",
+                nine_tiers: "9つのソウルティア",
+                nine_tiers_desc: "各レベルはキャラクターの物語の深さの段階を表します。",
+                tier_eco_phrase: "「静かな人生」",
+                tier_eco_stats: "1スキル · パワー3-4",
+                tier_murmullo_phrase: "「半分の物語」",
+                tier_murmullo_stats: "2スキル · パワー4-5",
+                tier_sombra_phrase: "「追いかける過去」",
+                tier_sombra_stats: "3スキル+シグネチャー · パワー5-6",
+                tier_voz_phrase: "「変える言葉」",
+                tier_voz_stats: "3スキル+シグネチャー · パワー5-7",
+                tier_alma_phrase: "「運命に刻まれた」",
+                tier_alma_stats: "4スキル+アルティメット · パワー6-8",
+                tier_ancestral_phrase: "「古代血統の血」",
+                tier_ancestral_stats: "4スキル+アルティメット · パワー7-8",
+                tier_primordial_phrase: "「自然の力」",
+                tier_primordial_stats: "5スキル+アルティメット · パワー7-9",
+                tier_legendaria_phrase: "「全国に知られた名前」",
+                tier_legendaria_stats: "6スキル+アルティメット · パワー8-9",
+                tier_mitica_phrase: "「現実が曲がる」",
+                tier_mitica_stats: "8スキル+アルティメット · パワー9-10",
+                signature_title: "シグネチャーアビリティ",
+                signature_tagline: "決して癒えなかった傷…今やあなたを定義するもの。",
+                signature_desc: "<strong>シグネチャーアビリティ</strong>は学んだり選んだりするものではありません。それはキャラクターの最も深いトラウマから<em>生まれます</em>。傷が力に変わり、痛みが目的に変わったものです。",
+                trauma_examples_title: "トラウマ別の例：",
+                trauma_abandono: "見捨て:", skill_vinculo: "壊れない絆", skill_vinculo_effect: "味方を守る時+3",
+                trauma_traicion: "裏切り:", skill_ojo: "警戒の目", skill_ojo_effect: "自動的に欺瞞を検知",
+                trauma_perdida: "喪失:", skill_duelo: "悲しみの力", skill_duelo_effect: "味方が倒れた時+2パワー",
+                trauma_violencia: "暴力:", skill_ira: "抑えた怒り", skill_ira_effect: "HP50%以下で+4ダメージ",
+                trauma_rechazo: "拒絶:", skill_prueba: "絶え間ない証明", skill_prueba_effect: "失敗後+2ロール",
+                trauma_culpa: "罪悪感:", skill_redencion: "贖罪", skill_redencion_effect: "無実を助ける行動に+3",
+                ultimate_title: "アルティメットアビリティ",
+                ultimate_desc: "<strong>アルティメット</strong>はキャラクターの物語のクライマックスです。<span class=\"gold-text\">ソウル</span>ティア以上でのみ利用可能。",
+                ultimate_note: "アルティメットは<strong>常にダメージを与えるわけではありません</strong>。運命、環境、シーンの物語を変えるものもあります。",
+                ultimate_types_title: "アルティメットの種類：",
+                ultimate_types: "<strong>⚔️ 戦闘:</strong> 壊滅的な攻撃、一時的な変身。<br><strong>🎭 社会:</strong> 忠誠を変えるスピーチ。<br><strong>🔮 神秘:</strong> 現実の変更、予言的なビジョン。<br><strong>📖 物語:</strong> 隠された真実を明かす、運命を呼び起こす。",
+                dnd_title: "🎲 お気に入りのシステムと互換",
+                dnd_desc: "SoulForgeをD&D、Pathfinderや他のシステムで使用する場合、これらは能力を統合するための<strong>推奨フォーミュラ</strong>です：",
+                formula_active: "アクティブアビリティ", formula_active_cost: "コスト：",
+                formula_passive: "パッシブアビリティ", formula_passive_cost: "コストなし",
+                formula_reaction: "リアクション", formula_reaction_limit: "ターンごとに1回",
+                formula_ultimate_cost: "コスト：",
+                dnd_footnote: "これらのメカニクスは<strong>提案</strong>です。値をテーブルに適応させるか、純粋な物語のためにキャラクターを使用する場合は無視してください。",
+                seal_text: "封印と布告：",
+                seal_tagline: "あなたの物語のために、あなたのロールプレイングゲームのために、次の大冒険のために。",
+                back_btn: "← ソウルを鍛えに戻る"
+            }
+        };
+
+        function setLang(lang) {
+            localStorage.setItem('soulforge_lang', lang);
+            applyTranslations(lang);
+
+            // Update active state
+            document.querySelectorAll('.lang-selector a').forEach(a => a.classList.remove('active'));
+            document.getElementById('lang-' + lang)?.classList.add('active');
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations['es'];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.innerHTML = t[key];
+                }
+            });
+            document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+        }
+
+        // Init on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('soulforge_lang') || 'es';
+            setLang(savedLang);
+        });
+    </script>
+</body>
+
+</html>

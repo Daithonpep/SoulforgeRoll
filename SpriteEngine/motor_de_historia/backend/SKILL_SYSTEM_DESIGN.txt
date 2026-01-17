@@ -1,0 +1,306 @@
+# SISTEMA DE HABILIDADES SOULFORGE
+## Documento de Diseño v2.0 - CORREGIDO
+
+---
+
+## RESUMEN EJECUTIVO
+
+El sistema de habilidades genera habilidades procedurales únicas basándose en:
+1. **TIER DEL ALMA** → Representa la profundidad narrativa y experiencias vividas
+2. **CLASE** → Define el árbol de habilidades disponibles
+3. **TRAUMA** → Genera habilidad de Firma única
+4. **EDAD** → Afecta SOLO la narrativa y stats base, NO las habilidades
+
+---
+
+## 1. TIER DEL ALMA (Profundidad Narrativa)
+
+El Tier representa cuánta historia, adversidad y experiencias significativas
+ha vivido el personaje. Un Tier alto = más eventos que lo moldearon.
+
+**La edad NO afecta el Tier.** Un joven puede tener Tier alto si su vida
+fue intensa (guerras, pérdidas, entrenamiento extremo). Un anciano puede
+tener Tier bajo si su vida fue tranquila.
+
+### Probabilidades y Beneficios
+
+| Tier       | Probabilidad | Skills | Signature | Ultimate | Poder Base |
+|------------|--------------|--------|-----------|----------|------------|
+| Eco        | 30%          | 1      | ❌        | ❌       | 3-4        |
+| Murmullo   | 25%          | 2      | ❌        | ❌       | 4-5        |
+| Sombra     | 20%          | 3      | ✅        | ❌       | 5-6        |
+| Voz        | 12%          | 3      | ✅        | ❌       | 5-7        |
+| Alma       | 8%           | 4      | ✅        | ✅       | 6-8        |
+| Ancestral  | 3.5%         | 4      | ✅        | ✅       | 7-8        |
+| Primordial | 1.25%        | 5      | ✅        | ✅       | 7-9        |
+| Legendaria | 0.2%         | 6      | ✅        | ✅       | 8-9        |
+| Mítica     | 0.05%        | 8      | ✅        | ✅       | 9-10       |
+
+### Características por Tier
+
+**ECO (30%)** - Común
+- 1 habilidad básica
+- Sin Signature ni Ultimate
+- Poder: 3-4
+- "Sobreviviente - Un alma recién despertada"
+
+**MURMULLO (25%)** - Poco Común
+- 2 habilidades
+- Sin Signature ni Ultimate
+- Poder: 4-5
+- "Viajero - Alguien que ha visto más de lo que aparenta"
+
+**SOMBRA (20%)** - Raro
+- 3 habilidades + Signature
+- Sin Ultimate
+- Poder: 5-6
+- "Agente - Entrenado en artes que pocos conocen"
+
+**VOZ (12%)** - Épico
+- 3 habilidades + Signature
+- Sin Ultimate
+- Poder: 5-7
+- "Orador - Don para la persuasión sobrenatural"
+
+**ALMA (8%)** - Legendario
+- 4 habilidades + Signature + Ultimate
+- Poder: 6-8
+- "Elegido - Marcado desde el nacimiento por señales"
+
+**ANCESTRAL (3.5%)** - Mítico
+- 4 habilidades + Signature + Ultimate
+- Poder: 7-8
+- "Heredero - Descendiente de línea antigua"
+
+**PRIMORDIAL (1.25%)** - Ultra-Raro
+- 5 habilidades + Signature + Ultimate
+- Poder: 7-9
+- "Fuerza de la Naturaleza - Trasciende la mortalidad"
+
+**LEGENDARIA (0.2%)** - Extremo
+- 6 habilidades + Signature + Ultimate
+- Poder: 8-9
+- "Mito Viviente - Sus hazañas son conocidas en todos los reinos"
+
+**MÍTICA (0.05%)** - Divino
+- 8 habilidades + Signature + Ultimate
+- Poder: 9-10
+- "Dios Entre Mortales - La realidad se dobla ante su voluntad"
+
+---
+
+## 2. EDAD (Afecta STATS y NARRATIVA, NO Habilidades)
+
+La edad modifica las estadísticas base del personaje y la narrativa,
+pero NO afecta el poder ni cantidad de habilidades.
+
+### Modificadores de Stats (engine.js)
+
+| Edad      | Modificadores Stats                  | Narrativa              |
+|-----------|--------------------------------------|------------------------|
+| < 25      | STR+2, DEX+2, CON+2, WIS-2          | Vitalidad Juvenil      |
+| 25-50     | Sin modificadores                    | En su Prime            |
+| > 50      | STR-2, DEX-2, CON-2, WIS+3, INT+1   | Sabiduría Ancestral    |
+
+### Efecto en Habilidades
+
+La edad SOLO afecta la razón narrativa de por qué tiene la habilidad:
+
+- **Joven (<25):** "Talento natural innato", "Entrenamiento precoz"
+- **Adulto (25-50):** "Perfeccionada con la práctica", "Desarrollada en combate"
+- **Mayor (>50):** "Refinada por décadas", "Sabiduría de años"
+
+**EJEMPLO:**
+- Mago de 20 años con Tier MÍTICA = 8 habilidades, poder 9-10
+- Mago de 80 años con Tier ECO = 1 habilidad, poder 3-4
+
+---
+
+## 3. CLASE (Árbol de Habilidades)
+
+Cada clase tiene un pool de habilidades temáticas:
+
+### MAGO
+| Habilidad           | Categoría | Descripción                    |
+|---------------------|-----------|--------------------------------|
+| Rayo Arcano         | Activa    | Proyectil de energía          |
+| Escudo Místico      | Reacción  | Barrera protectora temporal    |
+| Meditación Profunda | Pasiva    | Recupera maná                  |
+| Visión Arcana       | Pasiva    | Detecta magia                  |
+| Tormenta de Fuego   | Ultimate  | Llamas devastadoras en área   |
+| Telekinesis         | Activa    | Mueve objetos con la mente    |
+| Contraconjuro       | Reacción  | Anula hechizo enemigo         |
+| Distorsión Temporal | Ultimate  | Ralentiza el tiempo           |
+
+### GUERRERO
+| Habilidad           | Categoría | Descripción                    |
+|---------------------|-----------|--------------------------------|
+| Golpe Devastador    | Activa    | Rompe defensas                 |
+| Carga Brutal        | Activa    | Embiste y derriba             |
+| Voluntad de Hierro  | Pasiva    | Resistencia al miedo          |
+| Segundo Aliento     | Reacción  | Recupera vitalidad            |
+| Grito de Guerra     | Activa    | Intimida enemigos             |
+| Ejecución           | Ultimate  | Daño masivo a debilitados     |
+| Furia Imparable     | Ultimate  | Frenesí de combate            |
+
+### PALADÍN
+| Habilidad           | Categoría | Descripción                    |
+|---------------------|-----------|--------------------------------|
+| Imposición de Manos | Activa    | Cura con energía divina       |
+| Aura Sagrada        | Pasiva    | Protege aliados cercanos      |
+| Castigo Divino      | Activa    | Poder sagrado en arma         |
+| Escudo de Fe        | Reacción  | Barrera vs ataques oscuros    |
+| Mártir              | Reacción  | Recibe daño por aliados       |
+| Juicio Final        | Ultimate  | Ataque devastador vs mal      |
+| Avatar de la Luz    | Ultimate  | Transformación divina         |
+
+### PÍCARO
+| Habilidad           | Categoría | Descripción                    |
+|---------------------|-----------|--------------------------------|
+| Ataque Furtivo      | Activa    | Daño extra desde sombras      |
+| Evasión             | Pasiva    | Esquiva ataques de área       |
+| Veneno Mortal       | Activa    | Toxina en armas               |
+| Paso de Sombra      | Activa    | Teletransporte corto          |
+| Escapar             | Reacción  | Desaparece brevemente         |
+| Golpe Letal         | Ultimate  | Crítico desde sigilo          |
+| Maestro de Sombras  | Ultimate  | Control total oscuridad       |
+
+---
+
+## 4. TRAUMA → HABILIDAD DE FIRMA
+
+Si el Tier desbloquea Signature (Sombra+), el trauma genera una pasiva única:
+
+| Tipo de Trauma    | Habilidad         | Efecto                        |
+|-------------------|-------------------|-------------------------------|
+| Abandono/Soledad  | Vínculo Irrompible| +3 al proteger aliados        |
+| Traición          | Ojo Vigilante     | Detecta engaños automáticos   |
+| Pérdida/Muerte    | Fuerza del Duelo  | +2 poder cuando aliado cae    |
+| Violencia/Abuso   | Ira Contenida     | +4 daño cuando HP < 50%       |
+| Rechazo           | Prueba Constante  | +2 tras un fallo              |
+| Culpa             | Redención         | +3 a ayudar inocentes         |
+
+---
+
+## 5. SISTEMA DE DADOS (Futuro)
+
+Las habilidades están preparadas para integrarse con d20:
+
+### Fórmulas por Categoría
+
+| Categoría | Fórmula de Tirada    | Fórmula de Daño/Efecto |
+|-----------|----------------------|------------------------|
+| Activa    | d20 + (Poder/2)      | Poder × d4             |
+| Pasiva    | +(Poder/3)+1 perm.   | N/A                    |
+| Reacción  | d20 + (Poder/2)      | N/A                    |
+| Ultimate  | Automático           | Poder × d6             |
+| Signature | +(Poder/2)+1 perm.   | Variable               |
+
+### Ejemplo de Combate (Futuro)
+
+```
+Mago Tier ALMA (Poder 7) usa "Rayo Arcano":
+- Tirada: d20 + 3 (7/2) = d20+3 vs AC enemigo
+- Daño: 7d4 daño arcano
+- Costo: 19 MP
+
+Si falla, puede usar "Escudo Místico" (Reacción):
+- Tirada: d20 + 3
+- Efecto: Bloquea el contraataque
+```
+
+---
+
+## 6. ALGORITMO DE GENERACIÓN
+
+```pseudocode
+function generateSkills(class, tier, trauma):
+    skills = []
+    
+    // 1. Determinar cantidad de slots
+    slots = tier.skill_slots()
+    
+    // 2. Obtener pool de clase
+    pool = getClassPool(class)
+    
+    // 3. Filtrar si no tiene acceso a Ultimate
+    if not tier.unlocks_ultimate():
+        pool = pool.filter(skill => skill.category != Ultimate)
+    
+    // 4. Seleccionar aleatoriamente
+    selected = pool.choose_random(slots)
+    
+    // 5. Calcular poder según tier
+    for skill in selected:
+        base = skill.category.base_power_range()
+        power = random(base.min, base.max) + tier.power_bonus()
+        power = min(power, 10)
+        skill.power = power
+        skills.append(skill)
+    
+    // 6. Añadir Signature si aplica
+    if tier.unlocks_signature() and trauma:
+        signature = generateSignature(trauma)
+        skills.append(signature)
+    
+    return skills
+```
+
+---
+
+## 7. EJEMPLOS CONCRETOS
+
+### Ejemplo 1: Guerrero Eco (Común)
+- **Tier:** Eco (30% probabilidad)
+- **Edad:** 45 años
+- **Clase:** Guerrero
+- **Trauma:** "Abandono de su padre" (no aplica, Eco no tiene Signature)
+
+**Resultado:**
+- 1 Habilidad: Golpe Devastador (Poder 4)
+- Sin Signature, Sin Ultimate
+- Stats: Normales (45 años, en su prime)
+
+### Ejemplo 2: Mago Sombra (Raro)
+- **Tier:** Sombra (20% probabilidad)
+- **Edad:** 22 años
+- **Clase:** Mago
+- **Trauma:** "Traición de su mentor"
+
+**Resultado:**
+- 3 Habilidades:
+  1. Rayo Arcano (Poder 5)
+  2. Meditación Profunda (Poder 5)
+  3. Escudo Místico (Poder 6)
+- 1 Signature: Ojo Vigilante (Poder 6)
+- Sin Ultimate
+- Stats: STR+2, DEX+2, CON+2, WIS-2 (joven)
+
+### Ejemplo 3: Paladín Mítica (Divino - 0.05%)
+- **Tier:** Mítica (0.05% probabilidad)
+- **Edad:** 60 años
+- **Clase:** Paladín
+- **Trauma:** "Pérdida de toda su orden"
+
+**Resultado:**
+- 8 Habilidades (todas las del pool)
+- Poder: 9-10 en cada una
+- 2-3 Ultimates disponibles
+- 1 Signature: Fuerza del Duelo (Poder 10)
+- Stats: STR-2, DEX-2, CON-2, WIS+3, INT+1 (mayor)
+
+---
+
+## RESUMEN FINAL
+
+| Factor | Afecta Habilidades | Afecta Stats | Afecta Narrativa |
+|--------|-------------------|--------------|------------------|
+| Tier   | ✅ Cantidad+Poder | ❌           | ✅ Arquetipo     |
+| Edad   | ❌                | ✅           | ✅ Historia      |
+| Clase  | ✅ Pool disponible| ❌           | ✅ Temática      |
+| Trauma | ✅ Signature      | ❌           | ✅ Profundidad   |
+
+---
+
+*Documento de Diseño SoulForge v2.0*
+*Sistema de Habilidades Procedurales - CORREGIDO*

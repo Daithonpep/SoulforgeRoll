@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulForge - Sistema GACHA de Habilidades</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --paper: #e3dac9;
+            --ink: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: #f0f0f0;
+            font-family: 'Crimson Text', serif;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-family: 'Cinzel';
+            text-align: center;
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .gacha-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(147, 112, 219, 0.2));
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .gacha-box h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-family: 'Cinzel';
+        }
+
+        .gacha-explanation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .gacha-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .gacha-item h3 {
+            color: #32CD32;
+            margin-bottom: 8px;
+        }
+
+        .gacha-item.no h3 {
+            color: #ff6b6b;
+        }
+
+        .tier-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .tier-table th,
+        .tier-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tier-table th {
+            background: rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            font-family: 'Cinzel';
+        }
+
+        .tier-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 25px;
+            max-width: 1600px;
+            margin: 30px auto;
+        }
+
+        .character-card {
+            background: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            border-radius: 8px;
+            overflow: hidden;
+            color: var(--ink);
+        }
+
+        .card-header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px double currentColor;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: 'Cinzel';
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .char-name {
+            font-family: 'Cinzel';
+            font-size: 1.4rem;
+            margin: 5px 0;
+        }
+
+        .char-class {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .char-meta {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .skills-section {
+            padding: 15px;
+        }
+
+        .skills-title {
+            font-family: 'Cinzel';
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 6px;
+        }
+
+        .skill-item {
+            background: rgba(0, 0, 0, 0.05);
+            border-left: 4px solid;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .skill-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .skill-category {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-desc {
+            font-style: italic;
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .skill-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 0.7rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .skill-power {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .power-bar {
+            display: flex;
+            gap: 1px;
+        }
+
+        .power-pip {
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+            background: #ddd;
+        }
+
+        .power-pip.filled {
+            background: currentColor;
+        }
+
+        /* Tier Colors */
+        .tier-eco {
+            background: #808080;
+            color: #fff;
+        }
+
+        .tier-murmullo {
+            background: #FFFFFF;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        .tier-sombra {
+            background: #32CD32;
+            color: #fff;
+        }
+
+        .tier-voz {
+            background: #4169E1;
+            color: #fff;
+        }
+
+        .tier-alma {
+            background: #9932CC;
+            color: #fff;
+        }
+
+        .tier-mitica {
+            background: #00FFFF;
+            color: #000;
+        }
+
+        .skill-active {
+            border-color: #4169E1;
+        }
+
+        .skill-passive {
+            border-color: #32CD32;
+        }
+
+        .skill-ultimate {
+            border-color: #FFD700;
+        }
+
+        .skill-reaction {
+            border-color: #FF4500;
+        }
+
+        .skill-signature {
+            border-color: #9932CC;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .highlight-box {
+            background: rgba(50, 205, 50, 0.1);
+            border: 1px solid rgba(50, 205, 50, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .highlight-box h4 {
+            color: #32CD32;
+            margin-bottom: 10px;
+        }
+
+        .age-note {
+            background: rgba(100, 149, 237, 0.1);
+            border: 1px solid rgba(100, 149, 237, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎰 Sistema GACHA de Habilidades</h1>
+    <p class="subtitle">El poder se determina por SUERTE al crear el personaje · La edad NO afecta las habilidades</p>
+
+    <div class="gacha-box">
+        <h2>⚡ ¿Cómo funciona el Sistema Gacha?</h2>
+        <p style="margin-bottom: 15px;">Al crear un personaje, se hace un <strong>roll aleatorio</strong> que determina
+            su Tier del Alma.</p>
+
+        <div class="gacha-explanation">
+            <div class="gacha-item">
+                <h3>✅ TIER determina:</h3>
+                <ul>
+                    <li>Cantidad de habilidades (1-8)</li>
+                    <li>Poder de cada habilidad (3-10)</li>
+                    <li>Acceso a Ultimates (Alma+)</li>
+                    <li>Acceso a Signature (Sombra+)</li>
+                    <li>Arquetipo narrativo</li>
+                </ul>
+            </div>
+            <div class="gacha-item no">
+                <h3>❌ EDAD <u>NO</u> afecta:</h3>
+                <ul>
+                    <li>❌ Cantidad de habilidades</li>
+                    <li>❌ Poder de habilidades</li>
+                    <li>❌ Tier del Alma</li>
+                    <li>✅ Solo stats (STR, DEX...)</li>
+                    <li>✅ Solo narrativa (historia)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <table class="tier-table">
+        <tr>
+            <th>Tier</th>
+            <th>Probabilidad</th>
+            <th>Skills</th>
+            <th>Poder</th>
+            <th>Signature</th>
+            <th>Ultimate</th>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#808080;color:#fff">ECO</td>
+            <td>30%</td>
+            <td>1</td>
+            <td>3-4</td>
+            <td>❌</td>
+            <td>❌</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#fff;color:#333">MURMULLO</td>
+            <td>25%</td>
+            <td>2</td>
+            <td>4-5</td>
+            <td>❌</td>
+            <td>❌</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#32CD32;color:#fff">SOMBRA</td>
+            <td>20%</td>
+            <td>3</td>
+            <td>5-6</td>
+            <td>✅</td>
+            <td>❌</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#4169E1;color:#fff">VOZ</td>
+            <td>12%</td>
+            <td>3</td>
+            <td>5-7</td>
+            <td>✅</td>
+            <td>❌</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#9932CC;color:#fff">ALMA</td>
+            <td>8%</td>
+            <td>4</td>
+            <td>6-8</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#FFD700;color:#333">ANCESTRAL</td>
+            <td>3.5%</td>
+            <td>4</td>
+            <td>7-8</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#FF4500;color:#fff">PRIMORDIAL</td>
+            <td>1.25%</td>
+            <td>5</td>
+            <td>7-9</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#FF1493;color:#fff">LEGENDARIA</td>
+            <td>0.2%</td>
+            <td>6</td>
+            <td>8-9</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+        <tr class="tier-row">
+            <td style="background:#00FFFF;color:#333">MÍTICA</td>
+            <td>0.05%</td>
+            <td>8</td>
+            <td>9-10</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        <h4>💡 Ejemplos de cómo funciona:</h4>
+        <p><strong>Mago de 20 años + Tier MÍTICA (0.05% suerte)</strong> = 8 habilidades, poder 9-10</p>
+        <p><strong>Mago de 80 años + Tier ECO (30% común)</strong> = 1 habilidad, poder 3-4</p>
+        <p style="margin-top: 10px; color: #888;">→ La edad no da ventaja en habilidades. Solo el roll de Tier importa.
+        </p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background:#4169E1"></div> Activa
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#32CD32"></div> Pasiva
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#FF4500"></div> Reacción
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#FFD700"></div> Ultimate
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background:#9932CC"></div> Firma
+        </div>
+    </div>
+
+    <div class="demo-grid">
+        <!-- ECO - Personaje viejo pero tier bajo -->
+        <div class="character-card">
+            <div class="card-header" style="border-color:#808080">
+                <div class="tier-badge tier-eco">ECO (30%)</div>
+                <div class="char-name">Gundric el Anciano</div>
+                <div class="char-class">Guerrero · Fantasía Medieval</div>
+                <div class="char-meta">72 años</div>
+                <div class="age-note">📌 A pesar de su edad avanzada, le tocó Tier ECO. Solo 1 habilidad, poder bajo.
+                </div>
+            </div>
+            <div class="skills-section">
+                <div class="skills-title">⚔️ HABILIDADES (1) · Poder 3-4</div>
+
+                <div class="skill-item skill-active" style="color:#4169E1">
+                    <div class="skill-header">
+                        <span class="skill-name">⚔️ Golpe Devastador</span>
+                        <span class="skill-category">Activa</span>
+                    </div>
+                    <div class="skill-desc">Ataque que rompe defensas</div>
+                    <div class="skill-meta">
+                        <span>💠 11 MP</span>
+                        <span>🎲 d20+1</span>
+                        <div class="skill-power">
+                            Poder:
+                            <div class="power-bar">
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p style="color:#888; font-size:0.8rem; text-align:center; margin-top:10px;">Sin Signature · Sin
+                    Ultimate (Tier bajo)</p>
+            </div>
+        </div>
+
+        <!-- SOMBRA - Persona joven con tier medio -->
+        <div class="character-card">
+            <div class="card-header" style="border-color:#32CD32">
+                <div class="tier-badge tier-sombra">SOMBRA (20%)</div>
+                <div class="char-name">Kira Lunasombra</div>
+                <div class="char-class">Pícaro · Fantasía Urbana</div>
+                <div class="char-meta">19 años</div>
+                <div class="age-note">📌 Joven pero con suerte media. Tiene 3 skills + Signature por trauma.</div>
+            </div>
+            <div class="skills-section">
+                <div class="skills-title">⚔️ HABILIDADES (4) · Poder 5-6</div>
+
+                <div class="skill-item skill-active" style="color:#4169E1">
+                    <div class="skill-header">
+                        <span class="skill-name">⚔️ Ataque Furtivo</span>
+                        <span class="skill-category">Activa</span>
+                    </div>
+                    <div class="skill-desc">Daño extra desde las sombras</div>
+                    <div class="skill-meta">
+                        <span>💠 15 MP</span>
+                        <span>🎲 d20+2</span>
+                        <div class="skill-power">
+                            Poder:
+                            <div class="power-bar">
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip filled"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                                <div class="power-pip"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-passive" style="color:#32CD32">
+                    <div class="skill-header">
+                        <span class="skill-name">🛡️ Evasión</span>
+                        <span class="skill-category">Pasiva</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>🎲 +3 permanente</span>
+                        <span>Poder: 6</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-reaction" style="color:#FF4500">
+                    <div class="skill-header">
+                        <span class="skill-name">⚡ Escapar</span>
+                        <span class="skill-category">Reacción</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>⏱️ 1/turno</span>
+                        <span>🎲 d20+2</span>
+                        <span>Poder: 5</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-signature" style="color:#9932CC">
+                    <div class="skill-header">
+                        <span class="skill-name">💎 Ojo Vigilante</span>
+                        <span class="skill-category">Firma</span>
+                    </div>
+                    <div class="skill-desc">La traición afiló tus sentidos. Detectas engaños automáticamente.</div>
+                    <div class="skill-meta">
+                        <span>♾️ Siempre activa</span>
+                        <span>Poder: 6</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALMA - Tier alto con todo -->
+        <div class="character-card">
+            <div class="card-header" style="border-color:#9932CC">
+                <div class="tier-badge tier-alma">ALMA (8%)</div>
+                <div class="char-name">Seraphina Aurorae</div>
+                <div class="char-class">Paladín · Mitología Divina</div>
+                <div class="char-meta">34 años</div>
+                <div class="age-note">📌 Tuvo suerte en el roll. 4 skills + Signature + Ultimate desbloqueado.</div>
+            </div>
+            <div class="skills-section">
+                <div class="skills-title">⚔️ HABILIDADES (5) · Poder 6-8</div>
+
+                <div class="skill-item skill-active" style="color:#4169E1">
+                    <div class="skill-header">
+                        <span class="skill-name">⚔️ Imposición de Manos</span>
+                        <span class="skill-category">Activa</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>💠 19 MP</span>
+                        <span>🎲 d20+3</span>
+                        <span>Poder: 7</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-passive" style="color:#32CD32">
+                    <div class="skill-header">
+                        <span class="skill-name">🛡️ Aura Sagrada</span>
+                        <span class="skill-category">Pasiva</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>🎲 +3 permanente</span>
+                        <span>Poder: 8</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-active" style="color:#4169E1">
+                    <div class="skill-header">
+                        <span class="skill-name">⚔️ Castigo Divino</span>
+                        <span class="skill-category">Activa</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>💠 17 MP</span>
+                        <span>Poder: 6</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-ultimate" style="color:#FFD700">
+                    <div class="skill-header">
+                        <span class="skill-name">⭐ Avatar de la Luz</span>
+                        <span class="skill-category">Ultimate</span>
+                    </div>
+                    <div class="skill-desc">Transforma en ser de luz pura</div>
+                    <div class="skill-meta">
+                        <span>💠 43 MP + Tensión</span>
+                        <span>🎲 7d6</span>
+                        <span>Poder: 7</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-signature" style="color:#9932CC">
+                    <div class="skill-header">
+                        <span class="skill-name">💎 Fuerza del Duelo</span>
+                        <span class="skill-category">Firma</span>
+                    </div>
+                    <div class="skill-desc">El dolor te forjó. +2 poder cuando un aliado cae.</div>
+                    <div class="skill-meta">
+                        <span>♾️ Siempre activa</span>
+                        <span>Poder: 8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÍTICA - El jackpot -->
+        <div class="character-card">
+            <div class="card-header" style="border-color:#00FFFF">
+                <div class="tier-badge tier-mitica">MÍTICA (0.05%)</div>
+                <div class="char-name">Zephyros Primordial</div>
+                <div class="char-class">Mago · Entidad Cósmica</div>
+                <div class="char-meta">25 años</div>
+                <div class="age-note">📌 ¡JACKPOT! 0.05% de probabilidad. Poder máximo sin importar edad.</div>
+            </div>
+            <div class="skills-section">
+                <div class="skills-title">⚔️ HABILIDADES (9) · Poder 9-10 🔥</div>
+
+                <div class="skill-item skill-ultimate" style="color:#FFD700">
+                    <div class="skill-header">
+                        <span class="skill-name">⭐ Catástrofe Arcana</span>
+                        <span class="skill-category">Ultimate</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>💠 55 MP</span>
+                        <span>🎲 10d6</span>
+                        <span style="color:#00FFFF; font-weight:bold;">Poder: 10</span>
+                    </div>
+                </div>
+
+                <div class="skill-item skill-ultimate" style="color:#FFD700">
+                    <div class="skill-header">
+                        <span class="skill-name">⭐ Distorsión Temporal</span>
+                        <span class="skill-category">Ultimate</span>
+                    </div>
+                    <div class="skill-meta">
+                        <span>🎲 9d6</span>
+                        <span style="color:#00FFFF; font-weight:bold;">Poder: 9</span>
+                    </div>
+                </div>
+
+                <p style="color:#888; font-size:0.75rem; text-align:center; padding:8px;">+ 6 habilidades más a poder
+                    9-10...</p>
+
+                <div class="skill-item skill-signature" style="color:#9932CC">
+                    <div class="skill-header">
+                        <span class="skill-name">💎 Marca del Destino</span>
+                        <span class="skill-category">Firma</span>
+                    </div>
+                    <div class="skill-desc">Habilidad única que refleja su historia cósmica.</div>
+                    <div class="skill-meta">
+                        <span>♾️ Siempre activa</span>
+                        <span style="color:#00FFFF; font-weight:bold;">Poder: 10</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Sistema GACHA de Habilidades SoulForge</strong></p>
+        <p style="margin-top: 8px; color: #555;">✅ Tier = Suerte (RNG) | ❌ Edad ≠ Poder | 📄 Ver:
+            SKILL_SYSTEM_DESIGN.txt</p>
+    </div>
+</body>
+
+</html>

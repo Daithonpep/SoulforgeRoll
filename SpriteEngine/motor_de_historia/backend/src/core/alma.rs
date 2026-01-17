@@ -12,6 +12,7 @@ use super::{
 use super::identidad::Identidad;
 use super::arco::ArcoNarrativo;
 use super::biografia::{Biografia, MotorBiografia};
+use super::skills::{Skill, SoulTier, SkillForge};
 
 /// Un personaje completo con alma
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,6 +45,12 @@ pub struct Alma {
     // D&D Stats (Optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ficha_tecnica: Option<super::DndStats>,
+    
+    // SoulForge Skills System
+    #[serde(default)]
+    pub soul_tier: Option<SoulTier>,
+    #[serde(default)]
+    pub skills: Vec<Skill>,
 }
 
 impl Alma {
@@ -136,6 +143,48 @@ impl Alma {
             Some(identidad.edad)
         );
         
+        // ------------------------------------------------------------
+        // INTEGRACIÓN SISTEMA DE HABILIDADES SOULFORGE
+        // ------------------------------------------------------------
+        
+        // 1. Determinar Tier por RNG (Gacha/Suerte)
+        let tier_roll = rng.gen_range(0.0..100.0);
+        let soul_tier = if tier_roll < 0.05 { SoulTier::Mitica }      // 0.05%
+                       else if tier_roll < 0.25 { SoulTier::Legendaria } // 0.2%
+                       else if tier_roll < 1.5 { SoulTier::Primordial }  // 1.25%
+                       else if tier_roll < 5.0 { SoulTier::Ancestral }   // 3.5%
+                       else if tier_roll < 13.0 { SoulTier::Alma }       // 8%
+                       else if tier_roll < 25.0 { SoulTier::Voz }        // 12%
+                       else if tier_roll < 45.0 { SoulTier::Sombra }     // 20%
+                       else if tier_roll < 70.0 { SoulTier::Murmullo }   // 25%
+                       else { SoulTier::Eco };                           // 30%
+                       
+        // 2. Determinar Clase (Usar la de ficha técnica si existe, o inferir)
+        let clase = if let Some(ref ficha) = ficha_tecnica {
+            ficha.clase.clone()
+        } else {
+            // Inferir clase básica basada en stats o rol si no hay ficha
+            match rol {
+                Rol::Heroe | Rol::Guardian | Rol::Mercenario => "Guerrero",
+                Rol::Villano | Rol::Sombra | Rol::Embaucador => "Pícaro",
+                Rol::Mentor | Rol::Profeta => "Mago",
+                Rol::Lider | Rol::Rebelde => "Paladín",
+                _ => "Aventurero"
+            }.to_string()
+        };
+        
+        // 3. Generar Habilidades
+        // Extraer un trauma de la herida para la Signature Skill
+        let trauma = format!("{} {}", capas.herida.causante, capas.herida.circunstancia);
+        
+        let skills = SkillForge::generate(
+            &mut rng, 
+            &clase, 
+            soul_tier, 
+            identidad.edad, 
+            Some(&trauma)
+        );
+
         Self {
             id: Uuid::new_v4(),
             semilla,
@@ -150,6 +199,8 @@ impl Alma {
             momentos_definitorios: momentos,
             biografia,
             ficha_tecnica,
+            soul_tier: Some(soul_tier),
+            skills,
         }
     }
 

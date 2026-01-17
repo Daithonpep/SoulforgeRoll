@@ -107,6 +107,43 @@ function generateStoryHTML(data) {
         ? ganchos.map(g => `<div class="hook">[Hook] ${g}</div>`).join('')
         : '<div class="hook">[Hook] El destino tiene planes para este personaje...</div>';
 
+    // --- SKILLS & TALENTS (SoulForge Gacha System) ---
+    const skills = data.skills || [];
+    const soulTier = data.soul_tier || 'Desconocido';
+
+    let skillsHTML = '';
+    if (skills.length > 0) {
+        skillsHTML = `
+        <div class="skills-section">
+            <h2 class="section-title">⚔️ Talentos & Habilidades</h2>
+            <div class="tier-banner">ALMA TIER: ${soulTier.toUpperCase()}</div>
+            <div class="skills-grid">
+                ${skills.map(s => {
+            const dots = Array(10).fill(0).map((_, i) =>
+                `<span class="dot ${i < s.power_level ? 'fill' : ''}"></span>`
+            ).join('');
+
+            return `
+                    <div class="skill-card cat-${s.category}">
+                        <div class="skill-header">
+                            <span class="skill-name">${s.name}</span>
+                            <span class="skill-badge">${s.category}</span>
+                        </div>
+                        <div class="skill-desc">${s.description}</div>
+                        <div class="skill-unlock">"${s.unlock_reason}"</div>
+                        <div class="skill-meta">
+                            <span>${s.cost ? '💠 ' + s.cost : ''}</span>
+                            <div class="power-dots">${dots}</div>
+                        </div>
+                    </div>`;
+        }).join('')}
+            </div>
+            <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:10px;">
+                * Poder y profundidad forjados por la complejidad del alma.
+            </div>
+        </div>`;
+    }
+
     return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -115,7 +152,7 @@ function generateStoryHTML(data) {
     <title>${name} - Ficha de Historia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
-        :root { --paper: #e3dac9; --ink: #1a1a1a; --accent: #8b4513; --blood: #722f37; }
+        :root { --paper: #e3dac9; --ink: #1a1a1a; --accent: #8b4513; --blood: #722f37; --gold: #c5a059; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #2a2a2a; padding: 40px 20px; font-family: 'Crimson Text', serif; color: var(--ink); min-height: 100vh; display: flex; justify-content: center; }
         .story-sheet { width: 100%; max-width: 800px; background: var(--paper); background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); box-shadow: 0 0 60px rgba(0,0,0,0.5); padding: 50px; border-radius: 4px; }
@@ -134,10 +171,30 @@ function generateStoryHTML(data) {
         .hooks-section { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-top: 25px; }
         .hook { border-bottom: 1px dashed #ccc; padding: 10px 0; color: #333; }
         .hook:last-child { border-bottom: none; }
+        
+        /* SKILLS STYLES */
+        .skills-section { margin-top: 30px; border-top: 2px solid var(--accent); padding-top: 20px; }
+        .tier-banner { text-align: center; background: #222; color: var(--gold); padding: 8px; font-family: 'Cinzel'; margin-bottom: 20px; border-radius: 4px; }
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .skill-card { background: rgba(0,0,0,0.03); padding: 10px; border-left: 4px solid #666; border-radius: 0 6px 6px 0; }
+        .skill-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-family: 'Cinzel'; font-weight: bold; font-size: 0.9rem; }
+        .skill-badge { font-size: 0.6rem; padding: 1px 5px; background: rgba(0,0,0,0.1); border-radius: 4px; }
+        .skill-desc { font-size: 0.85rem; font-style: italic; color: #444; margin-bottom: 5px; }
+        .skill-unlock { font-size: 0.7rem; color: #888; font-style: italic; margin-bottom: 5px; border-top: 1px dashed #ccc; padding-top: 3px; }
+        .skill-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+        .power-dots { display: flex; gap: 1px; }
+        .dot { width: 5px; height: 5px; background: #ddd; border-radius: 50%; }
+        .dot.fill { background: var(--gold); }
+        
+        .cat-Active { border-left-color: #4169E1; }
+        .cat-Passive { border-left-color: #32CD32; }
+        .cat-Ultimate { border-left-color: #FFD700; background: rgba(255, 215, 0, 0.1); }
+        .cat-Signature { border-left-color: #9932CC; background: rgba(153, 50, 204, 0.05); }
+
         .footer { text-align: center; margin-top: 30px; color: #888; font-size: 0.8rem; border-top: 1px solid #ccc; padding-top: 20px; }
         .download-btn { display: block; width: fit-content; margin: 25px auto 0; background: var(--ink); color: var(--paper); border: 2px solid var(--accent); padding: 12px 30px; font-family: 'Cinzel'; cursor: pointer; border-radius: 8px; }
         .download-btn:hover { background: var(--accent); color: var(--paper); }
-        @media (max-width: 600px) { .psych-grid { grid-template-columns: 1fr; } .story-sheet { padding: 25px; } h1 { font-size: 2rem; } }
+        @media (max-width: 600px) { .psych-grid, .skills-grid { grid-template-columns: 1fr; } .story-sheet { padding: 25px; } h1 { font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -157,6 +214,9 @@ function generateStoryHTML(data) {
         </div>
         <h2 class="section-title">📜 Biografía</h2>
         ${bioHTML}
+        
+        ${skillsHTML}
+
         <div class="hooks-section">
             <h2 class="section-title" style="margin-top: 0;">📖 Ganchos Narrativos</h2>
             ${ganchosHTML}

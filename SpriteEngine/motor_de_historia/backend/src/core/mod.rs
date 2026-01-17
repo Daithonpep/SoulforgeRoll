@@ -13,6 +13,7 @@ pub mod procedural_text;
 pub mod narrativa;
 pub mod promo;
 pub mod items;
+pub mod skills;
 
 pub use alma::*;
 pub use capas::*;
