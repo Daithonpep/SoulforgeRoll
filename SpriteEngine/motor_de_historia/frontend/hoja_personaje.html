@@ -23,47 +23,76 @@
         body {
             background-color: var(--bg-dark);
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px;
             font-family: 'Crimson Text', serif;
             color: var(--ink);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            /* Allow stacking pages */
+            align-items: center;
             min-height: 100vh;
+            gap: 40px;
+            /* Space between pages */
         }
 
-        .rpg-sheet {
+        /* PAGE STRUCTURE */
+        .page {
             width: 100%;
             max-width: 1100px;
             background-color: var(--paper);
             background-image: var(--paper-texture);
             box-shadow: 0 0 80px rgba(0, 0, 0, 0.9);
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            min-height: 1200px;
             position: relative;
             overflow: hidden;
             border-radius: 4px;
+            min-height: 1400px;
+            /* A4 Ratio approx */
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                gap: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                border-radius: 0;
+                page-break-after: always;
+                width: 100%;
+                height: 100vh;
+            }
+
+            .download-btn {
+                display: none;
+            }
+        }
+
+        /* PAGE 1: IDENTITY (Aric Style) */
+        .page-identity {
+            display: grid;
+            grid-template-columns: 320px 1fr;
         }
 
         /* SIDEBAR (STATS & AURA) */
         .sidebar {
             background-color: var(--panel-dark);
             color: #ccc;
-            padding: 30px 20px;
+            padding: 40px 25px;
             border-right: 4px solid var(--gold);
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 30px;
         }
 
-        /* Avatar Container with Aura */
         .avatar-container {
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
             margin: 0 auto;
             border-radius: 50%;
             border: 3px solid var(--gold);
-            box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
             overflow: hidden;
             background: #000;
             position: relative;
@@ -76,305 +105,316 @@
             object-fit: cover;
         }
 
-        /* Tier Specific Auras */
+        /* Auras */
         .aura-eco .avatar-container {
             border-color: #888;
-            box-shadow: 0 0 15px rgba(136, 136, 136, 0.4);
-        }
-
-        .aura-murmullo .avatar-container {
-            border-color: #ddd;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .aura-sombra .avatar-container {
-            border-color: #32CD32;
-            box-shadow: 0 0 25px rgba(50, 205, 50, 0.5);
-        }
-
-        .aura-voz .avatar-container {
-            border-color: #4169E1;
-            box-shadow: 0 0 30px rgba(65, 105, 225, 0.6);
+            box-shadow: 0 0 15px rgba(136, 136, 136, 0.5);
         }
 
         .aura-alma .avatar-container {
             border-color: #9932CC;
-            box-shadow: 0 0 40px rgba(153, 50, 204, 0.7);
+            box-shadow: 0 0 40px rgba(153, 50, 204, 0.8);
         }
 
-        .aura-ancestral .avatar-container {
-            border-color: #FFD700;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
+        /* (Add generic robust box-shadow for any tier just in case) */
+        .avatar-container {
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
         }
 
-        .aura-primordial .avatar-container {
-            border-color: #FF4500;
-            box-shadow: 0 0 60px rgba(255, 69, 0, 0.8);
-        }
-
-        .aura-legendaria .avatar-container {
-            border-color: #FF1493;
-            box-shadow: 0 0 70px rgba(255, 20, 147, 0.9);
-        }
-
-        .aura-mitica .avatar-container {
-            border-color: #00FFFF;
-            box-shadow: 0 0 80px rgba(0, 255, 255, 1);
-            filter: contrast(1.1);
-        }
-
-        .tier-label {
+        .tier-display {
             text-align: center;
             font-family: 'Cinzel';
-            font-size: 0.9rem;
             color: #888;
-            margin-top: -15px;
             letter-spacing: 2px;
-            text-transform: uppercase;
+            border-bottom: 3px double #333;
+            padding-bottom: 10px;
+            margin-top: -10px;
         }
 
-        /* Stats Grid */
-        .stats-container {
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 15px;
             justify-items: center;
-            margin-top: 10px;
         }
 
-        .stat-medallion {
-            position: relative;
-            width: 70px;
-            height: 80px;
-            background: linear-gradient(135deg, #222, #111);
+        .stat-box {
+            width: 90px;
+            height: 100px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
             border: 1px solid #444;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 5px #000;
+            position: relative;
         }
 
-        .stat-value {
+        .stat-val {
             font-family: 'Cinzel';
-            font-size: 1.4rem;
+            font-size: 2rem;
             color: #fff;
             font-weight: bold;
-            z-index: 2;
+            line-height: 1;
         }
 
-        .stat-name {
-            font-size: 0.6rem;
-            color: #777;
-            margin-top: 2px;
-            text-transform: uppercase;
+        .stat-lbl {
+            font-size: 0.7rem;
+            color: #888;
             letter-spacing: 1px;
-            z-index: 2;
+            margin-top: 5px;
         }
 
         .stat-mod {
             position: absolute;
-            bottom: -6px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+            bottom: -8px;
             background: var(--blood);
             color: #fff;
-            font-size: 0.7rem;
-            font-weight: bold;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #000;
-            z-index: 3;
+            font-size: 0.8rem;
+            border: 2px solid #0a0a0a;
+            font-weight: bold;
         }
 
-        /* Resonancia / Skills in Sidebar */
-        .resonance-section {
-            border-top: 1px solid #333;
-            padding-top: 20px;
-            margin-top: 10px;
+        .sidebar-list {
+            margin-top: 20px;
         }
 
-        .res-title {
+        .sb-title {
             font-family: 'Cinzel';
             color: var(--gold);
-            text-align: center;
             font-size: 0.9rem;
             margin-bottom: 15px;
-            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .skill-mini-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 2px solid #555;
-            padding: 8px 10px;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-
-        .skill-mini-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .skill-mini-name {
-            font-family: 'Cinzel';
+        .sb-item {
             font-size: 0.8rem;
-            color: #ccc;
-            font-weight: bold;
-            display: block;
-        }
-
-        .skill-mini-meta {
-            font-size: 0.65rem;
-            color: #777;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 3px;
-        }
-
-        /* Skill Colors in Sidebar */
-        .sk-Active {
-            border-color: #4169E1;
-        }
-
-        .sk-Active .skill-mini-name {
-            color: #aaccff;
-        }
-
-        .sk-Passive {
-            border-color: #32CD32;
-        }
-
-        .sk-Signature {
-            border-color: #9932CC;
-        }
-
-        .sk-Signature .skill-mini-name {
-            color: #dcb3ff;
-        }
-
-        .sk-Ultimate {
-            border-color: #FFD700;
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
-        }
-
-        .sk-Ultimate .skill-mini-name {
-            color: #FFD700;
-        }
-
-        /* MAIN CONTENT - RIGHT */
-        .main-content {
-            padding: 50px 60px;
-        }
-
-        .char-header {
-            border-bottom: 3px double var(--accent);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-family: 'Cinzel';
-            font-size: 3.2rem;
-            color: var(--ink);
-            margin: 0;
-            line-height: 1;
-        }
-
-        .sub-header {
-            font-family: 'Metamorphous';
-            font-size: 1.1rem;
-            color: var(--blood);
-            margin-top: 8px;
-            font-style: italic;
-        }
-
-        .quote-box {
-            background: rgba(93, 64, 55, 0.05);
-            border-left: 4px solid var(--accent);
-            padding: 15px 20px;
-            margin: 25px 0;
-            font-family: 'Crimson Text';
-            font-style: italic;
-            color: #444;
-            font-size: 1.1rem;
-        }
-
-        h2 {
-            font-family: 'Cinzel';
-            font-size: 1.5rem;
-            color: var(--accent);
-            border-bottom: 1px solid #bbb;
-            margin-top: 30px;
+            color: #aaa;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #333;
             padding-bottom: 5px;
         }
 
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            text-align: justify;
-            margin-bottom: 15px;
-            color: #222;
+        .sb-item strong {
+            color: #ddd;
+            display: block;
         }
 
-        strong {
-            color: var(--blood);
+        .sb-item em {
+            color: #666;
+            font-size: 0.7rem;
         }
 
-        .bio-entry {
-            margin-bottom: 20px;
+        /* MAIN CONTENT PAGE 1 */
+        .main-col {
+            padding: 60px;
         }
 
-        .bio-title {
+        .header-big h1 {
             font-family: 'Cinzel';
-            font-size: 1.1rem;
+            font-size: 3.5rem;
+            line-height: 1;
+            margin: 0;
+            letter-spacing: 2px;
+            color: var(--ink);
+        }
+
+        .header-big .meta {
+            font-family: 'Metamorphous';
             color: var(--blood);
-            margin-bottom: 5px;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-style: italic;
+            border-bottom: 3px double var(--accent);
+            padding-bottom: 20px;
         }
 
-        .timeline-box {
-            border-top: 1px solid var(--accent);
+        .quote-block {
+            background: rgba(0, 0, 0, 0.04);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            font-family: 'Crimson Text';
+            font-size: 1.15rem;
+            color: #333;
+        }
+
+        .section-h2 {
+            font-family: 'Cinzel';
+            font-size: 1.6rem;
+            color: var(--accent);
+            border-bottom: 1px solid #bbb;
             margin-top: 40px;
-            padding-top: 20px;
+            padding-bottom: 5px;
         }
 
-        .timeline-item {
+        .prop-row {
             display: flex;
             margin-bottom: 10px;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
         }
 
-        .tl-year {
+        .prop-label {
             font-weight: bold;
-            color: var(--accent);
-            width: 100px;
-            flex-shrink: 0;
+            width: 140px;
+            color: var(--blood);
         }
 
-        .tl-content {
-            font-style: italic;
+        /* PAGE 2: SKILLS (The Requested "Otra Hoja") */
+        .page-skills {
+            padding: 80px;
+        }
+
+        .skills-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Cinzel';
+            font-size: 1.8rem;
+            color: #444;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        .skill-row {
+            background: rgba(93, 64, 55, 0.08);
+            /* Beige darker like image */
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            padding: 15px 20px 15px 25px;
+            /* Left padding for bar */
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .skill-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+        }
+
+        .sk-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .sk-title {
+            font-family: 'Cinzel';
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            /* Blueish distinct */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sk-badge {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
             color: #555;
         }
 
-        .download-btn {
+        .sk-desc {
+            font-style: italic;
+            color: #444;
+            margin: 5px 0 10px 0;
+            font-size: 1rem;
+        }
+
+        .sk-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            font-family: 'Cinzel';
+        }
+
+        .sk-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Icon Placeholders (SVG) */
+        .ico-sm {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Color Variations */
+        .type-Active {
+            --c: #4169E1;
+        }
+
+        .type-Active .sk-title {
+            color: #2c4a9e;
+        }
+
+        .type-Passive {
+            --c: #32CD32;
+        }
+
+        .type-Passive .sk-title {
+            color: #228B22;
+        }
+
+        .type-Ultimate {
+            --c: #FFD700;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .type-Ultimate .sk-title {
+            color: #B8860B;
+        }
+
+        .type-Signature {
+            --c: #9932CC;
+        }
+
+        .type-Signature .sk-title {
+            color: #800080;
+        }
+
+        .type-Reaction {
+            --c: #FF4500;
+        }
+
+        .btn-float {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            padding: 12px 25px;
+            z-index: 1000;
             background: var(--blood);
-            color: #fff;
+            color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            padding: 15px 30px;
             font-family: 'Cinzel';
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 100;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
     </style>
     <script>
@@ -385,131 +425,155 @@
 </head>
 
 <body>
-    <button class="download-btn" onclick="downloadHTML()">💾 GUARDAR FICHA</button>
+    <button class="btn-float" onclick="downloadHTML()">💾 GUARDAR DOCUMENTO</button>
 
-    <div class="rpg-sheet">
+    <!-- PAGE 1: CHARACTER SHEET (ARIC STYLE) -->
+    <div class="page page-identity">
         <!-- SIDEBAR -->
         <div class="sidebar aura-{{ soul_tier | lower }}">
             <div class="avatar-container">
                 <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ semilla }}" class="avatar-img">
             </div>
+            <div class="tier-display">Tier {{ soul_tier }}</div>
 
-            {% if soul_tier %}
-            <div class="tier-label">{{ soul_tier }} ALMA</div>
-            {% endif %}
-
+            <!-- STATS -->
+            <div style="text-align:center; font-family:'Cinzel'; margin:20px 0; color:#gold;">— ATRIBUTOS —</div>
             {% if ficha_tecnica %}
-            <div class="stats-container">
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.fuerza }}</span>
-                    <span class="stat-name">STR</span>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.fuerza }}</div>
+                    <div class="stat-lbl">STR</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.fuerza - 10) // 2 }}</div>
                 </div>
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.destreza }}</span>
-                    <span class="stat-name">DEX</span>
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.destreza }}</div>
+                    <div class="stat-lbl">DEX</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.destreza - 10) // 2 }}</div>
                 </div>
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.constitucion }}</span>
-                    <span class="stat-name">CON</span>
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.constitucion }}</div>
+                    <div class="stat-lbl">CON</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.constitucion - 10) // 2 }}</div>
                 </div>
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.inteligencia }}</span>
-                    <span class="stat-name">INT</span>
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.inteligencia }}</div>
+                    <div class="stat-lbl">INT</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.inteligencia - 10) // 2 }}</div>
                 </div>
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.sabiduria }}</span>
-                    <span class="stat-name">WIS</span>
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.sabiduria }}</div>
+                    <div class="stat-lbl">WIS</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.sabiduria - 10) // 2 }}</div>
                 </div>
-                <div class="stat-medallion">
-                    <span class="stat-value">{{ ficha_tecnica.carisma }}</span>
-                    <span class="stat-name">CHA</span>
+                <div class="stat-box">
+                    <div class="stat-val">{{ ficha_tecnica.carisma }}</div>
+                    <div class="stat-lbl">CHA</div>
                     <div class="stat-mod">+{{ (ficha_tecnica.carisma - 10) // 2 }}</div>
                 </div>
             </div>
             {% endif %}
 
-            {% if skills %}
-            <div class="resonance-section">
-                <div class="res-title">✨ RESONANCIA DEL ALMA</div>
-                {% for skill in skills %}
-                <div class="skill-mini-card sk-{{ skill.category }}">
-                    <span class="skill-mini-name">
-                        {% if skill.category == 'Ultimate' %}⭐ {% endif %}
-                        {% if skill.category == 'Signature' %}💎 {% endif %}
-                        {{ skill.name }}
-                    </span>
-                    <div class="skill-mini-meta">
-                        <span>{{ skill.category }}</span>
-                        <span>PWR: {{ skill.power_level }}</span>
-                    </div>
+            <!-- RESONANCE (Abstract Perks, not Full Skills) -->
+            <div class="sidebar-list">
+                <div class="sb-title">✧ RESONANCIA</div>
+                {% for gancho in ganchos_narrativos[:3] %}
+                <div class="sb-item">
+                    <strong>Gancho Narrativo</strong>
+                    {{ gancho | truncate(40) }}
                 </div>
                 {% endfor %}
             </div>
-            {% endif %}
         </div>
 
-        <!-- MAIN CONTENT (Aric Blackwood Style) -->
-        <div class="main-content">
-            <div class="char-header">
+        <!-- MAIN BODY -->
+        <div class="main-col">
+            <div class="header-big">
                 <h1>{{ identidad.nombre }}</h1>
-                <div class="sub-header">
-                    {% if identidad.titulo %}{{ identidad.titulo }}{% endif %} · {{ rol }} · {{ mundo }}
-                </div>
+                <div class="meta">{{ identidad.titulo }} · {{ rol }} · {{ mundo }}</div>
             </div>
 
-            <div class="quote-box">
+            <div class="quote-block">
                 "{{ capas.mascara.frase_tipica }}"
             </div>
 
-            <h2>{{ t.titulo_identidad }}</h2>
-            <p>{{ identidad.vestimenta }}. {{ identidad.voz }}. {{ identidad.manierismo }}</p>
-
-            <h2>El Juramento Roto (La Herida)</h2>
-            <p>
-                <span
-                    style="background:var(--blood); color:white; padding:2px 8px; font-size:0.8rem; border-radius:4px; margin-right:5px;">TRAUMA</span>
-                {{ capas.herida.causante }}. {{ capas.herida.circunstancia }}.
-            </p>
-            <p><strong>{{ capas.herida.como_lo_cambio }}</strong></p>
-
-            <h2>Psicología Profunda</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-                <div style="background:rgba(0,0,0,0.03); padding:10px; border-left:3px solid var(--accent);">
-                    <strong>La Mentira:</strong> "{{ capas.mentira.la_mentira }}"
-                </div>
-                <div style="background:rgba(0,0,0,0.03); padding:10px; border-left:3px solid var(--accent);">
-                    <strong>El Deseo:</strong> {{ capas.deseo_necesidad.deseo_consciente }}
-                </div>
+            <h2 class="section-h2">Identidad & Apariencia</h2>
+            <div class="prop-row">
+                <div class="prop-label">Viste:</div>
+                <div>{{ identidad.vestimenta }}</div>
+            </div>
+            <div class="prop-row">
+                <div class="prop-label">Voz:</div>
+                <div>{{ identidad.voz }}</div>
+            </div>
+            <div class="prop-row">
+                <div class="prop-label">Rasgo:</div>
+                <div>{{ identidad.rasgo_distintivo }}</div>
             </div>
 
-            <h2>Biografía</h2>
+            <h2 class="section-h2">Psicología Profunda</h2>
+            <p><strong>Herida:</strong> {{ capas.herida.causante }}. {{ capas.herida.como_lo_cambio }}</p>
+            <p><strong>Deseo:</strong> {{ capas.deseo_necesidad.deseo_consciente }}</p>
+            <p><strong>Mentira:</strong> {{ capas.mentira.la_mentira }}</p>
+
+            <h2 class="section-h2">Historia & Cronología</h2>
             {% for fase in biografia.fases %}
-            <div class="bio-entry">
-                <div class="bio-title">✦ {{ fase.titulo }}</div>
-                <p>{{ fase.contenido }}</p>
+            <div style="margin-bottom:15px;">
+                <h4 style="margin:0 0 5px 0; font-family:'Cinzel'; color:var(--blood);">✦ {{ fase.titulo }}</h4>
+                <p style="margin:0; text-align:justify;">{{ fase.contenido }}</p>
             </div>
             {% endfor %}
-
-            <div class="timeline-box">
-                <h3 style="font-family:'Cinzel'; color:var(--accent); margin-bottom:15px;">Línea de Vida</h3>
-                {% for fase in biografia.fases %}
-                <div class="timeline-item">
-                    <div class="tl-year">{{ fase.titulo }}</div>
-                    <div class="tl-content">{{ fase.contenido | truncate(60) }}...</div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div style="margin-top:30px; color:#888; font-size:0.8rem; text-align:center;">
-                {{ t.guia_uso_desc }} ({{ id }})
-            </div>
         </div>
     </div>
+
+    <!-- PAGE 2: SKILLS & MAGIC (Skill Sheet) -->
+    <div class="page page-skills">
+        <div class="skills-header">
+            <!-- Icon -->
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="#5d4037">
+                <path
+                    d="M14.5 17c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zm8.5 0c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zm-17 0c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zM7 2h10v2h-2v2h-2V4H7v2H5V2h2zm.17 12.09L6 11l5-5-1.41-1.41-5 5-2.26-2.25-1.41 1.41 3.67 3.66 2.58-1.32z" />
+            </svg>
+            HABILIDADES & TALENTOS ({{ skills|length }})
+        </div>
+
+        {% if skills %}
+        {% for skill in skills %}
+        <div class="skill-row type-{{ skill.category }}">
+            <div class="skill-bar" style="background:var(--c);"></div>
+
+            <div class="sk-top">
+                <div class="sk-title">
+                    <!-- Icon based on type -->
+                    {% if skill.category == 'Active' %}⚔️{% elif skill.category == 'Passive' %}🛡️{% elif skill.category
+                    == 'Ultimate' %}⭐{% else %}💎{% endif %}
+                    {{ skill.name }}
+                </div>
+                <div class="sk-badge" style="color:var(--c); border:1px solid var(--c);">{{ skill.category }}</div>
+            </div>
+
+            <div class="sk-desc">{{ skill.description }}</div>
+
+            <div class="sk-meta">
+                {% if skill.cost > 0 %}
+                <span>🔹 {{ skill.cost }} MP</span>
+                {% endif %}
+                <span>🎲 Poder: <strong>{{ skill.power_level }}/10</strong></span>
+                {% if skill.category == 'Ultimate' %}
+                <span>⚠️ Requiere Tensión Máxima</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        <div style="text-align:center; color:#888; margin-top:30px; font-style:italic;">
+            Sistema de Habilidades Encriptado SoulForge v2.1
+        </div>
+        {% else %}
+        <div style="text-align:center; color:#888; margin-top:50px;">
+            Este alma no ha manifestado habilidades conscientes aún.
+        </div>
+        {% endif %}
+    </div>
+
 </body>
 
 </html>
