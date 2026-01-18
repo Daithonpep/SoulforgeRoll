@@ -1,9 +1,10 @@
 # Temporary files
 %TEMP%/
 
-# Groq AI Integration - NOT READY FOR DEPLOYMENT
-# Contains API keys - do not commit until ready
-groq_integration/
+# API Keys - NEVER commit these
+.env
+*.key
+secrets.*
 
 # Python
 __pycache__/
