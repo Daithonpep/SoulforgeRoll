@@ -357,3 +357,48 @@ impl Alma {
         n
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rand::SeedableRng;
+    use rand::rngs::StdRng;
+    use crate::core::{ForgeConfig, Language, Genero, Raza};
+
+    #[test]
+    fn test_alma_generation_with_skills() {
+        let semilla = 12345;
+        let mut rng = StdRng::seed_from_u64(semilla);
+        let config = ForgeConfig::default();
+        
+        let params = ParametrosGeneracion {
+            nombre_fijo: Some("TestHero".to_string()),
+            genero: Some(Genero::Masculino),
+            rol: Some(Rol::Jugador), // Use Jugador to ensure D&D stats/class generation
+            // clase field does not exist in params, it is derived
+            raza: Some(Raza::Humano),
+            edad_fija: Some(25),
+            idioma: Some(Language::Espanol),
+            ..Default::default() 
+        };
+
+        // Pass config reference instead of seed
+        let alma = Alma::generar(&mut rng, params, &config);
+
+        println!("--- TEST GENERATION ---");
+        println!("Nombre: {}", alma.identidad.nombre);
+        println!("Tier: {:?}", alma.soul_tier);
+        
+        if let Some(tier) = &alma.soul_tier {
+             println!("Tier Description: {:?}", tier);
+        }
+
+        println!("Habilidades Generadas: {}", alma.skills.len());
+        for skill in &alma.skills {
+            println!("- [{:?}] {} (Poder: {})", skill.category, skill.name, skill.power_level);
+        }
+        
+        assert!(alma.soul_tier.is_some(), "El SoulTier debería generarse");
+        assert!(!alma.skills.is_empty(), "Debería tener habilidades");
+    }
+}
