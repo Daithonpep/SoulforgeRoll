@@ -84,62 +84,102 @@ export async function handleForjarAlma(event) {
 
 // Generate HTML for story-only characters (no stats, pure narrative)
 function generateStoryHTML(data) {
-    const name = data.nombre || 'Personaje Sin Nombre';
+    // CORRECT DATA EXTRACTION
+    const name = data.identidad?.nombre || data.nombre || 'Personaje Sin Nombre';
+    const titulo = data.identidad?.titulo || '';
     const rol = data.rol || 'Protagonista';
     const mundo = data.mundo || 'Desconocido';
+    const edad = data.identidad?.edad || '?';
+    const genero = data.identidad?.genero || '';
 
-    // Extract narrative elements
-    const herida = data.psicologia?.herida || data.herida || 'Una herida que el tiempo no ha sanado.';
-    const mascara = data.psicologia?.mascara || data.mascara || 'La cara que muestra al mundo.';
-    const deseo = data.psicologia?.deseo || data.deseo || 'Lo que realmente anhela en su corazón.';
-    const mentira = data.psicologia?.mentira || data.mentira || 'Lo que se dice a sí mismo para sobrevivir.';
-    const sombra = data.psicologia?.sombra || data.sombra || 'Lo que oculta incluso de sí mismo.';
+    // Vestimenta y apariencia
+    const vestimenta = data.identidad?.vestimenta || 'Ropas sencillas de viaje.';
+    const voz = data.identidad?.voz || 'Una voz que guarda secretos.';
+    const rasgo = data.identidad?.rasgo_distintivo || 'Un aura de misterio lo rodea.';
+    const manierismo = data.identidad?.manierismo || '';
 
-    // Biography
+    // PSYCHOLOGY (from capas)
+    const mascara = data.capas?.mascara || {};
+    const herida = data.capas?.herida || {};
+    const mentira = data.capas?.mentira || {};
+    const sombra = data.capas?.sombra || {};
+    const deseo = data.capas?.deseo_necesidad || {};
+
+    // Narrative elements with fallbacks
+    const heridaTexto = herida.causante ?
+        `${herida.causante}. ${herida.circunstancia || ''} ${herida.como_lo_cambio || ''}` :
+        'Un pasado que prefiere no recordar.';
+
+    const mascaraTexto = mascara.comportamiento_publico || 'Muestra al mundo una cara cuidadosamente construida.';
+    const fraseTexto = mascara.frase_tipica || '"Todos llevamos máscaras."';
+    const miedoTexto = mascara.miedo_central || 'Ser descubierto.';
+    const secretoTexto = mascara.deseo_secreto || 'Algo que no se atreve a admitir.';
+
+    const deseoTexto = deseo.deseo_consciente || 'Encontrar su lugar en el mundo.';
+    const necesidadTexto = deseo.necesidad_real || 'Lo que realmente necesita está oculto incluso para sí mismo.';
+
+    const mentiraTexto = mentira.la_mentira || 'Se cuenta historias para sobrevivir.';
+    const verdadTexto = mentira.verdad_necesaria || 'Una verdad que eventualmente deberá enfrentar.';
+
+    const sombraTexto = sombra.rasgo_negado || 'Partes de sí mismo que prefiere ignorar.';
+    const sombraTrigger = sombra.trigger_emergencia || 'Situaciones extremas.';
+
+    // ARCO NARRATIVO
+    const arco = data.arco || {};
+    const arcoInicial = arco.estado_inicial || 'Un alma en conflicto consigo misma.';
+    const arcoQuiebre = arco.punto_de_quiebre || 'El momento que lo cambiará todo.';
+    const arcoPositivo = arco.resolucion_positiva || 'Encontrar paz y propósito.';
+    const arcoTragico = arco.resolucion_tragica || 'Perderse en sus propios demonios.';
+
+    // BIOGRAPHY
     const bioFases = data.biografia?.fases || [];
     const bioHTML = bioFases.length > 0
-        ? bioFases.map(f => `<div class="bio-phase"><h3>✦ ${f.titulo}</h3><p>${f.contenido}</p></div>`).join('<div class="separator">❖</div>')
-        : '<p>Una historia por escribir...</p>';
+        ? bioFases.map(f => `
+            <div class="bio-phase">
+                <h3>✦ ${f.titulo}</h3>
+                <p>${f.contenido}</p>
+            </div>`).join('<div class="separator">❖</div>')
+        : `<p><em>Una historia que aún está escribiéndose...</em></p>`;
 
-    // Narrative hooks
+    // HOOKS (sin el feo [Hook])
     const ganchos = data.ganchos_narrativos || [];
-    const ganchosHTML = ganchos.length > 0
-        ? ganchos.map(g => `<div class="hook">[Hook] ${g}</div>`).join('')
-        : '<div class="hook">[Hook] El destino tiene planes para este personaje...</div>';
+    const momentos = data.momentos_definitorios || [];
 
-    // --- SKILLS & TALENTS (SoulForge Gacha System) ---
+    const ganchosHTML = ganchos.length > 0
+        ? ganchos.map(g => `<div class="hook-item">⚔️ ${g}</div>`).join('')
+        : '<div class="hook-item">⚔️ El destino tiene planes para este personaje...</div>';
+
+    const momentosHTML = momentos.length > 0
+        ? momentos.map(m => `<div class="hook-item">💫 ${m}</div>`).join('')
+        : '';
+
+    // --- SKILLS (if available) ---
     const skills = data.skills || [];
-    const soulTier = data.soul_tier || 'Desconocido';
+    const soulTier = data.soul_tier || '';
 
     let skillsHTML = '';
     if (skills.length > 0) {
         skillsHTML = `
         <div class="skills-section">
-            <h2 class="section-title">⚔️ Talentos & Habilidades</h2>
-            <div class="tier-banner">ALMA TIER: ${soulTier.toUpperCase()}</div>
+            <h2 class="section-title">⚔️ Talentos & Habilidades ${soulTier ? `<span class="tier-tag">${soulTier}</span>` : ''}</h2>
             <div class="skills-grid">
                 ${skills.map(s => {
-            const dots = Array(10).fill(0).map((_, i) =>
-                `<span class="dot ${i < s.power_level ? 'fill' : ''}"></span>`
-            ).join('');
-
+            const catColor = s.category === 'Active' ? '#4169E1' :
+                s.category === 'Passive' ? '#32CD32' :
+                    s.category === 'Ultimate' ? '#FFD700' : '#9932CC';
             return `
-                    <div class="skill-card cat-${s.category}">
+                    <div class="skill-card" style="border-left-color: ${catColor};">
                         <div class="skill-header">
                             <span class="skill-name">${s.name}</span>
                             <span class="skill-badge">${s.category}</span>
                         </div>
                         <div class="skill-desc">${s.description}</div>
-                        <div class="skill-unlock">"${s.unlock_reason}"</div>
                         <div class="skill-meta">
-                            <span>${s.cost ? '💠 ' + s.cost : ''}</span>
-                            <div class="power-dots">${dots}</div>
+                            ${s.cost > 0 ? `<span>💠 ${s.cost} MP</span>` : ''}
+                            <span>⚡ Poder: ${s.power_level}/10</span>
                         </div>
                     </div>`;
         }).join('')}
-            </div>
-            <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:10px;">
-                * Poder y profundidad forjados por la complejidad del alma.
             </div>
         </div>`;
     }
@@ -152,49 +192,60 @@ function generateStoryHTML(data) {
     <title>${name} - Ficha de Historia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
-        :root { --paper: #e3dac9; --ink: #1a1a1a; --accent: #8b4513; --blood: #722f37; --gold: #c5a059; }
+        :root { --paper: #e3dac9; --ink: #1a1a1a; --accent: #8b4513; --blood: #722f37; --gold: #c5a059; --purple: #663399; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #2a2a2a; padding: 40px 20px; font-family: 'Crimson Text', serif; color: var(--ink); min-height: 100vh; display: flex; justify-content: center; }
-        .story-sheet { width: 100%; max-width: 800px; background: var(--paper); background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); box-shadow: 0 0 60px rgba(0,0,0,0.5); padding: 50px; border-radius: 4px; }
+        .story-sheet { width: 100%; max-width: 900px; background: var(--paper); background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); box-shadow: 0 0 60px rgba(0,0,0,0.5); padding: 50px; border-radius: 4px; }
+        
         .header { text-align: center; border-bottom: 3px double var(--accent); padding-bottom: 25px; margin-bottom: 30px; }
         .role-badge { display: inline-block; background: var(--accent); color: var(--paper); padding: 4px 15px; border-radius: 4px; font-family: 'Cinzel'; font-size: 0.8rem; margin-bottom: 10px; }
-        h1 { font-family: 'Cinzel'; font-size: 2.8rem; color: var(--ink); margin: 10px 0; }
-        .subtitle { font-family: 'Metamorphous'; color: var(--accent); font-style: italic; }
-        .section-title { font-family: 'Cinzel'; font-size: 1.4rem; color: var(--blood); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin: 30px 0 15px 0; }
+        h1 { font-family: 'Cinzel'; font-size: 2.8rem; color: var(--ink); margin: 10px 0; letter-spacing: 1px; }
+        .subtitle { font-family: 'Metamorphous'; color: var(--accent); font-style: italic; font-size: 1.1rem; }
+        .meta-info { font-size: 0.9rem; color: #666; margin-top: 10px; }
+        
+        .quote-block { border-left: 4px solid var(--purple); background: rgba(102,51,153,0.05); padding: 20px; margin: 25px 0; font-size: 1.2rem; font-style: italic; color: #333; }
+        
+        .section-title { font-family: 'Cinzel'; font-size: 1.4rem; color: var(--blood); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin: 35px 0 20px 0; display: flex; align-items: center; gap: 10px; }
+        .tier-tag { background: var(--gold); color: #000; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; }
+        
+        .appearance-box { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        .appear-item { margin-bottom: 12px; }
+        .appear-label { font-weight: bold; color: var(--accent); }
+        
         .psych-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .psych-item { background: rgba(0,0,0,0.04); border: 1px solid #ccc; border-left: 4px solid var(--accent); padding: 15px; border-radius: 6px; }
-        .psych-label { font-weight: bold; color: var(--blood); font-size: 0.9rem; margin-bottom: 5px; }
+        .psych-item { background: rgba(0,0,0,0.04); border: 1px solid #ccc; border-left: 4px solid var(--accent); padding: 15px; border-radius: 0 6px 6px 0; }
+        .psych-label { font-weight: bold; color: var(--blood); font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .psych-text { font-style: italic; color: #444; line-height: 1.5; }
+        .psych-full { grid-column: 1 / -1; }
+        
+        .arc-box { background: linear-gradient(to right, rgba(102,51,153,0.05), transparent); border: 1px solid var(--purple); padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .arc-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
+        .arc-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .arc-label { font-weight: bold; color: var(--purple); font-size: 0.85rem; }
+        .arc-text { margin-top: 5px; font-style: italic; }
+        
         .bio-phase h3 { font-family: 'Cinzel'; color: var(--blood); font-size: 1.2rem; margin-bottom: 10px; }
         .bio-phase p { text-align: justify; line-height: 1.8; margin-bottom: 15px; }
-        .separator { text-align: center; color: var(--accent); opacity: 0.5; margin: 20px 0; }
-        .hooks-section { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-top: 25px; }
-        .hook { border-bottom: 1px dashed #ccc; padding: 10px 0; color: #333; }
-        .hook:last-child { border-bottom: none; }
+        .separator { text-align: center; color: var(--accent); opacity: 0.5; margin: 25px 0; font-size: 1.2rem; }
         
-        /* SKILLS STYLES */
-        .skills-section { margin-top: 30px; border-top: 2px solid var(--accent); padding-top: 20px; }
-        .tier-banner { text-align: center; background: #222; color: var(--gold); padding: 8px; font-family: 'Cinzel'; margin-bottom: 20px; border-radius: 4px; }
+        .hooks-section { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 25px; border-radius: 8px; margin-top: 30px; }
+        .hook-item { border-bottom: 1px dashed #ccc; padding: 12px 0; color: #333; font-size: 1.05rem; }
+        .hook-item:last-child { border-bottom: none; }
+        
+        .skills-section { margin-top: 35px; border-top: 2px solid var(--gold); padding-top: 25px; }
         .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .skill-card { background: rgba(0,0,0,0.03); padding: 10px; border-left: 4px solid #666; border-radius: 0 6px 6px 0; }
-        .skill-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-family: 'Cinzel'; font-weight: bold; font-size: 0.9rem; }
-        .skill-badge { font-size: 0.6rem; padding: 1px 5px; background: rgba(0,0,0,0.1); border-radius: 4px; }
-        .skill-desc { font-size: 0.85rem; font-style: italic; color: #444; margin-bottom: 5px; }
-        .skill-unlock { font-size: 0.7rem; color: #888; font-style: italic; margin-bottom: 5px; border-top: 1px dashed #ccc; padding-top: 3px; }
-        .skill-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-        .power-dots { display: flex; gap: 1px; }
-        .dot { width: 5px; height: 5px; background: #ddd; border-radius: 50%; }
-        .dot.fill { background: var(--gold); }
+        .skill-card { background: rgba(0,0,0,0.03); padding: 15px; border-left: 4px solid #666; border-radius: 0 6px 6px 0; }
+        .skill-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .skill-name { font-family: 'Cinzel'; font-weight: bold; font-size: 1rem; }
+        .skill-badge { font-size: 0.65rem; padding: 2px 6px; background: rgba(0,0,0,0.1); border-radius: 4px; text-transform: uppercase; }
+        .skill-desc { font-size: 0.9rem; font-style: italic; color: #444; margin-bottom: 8px; line-height: 1.4; }
+        .skill-meta { display: flex; gap: 15px; font-size: 0.8rem; color: #666; }
         
-        .cat-Active { border-left-color: #4169E1; }
-        .cat-Passive { border-left-color: #32CD32; }
-        .cat-Ultimate { border-left-color: #FFD700; background: rgba(255, 215, 0, 0.1); }
-        .cat-Signature { border-left-color: #9932CC; background: rgba(153, 50, 204, 0.05); }
-
-        .footer { text-align: center; margin-top: 30px; color: #888; font-size: 0.8rem; border-top: 1px solid #ccc; padding-top: 20px; }
+        .footer { text-align: center; margin-top: 40px; color: #888; font-size: 0.8rem; border-top: 1px solid #ccc; padding-top: 20px; }
         .download-btn { display: block; width: fit-content; margin: 25px auto 0; background: var(--ink); color: var(--paper); border: 2px solid var(--accent); padding: 12px 30px; font-family: 'Cinzel'; cursor: pointer; border-radius: 8px; }
         .download-btn:hover { background: var(--accent); color: var(--paper); }
-        @media (max-width: 600px) { .psych-grid, .skills-grid { grid-template-columns: 1fr; } .story-sheet { padding: 25px; } h1 { font-size: 2rem; } }
+        
+        @media (max-width: 700px) { .psych-grid, .skills-grid { grid-template-columns: 1fr; } .story-sheet { padding: 25px; } h1 { font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -202,30 +253,107 @@ function generateStoryHTML(data) {
         <div class="header">
             <div class="role-badge">${rol.toUpperCase()}</div>
             <h1>${name}</h1>
-            <div class="subtitle">${mundo} · Personaje de Historia</div>
+            ${titulo ? `<div class="subtitle">"${titulo}"</div>` : ''}
+            <div class="meta-info">${mundo} · ${genero ? genero + ' · ' : ''}${edad} años</div>
         </div>
+        
+        <div class="quote-block">
+            "${fraseTexto}"
+        </div>
+        
+        <h2 class="section-title">👤 Primera Impresión</h2>
+        <div class="appearance-box">
+            <div class="appear-item"><span class="appear-label">Vestimenta:</span> ${vestimenta}</div>
+            <div class="appear-item"><span class="appear-label">Voz:</span> ${voz}</div>
+            <div class="appear-item"><span class="appear-label">Rasgo Distintivo:</span> ${rasgo}</div>
+            ${manierismo ? `<div class="appear-item"><span class="appear-label">Manierismo:</span> ${manierismo}</div>` : ''}
+            <div class="appear-item"><span class="appear-label">Comportamiento:</span> ${mascaraTexto}</div>
+        </div>
+        
         <h2 class="section-title">🧠 Psicología del Personaje</h2>
         <div class="psych-grid">
-            <div class="psych-item"><div class="psych-label">La Herida</div><div class="psych-text">${herida}</div></div>
-            <div class="psych-item"><div class="psych-label">La Máscara</div><div class="psych-text">${mascara}</div></div>
-            <div class="psych-item"><div class="psych-label">El Deseo</div><div class="psych-text">${deseo}</div></div>
-            <div class="psych-item"><div class="psych-label">La Mentira</div><div class="psych-text">${mentira}</div></div>
-            <div class="psych-item" style="grid-column: 1 / -1;"><div class="psych-label">La Sombra</div><div class="psych-text">${sombra}</div></div>
+            <div class="psych-item">
+                <div class="psych-label">🩸 La Herida</div>
+                <div class="psych-text">${heridaTexto}</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">🎭 La Máscara</div>
+                <div class="psych-text">${mascaraTexto}</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">💔 El Miedo Central</div>
+                <div class="psych-text">${miedoTexto}</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">✨ Deseo Secreto</div>
+                <div class="psych-text">${secretoTexto}</div>
+            </div>
+            <div class="psych-item psych-full">
+                <div class="psych-label">🌑 La Sombra</div>
+                <div class="psych-text">${sombraTexto} <br><em style="color:#888;">Emerge cuando: ${sombraTrigger}</em></div>
+            </div>
         </div>
+        
+        <h2 class="section-title">💭 Conflicto Interior</h2>
+        <div class="psych-grid">
+            <div class="psych-item">
+                <div class="psych-label">🌟 Lo que QUIERE</div>
+                <div class="psych-text">${deseoTexto}</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">💎 Lo que NECESITA</div>
+                <div class="psych-text">${necesidadTexto}</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">🕸️ La Mentira que se Cuenta</div>
+                <div class="psych-text">"${mentiraTexto}"</div>
+            </div>
+            <div class="psych-item">
+                <div class="psych-label">☀️ Verdad que Necesita</div>
+                <div class="psych-text">${verdadTexto}</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">🎭 Arco Narrativo Potencial</h2>
+        <div class="arc-box">
+            <div class="arc-item">
+                <div class="arc-label">📍 Estado Inicial</div>
+                <div class="arc-text">${arcoInicial}</div>
+            </div>
+            <div class="arc-item">
+                <div class="arc-label">⚡ Punto de Quiebre</div>
+                <div class="arc-text">${arcoQuiebre}</div>
+            </div>
+            <div class="arc-item">
+                <div class="arc-label">✨ Si Triunfa...</div>
+                <div class="arc-text">${arcoPositivo}</div>
+            </div>
+            <div class="arc-item">
+                <div class="arc-label">💀 Si Falla...</div>
+                <div class="arc-text">${arcoTragico}</div>
+            </div>
+        </div>
+        
         <h2 class="section-title">📜 Biografía</h2>
         ${bioHTML}
         
         ${skillsHTML}
 
         <div class="hooks-section">
-            <h2 class="section-title" style="margin-top: 0;">📖 Ganchos Narrativos</h2>
+            <h2 class="section-title" style="margin-top:0; border-bottom:none;">⚔️ Ganchos Narrativos</h2>
             ${ganchosHTML}
+            ${momentosHTML ? `
+            <h3 style="font-family:'Cinzel'; color:var(--purple); margin-top:20px; font-size:1.1rem;">💫 Momentos Definitorios</h3>
+            ${momentosHTML}
+            ` : ''}
         </div>
+        
         <button class="download-btn" onclick="window.print()">🖨️ Imprimir / PDF</button>
         <div class="footer">Generado por SoulForge Engine | ${new Date().toLocaleDateString()}</div>
     </div>
 </body>
 </html>`;
+}
 }
 
 function downloadHTML(content, name) {
