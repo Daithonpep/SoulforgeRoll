@@ -511,14 +511,28 @@
             }
 
             const tierData = TIERS[finalTierKey];
+
+            // Prefer backend stats (ficha_tecnica) if available
+            let finalStats = generateStats(finalTierKey);
+            if (realData.ficha_tecnica) {
+                finalStats = {
+                    str: realData.ficha_tecnica.fuerza || 10,
+                    dex: realData.ficha_tecnica.destreza || 10,
+                    con: realData.ficha_tecnica.constitucion || 10,
+                    int: realData.ficha_tecnica.inteligencia || 10,
+                    wis: realData.ficha_tecnica.sabiduria || 10,
+                    cha: realData.ficha_tecnica.carisma || 10
+                };
+            }
+
             const characterData = {
                 // Default fallback
-                id: 'SOUL-' + Date.now().toString(36).toUpperCase(),
-                name: 'Personaje Forjado',
+                id: realData.id || 'SOUL-' + Date.now().toString(36).toUpperCase(),
+                name: realData.identidad?.nombre || 'Personaje Forjado',
                 tier: finalTierKey,
                 tierColor: tierData.color,
                 benefits: tierData.benefits,
-                stats: generateStats(finalTierKey),
+                stats: finalStats,
                 createdAt: new Date().toISOString(),
                 // Merge real data
                 ...realData,
@@ -575,45 +589,56 @@
             // Generate rich content based on tier
             const tierContent = getTierContent(data.tier);
 
-            // PREFER DYNAMIC DATA IF AVAILABLE
-            const cName = data.nombre || data.name || "Personaje Forjado";
-            const cArchetype = data.arquetipo || data.clase || data.rol || tierContent.archetype;
-            const cBio = data.narrative_arc ? data.narrative_arc.origin : (data.biografia || tierContent.bio);
-            const cQuote = data.frase || data.meta_line || tierContent.quote;
+            // PREFER DYNAMIC DATA FROM BACKEND (CORRECT PATHS)
+            const cName = data.identidad?.nombre || data.nombre || data.name || "Personaje Forjado";
+            const cArchetype = data.identidad?.titulo || data.rol || tierContent.archetype;
+            const cRol = data.rol || 'Aventurero';
+            const cMundo = data.mundo || 'Desconocido';
 
-            // PSYCHOLOGY FIXES
-            // 1. Mask
-            let cMask = tierContent.mask;
-            if (data.psicologia && data.psicologia.mascara) cMask = data.psicologia.mascara;
-            else if (data.mechanics && data.mechanics.moral_matrix && data.mechanics.moral_matrix.current_stage) {
-                // Convert stage to mask description
-                const stage = data.mechanics.moral_matrix.current_stage;
-                cMask = `Oculta su verdadero ser bajo una capa de ${stage.toLowerCase()}, temiendo ser descubierto.`;
+            // Biography - extract first phase
+            let cBio = tierContent.bio;
+            if (data.biografia && data.biografia.fases && data.biografia.fases.length > 0) {
+                cBio = data.biografia.fases.map(f => f.contenido).join('<br><br>');
             }
 
-            // 2. Shadow (Avoid raw numbers)
-            let cShadow = tierContent.shadow;
-            if (data.psicologia && data.psicologia.sombra) cShadow = data.psicologia.sombra;
-            else if (data.mechanics && data.mechanics.soul_tension) {
-                const tension = data.mechanics.soul_tension;
-                // Narrative description of tension
-                if (tension > 70) cShadow = `Una tensión oscura (${tension}%) bullendo bajo la piel, lista para estallar en violencia.`;
-                else if (tension > 40) cShadow = `Una inquietud constante (${tension}%) que le impide confiar plenamente.`;
-                else cShadow = `Una calma aparente (${tension}%), aunque los demonios internos siguen susurrando.`;
+            // Quote
+            const cQuote = data.capas?.mascara?.frase_tipica || data.frase || tierContent.quote;
+
+            // PSYCHOLOGY (from capas)
+            const cMask = data.capas?.mascara?.comportamiento_publico || tierContent.mask;
+            const cShadow = data.capas?.sombra?.rasgo_negado || tierContent.shadow;
+            const cWound = data.capas?.herida?.causante ?
+                `${data.capas.herida.causante}. ${data.capas.herida.circunstancia}` : tierContent.wound;
+            const cDesire = data.capas?.deseo_necesidad?.deseo_consciente || tierContent.desire;
+            const cMentira = data.capas?.mentira?.la_mentira || '';
+
+            // INVENTORY (hooks as items + tier inventory)
+            let cInventory = tierContent.inventory;
+            if (data.ganchos_narrativos && data.ganchos_narrativos.length > 0) {
+                cInventory = [
+                    '📜 ' + data.ganchos_narrativos[0]?.substring(0, 30) + '...',
+                    '🗡️ Arma de ' + cMundo,
+                    '🧿 Sello de ' + data.tier,
+                    ...tierContent.inventory.slice(3)
+                ];
             }
 
-            const cWound = (data.psicologia && data.psicologia.herida) || (data.narrative_arc && data.narrative_arc.turning_point) || tierContent.wound;
-            const cDesire = (data.psicologia && data.psicologia.deseo) || (data.narrative_arc && data.narrative_arc.moment_of_light) || tierContent.desire;
-
-            const cInventory = data.inventory || tierContent.inventory;
-
-            // Render Skills from Mechanics or Tier
+            // SKILLS from backend (data.skills array)
             let skillsHTML = '';
-            if (data.mechanics && data.mechanics.soul_perks) {
-                skillsHTML = data.mechanics.soul_perks.map(s => `<div class="skill-item"><div class="skill-name">${s.name}</div><div class="skill-desc">${s.flavor || s.type}</div></div>`).join('');
-            } else {
+            if (data.skills && data.skills.length > 0) {
+                skillsHTML = data.skills.map(s => `
+                    <div class="skill-item" style="border-left-color: ${s.category === 'Ultimate' ? '#FFD700' : s.category === 'Active' ? '#4169E1' : s.category === 'Passive' ? '#32CD32' : '#9932CC'};">
+                        <div class="skill-name">${s.name}</div>
+                        <div class="skill-desc">${s.description}</div>
+                        <div style="font-size:0.7rem; color:#666; margin-top:3px;">PWR: ${s.power_level} | ${s.category}${s.cost > 0 ? ' | MP: ' + s.cost : ''}</div>
+                    </div>
+                `).join('');
+            } else if (tierContent.skills) {
                 skillsHTML = tierContent.skills.map(s => `<div class="skill-item"><div class="skill-name">${s.name}</div><div class="skill-desc">${s.desc}</div></div>`).join('');
             }
+
+            // Soul Tier from backend if available
+            const displayTier = data.soul_tier || data.tier || 'Eco';
 
             return `<!DOCTYPE html>
 <html lang="es">
@@ -702,9 +727,9 @@
             </div>
         </div>
         <div class="main-content">
-            <div class="tier-badge">${data.tier.toUpperCase()} · NIVEL 1</div>
+            <div class="tier-badge">${displayTier.toUpperCase()} · NIVEL 1</div>
             <h1 id="charName">${cName}</h1>
-            <div class="subtitle">${cArchetype} · Origen Desconocido · Tono: Neutral</div>
+            <div class="subtitle">${cArchetype} · ${cMundo} · ${cRol}</div>
             <div class="quote-block">"${cQuote}"</div>
             <h2 class="section-title">📜 Biografía</h2>
             <p>${cBio}</p>
@@ -742,7 +767,7 @@
             try {
                 const p = document.getElementById('soul-payload').textContent;
                 const d = JSON.parse(decodeURIComponent(escape(atob(p))));
-                document.getElementById('charName').textContent = d.name;
+                document.getElementById('charName').textContent = d.identidad?.nombre || d.nombre || d.name || 'Personaje';
             } catch(e) {}
         })();
     <\/script>
