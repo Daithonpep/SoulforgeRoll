@@ -354,7 +354,6 @@ function generateStoryHTML(data) {
 </body>
 </html>`;
 }
-}
 
 function downloadHTML(content, name) {
     const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
