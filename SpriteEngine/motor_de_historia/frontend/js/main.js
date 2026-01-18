@@ -1,6 +1,7 @@
 import { TokenSystem, fetchCharacter, fetchConstellation } from './api.js';
 import { SoulRPGEngine } from './engine.js';
 import { showPayPalModal } from './ui.js';
+import { getLabels } from './i18n-sheet.js';
 
 const rpgEngine = new SoulRPGEngine();
 
@@ -84,8 +85,12 @@ export async function handleForjarAlma(event) {
 
 // Generate HTML for story-only characters (no stats, pure narrative)
 function generateStoryHTML(data) {
+    // DETECT LANGUAGE AND GET LABELS
+    const lang = data.idioma || data.lang || 'es';
+    const L = getLabels(lang);
+
     // CORRECT DATA EXTRACTION
-    const name = data.identidad?.nombre || data.nombre || 'Personaje Sin Nombre';
+    const name = data.identidad?.nombre || data.nombre || L.nameless;
     const titulo = data.identidad?.titulo || '';
     const rol = data.rol || 'Protagonista';
     const mundo = data.mundo || 'Desconocido';
@@ -93,9 +98,9 @@ function generateStoryHTML(data) {
     const genero = data.identidad?.genero || '';
 
     // Vestimenta y apariencia
-    const vestimenta = data.identidad?.vestimenta || 'Ropas sencillas de viaje.';
-    const voz = data.identidad?.voz || 'Una voz que guarda secretos.';
-    const rasgo = data.identidad?.rasgo_distintivo || 'Un aura de misterio lo rodea.';
+    const vestimenta = data.identidad?.vestimenta || L.defaultClothes;
+    const voz = data.identidad?.voz || L.defaultVoice;
+    const rasgo = data.identidad?.rasgo_distintivo || L.defaultTrait;
     const manierismo = data.identidad?.manierismo || '';
 
     // PSYCHOLOGY (from capas)
@@ -105,31 +110,31 @@ function generateStoryHTML(data) {
     const sombra = data.capas?.sombra || {};
     const deseo = data.capas?.deseo_necesidad || {};
 
-    // Narrative elements with fallbacks
+    // Narrative elements with localized fallbacks
     const heridaTexto = herida.causante ?
         `${herida.causante}. ${herida.circunstancia || ''} ${herida.como_lo_cambio || ''}` :
-        'Un pasado que prefiere no recordar.';
+        L.defaultWound;
 
-    const mascaraTexto = mascara.comportamiento_publico || 'Muestra al mundo una cara cuidadosamente construida.';
-    const fraseTexto = mascara.frase_tipica || '"Todos llevamos máscaras."';
-    const miedoTexto = mascara.miedo_central || 'Ser descubierto.';
-    const secretoTexto = mascara.deseo_secreto || 'Algo que no se atreve a admitir.';
+    const mascaraTexto = mascara.comportamiento_publico || L.defaultMask;
+    const fraseTexto = mascara.frase_tipica || L.defaultQuote;
+    const miedoTexto = mascara.miedo_central || L.defaultFear;
+    const secretoTexto = mascara.deseo_secreto || L.defaultSecret;
 
-    const deseoTexto = deseo.deseo_consciente || 'Encontrar su lugar en el mundo.';
-    const necesidadTexto = deseo.necesidad_real || 'Lo que realmente necesita está oculto incluso para sí mismo.';
+    const deseoTexto = deseo.deseo_consciente || L.defaultWant;
+    const necesidadTexto = deseo.necesidad_real || L.defaultNeed;
 
-    const mentiraTexto = mentira.la_mentira || 'Se cuenta historias para sobrevivir.';
-    const verdadTexto = mentira.verdad_necesaria || 'Una verdad que eventualmente deberá enfrentar.';
+    const mentiraTexto = mentira.la_mentira || L.defaultLie;
+    const verdadTexto = mentira.verdad_necesaria || L.defaultTruth;
 
-    const sombraTexto = sombra.rasgo_negado || 'Partes de sí mismo que prefiere ignorar.';
-    const sombraTrigger = sombra.trigger_emergencia || 'Situaciones extremas.';
+    const sombraTexto = sombra.rasgo_negado || L.defaultShadow;
+    const sombraTrigger = sombra.trigger_emergencia || L.defaultTrigger;
 
     // ARCO NARRATIVO
     const arco = data.arco || {};
-    const arcoInicial = arco.estado_inicial || 'Un alma en conflicto consigo misma.';
-    const arcoQuiebre = arco.punto_de_quiebre || 'El momento que lo cambiará todo.';
-    const arcoPositivo = arco.resolucion_positiva || 'Encontrar paz y propósito.';
-    const arcoTragico = arco.resolucion_tragica || 'Perderse en sus propios demonios.';
+    const arcoInicial = arco.estado_inicial || L.defaultArc1;
+    const arcoQuiebre = arco.punto_de_quiebre || L.defaultArc2;
+    const arcoPositivo = arco.resolucion_positiva || L.defaultArc3;
+    const arcoTragico = arco.resolucion_tragica || L.defaultArc4;
 
     // BIOGRAPHY
     const bioFases = data.biografia?.fases || [];
@@ -139,15 +144,15 @@ function generateStoryHTML(data) {
                 <h3>✦ ${f.titulo}</h3>
                 <p>${f.contenido}</p>
             </div>`).join('<div class="separator">❖</div>')
-        : `<p><em>Una historia que aún está escribiéndose...</em></p>`;
+        : `<p><em>${L.defaultBio}</em></p>`;
 
-    // HOOKS (sin el feo [Hook])
+    // HOOKS
     const ganchos = data.ganchos_narrativos || [];
     const momentos = data.momentos_definitorios || [];
 
     const ganchosHTML = ganchos.length > 0
         ? ganchos.map(g => `<div class="hook-item">⚔️ ${g}</div>`).join('')
-        : '<div class="hook-item">⚔️ El destino tiene planes para este personaje...</div>';
+        : `<div class="hook-item">⚔️ ${L.defaultHook}</div>`;
 
     const momentosHTML = momentos.length > 0
         ? momentos.map(m => `<div class="hook-item">💫 ${m}</div>`).join('')
@@ -254,102 +259,102 @@ function generateStoryHTML(data) {
             <div class="role-badge">${rol.toUpperCase()}</div>
             <h1>${name}</h1>
             ${titulo ? `<div class="subtitle">"${titulo}"</div>` : ''}
-            <div class="meta-info">${mundo} · ${genero ? genero + ' · ' : ''}${edad} años</div>
+            <div class="meta-info">${mundo} · ${genero ? genero + ' · ' : ''}${edad} ${L.years}</div>
         </div>
         
         <div class="quote-block">
             "${fraseTexto}"
         </div>
         
-        <h2 class="section-title">👤 Primera Impresión</h2>
+        <h2 class="section-title">${L.firstImpression}</h2>
         <div class="appearance-box">
-            <div class="appear-item"><span class="appear-label">Vestimenta:</span> ${vestimenta}</div>
-            <div class="appear-item"><span class="appear-label">Voz:</span> ${voz}</div>
-            <div class="appear-item"><span class="appear-label">Rasgo Distintivo:</span> ${rasgo}</div>
-            ${manierismo ? `<div class="appear-item"><span class="appear-label">Manierismo:</span> ${manierismo}</div>` : ''}
-            <div class="appear-item"><span class="appear-label">Comportamiento:</span> ${mascaraTexto}</div>
+            <div class="appear-item"><span class="appear-label">${L.clothing}:</span> ${vestimenta}</div>
+            <div class="appear-item"><span class="appear-label">${L.voice}:</span> ${voz}</div>
+            <div class="appear-item"><span class="appear-label">${L.trait}:</span> ${rasgo}</div>
+            ${manierismo ? `<div class="appear-item"><span class="appear-label">${L.mannerism}:</span> ${manierismo}</div>` : ''}
+            <div class="appear-item"><span class="appear-label">${L.behavior}:</span> ${mascaraTexto}</div>
         </div>
         
-        <h2 class="section-title">🧠 Psicología del Personaje</h2>
+        <h2 class="section-title">${L.psychology}</h2>
         <div class="psych-grid">
             <div class="psych-item">
-                <div class="psych-label">🩸 La Herida</div>
+                <div class="psych-label">${L.wound}</div>
                 <div class="psych-text">${heridaTexto}</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">🎭 La Máscara</div>
+                <div class="psych-label">${L.mask}</div>
                 <div class="psych-text">${mascaraTexto}</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">💔 El Miedo Central</div>
+                <div class="psych-label">${L.fear}</div>
                 <div class="psych-text">${miedoTexto}</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">✨ Deseo Secreto</div>
+                <div class="psych-label">${L.secret}</div>
                 <div class="psych-text">${secretoTexto}</div>
             </div>
             <div class="psych-item psych-full">
-                <div class="psych-label">🌑 La Sombra</div>
-                <div class="psych-text">${sombraTexto} <br><em style="color:#888;">Emerge cuando: ${sombraTrigger}</em></div>
+                <div class="psych-label">${L.shadow}</div>
+                <div class="psych-text">${sombraTexto} <br><em style="color:#888;">${L.emerges}: ${sombraTrigger}</em></div>
             </div>
         </div>
         
-        <h2 class="section-title">💭 Conflicto Interior</h2>
+        <h2 class="section-title">${L.conflict}</h2>
         <div class="psych-grid">
             <div class="psych-item">
-                <div class="psych-label">🌟 Lo que QUIERE</div>
+                <div class="psych-label">${L.wants}</div>
                 <div class="psych-text">${deseoTexto}</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">💎 Lo que NECESITA</div>
+                <div class="psych-label">${L.needs}</div>
                 <div class="psych-text">${necesidadTexto}</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">🕸️ La Mentira que se Cuenta</div>
+                <div class="psych-label">${L.lie}</div>
                 <div class="psych-text">"${mentiraTexto}"</div>
             </div>
             <div class="psych-item">
-                <div class="psych-label">☀️ Verdad que Necesita</div>
+                <div class="psych-label">${L.truth}</div>
                 <div class="psych-text">${verdadTexto}</div>
             </div>
         </div>
         
-        <h2 class="section-title">🎭 Arco Narrativo Potencial</h2>
+        <h2 class="section-title">${L.arc}</h2>
         <div class="arc-box">
             <div class="arc-item">
-                <div class="arc-label">📍 Estado Inicial</div>
+                <div class="arc-label">${L.initial}</div>
                 <div class="arc-text">${arcoInicial}</div>
             </div>
             <div class="arc-item">
-                <div class="arc-label">⚡ Punto de Quiebre</div>
+                <div class="arc-label">${L.turning}</div>
                 <div class="arc-text">${arcoQuiebre}</div>
             </div>
             <div class="arc-item">
-                <div class="arc-label">✨ Si Triunfa...</div>
+                <div class="arc-label">${L.ifWins}</div>
                 <div class="arc-text">${arcoPositivo}</div>
             </div>
             <div class="arc-item">
-                <div class="arc-label">💀 Si Falla...</div>
+                <div class="arc-label">${L.ifFails}</div>
                 <div class="arc-text">${arcoTragico}</div>
             </div>
         </div>
         
-        <h2 class="section-title">📜 Biografía</h2>
+        <h2 class="section-title">${L.bio}</h2>
         ${bioHTML}
         
         ${skillsHTML}
 
         <div class="hooks-section">
-            <h2 class="section-title" style="margin-top:0; border-bottom:none;">⚔️ Ganchos Narrativos</h2>
+            <h2 class="section-title" style="margin-top:0; border-bottom:none;">${L.hooks}</h2>
             ${ganchosHTML}
             ${momentosHTML ? `
-            <h3 style="font-family:'Cinzel'; color:var(--purple); margin-top:20px; font-size:1.1rem;">💫 Momentos Definitorios</h3>
+            <h3 style="font-family:'Cinzel'; color:var(--purple); margin-top:20px; font-size:1.1rem;">${L.moments}</h3>
             ${momentosHTML}
             ` : ''}
         </div>
         
-        <button class="download-btn" onclick="window.print()">🖨️ Imprimir / PDF</button>
-        <div class="footer">Generado por SoulForge Engine | ${new Date().toLocaleDateString()}</div>
+        <button class="download-btn" onclick="window.print()">🖨️ ${L.print}</button>
+        <div class="footer">SoulForge Engine | ${new Date().toLocaleDateString()}</div>
     </div>
 </body>
 </html>`;
