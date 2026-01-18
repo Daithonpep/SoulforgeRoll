@@ -20,5 +20,5 @@ pub mod exportadores;
 pub mod cartographer;
 
 // Re-exports principales
-pub use core::{Alma, SoulForge, ParametrosGeneracion, ParametrosConstelacion, Mundo, Rol, TonoMoral, Language};
+pub use core::{Alma, SoulForge, ParametrosGeneracion, ParametrosConstelacion, Mundo, Rol, TonoMoral, Language, Genero};
 pub use constelacion::{Constelacion, ConstelacionBuilder};

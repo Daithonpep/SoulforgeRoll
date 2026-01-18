@@ -84,6 +84,14 @@ fn parse_rol(s: &str) -> Rol {
     }
 }
 
+fn parse_genero(s: &str) -> Option<soulforge_server::Genero> {
+    match s.to_lowercase().as_str() {
+        "masculino" | "male" | "m" => Some(soulforge_server::Genero::Masculino),
+        "femenino" | "female" | "f" => Some(soulforge_server::Genero::Femenino),
+        _ => None, // random
+    }
+}
+
 async fn generate_character_handler(query: CharacterQuery) -> Result<impl warp::Reply, warp::Rejection> {
     let mut forge = SoulForge::nuevo();
     
@@ -93,6 +101,7 @@ async fn generate_character_handler(query: CharacterQuery) -> Result<impl warp::
         rol: query.rol.as_deref().map(parse_rol),
         tono_moral: query.tono.as_deref().map(parse_tono),
         edad_fija: query.edad,
+        genero: query.genero.as_deref().and_then(parse_genero),
         idioma: query.lang.as_deref().map(Language::from_str),
         ..Default::default()
     };
