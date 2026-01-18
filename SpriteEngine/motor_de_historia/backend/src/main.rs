@@ -107,8 +107,15 @@ async fn generate_character_handler(query: CharacterQuery) -> Result<impl warp::
     };
     
     let alma = forge.forjar(params);
+
+    // Convertir a serde_json::Value para pasar al enriquecedor
+    let json_val = serde_json::to_value(&alma).unwrap_or_default();
+
+    // Enriquecer con IA (si está disponible)
+    use soulforge_server::core::ia_integration::enriquecer_personaje;
+    let enhanced_json = enriquecer_personaje(json_val);
     
-    Ok(warp::reply::json(&alma))
+    Ok(warp::reply::json(&enhanced_json))
 }
 
 async fn generate_constellation_handler(query: ConstellationQuery) -> Result<impl warp::Reply, warp::Rejection> {

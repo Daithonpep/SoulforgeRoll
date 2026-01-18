@@ -15,6 +15,7 @@ pub mod promo;
 pub mod items;
 pub mod skills;
 pub mod mundo_narrativo;
+pub mod ia_integration;
 
 pub use alma::*;
 pub use capas::*;

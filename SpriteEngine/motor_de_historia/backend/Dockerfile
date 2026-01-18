@@ -21,9 +21,13 @@ RUN cargo build --release
 # === Imagen final ligera ===
 FROM debian:bookworm-slim
 
+# Instalar dependencias del sistema y Python para la integración IA
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl3 \
+    python3 \
+    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -31,9 +35,13 @@ WORKDIR /app
 # Copiar binario compilado
 COPY --from=builder /app/target/release/soulforge-server /app/soulforge-server
 
-# Templates y static removidos para Backend Only
-# COPY --from=builder /app/templates ./templates
-# COPY --from=builder /app/static ./static
+# Copiar integración de Groq
+COPY --from=builder /app/groq_integration /app/groq_integration
+
+# Crear entorno virtual e instalar dependencias de Python (para evitar conflictos con paquetes del sistema)
+RUN python3 -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+RUN pip install groq
 
 # Puerto (Railway usa $PORT)
 ENV PORT=8080
