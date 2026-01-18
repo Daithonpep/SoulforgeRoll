@@ -72,11 +72,13 @@ impl Alma {
         // Generar identidad
         let mut identidad = Identidad::generar(&mut rng, &mundo, params.genero, params.edad_fija);
         if let Some(fijo) = &params.nombre_fijo {
-            identidad.nombre = fijo.clone();
-            // Intentar separar apellido si viene en el nombre (Hack simple)
-            let partes: Vec<&str> = fijo.split_whitespace().collect();
-            if partes.len() > 1 {
-                identidad.apellido = Some(partes[1..].join(" "));
+            if !fijo.trim().is_empty() {
+                identidad.nombre = fijo.clone();
+                // Intentar separar apellido si viene en el nombre (Hack simple)
+                let partes: Vec<&str> = fijo.split_whitespace().collect();
+                if partes.len() > 1 {
+                    identidad.apellido = Some(partes[1..].join(" "));
+                }
             }
         }
 

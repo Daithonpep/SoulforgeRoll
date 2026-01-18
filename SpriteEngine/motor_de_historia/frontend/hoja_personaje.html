@@ -4,28 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ identidad.nombre }} - SoulForge Record</title>
+    <title>{{ identidad.nombre }} - SSS Record</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0a0f;
-            --panel-dark: #111;
-            --paper: #e3dac9;
-            --paper-texture: url('https://www.transparenttextures.com/patterns/aged-paper.png');
-            --ink: #1a1a1a;
-            --gold: #c5a059;
+            --void-dark: #050505;
+            --void-panel: #0a0a0c;
+            --paper-sss: #E6E0D4;
+            /* Lighter, cleaner beige */
+            --gold-sss: #FFD700;
+            --gold-dim: #C5A059;
+            --neon-purple: #b026ff;
+            --neon-blue: #00f3ff;
             --blood: #8a0b0b;
-            --accent: #5d4037;
+            --text-dark: #1a1a1a;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: #000;
             margin: 0;
             padding: 20px;
-            font-family: 'Crimson Text', serif;
-            color: var(--ink);
+            font-family: 'Playfair Display', serif;
+            color: var(--text-dark);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -33,17 +35,23 @@
             gap: 40px;
         }
 
-        /* PAGE STRUCTURE */
+        /* PAGE BASE */
         .page {
-            width: 100%;
-            max-width: 1100px;
-            background-color: var(--paper);
-            background-image: var(--paper-texture);
-            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9);
+            width: 1100px;
+            min-height: 1500px;
+            background-color: var(--paper-sss);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.1);
+            border: 2px solid var(--gold-sss);
+            /* Azraell outer border */
             position: relative;
             overflow: hidden;
-            border-radius: 4px;
-            min-height: 1400px;
+            border-radius: 2px;
+            display: grid;
+        }
+
+        /* PAGE 1 LAYOUT */
+        .page-identity {
+            grid-template-columns: 340px 1fr;
         }
 
         @media print {
@@ -54,49 +62,53 @@
             }
 
             .page {
-                box-shadow: none;
                 margin: 0;
-                border-radius: 0;
+                border: none;
                 page-break-after: always;
                 width: 100%;
                 height: 100vh;
+                box-shadow: none;
             }
 
-            .btn-float,
-            .navbar {
+            .btn-float {
                 display: none;
             }
         }
 
-        /* PAGE 1: IDENTITY (Aric Style + Content) */
-        .page-identity {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-        }
-
-        /* SIDEBAR */
+        /* SIDEBAR (AZRAELL STYLE: DARK & GOLD) */
         .sidebar {
-            background-color: var(--panel-dark);
-            color: #ccc;
+            background-color: var(--void-panel);
+            color: #ddd;
             padding: 40px 25px;
-            border-right: 4px solid var(--gold);
+            border-right: 3px solid var(--gold-sss);
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 25px;
+            position: relative;
         }
 
-        /* Avatar Container with Aura */
-        .avatar-container {
-            width: 200px;
-            height: 200px;
+        /* Avatar Halo */
+        .avatar-box {
+            width: 220px;
+            height: 220px;
             margin: 0 auto;
-            border-radius: 50%;
-            border: 3px solid var(--gold);
-            overflow: hidden;
-            background: #000;
             position: relative;
-            transition: all 0.5s ease;
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-circle {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--gold-sss);
+            position: relative;
+            z-index: 2;
+            background: #000;
+            box-shadow: 0 0 25px rgba(176, 38, 255, 0.4);
+            /* Default purple glow */
         }
 
         .avatar-img {
@@ -105,460 +117,295 @@
             object-fit: cover;
         }
 
-        /* Tier Auras */
-        .aura-eco .avatar-container {
-            border-color: #888;
-            box-shadow: 0 0 15px rgba(136, 136, 136, 0.5);
+        /* Rank Ring (Simulated with CSS) */
+        .rank-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 215, 0, 0.3);
+            animation: spin 60s linear infinite;
+            z-index: 1;
         }
 
-        .aura-murmullo .avatar-container {
-            border-color: #ddd;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        .aura-sombra .avatar-container {
-            border-color: #32CD32;
-            box-shadow: 0 0 25px rgba(50, 205, 50, 0.5);
-        }
-
-        .aura-voz .avatar-container {
-            border-color: #4169E1;
-            box-shadow: 0 0 30px rgba(65, 105, 225, 0.6);
-        }
-
-        .aura-alma .avatar-container {
-            border-color: #9932CC;
-            box-shadow: 0 0 40px rgba(153, 50, 204, 0.7);
-        }
-
-        .aura-ancestral .avatar-container {
-            border-color: #FFD700;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
-        }
-
-        .aura-primordial .avatar-container {
-            border-color: #FF4500;
-            box-shadow: 0 0 60px rgba(255, 69, 0, 0.8);
-        }
-
-        .aura-legendaria .avatar-container {
-            border-color: #FF1493;
-            box-shadow: 0 0 70px rgba(255, 20, 147, 0.9);
-        }
-
-        .aura-mitica .avatar-container {
-            border-color: #00FFFF;
-            box-shadow: 0 0 80px rgba(0, 255, 255, 1);
-            filter: contrast(1.1);
-        }
-
-        .tier-display {
+        /* Power Bar SSS */
+        .power-bar-box {
+            border: 1px solid var(--gold-sss);
+            background: #000;
+            padding: 10px;
+            margin-top: 10px;
             text-align: center;
-            font-family: 'Cinzel';
-            color: #888;
-            letter-spacing: 2px;
-            border-bottom: 3px double #333;
-            padding-bottom: 10px;
-            margin-top: -10px;
-            text-transform: uppercase;
+            border-radius: 4px;
+            box-shadow: 0 0 10px inset rgba(255, 215, 0, 0.1);
         }
 
-        /* TENSION BAR */
-        .tension-wrapper {
-            margin-top: 5px;
-            text-align: center;
-        }
-
-        .tension-label {
+        .pb-label {
+            font-family: 'Share Tech Mono', monospace;
             font-size: 0.7rem;
-            color: #888;
-            margin-bottom: 5px;
+            color: var(--gold-sss);
+            letter-spacing: 2px;
+        }
+
+        .pb-val {
             font-family: 'Cinzel';
+            font-size: 1.4rem;
+            color: #fff;
+            text-shadow: 0 0 5px var(--gold-sss);
         }
 
-        .tension-track {
-            width: 100%;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            overflow: hidden;
+        /* Battle Console / Sidebar Log */
+        .console-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            padding: 15px 0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: #888;
         }
 
-        .tension-fill {
-            height: 100%;
-            width: 60%;
-            background: linear-gradient(90deg, var(--gold), var(--blood));
+        .console-line {
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* STATS w/ Overflow Protection */
+        .cl-green {
+            color: #4ade80;
+        }
+
+        /* Stats (Low Sidebar) */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            justify-items: center;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: auto;
         }
 
-        .stat-box {
-            width: 85px;
-            height: 95px;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+        .stat-medallion {
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
             border: 1px solid #444;
-            border-radius: 8px;
+            border-radius: 6px;
+            height: 70px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
-            /* Prevents overflow */
         }
 
         .stat-val {
             font-family: 'Cinzel';
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #fff;
-            font-weight: bold;
             line-height: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            padding: 0 5px;
         }
 
-        .stat-lbl {
-            font-size: 0.65rem;
-            color: #888;
-            letter-spacing: 1px;
-            margin-top: 5px;
+        .stat-img {
+            width: 15px;
+            height: 15px;
+            opacity: 0.5;
+            margin-bottom: 2px;
         }
 
         .stat-mod {
             position: absolute;
             bottom: -8px;
-            background: var(--blood);
+            background: var(--neon-purple);
             color: #fff;
-            width: 24px;
-            height: 24px;
+            border: 1px constant #fff;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            border: 2px solid #0a0a0a;
             font-weight: bold;
-        }
-
-        /* RESONANCE (Old Perks) */
-        .sidebar-list {
-            margin-top: 25px;
-            border-top: 1px solid #333;
-            padding-top: 15px;
-        }
-
-        .sb-title {
-            font-family: 'Cinzel';
-            color: var(--gold);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .sb-item {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-bottom: 10px;
-            border-left: 2px solid #444;
-            padding-left: 8px;
-        }
-
-        .sb-item strong {
-            color: #ddd;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .sb-desc {
-            font-style: italic;
-            color: #666;
-            font-size: 0.75rem;
-            line-height: 1.3;
         }
 
         /* MAIN CONTENT PAGE 1 */
-        .main-col {
+        .main-content {
             padding: 50px 60px;
+            position: relative;
         }
 
-        .header-big h1 {
-            font-family: 'Cinzel';
-            font-size: 3.5rem;
-            line-height: 1;
-            margin: 0;
+        .top-tag {
+            background: var(--gold-sss);
+            color: #000;
+            display: inline-block;
+            padding: 4px 12px;
+            font-weight: bold;
+            font-family: 'Share Tech Mono';
+            font-size: 0.8rem;
+            border: 1px solid #000;
+            margin-bottom: 15px;
             letter-spacing: 1px;
-            color: var(--ink);
         }
 
-        .meta-line {
-            font-family: 'Metamorphous';
-            color: var(--blood);
+        h1 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 4rem;
+            margin: 0;
+            line-height: 0.9;
+            color: #111;
+            letter-spacing: 2px;
+        }
+
+        .classes-line {
+            font-family: 'Cinzel';
+            color: #660066;
             font-size: 1.1rem;
+            font-weight: bold;
             margin-top: 10px;
-            font-style: italic;
-            border-bottom: 3px double var(--accent);
             padding-bottom: 20px;
+            border-bottom: 2px solid var(--text-dark);
         }
 
-        .quote-block {
-            background: rgba(93, 64, 55, 0.05);
-            border-left: 4px solid var(--accent);
-            padding: 15px 20px;
+        .quote-sss {
+            background: rgba(176, 38, 255, 0.05);
+            /* Purple tint */
+            border-left: 4px solid var(--neon-purple);
+            padding: 20px;
             margin: 25px 0;
             font-style: italic;
-            font-family: 'Crimson Text';
-            font-size: 1.1rem;
-            color: #444;
+            font-size: 1.2rem;
+            color: #333;
         }
 
-        .section-h2 {
+        .section-header {
             font-family: 'Cinzel';
             font-size: 1.5rem;
-            color: var(--accent);
-            border-bottom: 1px solid #bbb;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        .sh-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Psycho Matrix (Purple Box - Azraell Style) */
+        .psy-matrix {
+            border: 2px solid #800080;
+            background: #faf5ff;
+            /* Lavender */
+            padding: 20px;
+            display: grid;
+            gap: 12px;
+            margin: 20px 0;
+            font-family: 'Share Tech Mono';
+            font-size: 0.9rem;
+        }
+
+        .pm-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            border-bottom: 1px dashed #d8b4fe;
             padding-bottom: 5px;
         }
 
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            text-align: justify;
-            margin-bottom: 15px;
-            color: #222;
-        }
-
-        strong {
-            color: var(--blood);
-        }
-
-        /* PSYCHO MATRIX (Restored) */
-        .matrix-box {
-            background: rgba(0, 0, 0, 0.03);
-            border: 2px solid var(--accent);
-            padding: 20px;
-            margin: 30px 0;
-            display: grid;
-            gap: 10px;
-        }
-
-        .matrix-row {
-            display: flex;
-            align-items: baseline;
-        }
-
-        .matrix-lbl {
-            font-weight: bold;
-            font-variant: small-caps;
-            color: var(--blood);
-            font-size: 1rem;
-            width: 120px;
-            flex-shrink: 0;
-        }
-
-        .matrix-val {
-            font-style: italic;
-            color: #333;
-        }
-
-        /* TIMELINE & ADVENTURE LOG (Restored) */
-        .timeline-item {
-            display: flex;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-
-        .tl-year {
-            font-weight: bold;
-            color: var(--accent);
-            width: 80px;
-            flex-shrink: 0;
-        }
-
-        .tl-content {
-            font-style: italic;
-            color: #555;
-        }
-
-        .adventure-log {
-            margin-top: 40px;
-            border-top: 2px solid var(--accent);
-            padding-top: 20px;
-            background: rgba(0, 0, 0, 0.02);
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .log-entry {
-            margin-bottom: 8px;
-            border-bottom: 1px dashed #ccc;
-            padding-bottom: 8px;
-        }
-
-        /* PAGE 2: SKILLS (New Design) */
-        .page-skills {
-            padding: 60px 80px;
-        }
-
-        .skills-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-family: 'Cinzel';
-            font-size: 2rem;
-            color: #333;
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 15px;
-            margin-bottom: 40px;
-        }
-
-        .skill-row {
-            background: rgba(93, 64, 55, 0.08);
-            /* Beige darker */
-            border-radius: 6px;
-            margin-bottom: 18px;
-            position: relative;
-            overflow: hidden;
-            padding: 15px 20px 15px 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
-        }
-
-        .skill-row:hover {
-            transform: translateX(5px);
-        }
-
-        .skill-bar {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 6px;
-        }
-
-        .sk-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sk-title {
-            font-family: 'Cinzel';
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #222;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sk-badge {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+        .pm-label {
+            color: #800080;
             font-weight: bold;
             text-transform: uppercase;
         }
 
-        .sk-desc {
+        .pm-val {
+            color: #333;
+            font-family: 'Playfair Display';
             font-style: italic;
-            color: #444;
-            margin: 5px 0 8px 0;
-            font-size: 1rem;
-            line-height: 1.4;
         }
 
-        .sk-meta {
+        /* INVENTORY GRID (New requested feature) */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .inv-item {
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 10px;
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Gold items for flavor */
+        .inv-item.legendary {
+            border: 1px solid var(--gold-sss);
+            background: linear-gradient(to right, #fff, #fffdf0);
+        }
+
+        .inv-icon {
+            font-size: 1.2rem;
+        }
+
+        .inv-name {
+            font-family: 'Cinzel';
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Bitácora / Log */
+        .log-entry {
+            font-family: 'Share Tech Mono';
             font-size: 0.85rem;
             color: #666;
-            font-family: 'Cinzel';
-            margin-top: 5px;
-            border-top: 1px dashed rgba(0, 0, 0, 0.1);
-            padding-top: 8px;
+            margin-bottom: 8px;
         }
 
-        /* Sidebar Colors for Page 2 */
-        .sk-type-Active {
-            background: #4169E1;
+        .log-date {
+            color: var(--blood);
+            font-weight: bold;
+            margin-right: 5px;
         }
 
-        .row-Active .skill-bar {
-            background: #4169E1;
+        /* PAGE 2: SKILLS (Keeping format but adapting style slightly) */
+        .page-skills {
+            padding: 60px 80px;
+            background: var(--paper-sss);
         }
 
-        .row-Active .sk-title {
-            color: #2a448c;
+        /* Using same skill cards but with updated fonts */
+        .page-skills .skill-row {
+            background: #fff;
+            border: 1px solid #ddd;
         }
 
-        .sk-type-Passive {
-            background: #32CD32;
-        }
-
-        .row-Passive .skill-bar {
-            background: #32CD32;
-        }
-
-        .row-Passive .sk-title {
-            color: #227a22;
-        }
-
-        .sk-type-Ultimate {
-            background: #FFD700;
-        }
-
-        .row-Ultimate .skill-bar {
-            background: #FFD700;
-        }
-
-        .row-Ultimate .sk-title {
-            color: #b58900;
-        }
-
-        .row-Ultimate {
-            background: rgba(255, 215, 0, 0.15);
-        }
-
-        .sk-type-Signature {
-            background: #9932CC;
-        }
-
-        .row-Signature .skill-bar {
-            background: #9932CC;
-        }
-
-        .row-Signature .sk-title {
-            color: #6a1b9a;
-        }
 
         .btn-float {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 1000;
-            background: var(--blood);
-            color: white;
-            border: none;
+            background: #000;
+            color: var(--gold-sss);
+            border: 2px solid var(--gold-sss);
             padding: 15px 30px;
             font-family: 'Cinzel';
-            border-radius: 30px;
+            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-float:hover {
+            background: var(--gold-sss);
+            color: #000;
         }
     </style>
     <script>
@@ -569,183 +416,176 @@
 </head>
 
 <body>
-    <button class="btn-float" onclick="downloadHTML()">💾 GUARDAR DOCUMENTO</button>
+    <button class="btn-float" onclick="downloadHTML()">💾 EXPORTAR DATOS [SSS]</button>
 
-    <!-- PAGE 1: FULL CHARACTER RECORD -->
+    <!-- PAGE 1: AZRAELL IDENTITY -->
     <div class="page page-identity">
         <!-- SIDEBAR -->
         <div class="sidebar aura-{{ soul_tier | lower }}">
-            <div class="avatar-container">
-                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ semilla }}" class="avatar-img">
-            </div>
-            <div class="tier-display">{{ soul_tier }} SOUL</div>
-
-            <!-- TENSION BAR (Restored) -->
-            <div class="tension-wrapper">
-                <div class="tension-label">TENSIÓN (MÁSCARA)</div>
-                <div class="tension-track">
-                    <div class="tension-fill"></div>
+            <div class="avatar-box">
+                <div class="rank-ring"></div>
+                <div class="avatar-circle">
+                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ semilla }}" class="avatar-img">
                 </div>
             </div>
 
-            <!-- STATS (Protected Layout) -->
+            <div class="power-bar-box">
+                <div class="pb-label">SOUL RANK</div>
+                <div class="pb-val">{{ soul_tier | default('UNKNOWN') }}</div>
+            </div>
+
+            <!-- Fake Terminal History -->
+            <div class="console-box">
+                <div style="margin-bottom:5px; color:#fff;">> HISTORIAL DE SISTEMA</div>
+                <div class="console-line"><span>Intervención Divina</span> <span class="cl-green">+3 VOL</span></div>
+                <div class="console-line"><span>Herida x Rebelión</span> <span style="color:#f87171">-1 CON</span></div>
+                <div class="console-line"><span>[Espada del Vacío]</span> <span>EQUIPADO</span></div>
+            </div>
+
+            <!-- Stats Grid -->
             {% if ficha_tecnica %}
-            <div style="text-align:center; font-family:'Cinzel'; margin:15px 0 5px; color:#888; font-size:0.8rem;">—
-                ATRIBUTOS —</div>
             <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.fuerza }}</div>
-                    <div class="stat-lbl">STR</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.fuerza }}</span><span
+                        style="font-size:0.6rem; color:#888;">STR</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.fuerza - 10) // 2 }}</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.destreza }}</div>
-                    <div class="stat-lbl">DEX</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.destreza }}</span><span
+                        style="font-size:0.6rem; color:#888;">DEX</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.destreza - 10) // 2 }}</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.constitucion }}</div>
-                    <div class="stat-lbl">CON</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.constitucion }}</span><span
+                        style="font-size:0.6rem; color:#888;">CON</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.constitucion - 10) // 2 }}</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.inteligencia }}</div>
-                    <div class="stat-lbl">INT</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.inteligencia }}</span><span
+                        style="font-size:0.6rem; color:#888;">INT</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.inteligencia - 10) // 2 }}</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.sabiduria }}</div>
-                    <div class="stat-lbl">WIS</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.sabiduria }}</span><span
+                        style="font-size:0.6rem; color:#888;">WIS</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.sabiduria - 10) // 2 }}</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-val">{{ ficha_tecnica.carisma }}</div>
-                    <div class="stat-lbl">CHA</div>
+                <div class="stat-medallion"><span class="stat-val">{{ ficha_tecnica.carisma }}</span><span
+                        style="font-size:0.6rem; color:#888;">CHA</span>
                     <div class="stat-mod">+{{ (ficha_tecnica.carisma - 10) // 2 }}</div>
                 </div>
             </div>
             {% endif %}
-
-            <!-- RESONANCE (Restored Mechanics) -->
-            <div class="sidebar-list">
-                <div class="sb-title">✧ MOMENTOS DE GRACIA</div>
-                {% for gracia in biografia.momentos_gracia %}
-                <div class="sb-item">
-                    <strong>{{ gracia.nombre }}</strong>
-                    <div class="sb-desc">{{ gracia.descripcion | truncate(50) }}</div>
-                </div>
-                {% endfor %}
-            </div>
         </div>
 
-        <!-- MAIN BODY -->
-        <div class="main-col">
-            <div class="header-big">
-                <h1>{{ identidad.nombre }}</h1>
-                <div class="meta-line">{{ identidad.titulo }} · {{ rol }} · {{ mundo }}</div>
+        <!-- MAIN CONTENT (Azraell Layout) -->
+        <div class="main-content">
+            <div class="top-tag">PROTOCOLO: {{ mundo | upper }}</div>
+
+            <h1>{{ identidad.nombre }}</h1>
+            <div class="classes-line">
+                {% if identidad.titulo %}{{ identidad.titulo }} · {% endif %}
+                {{ rol }} · Edad: {{ identidad.edad }}
             </div>
 
-            <div class="quote-block">
+            <div class="quote-sss">
                 "{{ capas.mascara.frase_tipica }}"
             </div>
 
-            <h2 class="section-h2">Identidad & Apariencia</h2>
-            <p><strong>Viste:</strong> {{ identidad.vestimenta }}</p>
-            <p><strong>Personalidad:</strong> {{ identidad.voz }}. {{ identidad.manierismo }}</p>
+            <div class="section-header">📜 Biografía: El Origen</div>
+            <p style="text-align:justify; line-height:1.6;">
+                {% for fase in biografia.fases[:1] %}
+                <span
+                    style="background:#8a0b0b; color:#fff; padding:2px 6px; font-size:0.7rem; margin-right:5px;">ORIGEN</span>
+                {{ fase.contenido }}
+                {% endfor %}
+            </p>
+            <p style="text-align:justify; line-height:1.6;">
+                <span style="background:#8a0b0b; color:#fff; padding:2px 6px; font-size:0.7rem; margin-right:5px;">EL
+                    TRAUMA</span>
+                {{ capas.herida.causante }}. {{ capas.herida.circunstancia }}.
+                <b>{{ capas.herida.como_lo_cambio }}</b>
+            </p>
 
-            <h2 class="section-h2">Trauma & Psicología</h2>
-            <p><strong>Herida Original:</strong> {{ capas.herida.causante }}. {{ capas.herida.circunstancia }}.
-                <br><em>{{ capas.herida.como_lo_cambio }}</em></p>
-
-            <!-- PSYCHO MATRIX (Restored) -->
-            <div class="matrix-box">
-                <div class="matrix-row">
-                    <div class="matrix-lbl">La Mentira</div>
-                    <div class="matrix-val">"{{ capas.mentira.la_mentira }}"</div>
+            <!-- Purple Psycho Box -->
+            <div class="psy-matrix">
+                <div class="pm-row">
+                    <div class="pm-label">La Mentira</div>
+                    <div class="pm-val">"{{ capas.mentira.la_mentira }}"</div>
                 </div>
-                <div class="matrix-row">
-                    <div class="matrix-lbl">Deseo</div>
-                    <div class="matrix-val">{{ capas.deseo_necesidad.deseo_consciente }}</div>
+                <div class="pm-row">
+                    <div class="pm-label">La Herida</div>
+                    <div class="pm-val">Causada por {{ capas.herida.causante }}</div>
                 </div>
-                <div class="matrix-row">
-                    <div class="matrix-lbl">Necesidad</div>
-                    <div class="matrix-val">{{ capas.deseo_necesidad.necesidad_real }}</div>
+                <div class="pm-row">
+                    <div class="pm-label">El Deseo</div>
+                    <div class="pm-val">{{ capas.deseo_necesidad.deseo_consciente }}</div>
                 </div>
             </div>
 
-            <h2 class="section-h2">Biografía</h2>
-            {% for fase in biografia.fases %}
-            <div style="margin-bottom:20px;">
-                <h4 style="margin:0 0 5px 0; font-family:'Cinzel'; color:var(--blood);">✦ {{ fase.titulo }}</h4>
-                <p style="margin:0;">{{ fase.contenido }}</p>
+            <!-- INVENTORY (New) -->
+            <div class="section-header">🎒 Inventario Legendario (Vinculado)</div>
+            <div class="inv-grid">
+                <div class="inv-item legendary">
+                    <div class="inv-icon">🗡️</div>
+                    <div class="inv-name">Espada de {{ mundo }}</div>
+                </div>
+                <div class="inv-item legendary">
+                    <div class="inv-icon">🧿</div>
+                    <div class="inv-name">Sello de {{ soul_tier }}</div>
+                </div>
+                <!-- Ganchos como objetos abstractos -->
+                {% for gancho in ganchos_narrativos[:2] %}
+                <div class="inv-item">
+                    <div class="inv-icon">📜</div>
+                    <div class="inv-name">{{ gancho | truncate(25) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Bitácora -->
+            <div class="section-header">📖 Bitácora de Crisis</div>
+            {% for fase in biografia.fases[1:] %}
+            <div class="log-entry">
+                <span class="log-date">[REF: {{ fase.titulo }}]</span>
+                {{ fase.contenido | truncate(120) }}
             </div>
             {% endfor %}
 
-            <!-- TIMELINE & LOG (Restored) -->
-            <div style="margin-top:40px; border-top:1px solid #ccc; padding-top:20px;">
-                <h3 style="font-family:'Cinzel'; color:#666; font-size:1.1rem; margin-bottom:15px;">LÍNEA DE VIDA: {{
-                    t.titulo_mascara_publica }}</h3>
-                {% for fase in biografia.fases %}
-                <div class="timeline-item">
-                    <div class="tl-year">{{ fase.titulo }}</div>
-                    <div class="tl-content">{{ fase.contenido | truncate(80) }}...</div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="adventure-log">
-                <h3 style="font-family:'Cinzel'; color:var(--accent); margin-bottom:15px;">GANCHOS DE AVENTURA</h3>
-                {% for gancho in ganchos_narrativos %}
-                <div class="log-entry">⚔️ {{ gancho }}</div>
-                {% endfor %}
-            </div>
         </div>
     </div>
 
-    <!-- PAGE 2: SKILLS & ABILITIES -->
+    <!-- PAGE 2: SKILLS (Retained as per request, just styled for compatibility) -->
     <div class="page page-skills">
-        <div class="skills-header">
-            <!-- Icon -->
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="#5d4037">
-                <path
-                    d="M14.5 17c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zm8.5 0c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zm-17 0c0 1.65-1.35 3-3 3s-3-1.35-3-3 1.35-3 3-3 3 1.35 3 3zM7 2h10v2h-2v2h-2V4H7v2H5V2h2zm.17 12.09L6 11l5-5-1.41-1.41-5 5-2.26-2.25-1.41 1.41 3.67 3.66 2.58-1.32z" />
-            </svg>
-            HABILIDADES & TALENTOS <!-- ({{ skills|length }}) -->
+        <div
+            style="font-family:'Cinzel'; font-size:2rem; margin-bottom:30px; border-bottom:2px solid var(--gold-sss); padding-bottom:10px;">
+            ⚔️ REGISTRO DE HABILIDADES
         </div>
 
         {% if skills %}
         {% for skill in skills %}
-        <div class="skill-row row-{{ skill.category }}">
-            <div class="skill-bar"></div>
-
-            <div class="sk-top">
-                <div class="sk-title">
-                    {% if skill.category == 'Active' %}⚔️{% elif skill.category == 'Passive' %}🛡️{% elif skill.category
-                    == 'Ultimate' %}⭐{% else %}💎{% endif %}
-                    {{ skill.name }}
-                </div>
-                <div class="sk-badge sk-type-{{ skill.category }}">{{ skill.category }}</div>
+        <div
+            style="background:#fff; border:1px solid #ccc; border-radius:4px; padding:15px; margin-bottom:15px; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <!-- Type Strip -->
+            <div
+                style="position:absolute; left:0; top:0; bottom:0; width:5px; background:{% if skill.category=='Active' %}#4169E1{% elif skill.category=='Passive' %}#32CD32{% elif skill.category=='Ultimate' %}#FFD700{% else %}#9932CC{% endif %};">
             </div>
 
-            <div class="sk-desc">{{ skill.description }}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-left:10px;">
+                <div style="font-family:'Cinzel'; font-weight:bold; font-size:1.1rem; color:#222;">{{ skill.name }}
+                </div>
+                <div
+                    style="font-size:0.7rem; font-weight:bold; color:#666; text-transform:uppercase; border:1px solid #ddd; padding:2px 8px; border-radius:10px;">
+                    {{ skill.category }}</div>
+            </div>
 
-            <div class="sk-meta">
-                {% if skill.cost > 0 %}
-                <span>🔹 {{ skill.cost }} MP</span>
-                {% endif %}
-                <span>🎲 Poder: <strong>{{ skill.power_level }}/10</strong></span>
-                <span>📜 "{{ skill.unlock_reason }}"</span>
+            <div style="padding-left:10px; font-style:italic; font-size:0.95rem; color:#444;">{{ skill.description }}
+            </div>
+
+            <div
+                style="padding-left:10px; display:flex; gap:15px; font-size:0.8rem; color:#777; font-family:'Share Tech Mono'; margin-top:5px; border-top:1px dashed #eee; padding-top:5px;">
+                {% if skill.cost > 0 %}<span>MP: {{ skill.cost }}</span>{% endif %}
+                <span>PWR: {{ skill.power_level }}</span>
             </div>
         </div>
         {% endfor %}
-        <div style="text-align:center; color:#888; margin-top:30px; font-style:italic; font-family:'Cinzel';">
-            SoulForge System v2.1 (Encrypted Attributes Verified)
-        </div>
         {% else %}
-        <div style="text-align:center; color:#888; margin-top:50px; border:2px dashed #ccc; padding:40px;">
-            <p>Las habilidades aún no han cristalizado en este alma.</p>
-            <small>Requiere forja en Modo RPG</small>
-        </div>
+        <div style="text-align:center; padding:50px; color:#888;">SIN DATOS DE COMBATE REGISTRADOS</div>
         {% endif %}
     </div>
 
