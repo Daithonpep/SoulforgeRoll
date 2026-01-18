@@ -14,6 +14,7 @@ pub mod narrativa;
 pub mod promo;
 pub mod items;
 pub mod skills;
+pub mod mundo_narrativo;
 
 pub use alma::*;
 pub use capas::*;

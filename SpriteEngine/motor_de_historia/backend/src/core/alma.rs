@@ -129,8 +129,8 @@ impl Alma {
             arco.resolucion_positiva = super::adapter::adapt_text(&rp, lang_code, seed.wrapping_add(62));
         }
         
-        // Generar hooks
-        let ganchos = Self::generar_ganchos(&mut rng, &capas, &idioma);
+        // Generar hooks with world-specific content
+        let ganchos = Self::generar_ganchos(&mut rng, &capas, &idioma, &mundo, &identidad.nombre);
         let momentos = Self::generar_momentos(&mut rng, &capas, &idioma);
         
         // Generar biografía procedural
@@ -240,14 +240,13 @@ impl Alma {
         }
     }
     
-    fn generar_ganchos(rng: &mut impl Rng, capas: &SietCapas, lang: &Language) -> Vec<String> {
-        let mut ganchos = vec![
-            format!("Alguien del pasado reaparece con noticias sobre {}", capas.herida.causante),
-            format!("Se ve forzado a confrontar: {}", capas.mentira.catalizador_potencial),
-            "Una oportunidad demasiado buena para ser verdad".to_string(),
-            "Debe elegir entre lo que desea y lo que es correcto".to_string(),
-            format!("Descubre la verdad sobre {}", capas.herida.circunstancia),
-        ];
+    fn generar_ganchos(rng: &mut impl Rng, capas: &SietCapas, lang: &Language, mundo: &super::Mundo, nombre: &str) -> Vec<String> {
+        // Get world-specific hooks
+        let mut ganchos = super::mundo_narrativo::ganchos_narrativos_mundo(rng, mundo, nombre);
+        
+        // Add some generic hooks based on character psychology
+        ganchos.push(format!("Alguien del pasado reaparece con noticias sobre {}", capas.herida.causante));
+        ganchos.push(format!("Se ve forzado a confrontar: {}", capas.mentira.catalizador_potencial));
         
         // Adaptar si es necesario
         if *lang != Language::Espanol {
