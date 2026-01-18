@@ -85,8 +85,9 @@ export async function handleForjarAlma(event) {
 
 // Generate HTML for story-only characters (no stats, pure narrative)
 function generateStoryHTML(data) {
-    // DETECT LANGUAGE AND GET LABELS
-    const lang = data.idioma || data.lang || 'es';
+    // DETECT LANGUAGE: Check data first, then localStorage, then default to 'es'
+    const storedLang = typeof localStorage !== 'undefined' ? localStorage.getItem('soulforge_lang') : null;
+    const lang = data.idioma || data.lang || storedLang || 'es';
     const L = getLabels(lang);
 
     // CORRECT DATA EXTRACTION
@@ -197,60 +198,60 @@ function generateStoryHTML(data) {
     <title>${name} - Ficha de Historia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Metamorphous&display=swap" rel="stylesheet">
     <style>
-        :root { --paper: #e3dac9; --ink: #1a1a1a; --accent: #8b4513; --blood: #722f37; --gold: #c5a059; --purple: #663399; }
+        :root { --paper: #f5f0e6; --ink: #0a0a0a; --accent: #8b4513; --blood: #6b1818; --gold: #c5a059; --purple: #5a2d82; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #2a2a2a; padding: 40px 20px; font-family: 'Crimson Text', serif; color: var(--ink); min-height: 100vh; display: flex; justify-content: center; }
-        .story-sheet { width: 100%; max-width: 900px; background: var(--paper); background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); box-shadow: 0 0 60px rgba(0,0,0,0.5); padding: 50px; border-radius: 4px; }
+        body { background-color: #1a1a1a; padding: 40px 20px; font-family: 'Crimson Text', serif; color: var(--ink); min-height: 100vh; display: flex; justify-content: center; font-size: 18px; line-height: 1.6; }
+        .story-sheet { width: 100%; max-width: 950px; background: var(--paper); box-shadow: 0 0 80px rgba(0,0,0,0.6); padding: 60px; border-radius: 6px; }
         
-        .header { text-align: center; border-bottom: 3px double var(--accent); padding-bottom: 25px; margin-bottom: 30px; }
-        .role-badge { display: inline-block; background: var(--accent); color: var(--paper); padding: 4px 15px; border-radius: 4px; font-family: 'Cinzel'; font-size: 0.8rem; margin-bottom: 10px; }
-        h1 { font-family: 'Cinzel'; font-size: 2.8rem; color: var(--ink); margin: 10px 0; letter-spacing: 1px; }
-        .subtitle { font-family: 'Metamorphous'; color: var(--accent); font-style: italic; font-size: 1.1rem; }
-        .meta-info { font-size: 0.9rem; color: #666; margin-top: 10px; }
+        .header { text-align: center; border-bottom: 4px double var(--accent); padding-bottom: 30px; margin-bottom: 35px; }
+        .role-badge { display: inline-block; background: var(--accent); color: white; padding: 6px 20px; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; letter-spacing: 2px; }
+        h1 { font-family: 'Cinzel', serif; font-size: 3.2rem; color: var(--ink); margin: 12px 0; letter-spacing: 2px; font-weight: 900; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .subtitle { font-family: 'Metamorphous', cursive; color: var(--accent); font-style: italic; font-size: 1.3rem; font-weight: 600; }
+        .meta-info { font-size: 1rem; color: #444; margin-top: 12px; font-weight: 500; }
         
-        .quote-block { border-left: 4px solid var(--purple); background: rgba(102,51,153,0.05); padding: 20px; margin: 25px 0; font-size: 1.2rem; font-style: italic; color: #333; }
+        .quote-block { border-left: 5px solid var(--purple); background: rgba(90,45,130,0.08); padding: 25px 30px; margin: 30px 0; font-size: 1.35rem; font-style: italic; color: #222; font-weight: 500; border-radius: 0 8px 8px 0; }
         
-        .section-title { font-family: 'Cinzel'; font-size: 1.4rem; color: var(--blood); border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin: 35px 0 20px 0; display: flex; align-items: center; gap: 10px; }
-        .tier-tag { background: var(--gold); color: #000; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; }
+        .section-title { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--blood); border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin: 40px 0 25px 0; display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .tier-tag { background: var(--gold); color: #000; padding: 4px 12px; font-size: 0.75rem; border-radius: 4px; font-weight: 700; }
         
-        .appearance-box { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
-        .appear-item { margin-bottom: 12px; }
-        .appear-label { font-weight: bold; color: var(--accent); }
+        .appearance-box { background: rgba(0,0,0,0.04); border: 2px solid #bbb; padding: 25px; border-radius: 10px; margin-bottom: 30px; }
+        .appear-item { margin-bottom: 15px; font-size: 1.1rem; }
+        .appear-label { font-weight: 700; color: var(--accent); margin-right: 8px; }
         
-        .psych-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .psych-item { background: rgba(0,0,0,0.04); border: 1px solid #ccc; border-left: 4px solid var(--accent); padding: 15px; border-radius: 0 6px 6px 0; }
-        .psych-label { font-weight: bold; color: var(--blood); font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .psych-text { font-style: italic; color: #444; line-height: 1.5; }
+        .psych-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 25px 0; }
+        .psych-item { background: rgba(0,0,0,0.05); border: 2px solid #aaa; border-left: 5px solid var(--accent); padding: 18px; border-radius: 0 8px 8px 0; }
+        .psych-label { font-weight: 800; color: var(--blood); font-size: 1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .psych-text { font-style: italic; color: #222; line-height: 1.6; font-size: 1.05rem; font-weight: 500; }
         .psych-full { grid-column: 1 / -1; }
         
-        .arc-box { background: linear-gradient(to right, rgba(102,51,153,0.05), transparent); border: 1px solid var(--purple); padding: 20px; margin: 20px 0; border-radius: 8px; }
-        .arc-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
+        .arc-box { background: linear-gradient(to right, rgba(90,45,130,0.08), transparent); border: 2px solid var(--purple); padding: 25px; margin: 25px 0; border-radius: 10px; }
+        .arc-item { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 2px dashed #ccc; }
         .arc-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .arc-label { font-weight: bold; color: var(--purple); font-size: 0.85rem; }
-        .arc-text { margin-top: 5px; font-style: italic; }
+        .arc-label { font-weight: 800; color: var(--purple); font-size: 0.95rem; }
+        .arc-text { margin-top: 8px; font-style: italic; font-size: 1.05rem; font-weight: 500; color: #222; }
         
-        .bio-phase h3 { font-family: 'Cinzel'; color: var(--blood); font-size: 1.2rem; margin-bottom: 10px; }
-        .bio-phase p { text-align: justify; line-height: 1.8; margin-bottom: 15px; }
-        .separator { text-align: center; color: var(--accent); opacity: 0.5; margin: 25px 0; font-size: 1.2rem; }
+        .bio-phase h3 { font-family: 'Cinzel', serif; color: var(--blood); font-size: 1.4rem; margin-bottom: 12px; font-weight: 700; }
+        .bio-phase p { text-align: justify; line-height: 1.9; margin-bottom: 18px; font-size: 1.1rem; font-weight: 500; color: #111; }
+        .separator { text-align: center; color: var(--accent); opacity: 0.6; margin: 30px 0; font-size: 1.4rem; }
         
-        .hooks-section { background: rgba(0,0,0,0.03); border: 1px solid #ccc; padding: 25px; border-radius: 8px; margin-top: 30px; }
-        .hook-item { border-bottom: 1px dashed #ccc; padding: 12px 0; color: #333; font-size: 1.05rem; }
+        .hooks-section { background: rgba(0,0,0,0.04); border: 2px solid #bbb; padding: 30px; border-radius: 10px; margin-top: 35px; }
+        .hook-item { border-bottom: 2px dashed #ccc; padding: 15px 0; color: #111; font-size: 1.15rem; font-weight: 500; }
         .hook-item:last-child { border-bottom: none; }
         
-        .skills-section { margin-top: 35px; border-top: 2px solid var(--gold); padding-top: 25px; }
-        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .skill-card { background: rgba(0,0,0,0.03); padding: 15px; border-left: 4px solid #666; border-radius: 0 6px 6px 0; }
-        .skill-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .skill-name { font-family: 'Cinzel'; font-weight: bold; font-size: 1rem; }
-        .skill-badge { font-size: 0.65rem; padding: 2px 6px; background: rgba(0,0,0,0.1); border-radius: 4px; text-transform: uppercase; }
-        .skill-desc { font-size: 0.9rem; font-style: italic; color: #444; margin-bottom: 8px; line-height: 1.4; }
-        .skill-meta { display: flex; gap: 15px; font-size: 0.8rem; color: #666; }
+        .skills-section { margin-top: 40px; border-top: 3px solid var(--gold); padding-top: 30px; }
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .skill-card { background: rgba(0,0,0,0.04); padding: 18px; border-left: 5px solid #666; border-radius: 0 8px 8px 0; border: 1px solid #bbb; }
+        .skill-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .skill-name { font-family: 'Cinzel', serif; font-weight: 800; font-size: 1.1rem; }
+        .skill-badge { font-size: 0.7rem; padding: 3px 8px; background: rgba(0,0,0,0.12); border-radius: 4px; text-transform: uppercase; font-weight: 700; }
+        .skill-desc { font-size: 1rem; font-style: italic; color: #333; margin-bottom: 10px; line-height: 1.5; font-weight: 500; }
+        .skill-meta { display: flex; gap: 18px; font-size: 0.9rem; color: #555; font-weight: 600; }
         
-        .footer { text-align: center; margin-top: 40px; color: #888; font-size: 0.8rem; border-top: 1px solid #ccc; padding-top: 20px; }
-        .download-btn { display: block; width: fit-content; margin: 25px auto 0; background: var(--ink); color: var(--paper); border: 2px solid var(--accent); padding: 12px 30px; font-family: 'Cinzel'; cursor: pointer; border-radius: 8px; }
-        .download-btn:hover { background: var(--accent); color: var(--paper); }
+        .footer { text-align: center; margin-top: 45px; color: #666; font-size: 0.9rem; border-top: 2px solid #ccc; padding-top: 25px; font-weight: 500; }
+        .download-btn { display: block; width: fit-content; margin: 30px auto 0; background: var(--ink); color: var(--paper); border: 3px solid var(--accent); padding: 15px 40px; font-family: 'Cinzel', serif; cursor: pointer; border-radius: 8px; font-size: 1rem; font-weight: 700; transition: all 0.3s; }
+        .download-btn:hover { background: var(--accent); color: white; transform: scale(1.02); }
         
-        @media (max-width: 700px) { .psych-grid, .skills-grid { grid-template-columns: 1fr; } .story-sheet { padding: 25px; } h1 { font-size: 2rem; } }
+        @media (max-width: 700px) { .psych-grid, .skills-grid { grid-template-columns: 1fr; } .story-sheet { padding: 30px; } h1 { font-size: 2.2rem; } body { font-size: 16px; } }
     </style>
 </head>
 <body>
