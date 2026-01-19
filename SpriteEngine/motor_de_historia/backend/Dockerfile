@@ -1,8 +1,8 @@
 # SoulForge - Motor de Historia
 # Dockerfile para Railway (Rust + Actix-web)
 
-# Usar la última versión estable de Rust
-FROM rust:latest as builder
+# Usar una versión específica de Rust basada en Debian Bookworm para asegurar compatibilidad de GLIBC
+FROM rust:1-bookworm as builder
 
 # Dependencias de compilación
 RUN apt-get update && apt-get install -y \
@@ -45,6 +45,7 @@ RUN pip install groq
 
 # Puerto (Railway usa $PORT)
 ENV PORT=8080
+
 EXPOSE 8080
 
 # Ejecutar servidor

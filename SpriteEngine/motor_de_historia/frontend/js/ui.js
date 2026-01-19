@@ -5,7 +5,7 @@ const UI_TEXTS = {
     es: {
         title: '💳 Acceso Premium Requerido',
         desc: 'Para forjar este personaje, necesitas un token VIP.',
-        price: 'Precio: $5 USD = 5 Tokens',
+        price: 'Precio: $4.99 USD',
         btn: 'Pagar con PayPal',
         token: '¿Ya pagaste? Ingresa tu código:',
         tokenBtn: 'Activar Token',
@@ -14,7 +14,7 @@ const UI_TEXTS = {
     en: {
         title: '💳 Premium Access Required',
         desc: 'To forge this character, you need a VIP token.',
-        price: 'Price: $5 USD = 5 Tokens',
+        price: 'Price: $4.99 USD',
         btn: 'Pay with PayPal',
         token: 'Already paid? Enter your code:',
         tokenBtn: 'Activate Token',
@@ -23,7 +23,7 @@ const UI_TEXTS = {
     jp: {
         title: '💳 プレミアムアクセスが必要',
         desc: 'このキャラクターを鍛造するにはVIPトークンが必要です。',
-        price: '価格: $5 USD = 5トークン',
+        price: '価格: $4.99 USD',
         btn: 'PayPalで支払う',
         token: '支払い済み？コードを入力:',
         tokenBtn: 'トークンを有効化',
@@ -103,22 +103,22 @@ export function showPayPalModal(type) {
 
 export function changeLanguage(lang) {
     if (!['es', 'en', 'jp'].includes(lang)) lang = 'es';
-    
+
     // 1. Save to localStorage for persistence
     localStorage.setItem('soulforge_lang', lang);
-    
+
     // 2. Update URL hash
     history.replaceState(null, null, '#' + lang);
-    
+
     // 3. Update hidden form fields (critical for backend)
     const langPersonaje = document.getElementById('inputLangPersonaje');
     const langConstelacion = document.getElementById('inputLangConstelacion');
     if (langPersonaje) langPersonaje.value = lang;
     if (langConstelacion) langConstelacion.value = lang;
-    
+
     // 4. Update all text elements with data-i18n attribute
     applyTranslations(lang);
-    
+
     console.log(`🌐 Idioma cambiado a: ${lang}`);
 }
 
@@ -126,7 +126,7 @@ export function changeLanguage(lang) {
 export function initLanguage() {
     // Priority: URL hash > localStorage > default 'es'
     let lang = 'es';
-    
+
     if (location.hash) {
         const hashLang = location.hash.replace('#', '');
         if (['es', 'en', 'jp'].includes(hashLang)) {
@@ -138,21 +138,21 @@ export function initLanguage() {
             lang = stored;
         }
     }
-    
+
     changeLanguage(lang);
 }
 
 // Apply translations to all data-i18n elements
 function applyTranslations(lang) {
     const translations = getTranslations(lang);
-    
+
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[key]) {
             el.textContent = translations[key];
         }
     });
-    
+
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         if (translations[key]) {
@@ -288,7 +288,7 @@ function getTranslations(lang) {
             label_clase: "クラス / 職業"
         }
     };
-    
+
     return TRANSLATIONS[lang] || TRANSLATIONS.es;
 }
 

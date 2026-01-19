@@ -11,13 +11,7 @@ export async function handleForjarAlma(event) {
     if (event) event.preventDefault();
     console.log('⚡ Forjando Alma...');
 
-    // 0. Check Tokens
-    if (TokenSystem.get() <= 0) {
-        // TEMPORARY PROMO
-        console.log('No tokens, giving promo tokens.');
-        TokenSystem.set(5);
-    }
-
+    // 0. Check Tokens - No free tokens, must pay or have VIP code
     if (TokenSystem.get() <= 0) {
         showPayPalModal('alma');
         return false;

@@ -1,0 +1,10 @@
+# Ignorar Git
+.git
+.gitignore
+
+# Ignorar dependencias locales y caches
+**/node_modules
+**/target
+**/venv
+**/__pycache__
+**/.env

@@ -196,7 +196,7 @@ async fn main() {
     // Health check
     let health = warp::path!("health")
         .map(|| warp::reply::json(&serde_json::json!({"status": "alive"})));
-    
+
     let routes = ws_route
         .or(create_route)
         .or(info_route)
