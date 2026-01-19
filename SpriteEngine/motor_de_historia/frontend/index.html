@@ -1180,8 +1180,16 @@
     </div>
 
     <!-- MODULAR JS ARCHITECTURE -->
-    <script type="module" src="js/main.js?v=4.4"></script>
-    <script type="module" src="js/ui.js?v=4.4"></script>
+    <script type="module" src="js/main.js?v=4.5"></script>
+    <script type="module" src="js/ui.js?v=4.5"></script>
+    
+    <!-- Check if user is returning from PayPal payment -->
+    <script type="module">
+        import { checkPaymentReturn } from './js/ui.js';
+        document.addEventListener('DOMContentLoaded', () => {
+            checkPaymentReturn();
+        });
+    </script>
 </body>
 
 </html>

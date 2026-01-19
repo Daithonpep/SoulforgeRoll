@@ -1,102 +1,216 @@
 import { TokenSystem } from './api.js';
 
-// --- TRANSLATIONS FOR UI ---
+// --- IMMERSIVE TRANSLATIONS FOR UNLOCK MODAL ---
 const UI_TEXTS = {
     es: {
-        title: '💳 Acceso Premium Requerido',
-        desc: 'Para forjar este personaje, necesitas un token VIP.',
-        price: 'Precio: $4.99 USD',
-        btn: 'Pagar con PayPal',
-        token: '¿Ya pagaste? Ingresa tu código:',
-        tokenBtn: 'Activar Token',
-        close: 'Cancelar'
+        title: '🔓 Desbloquear Creación',
+        desc: 'Este personaje espera cobrar vida.',
+        desc2: 'Completa el proceso para darle forma en el mundo.',
+        price: 'Costo: $4.99 USD',
+        btn: '🔓 Desbloquear Ahora',
+        processing: '✨ Verificando pago...',
+        token: '¿Ya tienes un código? Ingrésalo aquí:',
+        tokenBtn: 'Activar',
+        close: 'Volver',
+        success: '✨ ¡Desbloqueado! Tu personaje está listo.',
+        error: 'El código no es válido. Intenta de nuevo.'
     },
     en: {
-        title: '💳 Premium Access Required',
-        desc: 'To forge this character, you need a VIP token.',
-        price: 'Price: $4.99 USD',
-        btn: 'Pay with PayPal',
-        token: 'Already paid? Enter your code:',
-        tokenBtn: 'Activate Token',
-        close: 'Cancel'
+        title: '🔓 Unlock Creation',
+        desc: 'This character is waiting to come alive.',
+        desc2: 'Complete the process to bring it into the world.',
+        price: 'Cost: $4.99 USD',
+        btn: '🔓 Unlock Now',
+        processing: '✨ Verifying payment...',
+        token: 'Already have a code? Enter it here:',
+        tokenBtn: 'Activate',
+        close: 'Go Back',
+        success: '✨ Unlocked! Your character is ready.',
+        error: 'The code is not valid. Try again.'
     },
     jp: {
-        title: '💳 プレミアムアクセスが必要',
-        desc: 'このキャラクターを鍛造するにはVIPトークンが必要です。',
-        price: '価格: $4.99 USD',
-        btn: 'PayPalで支払う',
-        token: '支払い済み？コードを入力:',
-        tokenBtn: 'トークンを有効化',
-        close: 'キャンセル'
+        title: '🔓 クリエーションをアンロック',
+        desc: 'このキャラクターは命を吹き込まれるのを待っています。',
+        desc2: 'プロセスを完了して、世界に形を与えましょう。',
+        price: '費用: $4.99 USD',
+        btn: '🔓 今すぐアンロック',
+        processing: '✨ 支払いを確認中...',
+        token: 'コードをお持ちですか？ここに入力:',
+        tokenBtn: '有効化',
+        close: '戻る',
+        success: '✨ アンロック完了！キャラクターの準備ができました。',
+        error: 'コードが無効です。もう一度お試しください。'
     }
 };
 
+// Get current page URL for PayPal return
+function getReturnUrl() {
+    const base = window.location.origin + window.location.pathname;
+    return base + '?payment=success';
+}
+
+// Check if user is returning from PayPal
+export function checkPaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+        // User just returned from PayPal - show success and grant tokens
+        const pendingAction = sessionStorage.getItem('soulforge_pending_action');
+
+        // Grant tokens
+        TokenSystem.add(1);
+
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Show success notification
+        showSuccessNotification();
+
+        // Auto-execute pending action after short delay
+        if (pendingAction) {
+            sessionStorage.removeItem('soulforge_pending_action');
+            setTimeout(() => {
+                if (pendingAction === 'forjar_alma') {
+                    const btn = document.getElementById('btnPersonaje');
+                    if (btn) btn.click();
+                } else if (pendingAction === 'forjar_constelacion') {
+                    const btn = document.getElementById('btnConstelacion');
+                    if (btn) btn.click();
+                }
+            }, 1500);
+        }
+
+        return true;
+    }
+    return false;
+}
+
+function showSuccessNotification() {
+    const lang = localStorage.getItem('soulforge_lang') || 'es';
+    const t = UI_TEXTS[lang] || UI_TEXTS.es;
+
+    const notif = document.createElement('div');
+    notif.innerHTML = `
+        <div style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #4ade80;border-radius:12px;padding:20px 40px;z-index:10000;box-shadow:0 10px 40px rgba(74,222,128,0.3);animation:slideDown 0.5s ease;">
+            <p style="color:#4ade80;font-family:'Cinzel',serif;font-size:1.2rem;margin:0;text-shadow:0 0 10px rgba(74,222,128,0.5);">
+                ${t.success}
+            </p>
+        </div>
+        <style>
+            @keyframes slideDown {
+                from { opacity:0; transform:translateX(-50%) translateY(-20px); }
+                to { opacity:1; transform:translateX(-50%) translateY(0); }
+            }
+        </style>
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 4000);
+}
+
 export function showPayPalModal(type) {
-    // Get current lang or default to spanish
-    let lang = 'es';
+    // Get current lang
+    let lang = localStorage.getItem('soulforge_lang') || 'es';
     if (location.hash.includes('#en')) lang = 'en';
     if (location.hash.includes('#jp')) lang = 'jp';
 
     const t = UI_TEXTS[lang] || UI_TEXTS.es;
 
-    // Remove existing if any
+    // Save what user was trying to do
+    sessionStorage.setItem('soulforge_pending_action', type === 'alma' ? 'forjar_alma' : 'forjar_constelacion');
+
+    // Remove existing modal
     const existing = document.getElementById('paypalModal');
     if (existing) existing.remove();
+
+    const returnUrl = getReturnUrl();
 
     const modal = document.createElement('div');
     modal.id = 'paypalModal';
     modal.innerHTML = `
-        <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
-            <div style="background:#1a1a1f;border:1px solid var(--accent);border-radius:16px;padding:30px;max-width:400px;text-align:center;box-shadow:0 0 50px rgba(0,0,0,0.5);">
-                <h2 style="color:var(--accent);margin-top:0;margin-bottom:15px;font-family:'Cinzel',serif;font-size:1.5rem;">${t.title}</h2>
-                <p style="color:#aaa;margin-bottom:20px;line-height:1.5;">${t.desc}</p>
-                <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-bottom:20px;">
-                    <p style="color:#4ade80;font-weight:bold;margin:0;">${t.price}</p>
+        <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+            <div style="background:linear-gradient(180deg,#1a1a2e 0%,#0f0f1a 100%);border:2px solid var(--accent);border-radius:20px;padding:40px;max-width:420px;text-align:center;box-shadow:0 0 80px rgba(212,175,55,0.2),inset 0 0 30px rgba(0,0,0,0.5);">
+                
+                <!-- Unlock Circle Decoration -->
+                <div style="width:80px;height:80px;margin:0 auto 20px;border:3px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite;box-shadow:0 0 20px rgba(212,175,55,0.3);">
+                    <span style="font-size:2.5rem;">🔓</span>
                 </div>
                 
-                <!-- PAYPAL BUTTON -->
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="margin-bottom:20px;">
+                <h2 style="color:var(--accent);margin:0 0 15px;font-family:'Cinzel',serif;font-size:1.6rem;text-shadow:0 0 20px rgba(212,175,55,0.5);">${t.title}</h2>
+                
+                <p style="color:#ccc;margin-bottom:8px;font-size:1.1rem;font-style:italic;">${t.desc}</p>
+                <p style="color:#888;margin-bottom:25px;line-height:1.6;">${t.desc2}</p>
+                
+                <div style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);padding:15px;border-radius:10px;margin-bottom:25px;">
+                    <p style="color:#4ade80;font-weight:bold;margin:0;font-size:1.1rem;">${t.price}</p>
+                </div>
+                
+                <!-- PAYPAL BUTTON with Return URL -->
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-bottom:25px;">
                     <input type="hidden" name="cmd" value="_s-xclick" />
                     <input type="hidden" name="hosted_button_id" value="AUH69VTF7QFH8" />
                     <input type="hidden" name="currency_code" value="USD" />
-                    <button type="submit" style="background:#ffc439;color:#000;border:none;padding:12px 30px;border-radius:25px;font-weight:bold;cursor:pointer;font-size:1rem;width:100%;transition:transform 0.2s;">
-                        Pay with <span style="font-weight:900;font-style:italic;">PayPal</span>
+                    <input type="hidden" name="return" value="${returnUrl}" />
+                    <input type="hidden" name="cancel_return" value="${window.location.href}" />
+                    <button type="submit" style="background:linear-gradient(135deg,#d4af37,#f4d03f);color:#000;border:none;padding:15px 40px;border-radius:30px;font-weight:bold;cursor:pointer;font-size:1.1rem;width:100%;transition:all 0.3s;box-shadow:0 5px 20px rgba(212,175,55,0.4);font-family:'Cinzel',serif;">
+                        ${t.btn}
                     </button>
                 </form>
                 
-                <div style="border-top:1px solid #333;padding-top:15px;margin-top:15px;">
-                    <p style="color:#666;font-size:0.8rem;margin-bottom:8px;">${t.token}</p>
-                    <div style="display:flex;gap:8px;">
-                        <input type="text" id="tokenInput" placeholder="XXXX-XXXX" 
-                               style="flex:1;padding:10px;background:#0a0a0f;border:1px solid #333;border-radius:6px;color:white;text-align:center;">
-                        <button id="btnActivate" style="padding:10px 15px;background:#333;color:white;border:1px solid #555;border-radius:6px;cursor:pointer;">
-                            OK
+                <div style="border-top:1px solid #333;padding-top:20px;margin-top:10px;">
+                    <p style="color:#555;font-size:0.85rem;margin-bottom:10px;">${t.token}</p>
+                    <div style="display:flex;gap:10px;">
+                        <input type="text" id="tokenInput" placeholder="XXXX-XXXX-XXXX" 
+                               style="flex:1;padding:12px;background:#0a0a0f;border:1px solid #333;border-radius:8px;color:white;text-align:center;font-family:monospace;font-size:1rem;letter-spacing:2px;">
+                        <button id="btnActivate" style="padding:12px 20px;background:linear-gradient(135deg,#333,#444);color:white;border:1px solid #555;border-radius:8px;cursor:pointer;font-weight:bold;">
+                            ✓
                         </button>
                     </div>
                 </div>
                 
                 <button id="btnCloseModal" 
-                        style="margin-top:20px;background:transparent;border:none;color:#666;cursor:pointer;text-decoration:underline;">
+                        style="margin-top:25px;background:transparent;border:none;color:#555;cursor:pointer;font-size:0.9rem;">
                     ${t.close}
                 </button>
             </div>
         </div>
+        <style>
+            @keyframes pulse {
+                0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+                50% { box-shadow: 0 0 40px rgba(212,175,55,0.6); }
+            }
+        </style>
     `;
     document.body.appendChild(modal);
 
     // Event Listeners
-    document.getElementById('btnCloseModal').onclick = () => modal.remove();
+    document.getElementById('btnCloseModal').onclick = () => {
+        sessionStorage.removeItem('soulforge_pending_action');
+        modal.remove();
+    };
 
     document.getElementById('btnActivate').onclick = () => {
-        const code = document.getElementById('tokenInput').value.trim();
-        // SIMPLE VALIDATION FOR DEMO
-        if (code.length > 4 || code === 'DEMO') {
-            TokenSystem.add(5);
-            alert("✅ Token Válido. +5 Créditos.");
+        const code = document.getElementById('tokenInput').value.trim().toUpperCase();
+
+        // Validate code format (at least 8 characters, alphanumeric with dashes)
+        if (code.length >= 8 && /^[A-Z0-9-]+$/.test(code)) {
+            TokenSystem.add(1);
             modal.remove();
-            // Optional: Auto-retry logic could go here
+            showSuccessNotification();
+
+            // Auto-trigger the pending action
+            const pendingAction = sessionStorage.getItem('soulforge_pending_action');
+            sessionStorage.removeItem('soulforge_pending_action');
+
+            setTimeout(() => {
+                if (pendingAction === 'forjar_alma') {
+                    const btn = document.getElementById('btnPersonaje');
+                    if (btn) btn.click();
+                } else if (pendingAction === 'forjar_constelacion') {
+                    const btn = document.getElementById('btnConstelacion');
+                    if (btn) btn.click();
+                }
+            }, 1000);
         } else {
-            alert("❌ Código inválido.");
+            alert(t.error);
         }
     };
 }
