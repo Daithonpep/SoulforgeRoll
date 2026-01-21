@@ -263,7 +263,7 @@ function applyTranslations(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[key]) {
-            el.textContent = translations[key];
+            el.innerHTML = translations[key];
         }
     });
 
@@ -309,6 +309,11 @@ function getTranslations(lang) {
             step3_desc: "Obtén una ficha HTML premium lista para usar.",
             demos_title: "Ejemplos de Personajes",
             demos_subtitle: "Mira la profundidad y complejidad.",
+            hierarchy_title: "🏆 Jerarquía de Poder",
+            hierarchy_desc: "El sistema de cartas no es solo estético; define el potencial narrativo y mecánico de tu personaje. Las cartas de alto nivel (SSS) no solo otorgan mejores estadísticas, sino que alteran las reglas del juego.",
+            class_eco: '<strong style="color: #2E8B57;">Clase Eco (C-B):</strong> Sobrevivientes. Stats base. Tecnología estándar.',
+            class_shadow: '<strong style="color: var(--accent);">Clase Sombra (A):</strong> Agentes de élite. Acceso a perks ocultos.',
+            class_primordial: '<strong style="color: #c026d3;">Clase Primordial (SSS):</strong> Entidades cósmicas. Rompen las reglas.',
             demo_click_cta: "VER FICHA COMPLETA",
             aviso_legal_titulo: "Aviso Legal",
             aviso_legal_1: "SoulForge es una herramienta de creación asistida.",
@@ -350,6 +355,11 @@ function getTranslations(lang) {
             step3_desc: "Get a premium HTML sheet ready to use.",
             demos_title: "Character Examples",
             demos_subtitle: "See the depth and complexity.",
+            hierarchy_title: "🏆 Power Hierarchy",
+            hierarchy_desc: "The card system is not just aesthetic; it defines the narrative and mechanical potential of your character. High-tier cards (SSS) not only grant better stats but alter the rules of the game.",
+            class_eco: '<strong style="color: #2E8B57;">Echo Class (C-B):</strong> Survivors. Base stats. Standard tech.',
+            class_shadow: '<strong style="color: var(--accent);">Shadow Class (A):</strong> Elite agents. Access to hidden perks.',
+            class_primordial: '<strong style="color: #c026d3;">Primordial Class (SSS):</strong> Cosmic entities. They break the rules.',
             demo_click_cta: "VIEW FULL SHEET",
             aviso_legal_titulo: "Legal Notice",
             aviso_legal_1: "SoulForge is an assisted creation tool.",
@@ -391,6 +401,11 @@ function getTranslations(lang) {
             step3_desc: "すぐに使えるプレミアムHTML。",
             demos_title: "キャラクター例",
             demos_subtitle: "深さと複雑さをご覧ください。",
+            hierarchy_title: "🏆 力の階層",
+            hierarchy_desc: "カードシステムは単なる見た目ではありません。キャラクターの物語的および機械的な可能性を定義します。高ランクのカード（SSS）は、ステータスが高いだけでなく、ゲームのルールそのものを変えます。",
+            class_eco: '<strong style="color: #2E8B57;">エコクラス (C-B):</strong> 生存者。基本ステータス。標準技術。',
+            class_shadow: '<strong style="color: var(--accent);">シャドウクラス (A):</strong> エリートエージェント。隠しパークへのアクセス。',
+            class_primordial: '<strong style="color: #c026d3;">プリモーディアルクラス (SSS):</strong> 宇宙的存在。ルールを破壊する。',
             demo_click_cta: "完全なシートを見る",
             aviso_legal_titulo: "法的通知",
             aviso_legal_1: "SoulForgeは創作支援ツールです。",

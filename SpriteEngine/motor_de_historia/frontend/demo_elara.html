@@ -600,9 +600,176 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = "Elara_Vex_Ficha.html";
+            a.download = "Elara_Vex_Sheet.html";
             document.body.appendChild(a); a.click(); a.remove();
         }
+
+        // --- TRANSLATION SYSTEM ---
+        const TRANSLATIONS = {
+            en: {
+                title: "Elara Vex - Character Sheet",
+                tension_label: "INNER TENSION",
+                tension_desc: "35% - Controlled Alert",
+                credits: "CREDITS",
+                stats: ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"],
+                skills_title: "✦ SKILLS",
+                skills: [
+                    { n: "Ghost Protocol", d: "Invisible to security systems for 10 minutes." },
+                    { n: "Net Hack", d: "+5 to intrusion rolls on corp systems." },
+                    { n: "Digital Hawk Eye", d: "Detects hidden cameras within 30 meters." },
+                ],
+                tier: "CYBERPUNK · LEVEL 5",
+                subtitle: "Corp Hacker · Arcadia Renegade · 27 Years · Tone: Grey",
+                quote: "\"Information wants to be free. I just charge rent.\"",
+                sect_bio: "📜 Biography",
+                bio_1: "Elara was born in the slums of Neo-Arcadia, daughter of a maintenance tech and an accountant working for Arasaka megacorp. She learned to code before she could read, devouring abandoned terminals in the tech-dumps near her home.",
+                bio_2: "At 16, while hacking medical records to get meds for her sick mother, she uncovered a corporate secret that made her a target. The corp sent agents to silence her. Her mother died in the crossfire. Elara escaped, but lost her innocence that night.",
+                bio_3: "Today she works as a freelance 'digital ghost', selling info to the highest bidder. She trusts no one except her cyber-cat, Pixel, and her own code. She claims money is her only motive, but those who know her know she keeps a list of corporate names... and crosses them off one by one.",
+                sect_psych: "🧠 Deep Psychology",
+                psych_labels: ["Mask (Shown)", "Shadow (Hidden)", "Core Wound", "Deep Desire"],
+                psych_vals: [
+                    "Cynical mercenary working only for credits.",
+                    "Deep fear of losing someone she loves again.",
+                    "Her mother's death because of her.",
+                    "Destroy Arasaka from the inside."
+                ],
+                sect_truth: "🎭 Lie & Truth",
+                lie: "<strong>Lie she believes:</strong> \"If I care for no one, no one can hurt me.\"",
+                truth: "<strong>Truth she needs:</strong> \"Human connection makes us strong, not weak.\"",
+                sect_timeline: "📅 Timeline",
+                tl_years: ["Year 0", "Year 12", "Year 16", "Year 22", "Current (Year 27)"],
+                tl_descs: [
+                    "Born in Neo-Arcadia slums. Poverty environment.",
+                    "First successful hack: unlocked education terminal for community.",
+                    "The Incident. Mother's death. Flees Arasaka. Permanent emotional scar.",
+                    "Establishes as 'digital ghost'. Underworld fame for clean extractions.",
+                    "Accepts a job taking her back into Arasaka's belly..."
+                ],
+                sect_inv: "🎒 Inventory",
+                inv_items: ["💻 Cyberdeck Mk.III", "🔫 Light Pistol (15 rounds)", "🔧 Repair Kit", "💊 Stims (x3)", "💳 Fake Credstick", "🕶️ Thermal Visor", "🐱 Pixel (cyber-cat)", "📡 Scan Antenna", "🗝️ Digital Skeleton Key"],
+                sect_log: "📖 Adventure Log",
+                log_note: "(Editable Zone: Record your sessions here)",
+                log_1: "<strong style='color:var(--accent)'>[Session 1]</strong> Data extraction at Arasaka Tower. Partial success. Found Genesis Project files...",
+                btn_save: "💾 Save Sheet (HTML)"
+            },
+            jp: {
+                title: "エララ・ヴェックス - キャラクターシート",
+                tension_label: "内部の緊張",
+                tension_desc: "35% - 制御された警戒",
+                credits: "クレジット",
+                stats: ["筋力", "敏捷性", "耐久力", "知力", "判断力", "魅力"],
+                skills_title: "✦ スキル",
+                skills: [
+                    { n: "ゴースト・プロトコル", d: "10分間セキュリティシステムから不可視。" },
+                    { n: "ネットハック", d: "企業システムへの侵入判定に+5。" },
+                    { n: "デジタル・ホークアイ", d: "30メートル以内の隠しカメラを検知。" },
+                ],
+                tier: "サイバーパンク · レベル 5",
+                subtitle: "企業ハッカー · アルカディアの反逆者 · 27歳 · トーン: グレー",
+                quote: "「情報は自由になりたがっている。私はただ家賃を請求するだけ。」",
+                sect_bio: "📜 経歴",
+                bio_1: "エララはネオ・アルカディアのスラム街で、アラサカ巨大企業のメンテナンス技師と会計士の娘として生まれた。彼女は読み書きよりも先にコーディングを学び、家の近くの技術廃棄場で捨てられた端末を貪った。",
+                bio_2: "16歳の時、病気の母のために薬を手に入れようと医療記録をハッキング中に、彼女は標的となる企業秘密を発見した。企業は彼女を黙らせるためにエージェントを送った。母は銃撃戦で死んだ。エララは逃げ出したが、その夜、無邪気さを失った。",
+                bio_3: "今日、彼女はフリーランスの「デジタル・ゴースト」として働き、最高入札者に情報を売っている。彼女はサイバー猫のピクセルと自分が書いたコード以外、誰も信用していない。金が唯一の動機だと言うが、彼女を知る者は、彼女が企業名のリストを持っていて...一人ずつ消していることを知っている。",
+                sect_psych: "🧠 深層心理",
+                psych_labels: ["仮面 (表向き)", "影 (隠されたもの)", "核となる傷", "深い欲望"],
+                psych_vals: [
+                    "クレジットのためだけに働く皮肉な傭兵。",
+                    "愛する人を再び失うことへの深い恐れ。",
+                    "自分のせいで起きた母の死。",
+                    "内部からアラサカを破壊する。"
+                ],
+                sect_truth: "🎭 嘘と真実",
+                lie: "<strong>信じている嘘:</strong> 「誰のことも気にかけなければ、誰も私を傷つけられない。」",
+                truth: "<strong>必要な真実:</strong> 「人との繋がりは私たちを強くする、弱くするのではない。」",
+                sect_timeline: "📅 年表",
+                tl_years: ["0年", "12年", "16年", "22年", "現在 (27年)"],
+                tl_descs: [
+                    "ネオ・アルカディアのスラムで誕生。貧困環境。",
+                    "初のハッキング成功：コミュニティのために教育端末を解放。",
+                    "事件。母の死。アラサカから逃亡。消えない心の傷。",
+                    "「デジタル・ゴースト」としての地位確立。鮮やかな抽出で裏社会の名声を得る。",
+                    "アラサカの腹の中へと戻る仕事を引き受ける..."
+                ],
+                sect_inv: "🎒 インベントリ",
+                inv_items: ["💻 サイバーデッキ Mk.III", "🔫 ライトピストル (15発)", "🔧 修理キット", "💊 スティム (x3)", "💳 偽造クレドスティック", "🕶️ サーマルバイザー", "🐱 ピクセル (サイバー猫)", "📡 スキャンアンテナ", "🗝️ デジタルマスターキー"],
+                sect_log: "📖 冒険ログ",
+                log_note: "(編集可能エリア: セッションをここに記録)",
+                log_1: "<strong style='color:var(--accent)'>[セッション 1]</strong> アラサカタワーでのデータ抽出。部分的に成功。プロジェクト・ジェネシスのファイルを発見...",
+                btn_save: "💾 シートを保存 (HTML)"
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && (hash === 'en' || hash === 'jp')) {
+                const t = TRANSLATIONS[hash];
+
+                document.title = t.title;
+                document.querySelector('.tension-label').textContent = t.tension_label;
+                document.querySelector('.tension-wrapper div:last-child').textContent = t.tension_desc;
+                document.querySelector('.economy-box div:first-child').textContent = t.credits;
+
+                // Stats
+                const statNames = document.querySelectorAll('.stat-name');
+                t.stats.forEach((s, i) => { if (statNames[i]) statNames[i].textContent = s; });
+
+                // Skills
+                document.querySelector('.skills-section div:first-child').textContent = t.skills_title;
+                const skillItems = document.querySelectorAll('.skill-item');
+                t.skills.forEach((s, i) => {
+                    if (skillItems[i]) {
+                        skillItems[i].querySelector('.skill-name').textContent = s.n;
+                        skillItems[i].querySelector('.skill-desc').textContent = s.d;
+                    }
+                });
+
+                // Main Content
+                document.querySelector('.tier-badge').textContent = t.tier;
+                document.querySelector('.subtitle').textContent = t.subtitle;
+                document.querySelector('.quote-block').textContent = t.quote;
+
+                // Bio
+                const h2s = document.querySelectorAll('h2.section-title');
+                h2s[0].textContent = t.sect_bio;
+                const ps = document.querySelectorAll('.main-content > p');
+                ps[0].textContent = t.bio_1;
+                ps[1].textContent = t.bio_2;
+                ps[2].textContent = t.bio_3;
+
+                // Psych
+                h2s[1].textContent = t.sect_psych;
+                const pLabels = document.querySelectorAll('.psych-label');
+                const pVals = document.querySelectorAll('.psych-text');
+                t.psych_labels.forEach((l, i) => { if (pLabels[i]) pLabels[i].textContent = l; });
+                t.psych_vals.forEach((v, i) => { if (pVals[i]) pVals[i].textContent = v; });
+
+                // Truth
+                h2s[2].textContent = t.sect_truth;
+                document.querySelector('.section-title + p').innerHTML = t.lie;
+                document.querySelector('.section-title + p + p').innerHTML = t.truth;
+
+                // Timeline
+                h2s[3].textContent = t.sect_timeline;
+                const tlYears = document.querySelectorAll('.timeline-year');
+                const tlDescs = document.querySelectorAll('.timeline-content');
+                t.tl_years.forEach((y, i) => { if (tlYears[i]) tlYears[i].textContent = y; });
+                t.tl_descs.forEach((d, i) => { if (tlDescs[i]) tlDescs[i].textContent = d; });
+
+                // Inventory
+                h2s[4].textContent = t.sect_inv;
+                const invItems = document.querySelectorAll('.inv-item');
+                t.inv_items.forEach((item, i) => { if (invItems[i]) invItems[i].textContent = item; });
+
+                // Log
+                document.querySelector('.log-section h2').textContent = t.sect_log;
+                document.querySelector('.log-section p').textContent = t.log_note;
+                document.querySelector('.log-entry').innerHTML = t.log_1;
+
+                // Button
+                document.querySelector('.download-btn').textContent = t.btn_save;
+            }
+        });
     </script>
 </body>
 
