@@ -678,37 +678,214 @@
     </script>
 
     <script>
+        // --- TRANSLATION DATA ---
+        const TRANSLATIONS = {
+            es: {
+                title: "Azraell - Ficha Primordial (Secured)",
+                tension_label: "TENSIÓN INTERIOR",
+                tension_status: "Estado: <span style='color:#aaa'>Estable</span> | Siguiente: <span style='color:#d88'>Frenesí (Requiere Daño)</span>",
+                capital_label: "CAPITAL CÓSMICO",
+                scars_title: "⚔️ HISTORIAL DE BATALLAS",
+                scar_1: "Intervención Divina",
+                scar_1_sub: "(Cicatriz de Nacimiento)",
+                scar_empty: "[Espacio para Trauma]",
+                stats: ["Fuerza", "Destreza", "Const.", "Intel.", "Sabid.", "Carisma"],
+                dones_title: "✨ DONES MÍTICOS (SSS)",
+                perk_locked_name: "Omnisciencia Limitada",
+                perk_locked_req: "🔒 Requiere: 1 Cicatriz Mayor",
+                perk_active_name: "Aura de Soberanía",
+                perk_active_desc: "NPCs de bajo nivel no pueden iniciar hostilidades.",
+                inv_title: "🎒 Inventario Legendario (Vinculado)",
+                crisis_title: "📖 Bitácora de Crisis",
+                crisis_subtitle: "(Registro de momentos donde el HP bajó del 10%)",
+                btn_save: "💾 CRISTALIZAR DATOS (Guardar HTML)",
+                // Content
+                char_name: "Azraell",
+                tier: "PRIMORDIAL",
+                archetype: "Entidad Cósmica · Caminante de Planos · Edad Eterna · Tono: Solemne",
+                quote: "\"La entropía no es un error en el sistema; es la única certeza que tienen los mortales... y mi única herramienta.\"",
+                bio_title: "Biografía: El Testigo del Vacío",
+                bio_origin_tag: "🌌 Origen",
+                bio_text: "Azraell existía antes de que los dioses aprendieran a mentir. Despertado por el colapso de la primera estrella, vaga entre dimensiones observando el ascenso y caída de imperios estelares. No es un héroe ni un villano; es una <strong>fuerza de la naturaleza</strong> encarnada.",
+                bio_trauma_tag: "🩸 El Trauma",
+                bio_trauma_text: "Recientemente, un ritual fallido de la Orden del Loto Negro lo ató a una forma semimortal. Ha descubierto dolor físico y límites por primera vez.",
+                matrix: [
+                    { label: "La Mentira", text: "\"Soy un prisionero en este cuerpo.\"" },
+                    { label: "La Herida", text: "La Sensación de Finitud." },
+                    { label: "El Deseo", text: "Romper los 7 Sellos." }
+                ],
+                crisis_log: "Intenté contener una explosión de maná sin protección. Me costó la sensibilidad en la mano izquierda.<br><strong style='font-size:0.8rem; color:#d88'>>> DESBLOQUEO: RESISTENCIA TÉRMICA</strong>",
+                inventory_items: ["⚔️ Espada de Eventos", "🧥 Manto del Vacío", "💍 Anillo de Singularidad", "📜 Grimorio del Origen", "🩸 Vial de Sangre Antigua", "🔑 Llave de la Torre"]
+            },
+            en: {
+                title: "Azraell - Primordial Sheet (Secured)",
+                tension_label: "INNER TENSION",
+                tension_status: "Status: <span style='color:#aaa'>Stable</span> | Next: <span style='color:#d88'>Frenzy (Requires Damage)</span>",
+                capital_label: "COSMIC CAPITAL",
+                scars_title: "⚔️ BATTLE HISTORY",
+                scar_1: "Divine Intervention",
+                scar_1_sub: "(Birth Scar)",
+                scar_empty: "[Trauma Slot]",
+                stats: ["Strength", "Dexterity", "Const.", "Intel.", "Wisdom", "Charisma"],
+                dones_title: "✨ MYTHIC GIFTS (SSS)",
+                perk_locked_name: "Limited Omniscience",
+                perk_locked_req: "🔒 Requires: 1 Major Scar",
+                perk_active_name: "Aura of Sovereignty",
+                perk_active_desc: "Low-level NPCs cannot initiate hostilities.",
+                inv_title: "🎒 Legendary Inventory (Bound)",
+                crisis_title: "📖 Crisis Log",
+                crisis_subtitle: "(Record of moments where HP dropped below 10%)",
+                btn_save: "💾 CRYSTALLIZE DATA (Save HTML)",
+                // Content
+                char_name: "Azraell",
+                tier: "PRIMORDIAL",
+                archetype: "Cosmic Entity · Planeswalker · Eternal Age · Tone: Solemn",
+                quote: "\"Entropy is not a bug in the system; it is the only certainty mortals have... and my only tool.\"",
+                bio_title: "Biography: The Void Witness",
+                bio_origin_tag: "🌌 Origin",
+                bio_text: "Azraell existed before gods learned to lie. Awakened by the collapse of the first star, he wanders between dimensions observing the rise and fall of stellar empires. He is neither hero nor villain; he is a <strong>force of nature</strong> incarnate.",
+                bio_trauma_tag: "🩸 The Trauma",
+                bio_trauma_text: "Recently, a failed ritual by the Order of the Black Lotus bound him to a semi-mortal form. He has discovered physical pain and limits for the first time.",
+                matrix: [
+                    { label: "The Lie", text: "\"I am a prisoner in this body.\"" },
+                    { label: "The Wound", text: "The Sensation of Finitude." },
+                    { label: "The Desire", text: "Break the 7 Seals." }
+                ],
+                crisis_log: "Tried to contain a mana explosion without protection. Cost me sensitivity in my left hand.<br><strong style='font-size:0.8rem; color:#d88'>>> UNLOCK: THERMAL RESISTANCE</strong>",
+                inventory_items: ["⚔️ Event Sword", "🧥 Void Mantle", "💍 Singularity Ring", "📜 Grimoire of Origin", "🩸 Vial of Ancient Blood", "🔑 Tower Key"]
+            },
+            jp: {
+                title: "アズラエル - 始源のシート (保護)",
+                tension_label: "内部の緊張",
+                tension_status: "状態: <span style='color:#aaa'>安定</span> | 次: <span style='color:#d88'>狂乱 (ダメージが必要)</span>",
+                capital_label: "宇宙資本",
+                scars_title: "⚔️ 戦闘履歴",
+                scar_1: "神の介入",
+                scar_1_sub: "(誕生の傷)",
+                scar_empty: "[トラウマスロット]",
+                stats: ["筋力", "敏捷性", "耐久力", "知力", "判断力", "魅力"],
+                dones_title: "✨ 神話的恩恵 (SSS)",
+                perk_locked_name: "限定的な全知",
+                perk_locked_req: "🔒 必要条件: 重傷1つ",
+                perk_active_name: "主権のオーラ",
+                perk_active_desc: "低レベルのNPCは敵対行動を開始できない。",
+                inv_title: "🎒 伝説のインベントリ (結合)",
+                crisis_title: "📖 危機ログ",
+                crisis_subtitle: "(HPが10%を下回った瞬間の記録)",
+                btn_save: "💾 データを結晶化 (HTML保存)",
+                // Content
+                char_name: "アズラエル",
+                tier: "プリモーディアル",
+                archetype: "宇宙的存在 · プレインズウォーカー · 永遠の年齢 · トーン: 厳粛",
+                quote: "「エントロピーはシステムのバグではない。それは定命の者が持つ唯一の確実性であり...私の唯一の道具だ。」",
+                bio_title: "経歴: 虚空の目撃者",
+                bio_origin_tag: "🌌 起源",
+                bio_text: "アズラエルは神々が嘘をつくことを学ぶ前から存在していた。最初の星の崩壊によって目覚め、次元の間を彷徨い、星間帝国の興亡を観察している。彼は英雄でも悪党でもない。受肉した<strong>自然の力</strong>そのものである。",
+                bio_trauma_tag: "🩸 トラウマ",
+                bio_trauma_text: "最近、黒蓮教団の儀式の失敗により、半定命の肉体に縛り付けられた。彼は初めて肉体的な痛みと限界を発見した。",
+                matrix: [
+                    { label: "嘘", text: "「私はこの肉体の囚人だ。」" },
+                    { label: "傷", text: "有限性の感覚。" },
+                    { label: "欲望", text: "7つの封印を破る。" }
+                ],
+                crisis_log: "保護なしでマナ爆発を抑え込もうとした。左手の感覚を失った。<br><strong style='font-size:0.8rem; color:#d88'>>> アンロック: 熱耐性</strong>",
+                inventory_items: ["⚔️ 事象の剣", "🧥 虚空のマント", "💍 特異点の指輪", "📜 起源のグリモワール", "🩸 古代の血の小瓶", "🔑 塔の鍵"]
+            }
+        };
+
         // --- SECURITY CORE ---
         function initSecureSystem() {
             try {
-                // DYNAMIC INTEGRATION: Read URL Params from Index
-                const params = new URLSearchParams(window.location.search);
-                const dynamicName = params.get('name');
-                const dynamicArch = params.get('archetype');
+                // 1. DETECT LANGUAGE
+                const hash = window.location.hash.replace('#', '');
+                const lang = (hash && ['en', 'jp'].includes(hash)) ? hash : 'es';
+                const t = TRANSLATIONS[lang];
 
+                // 2. APPLY STATIC TEXTS
+                document.title = t.title;
+                document.querySelector('.tension-label-mini').innerText = t.tension_label;
+                document.querySelector('.tension-wrapper div:nth-child(3)').innerHTML = t.tension_status;
+                document.querySelector('.economy-box div:first-child').innerText = t.capital_label;
+                document.querySelector('.scars-title').innerText = t.scars_title;
+
+                // Scars
+                const scarSlot = document.querySelector('.scar-slot.filled div');
+                if (scarSlot) {
+                    scarSlot.querySelector('span:nth-child(1)').innerText = t.scar_1;
+                    scarSlot.querySelector('span:nth-child(2)').innerText = t.scar_1_sub;
+                }
+                const emptySlot = document.querySelectorAll('.scar-slot')[1];
+                if (emptySlot) emptySlot.querySelector('span:first-child').innerText = t.scar_empty;
+
+                // Stats Names
+                const statNames = document.querySelectorAll('.stat-name-tiny');
+                t.stats.forEach((s, i) => { if (statNames[i]) statNames[i].innerText = s; });
+
+                // Dones
+                document.querySelector('.resonance-title').innerText = t.dones_title;
+                const perkLocked = document.querySelector('.locked-perk');
+                perkLocked.querySelector('span:first-child').innerText = t.perk_locked_name;
+                perkLocked.querySelector('.locked-msg').innerText = t.perk_locked_req;
+
+                const perkActive = document.querySelector('.soul-perk:not(.locked-perk)');
+                perkActive.querySelector('.perk-name').innerText = t.perk_active_name;
+                perkActive.querySelector('div').innerText = t.perk_active_desc;
+
+                // Content Areas
+                document.getElementById('char-name').innerText = t.char_name;
+                document.getElementById('tier-badge').innerText = t.tier;
+                document.getElementById('char-archetype').innerText = t.archetype;
+                document.querySelector('.quote-box').innerText = t.quote;
+
+                document.querySelector('h2').innerText = t.bio_title;
+                const bioPars = document.querySelectorAll('.main-content > p');
+                // Bio P1
+                const tag1 = bioPars[0].querySelector('.dm-tag');
+                tag1.innerText = t.bio_origin_tag;
+                // Preserve tag and append text
+                bioPars[0].innerHTML = '';
+                bioPars[0].appendChild(tag1);
+                bioPars[0].insertAdjacentHTML('beforeend', " " + t.bio_text);
+
+                // Bio P2
+                const tag2 = bioPars[1].querySelector('.dm-tag');
+                tag2.innerText = t.bio_trauma_tag;
+                bioPars[1].innerHTML = '';
+                bioPars[1].appendChild(tag2);
+                bioPars[1].insertAdjacentHTML('beforeend', " " + t.bio_trauma_text);
+
+                // Matrix
+                const matrixRows = document.querySelectorAll('.matrix-row');
+                t.matrix.forEach((m, i) => {
+                    if (matrixRows[i]) {
+                        matrixRows[i].querySelector('.matrix-label').innerText = m.label;
+                        matrixRows[i].querySelector('.matrix-text').innerText = m.text;
+                    }
+                });
+
+                // Inventory & Logs
+                document.querySelector('h2:nth-of-type(2)').innerText = t.inv_title;
+                document.querySelector('h2:nth-of-type(3)').innerText = t.crisis_title;
+                document.querySelector('.main-content > div[style*="font-style:italic"]').innerText = t.crisis_subtitle;
+                document.querySelector('.timeline-content').innerHTML = t.crisis_log;
+                document.querySelector('.download-btn').innerText = t.btn_save;
+
+
+                // 3. POPULATE SECURED DATA (Inventory & Stats)
                 const securedData = {
-                    name: dynamicName || "Azraell",
-                    tier: "PRIMORDIAL", // SSS
                     stats: [18, 20, 22, 25, 25, 30], // STR, DEX, CON, INT, WIS, CHA
                     mods: ["+4", "+5", "+6", "+7", "+7", "+10"],
-                    inventory: [
-                        "⚔️ Espada de Eventos", "🧥 Manto del Vacío", "💍 Anillo de Singularidad",
-                        "📜 Grimorio del Origen", "🩸 Vial de Sangre Antigua", "🔑 Llave de la Torre"
-                    ]
+                    inventory: t.inventory_items // Use translated inventory
                 };
 
-                // 1. ENFORCE STATS & MODS
+                // ENFORCE STATS
                 const statIds = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
                 statIds.forEach((id, index) => {
                     document.getElementById('stat-' + id).innerText = securedData.stats[index];
                     document.getElementById('mod-' + id).innerText = securedData.mods[index];
                 });
 
-                // 2. ENFORCE TIER & NAME
-                document.getElementById('tier-badge').innerText = securedData.tier;
-                document.getElementById('char-name').innerText = securedData.name;
-
-                // 3. ENFORCE INVENTORY
+                // ENFORCE INVENTORY
                 const invGrid = document.getElementById('inventory-grid');
                 if (invGrid) {
                     invGrid.innerHTML = '';
@@ -720,27 +897,21 @@
                     });
                 }
 
-                // 4. Update Archetype (Visual Only)
-                if (dynamicArch) {
-                    document.getElementById('char-archetype').innerText = dynamicArch + " · Origen Desconocido";
-                }
-
-                console.log("System Integrity Verified: Stats Locked.");
+                console.log("System Integrity Verified: Stats Locked (" + lang + ").");
 
             } catch (e) {
                 console.error("Tampering Detected:", e);
-                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px;'>ERROR DE INTEGRIDAD: FICHA CORRUPTA</h1>";
+                // document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px;'>ERROR DE INTEGRIDAD</h1>";
             }
         }
 
         function saveProgress() {
-            // Re-serialize HTML but keep the script block intact
             const htmlContent = document.documentElement.outerHTML;
             const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = "Ficha_SSS_Protected.html";
+            a.download = "Azraell_Sheet.html";
             document.body.appendChild(a); a.click(); a.remove();
         }
 
