@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulForge Writer - La Fragua de Historias</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #050508;
+            --bg-dark: #0a0a0f;
+            --panel-dark: #0d0d12;
+            --panel-mid: #131318;
+            --panel-lighter: #1a1a22;
+            --border-subtle: #222228;
+            --border-gold: rgba(197, 160, 89, 0.3);
+
+            --paper: #f4efe4;
+            --paper-dark: #e8e0d0;
+            --ink: #2a2520;
+            --ink-light: #5a5550;
+
+            --gold: #c5a059;
+            --gold-bright: #e8c873;
+            --gold-dim: #8a7040;
+            --blood: #8a1515;
+            --blood-glow: #c02020;
+            --emerald: #2d8a5a;
+            --amethyst: #7a5af0;
+
+            --text-primary: #e8e6e0;
+            --text-secondary: #a0a0a0;
+            --text-dim: #606060;
+
+            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.8);
+            --shadow-glow-gold: 0 0 30px rgba(197, 160, 89, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-void);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HEADER ========== */
+        .forge-header {
+            height: 56px;
+            background: linear-gradient(180deg, var(--panel-mid) 0%, var(--panel-dark) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .forge-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(197, 160, 89, 0.3);
+        }
+
+        .brand-text {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-subtle);
+            background: var(--panel-lighter);
+            color: var(--text-secondary);
+        }
+
+        .btn-header:hover {
+            background: var(--panel-mid);
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        .btn-header.primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            border-color: var(--gold);
+            color: #000;
+            font-weight: 600;
+        }
+
+        .btn-header.primary:hover {
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--panel-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-dim);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .status-dot.active {
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulse-status 2s infinite;
+        }
+
+        @keyframes pulse-status {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        /* ========== WORKSPACE ========== */
+        .workspace {
+            display: grid;
+            grid-template-columns: 260px 1fr 300px;
+            height: calc(100vh - 56px);
+            background: var(--bg-void);
+        }
+
+        /* ========== LEFT PANEL: SOULS ========== */
+        .panel-souls {
+            background: var(--panel-dark);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .panel-header h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .panel-header span {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .soul-drop-zone {
+            margin: 16px;
+            padding: 32px 16px;
+            border: 2px dashed var(--border-subtle);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .soul-drop-zone:hover,
+        .soul-drop-zone.dragover {
+            border-color: var(--gold);
+            background: rgba(197, 160, 89, 0.05);
+        }
+
+        .drop-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            opacity: 0.4;
+        }
+
+        .soul-drop-zone.dragover .drop-icon {
+            opacity: 1;
+            animation: bounce 0.5s ease infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .drop-text {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .soul-list {
+            flex: 1;
+            padding: 0 16px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .soul-card {
+            background: var(--panel-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 14px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .soul-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gold-dim);
+            transition: all 0.2s;
+        }
+
+        .soul-card:hover {
+            background: var(--panel-mid);
+            border-color: var(--gold-dim);
+            transform: translateX(4px);
+        }
+
+        .soul-card:hover::before {
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .soul-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .soul-archetype {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ========== CENTER: EDITOR ========== */
+        .editor-area {
+            background: linear-gradient(135deg, #0a0a10 0%, #08080c 100%);
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Subtle vignette effect */
+        .editor-area::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+            pointer-events: none;
+        }
+
+        .book-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .book-page {
+            background: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            min-height: 900px;
+            padding: 50px 60px 60px;
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.1),
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 80px rgba(0, 0, 0, 0.03);
+            border-radius: 2px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Page fold effect */
+        .book-page::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--paper-dark) 50%, transparent 50%);
+            box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--ink-light);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-btn:hover:not(.disabled) {
+            color: var(--ink);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .chapter-indicator {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--ink-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .chapter-title-input {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--ink);
+            border: none;
+            background: transparent;
+            width: 100%;
+            margin-bottom: 40px;
+            padding: 10px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        .chapter-title-input:focus {
+            border-bottom-color: var(--gold-dim);
+        }
+
+        .editor-content {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: var(--ink);
+            min-height: 600px;
+            outline: none;
+        }
+
+        .editor-content p {
+            margin-bottom: 1.5em;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        .editor-content p:first-child {
+            text-indent: 0;
+        }
+
+        .editor-content p:first-child::first-letter {
+            font-size: 3.5em;
+            float: left;
+            line-height: 0.8;
+            margin-right: 8px;
+            margin-top: 6px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--gold-dim);
+        }
+
+        /* Floating Toolbar */
+        .editor-toolbar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .book-page:hover .editor-toolbar {
+            opacity: 1;
+        }
+
+        .tool-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--ink-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: var(--gold);
+            color: #fff;
+            border-color: var(--gold);
+            box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4);
+        }
+
+        /* ========== RIGHT PANEL: ORACLE ========== */
+        .panel-oracle {
+            background: var(--panel-dark);
+            border-left: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .oracle-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-subtle);
+            position: relative;
+        }
+
+        .oracle-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+        }
+
+        .oracle-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gold);
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+        }
+
+        .oracle-subtitle {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .oracle-eye-container {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .oracle-eye {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1a1a25, #0a0a0f);
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow:
+                inset 0 0 20px rgba(0, 0, 0, 0.8),
+                0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .oracle-eye::before {
+            content: '';
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--gold-dim);
+            animation: oracle-pulse 3s ease-in-out infinite;
+        }
+
+        .oracle-eye::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+            animation: oracle-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes oracle-pulse {
+
+            0%,
+            100% {
+                transform: scale(0.9);
+                opacity: 0.4;
+                border-color: var(--gold-dim);
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+                border-color: var(--gold);
+            }
+        }
+
+        @keyframes oracle-glow {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .oracle-section {
+            padding: 0 16px 16px;
+            flex-shrink: 0;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .tension-container {
+            background: var(--panel-lighter);
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tension-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .tension-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .tension-bar {
+            height: 8px;
+            background: var(--panel-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tension-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg,
+                    var(--emerald) 0%,
+                    var(--gold) 50%,
+                    var(--blood) 100%);
+            width: 15%;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+
+        .tension-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+        }
+
+        .tension-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .suggestions-container {
+            flex: 1;
+            min-height: 100px;
+            overflow-y: auto;
+            padding: 0 16px 16px;
+        }
+
+        .suggestion-card {
+            background: var(--panel-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-card:hover {
+            border-color: var(--gold-dim);
+            background: var(--panel-mid);
+        }
+
+        .suggestion-type {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .suggestion-type::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        .suggestion-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .oracle-actions {
+            padding: 16px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-oracle {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--panel-lighter);
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .btn-oracle:hover {
+            background: var(--panel-mid);
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        .btn-oracle.primary {
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.15), rgba(197, 160, 89, 0.05));
+            border-color: var(--gold-dim);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            justify-content: center;
+        }
+
+        .btn-oracle.primary:hover {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+            color: #000;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .btn-label {
+            flex: 1;
+        }
+
+        .btn-label small {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-subtle);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-dim);
+        }
+
+        /* ========== UTILITY ========== */
+        .hidden-input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="forge-header">
+        <div class="brand">
+            <div class="brand-icon">⚔️</div>
+            <span class="brand-text">SOULFORGE WRITER</span>
+        </div>
+
+        <div class="header-controls">
+            <button class="btn-header" onclick="document.getElementById('fileInput').click()">
+                📂 Cargar Libro
+            </button>
+            <input type="file" id="fileInput" class="hidden-input" onchange="loadBookFile(this)" accept=".json">
+
+            <button class="btn-header primary" onclick="saveBook()">
+                💾 Guardar Libro
+            </button>
+
+            <div class="status-badge">
+                <div id="statusDot" class="status-dot"></div>
+                <span id="statusText">Iniciando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace">
+
+        <!-- LEFT: SOULS PANEL -->
+        <aside class="panel-souls">
+            <div class="panel-header">
+                <h3>ALMAS CARGADAS</h3>
+                <span id="soulCount">0 de 5 personajes</span>
+            </div>
+
+            <div id="dropZone" class="soul-drop-zone">
+                <div class="drop-icon">📜</div>
+                <div class="drop-text">
+                    Arrastra fichas de<br>personaje aquí
+                </div>
+            </div>
+
+            <div id="soulList" class="soul-list">
+                <!-- Souls will be added here -->
+            </div>
+        </aside>
+
+        <!-- CENTER: EDITOR -->
+        <main class="editor-area">
+            <div class="book-container">
+                <div class="book-page">
+
+                    <!-- Floating Toolbar -->
+                    <div class="editor-toolbar">
+                        <button class="tool-btn" onclick="suggestIntro()" title="Sugerir Inicio">💡</button>
+                        <button class="tool-btn" title="Negrita">B</button>
+                        <button class="tool-btn" title="Cursiva">I</button>
+                    </div>
+
+                    <!-- Chapter Navigation -->
+                    <nav class="chapter-nav">
+                        <button class="nav-btn disabled" id="prevChap" onclick="changeChapter(-1)">
+                            ❮ Anterior
+                        </button>
+                        <span id="chapterIndicator" class="chapter-indicator">Capítulo 1 de 1</span>
+                        <button class="nav-btn" id="nextChap" onclick="changeChapter(1)">
+                            Nuevo +
+                        </button>
+                    </nav>
+
+                    <!-- Chapter Title -->
+                    <input type="text" id="chapterTitle" class="chapter-title-input" value="Capítulo I: El Comienzo"
+                        placeholder="Título del Capítulo">
+
+                    <!-- Editor Content -->
+                    <div id="editor" class="editor-content" contenteditable="true" spellcheck="false">
+                        <p>La noche caía sobre las Tierras Fronterizas. El silencio era absoluto, roto solo por el
+                            crepitar de la fogata. Las sombras danzaban contra los árboles centenarios, creando figuras
+                            que parecían susurrar secretos olvidados.</p>
+                        <p>El guerrero observaba las llamas con la mirada perdida. En sus ojos se reflejaba algo más que
+                            el fuego: memorias de batallas pasadas, promesas rotas, y el peso de un destino que aún no
+                            comprendía del todo.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT: ORACLE PANEL -->
+        <aside class="panel-oracle">
+            <div class="oracle-header">
+                <div class="oracle-title">EL ORÁCULO</div>
+                <div class="oracle-subtitle">Motor de Narrativa Viva</div>
+            </div>
+
+            <div class="oracle-eye-container">
+                <div class="oracle-eye"></div>
+            </div>
+
+            <div class="oracle-section">
+                <div class="section-label">Tensión Narrativa</div>
+                <div class="tension-container">
+                    <div class="tension-header">
+                        <span class="tension-value" id="tensionValue">15%</span>
+                        <span class="tension-label">CALMA</span>
+                    </div>
+                    <div class="tension-bar">
+                        <div id="tensionMeter" class="tension-fill" style="width: 15%;"></div>
+                    </div>
+                    <div class="tension-labels">
+                        <span>Serenidad</span>
+                        <span>Clímax</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="oracle-section">
+                <div class="section-label">Sugerencias del Oráculo</div>
+            </div>
+
+            <div id="oracleSuggestions" class="suggestions-container">
+                <div class="suggestion-card">
+                    <div class="suggestion-type">Sugerencia de Trama</div>
+                    <div class="suggestion-text">
+                        Las llamas de la fogata podrían despertar memorias dormidas en el protagonista.
+                        Considera un flashback que revele su cicatriz más profunda.
+                    </div>
+                </div>
+            </div>
+
+            <div class="oracle-actions">
+                <button class="btn-oracle primary" onclick="suggestNarrativeIntro()">
+                    ✨ Sugerir Introducción
+                </button>
+
+                <button class="btn-oracle" onclick="generateSceneFromSouls()">
+                    <span class="btn-icon">📜</span>
+                    <span class="btn-label">
+                        Generar Escena Inicial
+                        <small>Basada en personajes cargados</small>
+                    </span>
+                </button>
+
+                <button class="btn-oracle" onclick="suggestConflict()">
+                    <span class="btn-icon">⚔️</span>
+                    <span class="btn-label">
+                        Sugerir Conflicto
+                        <small>Tensión entre personajes</small>
+                    </span>
+                </button>
+
+                <button class="btn-oracle" onclick="suggestMystery()">
+                    <span class="btn-icon">🔮</span>
+                    <span class="btn-label">
+                        Misterio a Resolver
+                        <small>Gancho narrativo</small>
+                    </span>
+                </button>
+
+                <button class="btn-oracle" onclick="suggestDialogue()">
+                    <span class="btn-icon">💬</span>
+                    <span class="btn-label">
+                        Sugerir Diálogo
+                        <small>Conversación entre almas</small>
+                    </span>
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // State
+        let engineReady = false;
+        let loadedSouls = [];
+        let currentChapterIndex = 0;
+        let bookData = {
+            title: "Crónicas de la Forja",
+            chapters: [{
+                title: "Capítulo I: El Comienzo",
+                content: `<p>La noche caía sobre las Tierras Fronterizas. El silencio era absoluto, roto solo por el crepitar de la fogata. Las sombras danzaban contra los árboles centenarios, creando figuras que parecían susurrar secretos olvidados.</p><p>El guerrero observaba las llamas con la mirada perdida. En sus ojos se reflejaba algo más que el fuego: memorias de batallas pasadas, promesas rotas, y el peso de un destino que aún no comprendía del todo.</p>`
+            }]
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initEngine();
+            updateUI();
+            setupDragDrop();
+        });
+
+        async function initEngine() {
+            await new Promise(r => setTimeout(r, 800));
+            engineReady = true;
+            document.getElementById('statusDot').classList.add('active');
+            document.getElementById('statusText').textContent = 'En Línea';
+            document.getElementById('statusText').style.color = '#2d8a5a';
+        }
+
+        function updateUI() {
+            const chap = bookData.chapters[currentChapterIndex];
+            document.getElementById('chapterTitle').value = chap.title;
+            document.getElementById('editor').innerHTML = chap.content;
+            document.getElementById('chapterIndicator').textContent =
+                `Capítulo ${currentChapterIndex + 1} de ${bookData.chapters.length}`;
+
+            // Navigation buttons
+            const prevBtn = document.getElementById('prevChap');
+            const nextBtn = document.getElementById('nextChap');
+
+            prevBtn.classList.toggle('disabled', currentChapterIndex === 0);
+
+            if (currentChapterIndex === bookData.chapters.length - 1) {
+                nextBtn.textContent = 'Nuevo +';
+            } else {
+                nextBtn.textContent = 'Siguiente ❯';
+            }
+        }
+
+        function changeChapter(direction) {
+            saveCurrentChapter();
+
+            if (direction === 1 && currentChapterIndex === bookData.chapters.length - 1) {
+                bookData.chapters.push({
+                    title: `Capítulo ${romanize(bookData.chapters.length + 1)}`,
+                    content: "<p>Continúa escribiendo tu historia...</p>"
+                });
+            }
+
+            const newIndex = currentChapterIndex + direction;
+            if (newIndex >= 0 && newIndex < bookData.chapters.length) {
+                currentChapterIndex = newIndex;
+                updateUI();
+
+                // Page turn animation
+                const page = document.querySelector('.book-page');
+                page.style.opacity = '0';
+                page.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    page.style.opacity = '1';
+                    page.style.transform = 'translateY(0)';
+                }, 150);
+            }
+        }
+
+        function saveCurrentChapter() {
+            bookData.chapters[currentChapterIndex].title = document.getElementById('chapterTitle').value;
+            bookData.chapters[currentChapterIndex].content = document.getElementById('editor').innerHTML;
+        }
+
+        function saveBook() {
+            saveCurrentChapter();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bookData, null, 2));
+            const link = document.createElement('a');
+            link.href = dataStr;
+            link.download = "Mi_Historia_SoulForge.json";
+            link.click();
+        }
+
+        function loadBookFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const loaded = JSON.parse(e.target.result);
+                    if (loaded.chapters && Array.isArray(loaded.chapters)) {
+                        bookData = loaded;
+                        currentChapterIndex = 0;
+                        updateUI();
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function suggestIntro() {
+            const intros = [
+                "Todo comenzó con el sonido de un cristal quebrándose en la oscuridad.",
+                "Nadie recordaba cuándo había dejado de salir el sol sobre aquellas tierras.",
+                "La espada pesaba más que su propia conciencia aquella noche.",
+                "Era una verdad que hubiera preferido ignorar hasta el fin de sus días."
+            ];
+            const chosen = intros[Math.floor(Math.random() * intros.length)];
+            const editor = document.getElementById('editor');
+            const p = document.createElement('p');
+            p.innerHTML = `<em style="color:#8a7040">${chosen}</em>`;
+            editor.prepend(p);
+        }
+
+        function suggestNarrativeIntro() {
+            const souls = loadedSouls.map(s => s.name).join(', ') || 'el protagonista';
+
+            const templates = [
+                `La historia de ${souls} comenzó mucho antes de que el destino decidiera entrelazar sus caminos.`,
+                `Había una profecía antigua que hablaba de ${souls}. Nadie creyó que se cumpliría tan pronto.`,
+                `El mundo cambió el día que ${souls} tomó una decisión que no podría deshacer.`,
+                `Las leyendas siempre comienzan con un susurro. Esta empezó con el nombre de ${souls}.`,
+                `Si le hubieras preguntado a ${souls} cómo comenzó todo, habría mentido. La verdad era demasiado dolorosa.`
+            ];
+
+            const chosen = templates[Math.floor(Math.random() * templates.length)];
+            addSuggestionCard('✨ Introducción Sugerida', chosen);
+            insertInEditor(chosen);
+        }
+
+        function generateSceneFromSouls() {
+            if (loadedSouls.length === 0) {
+                addSuggestionCard('⚠️ Sin Personajes', 'Carga al menos un personaje para generar una escena basada en sus características.');
+                return;
+            }
+
+            const soul = loadedSouls[Math.floor(Math.random() * loadedSouls.length)];
+            const scenes = [
+                `${soul.name} se encontraba en las ruinas de lo que alguna vez fue su hogar. El viento arrastraba cenizas y recuerdos.`,
+                `La taberna estaba llena de murmullos. Cuando ${soul.name} entró, todos guardaron silencio.`,
+                `${soul.name} despertó en un lugar desconocido. Lo último que recordaba era la traición.`,
+                `El pergamino tenía un solo nombre escrito: ${soul.name}. Y una fecha. Mañana.`,
+                `"No esperaba verte aquí", dijo la voz desde las sombras. ${soul.name} reconoció ese tono. Era imposible olvidarlo.`
+            ];
+
+            const chosen = scenes[Math.floor(Math.random() * scenes.length)];
+            addSuggestionCard(`📜 Escena con ${soul.name}`, chosen);
+            insertInEditor(chosen);
+        }
+
+        function suggestConflict() {
+            const conflicts = loadedSouls.length >= 2
+                ? [
+                    `${loadedSouls[0].name} descubre que ${loadedSouls[1].name} mintió sobre algo fundamental. La confianza se quiebra.`,
+                    `Un secreto del pasado de ${loadedSouls[0].name} amenaza con destruir todo lo que ${loadedSouls[1].name} ha construido.`,
+                    `${loadedSouls[0].name} y ${loadedSouls[1].name} quieren lo mismo. Solo uno puede conseguirlo.`
+                ]
+                : [
+                    'El protagonista debe elegir entre salvar a quien ama o cumplir su deber.',
+                    'Una traición inesperada revela que el verdadero enemigo siempre estuvo cerca.',
+                    'El héroe descubre que su causa no es tan noble como creía.',
+                    'Un aliado pide algo imposible a cambio de información vital.'
+                ];
+
+            const chosen = conflicts[Math.floor(Math.random() * conflicts.length)];
+            addSuggestionCard('⚔️ Conflicto Sugerido', chosen);
+        }
+
+        function suggestMystery() {
+            const mysteries = [
+                '¿Por qué apareció ese símbolo grabado en la puerta exactamente hoy?',
+                'Las últimas palabras del moribundo no tenían sentido... o eso parecía.',
+                'Nadie recuerda cómo llegó esa carta, pero todos reconocen la letra.',
+                'El mapa señala un lugar que oficialmente no existe.',
+                'Cada noche, a la misma hora, se escucha el mismo sonido. ¿Qué significa?'
+            ];
+
+            const chosen = mysteries[Math.floor(Math.random() * mysteries.length)];
+            addSuggestionCard('🔮 Misterio Narrativo', chosen);
+        }
+
+        function suggestDialogue() {
+            if (loadedSouls.length >= 2) {
+                const dialogues = [
+                    `—¿Crees que esto cambiará algo? —preguntó ${loadedSouls[0].name}.\n—Todo —respondió ${loadedSouls[1].name}—. O nada. Depende de nosotros.`,
+                    `—Te advertí que esto pasaría —dijo ${loadedSouls[1].name} sin mirarlo.\n${loadedSouls[0].name} apretó los puños. —Y yo te dije que no me importaba.`,
+                    `—¿Confías en mí? —${loadedSouls[0].name} extendió la mano.\n${loadedSouls[1].name} dudó. Una pausa que duró demasiado.`
+                ];
+                const chosen = dialogues[Math.floor(Math.random() * dialogues.length)];
+                addSuggestionCard('💬 Diálogo Sugerido', chosen);
+            } else {
+                addSuggestionCard('💬 Diálogo', 'Carga al menos 2 personajes para generar diálogos entre ellos.');
+            }
+        }
+
+        function addSuggestionCard(type, text) {
+            const container = document.getElementById('oracleSuggestions');
+            const card = document.createElement('div');
+            card.className = 'suggestion-card';
+            card.innerHTML = `
+                <div class="suggestion-type">${type}</div>
+                <div class="suggestion-text">${text}</div>
+            `;
+            card.style.cursor = 'pointer';
+            card.onclick = () => insertInEditor(text);
+            container.prepend(card);
+
+            // Update tension slightly
+            const currentTension = parseInt(document.getElementById('tensionValue').textContent) || 15;
+            const newTension = Math.min(100, currentTension + Math.floor(Math.random() * 10) + 5);
+            document.getElementById('tensionMeter').style.width = newTension + '%';
+            document.getElementById('tensionValue').textContent = newTension + '%';
+            document.querySelector('.tension-label').textContent =
+                newTension < 40 ? 'CALMA' : newTension < 70 ? 'TENSIÓN' : 'CLÍMAX';
+        }
+
+        function insertInEditor(text) {
+            const editor = document.getElementById('editor');
+            const p = document.createElement('p');
+            p.innerHTML = `<em style="color:#5d4037">${text}</em>`;
+            editor.appendChild(p);
+            p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function romanize(num) {
+            const lookup = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X' };
+            return lookup[num] || num;
+        }
+
+        function setupDragDrop() {
+            const dropZone = document.getElementById('dropZone');
+
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.name.endsWith('.html')) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const nameMatch = e.target.result.match(/<h1[^>]*>([^<]+)<\/h1>/) || ["", file.name];
+                        addSoulToList(nameMatch[1].trim(), "Personaje");
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        }
+
+        function addSoulToList(name, archetype) {
+            const container = document.getElementById('soulList');
+            const card = document.createElement('div');
+            card.className = 'soul-card';
+            card.innerHTML = `
+                <div class="soul-name">${name}</div>
+                <div class="soul-archetype">${archetype}</div>
+            `;
+            container.appendChild(card);
+            loadedSouls.push({ name, archetype });
+            document.getElementById('soulCount').textContent = `${loadedSouls.length} de 5 personajes`;
+        }
+    </script>
+
+</body>
+
+</html>
