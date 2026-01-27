@@ -1461,7 +1461,7 @@
                     <span class="slider round"></span>
                 </label>
                 <span class="ghost-label" style="font-size: 0.7rem; color: var(--text-dim);">FANTASMA</span>
-                
+
                 <button class="btn-help" onclick="toggleGuide()" title="Guía de Inicio">?</button>
             </div>
         </div>
@@ -1566,39 +1566,47 @@
     <div id="guideModal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
             <span class="close-modal" onclick="toggleGuide()">&times;</span>
-            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px;">BIBLIOTECA DE ALMAS: GUÍA DE INICIO</h2>
-            <p style="color: var(--text-dim); font-size: 0.9rem;">Bienvenido, Forjador. Aquí tienes las herramientas para tejer tu destino.</p>
-            
+            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px;">BIBLIOTECA DE ALMAS: GUÍA
+                DE INICIO</h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Bienvenido, Forjador. Aquí tienes las herramientas
+                para tejer tu destino.</p>
+
             <div class="guide-grid">
                 <div class="guide-item">
                     <span class="guide-icon">🎭</span>
                     <span class="guide-title">Modos de Escritura</span>
-                    <p class="guide-desc"><b>Ficción:</b> Enfocado en la narrativa, tensión y creatividad.<br><b>No-Fic:</b> Enfocado en impacto, claridad y persuasión.</p>
+                    <p class="guide-desc"><b>Ficción:</b> Enfocado en la narrativa, tensión y
+                        creatividad.<br><b>No-Fic:</b> Enfocado en impacto, claridad y persuasión.</p>
                 </div>
                 <div class="guide-item">
                     <span class="guide-icon">🌡️</span>
                     <span class="guide-title">Indicador de Impacto</span>
-                    <p class="guide-desc">Mide la intensidad de tu texto en tiempo real. Varía entre Clímax (Ficción) o Máximo Valor (No-Ficción).</p>
+                    <p class="guide-desc">Mide la intensidad de tu texto en tiempo real. Varía entre Clímax (Ficción) o
+                        Máximo Valor (No-Ficción).</p>
                 </div>
                 <div class="guide-item">
                     <span class="guide-icon">🎲</span>
                     <span class="guide-title">Herramientas de Inspiración</span>
-                    <p class="guide-desc">Usa el Dado de Caos o los disparadores (Giro, Sentidos, Diálogo) para recibir sugerencias contextuales de Aria.</p>
+                    <p class="guide-desc">Usa el Dado de Caos o los disparadores (Giro, Sentidos, Diálogo) para recibir
+                        sugerencias contextuales de Aria.</p>
                 </div>
                 <div class="guide-item">
                     <span class="guide-icon">✨</span>
                     <span class="guide-title">Aria: Co-Piloto</span>
-                    <p class="guide-desc">Tu guía espiritual. Analiza tus "Almas" (personajes o lectores) para darte consejos precisos sobre qué escribir.</p>
+                    <p class="guide-desc">Tu guía espiritual. Analiza tus "Almas" (personajes o lectores) para darte
+                        consejos precisos sobre qué escribir.</p>
                 </div>
                 <div class="guide-item">
                     <span class="guide-icon">👻</span>
                     <span class="guide-title">Escritura Fantasma</span>
-                    <p class="guide-desc">Si te bloqueas, Aria puede materializar el siguiente párrafo basándose en tu estilo y en las almas cargadas.</p>
+                    <p class="guide-desc">Si te bloqueas, Aria puede materializar el siguiente párrafo basándose en tu
+                        estilo y en las almas cargadas.</p>
                 </div>
                 <div class="guide-item">
                     <span class="guide-icon">🌌</span>
-                    <span class="guide-title">Ambiente Inmersivo</span>
-                    <p class="guide-desc">Controla la atmósfera con sonidos de lluvia, noche o taberna. Ubicados en la esquina inferior izquierda.</p>
+                    <span class="guide-title">Sonidos para Concentración</span>
+                    <p class="guide-desc">Sonidos blancos (Lluvia, Fuego, Ambiente) diseñados para el enfoque profundo y
+                        la relajación mientras escribes.</p>
                 </div>
             </div>
         </div>
@@ -1623,9 +1631,9 @@
 
     <!-- Ambience Controls -->
     <div class="ambience-dock">
-        <button class="btn-ambience" onclick="playAmbience('rain')" title="Lluvia (Enfoque)">🌧️</button>
-        <button class="btn-ambience" onclick="playAmbience('fire')" title="Fogata (Calidez)">🔥</button>
-        <button class="btn-ambience" onclick="playAmbience('tavern')" title="Taberna (Social)">🍺</button>
+        <button class="btn-ambience" onclick="playAmbience('rain')" title="Lluvia (Ruido Blanco / Enfoque)">🌧️</button>
+        <button class="btn-ambience" onclick="playAmbience('fire')" title="Fuego (Relajación / Calidez)">🔥</button>
+        <button class="btn-ambience" onclick="playAmbience('tavern')" title="Ambiente (Foco Social)">🍺</button>
         <div class="volume-slider">
             <input type="range" min="0" max="1" step="0.1" value="0.5" oninput="setGlobalVolume(this.value)"
                 style="width:50px;">
