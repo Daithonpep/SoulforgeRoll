@@ -8,6 +8,27 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+
+    <!-- Firebase SDK (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // CONFIGURACIÓN DE FIREBASE (Placeholder)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY_AQUÍ",
+            authDomain: "TU_DOMINIO.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_BUCKET.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
     <style>
         :root {
             --bg-void: #050508;
@@ -1772,6 +1793,18 @@
 
             // Check for idle (Ghost Writer & Character Interjections)
             setInterval(checkIdle, 1000);
+
+            // Sync Plan with Firebase
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    const doc = await db.collection('usuarios').doc(user.uid).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        localStorage.setItem('soulforge_tier', data.plan_activo);
+                        console.log("Plan sincronizado:", data.plan_activo);
+                    }
+                }
+            });
         });
 
         async function initEngine() {
@@ -1897,9 +1930,9 @@
         }
 
         function checkAriaUsage() {
-            // If user is premium, we can bypass this (logic for later integration)
-            const isPremium = localStorage.getItem('soulforge_tier') === 'premium';
-            if (isPremium) return true;
+            // If user is premium or pro (trial), we can bypass this
+            const tier = localStorage.getItem('soulforge_tier');
+            if (tier === 'pro' || tier === 'premium') return true;
 
             const usage = getDailyUsage();
             if (usage.count >= CONFIG.usageLimit) {

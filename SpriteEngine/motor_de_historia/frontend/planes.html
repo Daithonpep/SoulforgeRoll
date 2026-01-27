@@ -8,6 +8,44 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+
+    <!-- Firebase SDK (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // CONFIGURACIÓN DE FIREBASE (Placeholder)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY_AQUÍ",
+            authDomain: "TU_DOMINIO.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_BUCKET.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Pass UID to PayPal
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Inyectar el UID en todos los formularios de PayPal de la página
+                document.querySelectorAll('form[action*="paypal.com"]').forEach(form => {
+                    let customField = form.querySelector('input[name="custom"]');
+                    if (!customField) {
+                        customField = document.createElement('input');
+                        customField.type = 'hidden';
+                        customField.name = 'custom';
+                        form.appendChild(customField);
+                    }
+                    customField.value = user.uid;
+                });
+            }
+        });
+    </script>
     <style>
         :root {
             --bg-void: #050508;

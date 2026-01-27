@@ -8,6 +8,34 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+
+    <!-- Firebase SDK (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- FirebaseUI -->
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+    <script>
+        // CONFIGURACIÓN DE FIREBASE (Reemplaza con tus datos de la consola)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY_AQUÍ",
+            authDomain: "TU_DOMINIO.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_BUCKET.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
     <style>
         :root {
             --bg-dark: #080a0e;
@@ -803,6 +831,10 @@
                     ✍️ Escribir Historia <span style="font-size: 0.7rem; display: block; color: #4ade80;">SoulForge
                         Writer</span>
                 </a>
+                <button type="button" class="nav-btn" onclick="showLogin()" id="loginBtn">
+                    👤 Iniciar Sesión <span style="font-size: 0.7rem; display: block; color: var(--accent);">Acceder a
+                        Santuario</span>
+                </button>
             </div>
         </div>
 
@@ -1172,40 +1204,94 @@
     </div>
     </div>
 
-    <!-- DISCLAIMER & FOOTER -->
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <div
-        style="width: 100%; max-width: 800px; margin: 60px auto 20px; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6;">
-        <strong style="color: var(--accent); display: block; margin-bottom: 10px; text-transform: uppercase;"
-            data-i18n="aviso_legal_titulo">
-            Aviso Legal
-        </strong>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_1">SoulForge es una herramienta de creación
-            asistida.</p>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_2">Los personajes son generados dinámicamente.
-        </p>
-        <p style="margin-bottom: 10px;" data-i18n="aviso_legal_3">Es responsabilidad del usuario descargar el
-            archivo.
-        </p>
-        <p data-i18n="aviso_legal_4">El uso implica que los resultados varían.</p>
-    </div>
-
-    <div class="footer" id="top">
-        <p data-i18n="footer_dev">Developed with ❤️ by DAITHON BENEDICTUS</p>
+    <!-- Firebase Login Container -->
+    <div id="login-modal"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
+        <div class="card" style="max-width:450px; width:90%; position:relative;">
+            <button onclick="document.getElementById('login-modal').style.display='none'"
+                style="position:absolute; top:15px; right:15px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1.5rem;">&times;</button>
+            <h2 class="card-title" style="text-align:center;">Iniciación de Alma</h2>
+            <p class="card-desc" style="text-align:center;">Identifícate para guardar tus almas y acceder a la sabiduría
+                de Aria.</p>
+            <div id="firebaseui-auth-container"></div>
+        </div>
     </div>
 
     <!-- MODULAR JS ARCHITECTURE -->
     <script type="module" src="js/main.js?v=4.5"></script>
     <script type="module" src="js/ui.js?v=4.5"></script>
 
-    <!-- Check if user is returning from PayPal payment -->
-    <script type="module">
-        import { checkPaymentReturn } from './js/ui.js';
-        import { TokenSystem } from './js/api.js';
+    <script>
+        // === LOGIN LOGIC ===
+        function showLogin() {
+            document.getElementById('login-modal').style.display = 'flex';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            checkPaymentReturn();
-            TokenSystem.updateDisplay();
+            const uiConfig = {
+                signInOptions: [
+                    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+                ],
+                signInSuccessUrl: 'editor_libros.html', // Redirect to editor after login
+                callbacks: {
+                    signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+                        return true; // Use default redirect
+                    }
+                }
+            };
+
+            let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+            ui.start('#firebaseui-auth-container', uiConfig);
+        }
+
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                console.log("Usuario identificado:", user.uid);
+                const userRef = db.collection('usuarios').doc(user.uid);
+                const doc = await userRef.get();
+
+                let currentPlan = "gratis";
+
+                if (!doc.exists) {
+                    // PRIMER LOGIN: REGALO DE 7 DÍAS PRO
+                    const trialEnd = new Date();
+                    trialEnd.setDate(trialEnd.getDate() + 7);
+
+                    const userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        plan_activo: "pro",
+                        trial_active: true,
+                        fecha_expiracion: firebase.firestore.Timestamp.fromDate(trialEnd),
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        created_at: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    await userRef.set(userData);
+                    currentPlan = "pro";
+                    alert("¡Bienvenido Iniciado! Se te ha otorgado el Plan Pro por 7 días como regalo de bienvenida.");
+                } else {
+                    const data = doc.data();
+                    currentPlan = data.plan_activo;
+
+                    // Verificar expiración
+                    if (currentPlan === "pro" && data.fecha_expiracion) {
+                        const now = new Date();
+                        const exp = data.fecha_expiracion.toDate();
+                        if (now > exp) {
+                            currentPlan = "gratis";
+                            await userRef.update({ plan_activo: "gratis", trial_active: false });
+                            alert("Tu periodo Pro ha expirado. Has vuelto al plan Novato.");
+                        }
+                    }
+                }
+
+                localStorage.setItem('soulforge_tier', currentPlan);
+                localStorage.setItem('soulforge_uid', user.uid);
+            } else {
+                localStorage.setItem('soulforge_tier', 'gratis');
+                localStorage.removeItem('soulforge_uid');
+            }
         });
 
         // Global function for demos
@@ -1214,6 +1300,12 @@
             const lang = localStorage.getItem('soulforge_lang') || 'es';
             window.open(url + '#' + lang, '_blank');
         }
+
+        // Add login button to header area if needed, or trigger via hero
+        document.addEventListener('DOMContentLoaded', () => {
+            // If hash is #login, show it immediately
+            if (window.location.hash === '#login') showLogin();
+        });
     </script>
 </body>
 
