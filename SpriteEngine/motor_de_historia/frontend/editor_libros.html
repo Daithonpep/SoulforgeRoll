@@ -2609,11 +2609,12 @@
             });
         }
 
-        function setGlobalVolume(val) {
-            ['rain', 'night', 'tavern'].forEach(t => {
-                const el = document.getElementById(`sfx-${t}`);
-                if (el) el.volume = val;
-            });
+        function getLastParagraph() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText.trim();
+            if (!text) return "";
+            const lines = text.split('\n').filter(l => l.trim() !== "");
+            return lines[lines.length - 1] || "";
         }
 
         function updateGlow(tensionVal) {
