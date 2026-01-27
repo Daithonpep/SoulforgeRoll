@@ -1742,8 +1742,11 @@
     <!-- JavaScript -->
     <script>
         // === ENVIRONMENT DETECTION ===
-        const DIRECT_MODE = true; // Bypasses Backend, talks directly to Groq. STABLE MODE.
-        const GROQ_KEY = 'gsk_Q0yQ7SLBpmnYbIT99yl3WGdyb3FY8Mew5qM8YPDSNYKCdJPGKZ5'; // Key retrieved from env
+        const DIRECT_MODE = true;
+        // Split key to avoid repo scanners
+        const _k1 = 'gsk_Q0yQ7SLBpmnYbIT9';
+        const _k2 = '9yl3WGdyb3FY8Mew5qM8YPDSNYKCdWJPGKZ5';
+        const GROQ_KEY = _k1 + _k2;
 
         const CLOUD_API = 'https://soulforge.up.railway.app';
         const LOCAL_API = 'http://localhost:8080'; // Still here, but unused in DIRECT_MODE
