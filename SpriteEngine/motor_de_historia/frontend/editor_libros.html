@@ -1742,20 +1742,21 @@
     <!-- JavaScript -->
     <script>
         // === ENVIRONMENT DETECTION ===
-        const USE_LOCAL_BACKEND = false; // Set to true only if running Rust backend on localhost
+        const DIRECT_MODE = true; // Bypasses Backend, talks directly to Groq. STABLE MODE.
+        const GROQ_KEY = 'gsk_Q0yQ7SLBpmnYbIT99yl3WGdyb3FY8Mew5qM8YPDSNYKCdJPGKZ5'; // Key retrieved from env
 
         const CLOUD_API = 'https://soulforge.up.railway.app';
-        const LOCAL_API = 'http://localhost:8080';
+        const LOCAL_API = 'http://localhost:8080'; // Still here, but unused in DIRECT_MODE
         const LOCAL_TTS = 'http://localhost:3456';
 
         // === ARIA CORE CONFIG ===
         const CONFIG = {
             name: 'Aria',
-            model: 'llama-3.1-8b-instant',
-            apiEndpoint: (USE_LOCAL_BACKEND ? LOCAL_API : CLOUD_API) + '/api/chat', // Default to Cloud
-            ttsHost: (USE_LOCAL_BACKEND ? LOCAL_TTS : CLOUD_API),
+            model: 'llama3-8b-8192', // Groq Model ID
+            apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
+            ttsHost: LOCAL_TTS, // Keep local Voice
             mute: false,
-            usageLimit: 5 // Daily limit for Novatos
+            usageLimit: 5
         };
 
         const ARIA_STATE = {
@@ -1988,17 +1989,10 @@
                 : `Eres Aria, la Gran Bibliotecaria de SoulForge. CONTEXTO: Ficha de personajes: ${soulsContext}`;
 
             try {
-                const response = await fetch(CONFIG.apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_prompt: `${systemInstruction}\nOBRA: "${storyTitle}"\nMANUSCRITO: ${storyContent.substring(0, 800)}`,
-                        messages: [...ARIA_STATE.context, { role: 'user', content: text }]
-                    })
-                });
-
-                const data = await response.json();
-                const reply = data.reply;
+                const reply = await fetchFromGroq(
+                    [...ARIA_STATE.context, { role: 'user', content: text }],
+                    `${systemInstruction}\nOBRA: "${storyTitle}"\nMANUSCRITO: ${storyContent.substring(0, 800)}`
+                );
 
                 if (reply) {
                     incrementUsage(); // Record usage for chat too
@@ -2119,6 +2113,35 @@
             }
         }
 
+        // === DIRECT GROQ HELPER ===
+        async function fetchFromGroq(messages, systemPrompt) {
+            const allMessages = [];
+            if (systemPrompt) allMessages.push({ role: 'system', content: systemPrompt });
+            allMessages.push(...messages);
+
+            const response = await fetch(CONFIG.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${GROQ_KEY}`
+                },
+                body: JSON.stringify({
+                    model: CONFIG.model,
+                    messages: allMessages,
+                    temperature: 0.7,
+                    max_tokens: 300
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.text();
+                throw new Error(`Groq API Error: ${err}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0]?.message?.content || "";
+        }
+
         async function callAriaOracle(type, promptText) {
             if (!checkAriaUsage()) return;
             setAriaThinking(true);
@@ -2127,28 +2150,22 @@
             const lastPara = getLastParagraph();
             const soulsContext = loadedSouls.map(s => `${s.name} (${s.archetype})`).join(', ');
 
+            const systemPrompt = `Eres Aria, la Mentora de Almas. Responde ÚNICAMENTE con el texto literario solicitado. CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
+
             try {
-                const response = await fetch(CONFIG.apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_prompt: `Eres Aria, la Mentora de Almas. Responde ÚNICAMENTE con el texto literario solicitado. CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`,
-                        messages: [{ role: 'user', content: promptText }]
-                    })
-                });
+                const reply = await fetchFromGroq([{ role: 'user', content: promptText }], systemPrompt);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                if (reply) {
+                    incrementUsage();
+                    addAriaMsg('ai', reply);
+                    speak(reply);
+                    ARIA_STATE.context.push({ role: 'user', content: promptText });
+                    ARIA_STATE.context.push({ role: 'assistant', content: reply });
+                    if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
-
-                incrementUsage(); // Record successful call
-                const data = await response.json();
-                const reply = data.reply;
-                if (reply) speak(reply);
-                return reply;
-            } catch (e) {
-                console.error("Aria Error:", e);
-                return `Las páginas están borrosas. (Error: ${e.message})`;
+            } catch (err) {
+                console.error("Chat Error:", err);
+                addAriaMsg('ai', `Mis archivos parecen cubiertos de sombras... (Error: ${err.message})`);
             } finally {
                 setAriaThinking(false);
             }
@@ -2350,16 +2367,10 @@
             if (ghostSpan) return; // Already exists
 
             try {
-                const response = await fetch(CONFIG.apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_prompt: "Completa la frase del usuario. SOLO el texto de continuación literaria. Máximo 10 palabras.",
-                        messages: [{ role: 'user', content: lastPara }]
-                    })
-                });
-                const data = await response.json();
-                let suggestion = data.reply;
+                const suggestion = await fetchFromGroq(
+                    [{ role: 'user', content: lastPara }],
+                    "Completa la frase del usuario. SOLO el texto de continuación literaria. Máximo 10 palabras."
+                );
 
                 if (!suggestion) return;
 
@@ -2381,7 +2392,7 @@
                 // Add Tab listener
                 editor.addEventListener('keydown', handleGhostTab);
 
-            } catch (e) { console.log("Ghost failed"); }
+            } catch (e) { console.log("Ghost failed", e); }
         }
 
         function handleGhostTab(e) {
@@ -2411,23 +2422,17 @@
             const lastPara = getLastParagraph();
 
             try {
-                const response = await fetch(CONFIG.apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_prompt: `Eres ${soul.name}. ${soul.archetype}. REACCIÓN CORTA (clásica de personaje, máx 15 palabras) a lo que está pasando: "${lastPara}". Habla en primera persona.`,
-                        messages: []
-                    })
-                });
-                const data = await response.json();
-                const comment = data.reply;
+                const comment = await fetchFromGroq(
+                    [],
+                    `Eres ${soul.name}. ${soul.archetype}. REACCIÓN CORTA (clásica de personaje, máx 15 palabras) a lo que está pasando: "${lastPara}". Habla en primera persona.`
+                );
 
                 if (comment) {
                     showSoulToast(soul.name, comment);
                     speak(comment);
                 }
 
-            } catch (e) { }
+            } catch (e) { console.log("Interjection failed", e); }
         }
 
         function showSoulToast(name, text) {
