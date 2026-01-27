@@ -212,9 +212,12 @@ async fn main() {
         .and(warp::query::<ConstellationQuery>())
         .and_then(generate_constellation_handler);
 
-    // POST /api/chat (Proxy de IA simplificado)
+    // POST /api/chat & /api/v1/aria/chat (Compatibilidad)
     let aria_chat_route = warp::path("api")
-        .and(warp::path("chat"))
+        .and(
+            warp::path("chat")
+            .or(warp::path("v1").and(warp::path("aria")).and(warp::path("chat")))
+        )
         .and(warp::post())
         .and(warp::body::json())
         .and_then(aria_chat_handler);
@@ -229,13 +232,13 @@ async fn main() {
     let health = warp::path!("health")
         .map(|| warp::reply::json(&serde_json::json!({"status": "alive"})));
 
-    let routes = ws_route
-        .or(create_route)
-        .or(info_route)
+    let routes = aria_chat_route
+        .or(aria_diag_route)
         .or(personaje_route)
         .or(constelacion_route)
-        .or(aria_chat_route)
-        .or(aria_diag_route)
+        .or(ws_route)
+        .or(create_route)
+        .or(info_route)
         .or(health)
         .with(cors);
     
