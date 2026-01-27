@@ -562,6 +562,73 @@
             font-size: 0.8rem;
         }
 
+        /* GUIDE MODAL */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .guide-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .guide-item:hover {
+            border-color: var(--gold-dim);
+            background: rgba(197, 160, 89, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .guide-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .guide-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .guide-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .btn-help {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--gold-dim);
+            background: transparent;
+            color: var(--gold);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-left: 5px;
+        }
+
+        .btn-help:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+        }
+
         /* ========== CENTER: EDITOR ========== */
         .editor-area {
             background: linear-gradient(135deg, #0a0a10 0%, #08080c 100%);
@@ -1394,6 +1461,8 @@
                     <span class="slider round"></span>
                 </label>
                 <span class="ghost-label" style="font-size: 0.7rem; color: var(--text-dim);">FANTASMA</span>
+                
+                <button class="btn-help" onclick="toggleGuide()" title="Guía de Inicio">?</button>
             </div>
         </div>
     </header>
@@ -1491,6 +1560,48 @@
             </div>
         </aside>
 
+    </div>
+
+    <!-- Guide Modal -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-modal" onclick="toggleGuide()">&times;</span>
+            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px;">BIBLIOTECA DE ALMAS: GUÍA DE INICIO</h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Bienvenido, Forjador. Aquí tienes las herramientas para tejer tu destino.</p>
+            
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <span class="guide-icon">🎭</span>
+                    <span class="guide-title">Modos de Escritura</span>
+                    <p class="guide-desc"><b>Ficción:</b> Enfocado en la narrativa, tensión y creatividad.<br><b>No-Fic:</b> Enfocado en impacto, claridad y persuasión.</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-icon">🌡️</span>
+                    <span class="guide-title">Indicador de Impacto</span>
+                    <p class="guide-desc">Mide la intensidad de tu texto en tiempo real. Varía entre Clímax (Ficción) o Máximo Valor (No-Ficción).</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-icon">🎲</span>
+                    <span class="guide-title">Herramientas de Inspiración</span>
+                    <p class="guide-desc">Usa el Dado de Caos o los disparadores (Giro, Sentidos, Diálogo) para recibir sugerencias contextuales de Aria.</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-icon">✨</span>
+                    <span class="guide-title">Aria: Co-Piloto</span>
+                    <p class="guide-desc">Tu guía espiritual. Analiza tus "Almas" (personajes o lectores) para darte consejos precisos sobre qué escribir.</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-icon">👻</span>
+                    <span class="guide-title">Escritura Fantasma</span>
+                    <p class="guide-desc">Si te bloqueas, Aria puede materializar el siguiente párrafo basándose en tu estilo y en las almas cargadas.</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-icon">🌌</span>
+                    <span class="guide-title">Ambiente Inmersivo</span>
+                    <p class="guide-desc">Controla la atmósfera con sonidos de lluvia, noche o taberna. Ubicados en la esquina inferior izquierda.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Soul Detail Modal -->
@@ -2323,6 +2434,15 @@
 
         function closeSoulModal() {
             document.getElementById('soulModal').style.display = 'none';
+        }
+
+        function toggleGuide() {
+            const modal = document.getElementById('guideModal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
         }
         // === AUDIO & ATMOSPHERE (Refactored) ===
         const AUDIO_STATE = {
