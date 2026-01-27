@@ -250,13 +250,28 @@
             color: var(--gold);
         }
 
-        .btn-buy.primary {
+        .btn-buy.primary,
+        .paypal-button-container button {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
             color: black;
             box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+            border: none;
+            width: 100%;
+            display: block;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
         }
 
-        .btn-buy.primary:hover {
+        .btn-buy.primary:hover,
+        .paypal-button-container button:hover {
             transform: scale(1.02);
             box-shadow: 0 6px 25px rgba(197, 160, 89, 0.5);
         }
@@ -398,7 +413,16 @@
                         <li>Atmósferas Pro: Madera y Fuego</li>
                         <li>1 Personaje Premium gratis/mes</li>
                     </ul>
-                    <a href="#" class="btn-buy primary">Activar mi Santuario</a>
+                    <div class="paypal-button-container">
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                            <input type="hidden" name="cmd" value="_s-xclick" />
+                            <input type="hidden" name="hosted_button_id" value="TQ2FDMBQ23H82" />
+                            <input type="hidden" name="currency_code" value="USD" />
+                            <button type="submit" name="submit" title="PayPal - The safer, easier way to pay online!">
+                                Activar mi Santuario
+                            </button>
+                        </form>
+                    </div>
                     <div class="payment-icons">
                         <span>💳 Visa / Mastercard / PayPal</span>
                     </div>
