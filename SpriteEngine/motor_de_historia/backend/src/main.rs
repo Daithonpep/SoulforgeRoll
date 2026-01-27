@@ -213,11 +213,18 @@ async fn main() {
         .and_then(generate_constellation_handler);
 
     // POST /api/chat & /api/v1/aria/chat (Compatibilidad)
-    let aria_chat_route = warp::path("api")
-        .and(
-            warp::path("chat")
-            .or(warp::path("v1").and(warp::path("aria")).and(warp::path("chat")))
-        )
+    // POST /api/chat (Ruta corta)
+    let aria_chat_short = warp::path("api")
+        .and(warp::path("chat"))
+        .and(warp::post())
+        .and(warp::body::json())
+        .and_then(aria_chat_handler);
+
+    // POST /api/v1/aria/chat (Ruta larga legacy)
+    let aria_chat_legacy = warp::path("api")
+        .and(warp::path("v1"))
+        .and(warp::path("aria"))
+        .and(warp::path("chat"))
         .and(warp::post())
         .and(warp::body::json())
         .and_then(aria_chat_handler);
@@ -232,7 +239,8 @@ async fn main() {
     let health = warp::path!("health")
         .map(|| warp::reply::json(&serde_json::json!({"status": "alive"})));
 
-    let routes = aria_chat_route
+    let routes = aria_chat_short
+        .or(aria_chat_legacy)
         .or(aria_diag_route)
         .or(personaje_route)
         .or(constelacion_route)
