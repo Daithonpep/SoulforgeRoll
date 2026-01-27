@@ -629,6 +629,54 @@
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
 
+        /* PAYWALL MODAL SPECIAL STYLES */
+        .paywall-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .paywall-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--gold));
+        }
+
+        .paywall-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .paywall-text {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .btn-upgrade-now {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+            color: black;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-upgrade-now:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(197, 160, 89, 0.6);
+        }
+
         /* ========== CENTER: EDITOR ========== */
         .editor-area {
             background: linear-gradient(135deg, #0a0a10 0%, #08080c 100%);
@@ -1626,6 +1674,23 @@
         </div>
     </div>
 
+    <!-- Paywall/Usage Limit Modal -->
+    <div id="paywallModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal"
+                onclick="document.getElementById('paywallModal').style.display='none'">&times;</span>
+            <div class="paywall-content">
+                <span class="paywall-icon">💎</span>
+                <h2 class="paywall-title">Límite de Aria Alcanzado</h2>
+                <p class="paywall-text">Has agotado tus 5 consultas diarias del Plan Novato. La sabiduría de la
+                    Bibliotecaria requiere más energía espiritual para continuar hoy.</p>
+                <a href="planes.html" class="btn-upgrade-now">Suscribirse para Consultas Ilimitadas</a>
+                <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-dim);">Tus usos se recargarán mañana
+                    automáticamente.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Soul Toast -->
     <div id="soulToast" class="soul-toast"></div>
 
@@ -1658,10 +1723,11 @@
         // === ARIA CORE CONFIG ===
         const CONFIG = {
             name: 'Aria',
-            model: 'llama-3.1-8b-instant', // Server side model
-            apiEndpoint: '/api/v1/aria/chat', // Natively integrated proxy
+            model: 'llama-3.1-8b-instant',
+            apiEndpoint: '/api/v1/aria/chat',
             ttsHost: 'http://localhost:3456',
-            mute: false
+            mute: false,
+            usageLimit: 5 // Daily limit for Novatos
         };
 
         const ARIA_STATE = {
@@ -1815,11 +1881,41 @@
             document.getElementById('editor').focus();
         }
 
+        function getDailyUsage() {
+            const today = new Date().toDateString();
+            const stored = JSON.parse(localStorage.getItem('aria_usage') || '{}');
+            if (stored.date !== today) {
+                return { date: today, count: 0 };
+            }
+            return stored;
+        }
+
+        function incrementUsage() {
+            const usage = getDailyUsage();
+            usage.count++;
+            localStorage.setItem('aria_usage', JSON.stringify(usage));
+        }
+
+        function checkAriaUsage() {
+            // If user is premium, we can bypass this (logic for later integration)
+            const isPremium = localStorage.getItem('soulforge_tier') === 'premium';
+            if (isPremium) return true;
+
+            const usage = getDailyUsage();
+            if (usage.count >= CONFIG.usageLimit) {
+                document.getElementById('paywallModal').style.display = 'flex';
+                return false;
+            }
+            return true;
+        }
+
         // === ARIA AI ENGINE (THE LIBRARIAN) ===
         async function sendToAria() {
             const input = document.getElementById('ariaInput');
             const text = input.value.trim();
             if (!text || ARIA_STATE.thinking) return;
+
+            if (!checkAriaUsage()) return;
 
             input.value = '';
             addAriaMsg('user', text);
@@ -1857,6 +1953,7 @@
                 const reply = data.reply;
 
                 if (reply) {
+                    incrementUsage(); // Record usage for chat too
                     addAriaMsg('ai', reply);
                     speak(reply);
                     ARIA_STATE.context.push({ role: 'user', content: text });
@@ -1974,6 +2071,7 @@
         }
 
         async function callAriaOracle(type, promptText) {
+            if (!checkAriaUsage()) return;
             setAriaThinking(true);
 
             const storyTitle = document.getElementById('chapterTitle').value;
@@ -1989,6 +2087,8 @@
                         messages: [{ role: 'user', content: promptText }]
                     })
                 });
+
+                incrementUsage(); // Record successful call
                 const data = await response.json();
                 const reply = data.reply;
                 if (reply) speak(reply);
