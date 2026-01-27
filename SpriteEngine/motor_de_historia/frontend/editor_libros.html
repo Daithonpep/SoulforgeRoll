@@ -605,7 +605,8 @@
             line-height: 1.5;
         }
 
-        .btn-help {
+        .btn-help,
+        .btn-settings {
             width: 26px;
             height: 26px;
             border-radius: 50%;
@@ -623,7 +624,8 @@
             margin-left: 5px;
         }
 
-        .btn-help:hover {
+        .btn-help:hover,
+        .btn-settings:hover {
             background: var(--gold);
             color: #000;
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
@@ -1462,6 +1464,7 @@
                 </label>
                 <span class="ghost-label" style="font-size: 0.7rem; color: var(--text-dim);">FANTASMA</span>
 
+                <button class="btn-settings" onclick="openSettings()" title="Configuración de API">⚙️</button>
                 <button class="btn-help" onclick="toggleGuide()" title="Guía de Inicio">?</button>
             </div>
         </div>
@@ -1812,14 +1815,30 @@
         }
 
         // === ARIA AI ENGINE (THE LIBRARIAN) ===
-        async function sendToAria() {
+        function checkApiKey() {
             if (!CONFIG.apiKey) {
-                const key = prompt("Para despertar a Aria, introduce tu API Key de Groq:");
+                const key = prompt("Para despertar a Aria, introduce tu API Key de Groq (se guardará en este navegador):");
                 if (key) {
                     CONFIG.apiKey = key;
                     localStorage.setItem('groq_api_key', key);
-                } else return;
+                    return true;
+                }
+                return false;
             }
+            return true;
+        }
+
+        function openSettings() {
+            const key = prompt("Configuración: Introduce tu API Key de Groq:", CONFIG.apiKey);
+            if (key !== null) {
+                CONFIG.apiKey = key;
+                localStorage.setItem('groq_api_key', key);
+                addAriaMsg('system', "✅ API Key actualizada.");
+            }
+        }
+
+        async function sendToAria() {
+            if (!checkApiKey()) return;
             const input = document.getElementById('ariaInput');
             const text = input.value.trim();
             if (!text || ARIA_STATE.thinking) return;
@@ -1999,7 +2018,7 @@
         }
 
         async function callAriaOracle(type, promptText) {
-            if (!CONFIG.apiKey) return alert("Se requiere API Key de Groq configurada.");
+            if (!checkApiKey()) return;
             setAriaThinking(true);
 
             const storyTitle = document.getElementById('chapterTitle').value;
