@@ -137,6 +137,30 @@ def call_groq(prompt: str, system_prompt: str = None) -> Optional[str]:
         print(f"[GROQ] Error: {e}")
         return None
 
+# ==================== GENERIC CHAT ====================
+
+def chat_with_aria(messages: List[Dict[str, str]], system_prompt: Optional[str] = None, max_tokens: int = 500) -> Optional[str]:
+    """Generic chat interface for Aria/Oracle"""
+    try:
+        from groq import Groq
+        client = Groq(api_key=GROQ_API_KEY)
+        
+        full_messages = []
+        if system_prompt:
+            full_messages.append({"role": "system", "content": system_prompt})
+        full_messages.extend(messages)
+        
+        completion = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=full_messages,
+            max_tokens=max_tokens,
+            temperature=GROQ_TEMPERATURE
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"[GROQ CHAT] Error: {e}")
+        return None
+
 # ==================== CONTENT GENERATORS ====================
 
 def get_world_context(world: str) -> Dict[str, Any]:

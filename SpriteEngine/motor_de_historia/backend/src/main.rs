@@ -34,6 +34,12 @@ struct ConstellationQuery {
     lang: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+struct AriaRequest {
+    messages: Vec<Value>,
+    system_prompt: Option<String>,
+}
+
 fn parse_mundo(s: &str) -> Mundo {
     match s.to_lowercase().as_str() {
         "fantasiamedieval" | "fantasia_medieval" | "fantasia medieval" => Mundo::FantasiaMedieval,
@@ -132,6 +138,14 @@ async fn generate_constellation_handler(query: ConstellationQuery) -> Result<imp
     Ok(warp::reply::json(&constelacion))
 }
 
+async fn aria_chat_handler(req: AriaRequest) -> Result<impl warp::Reply, warp::Rejection> {
+    use soulforge_server::core::ia_integration::chat_con_aria;
+    let reply = chat_con_aria(req.messages, req.system_prompt)
+        .unwrap_or_else(|| "Error al procesar la solicitud con Aria.".to_string());
+    
+    Ok(warp::reply::json(&serde_json::json!({ "reply": reply })))
+}
+
 #[tokio::main]
 async fn main() {
     // Inicializar logging
@@ -192,6 +206,12 @@ async fn main() {
         .and(warp::get())
         .and(warp::query::<ConstellationQuery>())
         .and_then(generate_constellation_handler);
+
+    // POST /api/v1/aria/chat (Proxy de IA)
+    let aria_chat_route = warp::path!("api" / "v1" / "aria" / "chat")
+        .and(warp::post())
+        .and(warp::body::json())
+        .and_then(aria_chat_handler);
     
     // Health check
     let health = warp::path!("health")
@@ -202,6 +222,7 @@ async fn main() {
         .or(info_route)
         .or(personaje_route)
         .or(constelacion_route)
+        .or(aria_chat_route)
         .or(health)
         .with(cors);
     

@@ -104,3 +104,59 @@ except Exception as e:
     // Si algo falló, devolver el original
     personaje_json
 }
+/// Intenta chatear con Aria usando el script de Python como puente
+pub fn chat_con_aria(messages: Vec<Value>, system_prompt: Option<String>) -> Option<String> {
+    if env::var("GROQ_API_KEY").is_err() {
+        return Some("API Key no configurada en el servidor.".to_string());
+    }
+
+    let script_path = if Path::new("/app/groq_integration/groq_enhancer.py").exists() {
+        "/app/groq_integration/groq_enhancer.py"
+    } else if Path::new("./groq_integration/groq_enhancer.py").exists() {
+        "./groq_integration/groq_enhancer.py"
+    } else if Path::new("../groq_integration/groq_enhancer.py").exists() {
+        "../groq_integration/groq_enhancer.py"
+    } else {
+        return Some("Script de IA no encontrado.".to_string());
+    };
+
+    let payload = serde_json::json!({
+        "messages": messages,
+        "system_prompt": system_prompt
+    });
+
+    let python_code = format!(r#"
+import sys
+import json
+import os
+sys.path.append(os.path.dirname('{}'))
+try:
+    from groq_enhancer import chat_with_aria
+    data = json.loads(sys.stdin.read())
+    res = chat_with_aria(data['messages'], data.get('system_prompt'))
+    print(res if res else "Error en la respuesta de IA")
+except Exception as e:
+    print(f"Error: {{e}}")
+"#, script_path);
+
+    let python_cmd = if cfg!(target_os = "windows") { "python" } else { "python3" };
+
+    let mut child = Command::new(python_cmd)
+        .arg("-c")
+        .arg(&python_code)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .spawn()
+        .ok()?;
+
+    if let Some(mut stdin) = child.stdin.take() {
+        let _ = stdin.write_all(payload.to_string().as_bytes());
+    }
+
+    let output = child.wait_with_output().ok()?;
+    if output.status.success() {
+        Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    } else {
+        None
+    }
+}
