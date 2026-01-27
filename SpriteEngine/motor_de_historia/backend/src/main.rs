@@ -139,11 +139,16 @@ async fn generate_constellation_handler(query: ConstellationQuery) -> Result<imp
 }
 
 async fn aria_chat_handler(req: AriaRequest) -> Result<impl warp::Reply, warp::Rejection> {
+    println!("[BACKEND] Recibida solicitud para Aria chat");
     use soulforge_server::core::ia_integration::chat_con_aria;
     let reply = chat_con_aria(req.messages, req.system_prompt)
         .unwrap_or_else(|| "Error al procesar la solicitud con Aria.".to_string());
     
     Ok(warp::reply::json(&serde_json::json!({ "reply": reply })))
+}
+
+async fn aria_status_handler() -> Result<impl warp::Reply, warp::Rejection> {
+    Ok(warp::reply::json(&serde_json::json!({ "status": "Aria is online and ready for chat (POST)" })))
 }
 
 #[tokio::main]
@@ -207,11 +212,18 @@ async fn main() {
         .and(warp::query::<ConstellationQuery>())
         .and_then(generate_constellation_handler);
 
-    // POST /api/v1/aria/chat (Proxy de IA)
-    let aria_chat_route = warp::path!("api" / "v1" / "aria" / "chat")
+    // POST /api/chat (Proxy de IA simplificado)
+    let aria_chat_route = warp::path("api")
+        .and(warp::path("chat"))
         .and(warp::post())
         .and(warp::body::json())
         .and_then(aria_chat_handler);
+
+    // GET /api/chat (Diagnóstico)
+    let aria_diag_route = warp::path("api")
+        .and(warp::path("chat"))
+        .and(warp::get())
+        .and_then(aria_status_handler);
     
     // Health check
     let health = warp::path!("health")
@@ -223,6 +235,7 @@ async fn main() {
         .or(personaje_route)
         .or(constelacion_route)
         .or(aria_chat_route)
+        .or(aria_diag_route)
         .or(health)
         .with(cors);
     

@@ -1745,7 +1745,7 @@
         const CONFIG = {
             name: 'Aria',
             model: 'llama-3.1-8b-instant',
-            apiEndpoint: 'https://soulforge.up.railway.app/api/v1/aria/chat',
+            apiEndpoint: 'https://soulforge.up.railway.app/api/chat',
             ttsHost: 'https://soulforge.up.railway.app/speak',
             mute: false,
             usageLimit: 5 // Daily limit for Novatos
@@ -2002,7 +2002,8 @@
                     if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
             } catch (err) {
-                addAriaMsg('ai', "Mis archivos parecen cubiertos de sombras... El servidor no responde.");
+                console.error("Chat Error:", err);
+                addAriaMsg('ai', `Mis archivos parecen cubiertos de sombras... El servidor respondió: ${err.message}`);
             } finally {
                 setAriaThinking(false);
             }
@@ -2129,13 +2130,18 @@
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 incrementUsage(); // Record successful call
                 const data = await response.json();
                 const reply = data.reply;
                 if (reply) speak(reply);
                 return reply;
             } catch (e) {
-                return "Las páginas del destino están borrosas. Inténtalo de nuevo.";
+                console.error("Aria Error:", e);
+                return `Las páginas están borrosas. (Error: ${e.message})`;
             } finally {
                 setAriaThinking(false);
             }
