@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoulForge Writer - La Fragua de Historias</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <style>
         :root {
@@ -186,7 +186,170 @@
             display: grid;
             grid-template-columns: 260px 1fr 300px;
             height: calc(100vh - 56px);
-            background: var(--bg-void);
+
+            /* REALISTIC ANCIENT WOOD SHADER */
+            background-color: #2e1d13;
+            background-image:
+                /* Deep Varnish Vignette */
+                radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.8) 120%),
+                /* Wood Fibers - subtle horizontal scratches */
+                repeating-linear-gradient(92deg, transparent 0px, transparent 2px, rgba(0, 0, 0, 0.2) 3px, transparent 4px),
+                /* Large Grain - diagonal banding */
+                repeating-linear-gradient(45deg, rgba(62, 39, 35, 0.4) 0px, rgba(62, 39, 35, 0.4) 40px, rgba(42, 28, 20, 0.6) 80px),
+                /* Base Wood Color */
+                linear-gradient(to bottom, #3e2723, #1a0f0a);
+
+            box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.95);
+            /* Deep shadow */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* NOISE TEXTURE FOR GRAIN REALISM */
+        .workspace::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* SVG Noise Data URI */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+            opacity: 0.08;
+            /* Subtle grit */
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        /* FIRE GLOW EFFECT - ORGANIC CANDLE */
+        .fire-layer {
+            position: fixed;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 5;
+            transition: opacity 1s;
+        }
+
+        /* Base Warmth (Stable) */
+        #fire-glow-base {
+            height: 45vh;
+            background: radial-gradient(ellipse at center bottom, rgba(255, 100, 0, 0.3) 0%, rgba(139, 0, 0, 0.1) 60%, transparent 80%);
+            filter: blur(40px);
+            opacity: 0.6;
+        }
+
+        /* Flickering Heart (Erratic) */
+        #fire-glow-flicker {
+            height: 55vh;
+            background: radial-gradient(circle at 50% 100%, rgba(255, 200, 50, 0.25) 0%, rgba(255, 69, 0, 0.15) 50%, transparent 80%);
+            filter: blur(60px);
+            animation: candle-flicker 3s infinite alternate-reverse cubic-bezier(0.5, 0, 0.5, 1);
+            opacity: 0.7;
+        }
+
+        @keyframes candle-flicker {
+            0% {
+                transform: scale(1.0) translateX(0px);
+                opacity: 0.6;
+            }
+
+            10% {
+                transform: scale(1.02) translateX(5px);
+                opacity: 0.65;
+            }
+
+            20% {
+                transform: scale(0.98) translateX(-5px);
+                opacity: 0.6;
+            }
+
+            40% {
+                transform: scale(1.05) translateX(8px);
+                opacity: 0.7;
+            }
+
+            60% {
+                transform: scale(1.0) translateX(-3px);
+                opacity: 0.6;
+            }
+
+            80% {
+                transform: scale(1.03) translateX(4px);
+                opacity: 0.65;
+            }
+
+            100% {
+                transform: scale(0.99) translateX(0px);
+                opacity: 0.6;
+            }
+        }
+
+        .glow-chaos {
+            filter: blur(20px) !important;
+            opacity: 1 !important;
+            background: radial-gradient(ellipse at center bottom, rgba(255, 255, 255, 0.5) 0%, rgba(255, 100, 0, 0.8) 50%, transparent 100%) !important;
+            transition: all 0.1s !important;
+        }
+
+        /* AMBIENCE CONTROLS */
+        .ambience-dock {
+            position: fixed;
+            bottom: 25px;
+            left: 30px;
+            /* Far left to clear the writing area */
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn-ambience {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-ambience:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-ambience.active {
+            color: var(--gold-bright);
+            background: rgba(197, 160, 89, 0.2);
+            box-shadow: 0 0 10px var(--gold-dim);
+        }
+
+        /* VOLUME SLIDER (Hidden by default) */
+        .volume-slider {
+            width: 0;
+            overflow: hidden;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .ambience-dock:hover .volume-slider {
+            width: 60px;
+            margin-left: 10px;
         }
 
         /* ========== LEFT PANEL: SOULS ========== */
@@ -258,9 +421,9 @@
         }
 
         .drop-text {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-dim);
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .soul-list {
@@ -275,48 +438,128 @@
         .soul-card {
             background: var(--panel-lighter);
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 12px 14px;
-            cursor: grab;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
             position: relative;
-            overflow: hidden;
-        }
-
-        .soul-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--gold-dim);
-            transition: all 0.2s;
         }
 
         .soul-card:hover {
-            background: var(--panel-mid);
-            border-color: var(--gold-dim);
-            transform: translateX(4px);
+            border-color: var(--gold);
+            background: rgba(197, 160, 89, 0.05);
         }
 
-        .soul-card:hover::before {
-            background: var(--gold);
-            box-shadow: 0 0 10px var(--gold);
+        .soul-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .soul-name {
             font-family: 'Cinzel', serif;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            margin-bottom: 2px;
+            font-size: 0.8rem;
+            color: var(--gold);
+            margin: 0;
         }
 
         .soul-archetype {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .soul-remove {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            padding: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .soul-remove:hover {
+            color: var(--blood);
+        }
+
+        /* Soul Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--panel-dark);
+            border: 1px solid var(--gold-dim);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dim) transparent;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--gold-dim);
+            border-radius: 3px;
+        }
+
+        .close-modal {
+            position: sticky;
+            top: -20px;
+            float: right;
+            margin-right: -20px;
+            color: var(--gold);
+            cursor: pointer;
+            font-size: 1.8rem;
+            z-index: 10;
+            background: var(--panel-dark);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .soul-details h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .soul-details p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .soul-details .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            color: var(--gold-dim);
+            font-size: 0.8rem;
         }
 
         /* ========== CENTER: EDITOR ========== */
@@ -435,12 +678,13 @@
         }
 
         .editor-content {
-            font-family: 'Crimson Text', serif;
-            font-size: 1.15rem;
-            line-height: 1.9;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.3rem;
+            line-height: 1.7;
             color: var(--ink);
             min-height: 600px;
             outline: none;
+            letter-spacing: -0.01em;
         }
 
         .editor-content p {
@@ -825,8 +1069,261 @@
         }
 
         /* ========== UTILITY ========== */
-        .hidden-input {
+        /* Aria Co-pilot Styles */
+        .aria-chat-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+            flex: 1;
+            /* Expand to fill space */
+            background: rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .aria-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+        }
+
+        .aria-msg {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            max-width: 90%;
+            animation: fadeIn 0.3s;
+        }
+
+        .aria-msg.ai {
+            background: rgba(197, 160, 89, 0.1);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            color: var(--text-primary);
+            align-self: flex-start;
+        }
+
+        .aria-msg.user {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            align-self: flex-end;
+        }
+
+        .push-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            background: rgba(197, 160, 89, 0.15);
+            border: 1px solid var(--gold-dim);
+            border-radius: 4px;
+            color: var(--gold);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .push-btn:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .aria-input-group {
+            display: flex;
+            gap: 8px;
+            background: var(--panel-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
+        .aria-input-group:focus-within {
+            border-color: var(--gold);
+        }
+
+        .aria-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 8px;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .aria-btn {
+            background: transparent;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 16px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--panel-mid);
+            transition: .4s;
+            border-radius: 16px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-dim);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--gold-dim);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(14px);
+            background-color: var(--gold);
+        }
+
+        .ghost-text {
+            color: var(--text-dim);
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .soul-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--panel-dark);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
             display: none;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* HEADER TOOLS STYLES */
+        .header-mid-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 0 20px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .tool-separator {
+            width: 1px;
+            height: 24px;
+            background: var(--border-subtle);
+        }
+
+        .header-tension {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .header-tension-bar {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .header-tension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--emerald) 0%, var(--gold) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .header-tools-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-tool-header {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .btn-tool-header:hover {
+            background: var(--panel-lighter);
+            color: var(--gold);
+            border-color: var(--gold-dim);
+            transform: translateY(-2px);
+        }
+
+        .btn-tool-header.chaos {
+            color: #d7ccc8;
+            border-color: #8d6e63;
+        }
+
+        .btn-tool-header.chaos:hover {
+            background: linear-gradient(135deg, #5d4037, #3e2723);
+            box-shadow: 0 0 10px rgba(141, 110, 99, 0.4);
         }
     </style>
 </head>
@@ -837,14 +1334,40 @@
     <header class="forge-header">
         <div class="brand">
             <div class="brand-icon">⚔️</div>
-            <span class="brand-text">SOULFORGE WRITER</span>
+            <span class="brand-text">SOULFORGE</span>
+        </div>
+
+        <!-- NEW CENTER TOOLS -->
+        <div class="header-mid-group">
+            <!-- Tension -->
+            <div class="header-tension" title="Nivel de Tensión Narrativa">
+                <span id="tensionLabel"
+                    style="font-size:0.7rem; color:var(--text-dim); min-width: 45px; text-align:right;">NEUTRO</span>
+                <div class="header-tension-bar">
+                    <div id="tensionMeter" class="header-tension-fill"></div>
+                </div>
+                <span id="tensionValue" style="font-size:0.8rem; font-weight:600; color:var(--gold);">0%</span>
+            </div>
+
+            <div class="tool-separator"></div>
+
+            <!-- Inspiration Tools -->
+            <div class="header-tools-row">
+                <button class="btn-tool-header chaos" onclick="suggestChaos()"
+                    title="Dado de Caos: Introduce un evento aleatorio">🎲</button>
+                <button class="btn-tool-header" onclick="suggestTwist()" title="Giro de Trama">🌀</button>
+                <button class="btn-tool-header" onclick="suggestSensory()" title="Detalle Sensorial">👃</button>
+                <button class="btn-tool-header" onclick="suggestDialogue()" title="Diálogo">💬</button>
+                <button class="btn-tool-header" onclick="suggestAction()" title="Acción">🔥</button>
+                <button class="btn-tool-header" onclick="suggestEmotion()" title="Emoción Interina">👁️</button>
+            </div>
         </div>
 
         <div class="header-controls">
             <button class="btn-header" onclick="document.getElementById('fileInput').click()">
                 📂 Cargar Libro
             </button>
-            <input type="file" id="fileInput" class="hidden-input" onchange="loadBookFile(this)" accept=".json">
+            <input type="file" id="fileInput" style="display:none" onchange="loadBookFile(this)" accept=".json">
 
             <button class="btn-header primary" onclick="saveBook()">
                 💾 Guardar Libro
@@ -853,6 +1376,24 @@
             <div class="status-badge">
                 <div id="statusDot" class="status-dot"></div>
                 <span id="statusText">Iniciando...</span>
+            </div>
+            <div style="margin-left: 15px; display: flex; align-items: center; gap: 10px;">
+                <!-- Mode Switcher -->
+                <div class="mode-switch-group"
+                    style="display:flex; border:1px solid var(--border-subtle); border-radius:6px; overflow:hidden;">
+                    <button id="btnModeFic" class="btn-header"
+                        style="border:none; border-radius:0; font-size:0.65rem; padding:4px 8px; background:var(--gold); color:black;"
+                        onclick="setWritingMode('FICTION')">FICCION</button>
+                    <button id="btnModeNon" class="btn-header"
+                        style="border:none; border-radius:0; font-size:0.65rem; padding:4px 8px;"
+                        onclick="setWritingMode('NON_FICTION')">NO-FIC</button>
+                </div>
+
+                <label class="switch" title="Modo Escritura Fantasma">
+                    <input type="checkbox" id="ghostModeToggle" onchange="toggleGhostMode()">
+                    <span class="slider round"></span>
+                </label>
+                <span class="ghost-label" style="font-size: 0.7rem; color: var(--text-dim);">FANTASMA</span>
             </div>
         </div>
     </header>
@@ -863,20 +1404,28 @@
         <!-- LEFT: SOULS PANEL -->
         <aside class="panel-souls">
             <div class="panel-header">
-                <h3>ALMAS CARGADAS</h3>
-                <span id="soulCount">0 de 5 personajes</span>
+                <h3 id="soulPanelTitle">ALMAS CARGADAS</h3>
+                <span id="soulCount">0 de 5 perfiles</span>
             </div>
 
-            <div id="dropZone" class="soul-drop-zone">
-                <div class="drop-icon">📜</div>
+            <div id="dropZone" class="soul-drop-zone" style="padding: 12px 10px; border-width: 1px;">
                 <div class="drop-text">
-                    Arrastra fichas de<br>personaje aquí
+                    <button id="btnLinkSoul" class="btn-oracle primary"
+                        style="font-size: 0.65rem; padding: 5px; width: 100%; border-radius: 4px;"
+                        onclick="document.getElementById('soulInput').click()">+ VINCULAR ALMA</button>
+                    <input type="file" id="soulInput" style="display:none" onchange="handleFiles(this.files)"
+                        accept=".html" multiple>
+                    <div style="font-size: 0.6rem; margin-top: 5px; color: var(--text-dim); opacity: 0.6;">O arrastra
+                        archivos aquí</div>
                 </div>
             </div>
 
-            <div id="soulList" class="soul-list">
+            <div id="soulList" class="soul-list" style="flex: 1; padding: 10px 0; overflow-y: auto;">
                 <!-- Souls will be added here -->
             </div>
+
+            <!-- Tools moved to header -->
+
         </aside>
 
         <!-- CENTER: EDITOR -->
@@ -887,8 +1436,9 @@
                     <!-- Floating Toolbar -->
                     <div class="editor-toolbar">
                         <button class="tool-btn" onclick="suggestIntro()" title="Sugerir Inicio">💡</button>
-                        <button class="tool-btn" title="Negrita">B</button>
-                        <button class="tool-btn" title="Cursiva">I</button>
+                        <button class="tool-btn" onclick="formatText('bold')" title="Negrita"><b>B</b></button>
+                        <button class="tool-btn" onclick="formatText('italic')" title="Cursiva"><i>I</i></button>
+                        <button class="tool-btn" onclick="formatText('underline')" title="Subrayado"><u>U</u></button>
                     </div>
 
                     <!-- Chapter Navigation -->
@@ -920,100 +1470,101 @@
         </main>
 
         <!-- RIGHT: ORACLE PANEL -->
-        <aside class="panel-oracle">
+        <aside class="panel-oracle" style="display: flex; flex-direction: column; height: 100%;">
             <div class="oracle-header">
-                <div class="oracle-title">EL ORÁCULO</div>
-                <div class="oracle-subtitle">Motor de Narrativa Viva</div>
+                <div class="oracle-title">ARIA : CO-PILOTO</div>
+                <div id="aiStatus" class="oracle-subtitle">Sistema en Línea</div>
             </div>
 
-            <div class="oracle-eye-container">
-                <div class="oracle-eye"></div>
-            </div>
-
-            <div class="oracle-section">
-                <div class="section-label">Tensión Narrativa</div>
-                <div class="tension-container">
-                    <div class="tension-header">
-                        <span class="tension-value" id="tensionValue">15%</span>
-                        <span class="tension-label">CALMA</span>
-                    </div>
-                    <div class="tension-bar">
-                        <div id="tensionMeter" class="tension-fill" style="width: 15%;"></div>
-                    </div>
-                    <div class="tension-labels">
-                        <span>Serenidad</span>
-                        <span>Clímax</span>
-                    </div>
+            <!-- AI CHAT INTEGRATION - Now occupying full height -->
+            <div class="aria-chat-section"
+                style="flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 16px;">
+                <div id="ariaMessages" class="aria-messages" style="flex: 1; overflow-y: auto; margin-bottom: 12px;">
+                    <div class="aria-msg ai">Hola, soy Aria. Como guardiana de estos archivos, estoy lista para ayudarte
+                        a tejer tu historia. ¿Sobre qué quieres escribir hoy?</div>
                 </div>
-            </div>
-
-            <div class="oracle-section">
-                <div class="section-label">Sugerencias del Oráculo</div>
-            </div>
-
-            <div id="oracleSuggestions" class="suggestions-container">
-                <div class="suggestion-card">
-                    <div class="suggestion-type">Sugerencia de Trama</div>
-                    <div class="suggestion-text">
-                        Las llamas de la fogata podrían despertar memorias dormidas en el protagonista.
-                        Considera un flashback que revele su cicatriz más profunda.
-                    </div>
+                <div class="aria-input-group" style="flex-shrink: 0;">
+                    <input type="text" id="ariaInput" class="aria-input" placeholder="Consulta a la Bibliotecaria..."
+                        onkeypress="if(event.key==='Enter') sendToAria()">
+                    <button class="aria-btn" onclick="sendToAria()">➤</button>
                 </div>
-            </div>
-
-            <div class="oracle-actions">
-                <button class="btn-oracle primary" onclick="suggestNarrativeIntro()">
-                    ✨ Sugerir Introducción
-                </button>
-
-                <button class="btn-oracle" onclick="generateSceneFromSouls()">
-                    <span class="btn-icon">📜</span>
-                    <span class="btn-label">
-                        Generar Escena Inicial
-                        <small>Basada en personajes cargados</small>
-                    </span>
-                </button>
-
-                <button class="btn-oracle" onclick="suggestConflict()">
-                    <span class="btn-icon">⚔️</span>
-                    <span class="btn-label">
-                        Sugerir Conflicto
-                        <small>Tensión entre personajes</small>
-                    </span>
-                </button>
-
-                <button class="btn-oracle" onclick="suggestMystery()">
-                    <span class="btn-icon">🔮</span>
-                    <span class="btn-label">
-                        Misterio a Resolver
-                        <small>Gancho narrativo</small>
-                    </span>
-                </button>
-
-                <button class="btn-oracle" onclick="suggestDialogue()">
-                    <span class="btn-icon">💬</span>
-                    <span class="btn-label">
-                        Sugerir Diálogo
-                        <small>Conversación entre almas</small>
-                    </span>
-                </button>
             </div>
         </aside>
 
     </div>
 
+    <!-- Soul Detail Modal -->
+    <div id="soulModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSoulModal()">&times;</span>
+            <div id="soulDetails" class="soul-details">
+                <!-- Content generated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Soul Toast -->
+    <div id="soulToast" class="soul-toast"></div>
+
+    <!-- Fire Glow Overlay (Multi-layered for organic effect) -->
+    <div id="fire-glow-base" class="fire-layer"></div>
+    <div id="fire-glow-flicker" class="fire-layer"></div>
+
+    <!-- Ambience Controls -->
+    <div class="ambience-dock">
+        <button class="btn-ambience" onclick="playAmbience('rain')" title="Lluvia (Enfoque)">🌧️</button>
+        <button class="btn-ambience" onclick="playAmbience('fire')" title="Fogata (Calidez)">🔥</button>
+        <button class="btn-ambience" onclick="playAmbience('tavern')" title="Taberna (Social)">🍺</button>
+        <div class="volume-slider">
+            <input type="range" min="0" max="1" step="0.1" value="0.5" oninput="setGlobalVolume(this.value)"
+                style="width:50px;">
+        </div>
+    </div>
+
+    <!-- Audio Sources (Fresh IDs to avoid cache conflicts) -->
+    <audio id="sfx-rain-new" loop src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg"
+        onerror="addAriaMsg('system', '⚠️ Error lluvia')"></audio>
+    <!-- Fire: Tried fireplace.ogg, now trying fire.ogg + 2 backups -->
+    <audio id="sfx-fire-new" loop src="https://actions.google.com/sounds/v1/ambiences/fire.ogg"
+        onerror="handleFireError(this)"></audio>
+    <audio id="sfx-tavern-new" loop src="https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg"
+        onerror="addAriaMsg('system', '⚠️ Error taberna')"></audio>
+
     <!-- JavaScript -->
     <script>
+        // === ARIA CORE CONFIG ===
+        const CONFIG = {
+            apiKey: localStorage.getItem('groq_api_key') || '',
+            name: 'Aria',
+            model: 'llama-3.3-70b-versatile',
+            ttsHost: 'http://localhost:3456',
+            mute: false
+        };
+
+        const ARIA_STATE = {
+            context: [],
+            thinking: false,
+            speaking: false,
+            ghostMode: false,
+            writingMode: 'FICTION', // Default
+            lastTypingTime: Date.now()
+        };
         // State
         let engineReady = false;
-        let loadedSouls = [];
+        let loadedSouls = []; // Array of objects: { name, archetype, bio, stats }
         let currentChapterIndex = 0;
         let bookData = {
-            title: "Crónicas de la Forja",
-            chapters: [{
-                title: "Capítulo I: El Comienzo",
-                content: `<p>La noche caía sobre las Tierras Fronterizas. El silencio era absoluto, roto solo por el crepitar de la fogata. Las sombras danzaban contra los árboles centenarios, creando figuras que parecían susurrar secretos olvidados.</p><p>El guerrero observaba las llamas con la mirada perdida. En sus ojos se reflejaba algo más que el fuego: memorias de batallas pasadas, promesas rotas, y el peso de un destino que aún no comprendía del todo.</p>`
-            }]
+            title: "Mi Nueva Historia",
+            chapters: [
+                {
+                    title: "Capítulo I: El Comienzo",
+                    content: `<p>La noche caía sobre las Tierras Fronterizas. El silencio era absoluto, roto solo por el
+                            crepitar de la fogata. Las sombras danzaban contra los árboles centenarios, creando figuras
+                            que parecían susurrar secretos olvidados.</p><p>El guerrero observaba las llamas con la mirada perdida. En sus ojos se reflejaba algo más que
+                            el fuego: memorias de batallas pasadas, promesas rotas, y el peso de un destino que aún no
+                            comprendía del todo.</p>`
+                }
+            ]
         };
 
         // Initialize
@@ -1021,6 +1572,17 @@
             await initEngine();
             updateUI();
             setupDragDrop();
+
+            // Editor listeners for tension and ghost
+            const editor = document.getElementById('editor');
+            editor.addEventListener('input', () => {
+                ARIA_STATE.lastTypingTime = Date.now();
+                analyzeTension();
+                removeGhostSuggestion();
+            });
+
+            // Check for idle (Ghost Writer & Character Interjections)
+            setInterval(checkIdle, 1000);
         });
 
         async function initEngine() {
@@ -1125,114 +1687,520 @@
             editor.prepend(p);
         }
 
-        function suggestNarrativeIntro() {
-            const souls = loadedSouls.map(s => s.name).join(', ') || 'el protagonista';
-
-            const templates = [
-                `La historia de ${souls} comenzó mucho antes de que el destino decidiera entrelazar sus caminos.`,
-                `Había una profecía antigua que hablaba de ${souls}. Nadie creyó que se cumpliría tan pronto.`,
-                `El mundo cambió el día que ${souls} tomó una decisión que no podría deshacer.`,
-                `Las leyendas siempre comienzan con un susurro. Esta empezó con el nombre de ${souls}.`,
-                `Si le hubieras preguntado a ${souls} cómo comenzó todo, habría mentido. La verdad era demasiado dolorosa.`
-            ];
-
-            const chosen = templates[Math.floor(Math.random() * templates.length)];
-            addSuggestionCard('✨ Introducción Sugerida', chosen);
-            insertInEditor(chosen);
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('editor').focus();
         }
 
-        function generateSceneFromSouls() {
-            if (loadedSouls.length === 0) {
-                addSuggestionCard('⚠️ Sin Personajes', 'Carga al menos un personaje para generar una escena basada en sus características.');
-                return;
+        // === ARIA AI ENGINE (THE LIBRARIAN) ===
+        async function sendToAria() {
+            if (!CONFIG.apiKey) {
+                const key = prompt("Para despertar a Aria, introduce tu API Key de Groq:");
+                if (key) {
+                    CONFIG.apiKey = key;
+                    localStorage.setItem('groq_api_key', key);
+                } else return;
             }
+            const input = document.getElementById('ariaInput');
+            const text = input.value.trim();
+            if (!text || ARIA_STATE.thinking) return;
 
-            const soul = loadedSouls[Math.floor(Math.random() * loadedSouls.length)];
-            const scenes = [
-                `${soul.name} se encontraba en las ruinas de lo que alguna vez fue su hogar. El viento arrastraba cenizas y recuerdos.`,
-                `La taberna estaba llena de murmullos. Cuando ${soul.name} entró, todos guardaron silencio.`,
-                `${soul.name} despertó en un lugar desconocido. Lo último que recordaba era la traición.`,
-                `El pergamino tenía un solo nombre escrito: ${soul.name}. Y una fecha. Mañana.`,
-                `"No esperaba verte aquí", dijo la voz desde las sombras. ${soul.name} reconoció ese tono. Era imposible olvidarlo.`
-            ];
+            input.value = '';
+            addAriaMsg('user', text);
+            setAriaThinking(true);
 
-            const chosen = scenes[Math.floor(Math.random() * scenes.length)];
-            addSuggestionCard(`📜 Escena con ${soul.name}`, chosen);
-            insertInEditor(chosen);
+            setAriaThinking(true);
+
+            // Get story and souls context
+            const storyTitle = document.getElementById('chapterTitle').value;
+            const storyContent = document.getElementById('editor').innerText;
+
+            // Adapt Context based on Mode
+            const isNonFic = ARIA_STATE.writingMode === 'NON_FICTION';
+            const soulLabel = isNonFic ? "PERFIL DEL LECTOR OBJETIVO" : "ALMAS DE PERSONAJES";
+
+            // Build deep souls context (Bio included for Aria's intelligence)
+            const soulsContext = loadedSouls.length > 0
+                ? `${soulLabel}:\n` + loadedSouls.map(s =>
+                    `- ${s.name} (${s.archetype}): ${s.bio.substring(0, 300)}...`
+                ).join('\n')
+                : "No hay perfiles cargados todavía.";
+
+            const systemInstruction = isNonFic
+                ? `Eres Aria, Editora Senior de No-Ficción y Coach Literaria.
+                   OBJETIVO: Ayudar al autor a escribir un libro de alto impacto (autoayuda, negocios, ensayo).
+                   AUDIENCIA: ${soulsContext}
+                   ESTILO: Claro, persuasivo, empático pero directo.
+                   SI TE PIDEN TEXTO: Genera contenido que aporte valor real, rompa objeciones o inspire acción.`
+                : `Eres Aria, la Gran Bibliotecaria de SoulForge.
+                   PERSONALIDAD: Culta, sofisticada, crítica pero con alma de mentora.
+                   HABILIDAD ESPECIAL: Si el autor te pide escribir un diálogo o escena, hazlo directamente usando los datos de las Almas.
+                   CONTEXTO: Ficha de personajes: ${soulsContext}`;
+
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${CONFIG.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: CONFIG.model,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: `${systemInstruction}
+                                OBRA: "${storyTitle}"
+                                MANUSCRITO ACTUAL: ${storyContent.substring(0, 1000)}`
+                            },
+                            ...ARIA_STATE.context,
+                            { role: 'user', content: text }
+                        ],
+                        max_tokens: 600
+                    })
+                });
+
+                const data = await response.json();
+                const reply = data.choices[0].message.content;
+
+                addAriaMsg('ai', reply);
+                speak(reply); // FIX: Aria now speaks
+                ARIA_STATE.context.push({ role: 'user', content: text });
+                ARIA_STATE.context.push({ role: 'assistant', content: reply });
+                if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
+
+            } catch (err) {
+                addAriaMsg('ai', "Mis archivos parecen cubiertos de sombras... Revisa tu API Key.");
+            } finally {
+                setAriaThinking(false);
+            }
         }
 
-        function suggestConflict() {
-            const conflicts = loadedSouls.length >= 2
-                ? [
-                    `${loadedSouls[0].name} descubre que ${loadedSouls[1].name} mintió sobre algo fundamental. La confianza se quiebra.`,
-                    `Un secreto del pasado de ${loadedSouls[0].name} amenaza con destruir todo lo que ${loadedSouls[1].name} ha construido.`,
-                    `${loadedSouls[0].name} y ${loadedSouls[1].name} quieren lo mismo. Solo uno puede conseguirlo.`
-                ]
-                : [
-                    'El protagonista debe elegir entre salvar a quien ama o cumplir su deber.',
-                    'Una traición inesperada revela que el verdadero enemigo siempre estuvo cerca.',
-                    'El héroe descubre que su causa no es tan noble como creía.',
-                    'Un aliado pide algo imposible a cambio de información vital.'
-                ];
+        // === MODES & ORACLE ===
+        function setWritingMode(mode) {
+            ARIA_STATE.writingMode = mode;
+            const isNonFic = mode === 'NON_FICTION';
 
-            const chosen = conflicts[Math.floor(Math.random() * conflicts.length)];
-            addSuggestionCard('⚔️ Conflicto Sugerido', chosen);
-        }
+            // Buttons style
+            document.getElementById('btnModeFic').style.background = isNonFic ? 'transparent' : 'var(--gold)';
+            document.getElementById('btnModeFic').style.color = isNonFic ? 'var(--text-secondary)' : 'black';
+            document.getElementById('btnModeNon').style.background = isNonFic ? 'var(--gold)' : 'transparent';
+            document.getElementById('btnModeNon').style.color = isNonFic ? 'black' : 'var(--text-secondary)';
 
-        function suggestMystery() {
-            const mysteries = [
-                '¿Por qué apareció ese símbolo grabado en la puerta exactamente hoy?',
-                'Las últimas palabras del moribundo no tenían sentido... o eso parecía.',
-                'Nadie recuerda cómo llegó esa carta, pero todos reconocen la letra.',
-                'El mapa señala un lugar que oficialmente no existe.',
-                'Cada noche, a la misma hora, se escucha el mismo sonido. ¿Qué significa?'
-            ];
+            // Labels
+            document.getElementById('soulPanelTitle').textContent = isNonFic ? 'LECTOR OBJETIVO' : 'ALMAS CARGADAS';
+            document.getElementById('soulCount').textContent = isNonFic ? `0 de 1 Perfil` : `0 de 5 Personajes`;
+            document.getElementById('btnLinkSoul').textContent = isNonFic ? '+ DEFINIR LECTOR' : '+ VINCULAR ALMA';
 
-            const chosen = mysteries[Math.floor(Math.random() * mysteries.length)];
-            addSuggestionCard('🔮 Misterio Narrativo', chosen);
-        }
+            // Header Tools Labels (Tooltips)
+            const tools = document.querySelectorAll('.btn-tool-header');
+            if (isNonFic) {
+                tools[0].title = "Abogado del Diablo: Generar objeción del lector"; // Chaos
+                tools[1].title = "Rompe-Mitos: Dato sorprendente o corrección"; // Twist
+                tools[2].title = "Metáfora: Explicar con analogía"; // Sensory
+                tools[3].title = "Testimonio/Cita: Voz de autoridad"; // Dialogue
+                tools[4].title = "Llamada a la Acción: Paso práctico"; // Action
+                tools[5].title = "Empatía: Conectar con el dolor/deseo"; // Emotion
 
-        function suggestDialogue() {
-            if (loadedSouls.length >= 2) {
-                const dialogues = [
-                    `—¿Crees que esto cambiará algo? —preguntó ${loadedSouls[0].name}.\n—Todo —respondió ${loadedSouls[1].name}—. O nada. Depende de nosotros.`,
-                    `—Te advertí que esto pasaría —dijo ${loadedSouls[1].name} sin mirarlo.\n${loadedSouls[0].name} apretó los puños. —Y yo te dije que no me importaba.`,
-                    `—¿Confías en mí? —${loadedSouls[0].name} extendió la mano.\n${loadedSouls[1].name} dudó. Una pausa que duró demasiado.`
-                ];
-                const chosen = dialogues[Math.floor(Math.random() * dialogues.length)];
-                addSuggestionCard('💬 Diálogo Sugerido', chosen);
+                // Tension Label
+                document.querySelector('.header-tension').title = "Nivel de Impacto / Persuasión";
+                document.getElementById('tensionLabel').textContent = "IMPACTO";
             } else {
-                addSuggestionCard('💬 Diálogo', 'Carga al menos 2 personajes para generar diálogos entre ellos.');
+                tools[0].title = "Dado de Caos: Evento aleatorio";
+                tools[1].title = "Giro de Trama";
+                tools[2].title = "Detalle Sensorial";
+                tools[3].title = "Diálogo";
+                tools[4].title = "Acción";
+                tools[5].title = "Emoción";
+
+                document.querySelector('.header-tension').title = "Nivel de Tensión Narrativa";
+                document.getElementById('tensionLabel').textContent = "NEUTRO";
             }
         }
 
-        function addSuggestionCard(type, text) {
-            const container = document.getElementById('oracleSuggestions');
-            const card = document.createElement('div');
-            card.className = 'suggestion-card';
-            card.innerHTML = `
-                <div class="suggestion-type">${type}</div>
-                <div class="suggestion-text">${text}</div>
-            `;
-            card.style.cursor = 'pointer';
-            card.onclick = () => insertInEditor(text);
-            container.prepend(card);
+        async function suggestChaos() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('CHAOS_NF', "Genera una objeción escéptica que tendría el lector ahora mismo ('¿Y si no tengo dinero?', '¿Y si fallo?').");
+                if (res) addAriaMsg('ai', `🤨 OBJECIÓN: ${res}`);
+            } else {
+                const res = await callAriaOracle('CHAOS', "Genera un evento aleatorio, caótico o disruptivo (un objeto se rompe, alguien llega, un sonido extraño).");
+                if (res) addAriaMsg('ai', `🎲 CAOS: ${res}`);
+            }
+        }
 
-            // Update tension slightly
-            const currentTension = parseInt(document.getElementById('tensionValue').textContent) || 15;
-            const newTension = Math.min(100, currentTension + Math.floor(Math.random() * 10) + 5);
-            document.getElementById('tensionMeter').style.width = newTension + '%';
-            document.getElementById('tensionValue').textContent = newTension + '%';
-            document.querySelector('.tension-label').textContent =
-                newTension < 40 ? 'CALMA' : newTension < 70 ? 'TENSIÓN' : 'CLÍMAX';
+        async function suggestSensory() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('SENSORY_NF', "Crea una metáfora o analogía brillante para explicar el concepto actual.");
+                if (res) addAriaMsg('ai', res);
+            } else {
+                const res = await callAriaOracle('SENSORY', "Describe el entorno usando uno de los 5 sentidos. Sé evocador.");
+                if (res) addAriaMsg('ai', res);
+            }
+        }
+
+        async function suggestTwist() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('TWIST_NF', "Sugiere un dato contraintuitivo o desmiente un mito común sobre este tema.");
+                if (res) addAriaMsg('ai', res);
+            } else {
+                const res = await callAriaOracle('TWIST', "Introduce un giro argumental inesperado que complique la situación actual.");
+                if (res) addAriaMsg('ai', res);
+            }
+        }
+
+        async function suggestDialogue() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('DIALOGUE_NF', "Genera una cita inspiradora o un breve testimonio (ficticio o real) que apoye este punto.");
+                if (res) addAriaMsg('ai', res);
+            } else {
+                const souls = loadedSouls.map(s => s.name).join(' y ');
+                const res = await callAriaOracle('DIALOGUE', `Genera un diálogo intenso y revelador entre ${souls || 'los personajes'}.`);
+                if (res) addAriaMsg('ai', res);
+            }
+        }
+
+        async function suggestAction() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('ACTION_NF', "Redacta una 'Llamada a la Acción' clara y directa para el lector.");
+                if (res) addAriaMsg('ai', res);
+            } else {
+                const res = await callAriaOracle('ACTION', "Eleva el ritmo con una escena de acción, persecución o peligro físico.");
+                if (res) addAriaMsg('ai', res);
+            }
+        }
+
+        async function suggestEmotion() {
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                const res = await callAriaOracle('EMOTION_NF', "Escribe una frase empática que valide la frustración o el deseo del lector ('Sé que es difícil...').");
+                if (res) addAriaMsg('ai', res);
+            } else {
+                const res = await callAriaOracle('EMOTION', "Focaliza en el sentimiento interno de un personaje ante lo que está ocurriendo.");
+                if (res) addAriaMsg('ai', res);
+            }
+        }
+
+        async function callAriaOracle(type, promptText) {
+            if (!CONFIG.apiKey) return alert("Se requiere API Key de Groq configurada.");
+            setAriaThinking(true);
+
+            const storyTitle = document.getElementById('chapterTitle').value;
+            const lastPara = getLastParagraph();
+            const soulsContext = loadedSouls.map(s => `${s.name} (${s.archetype})`).join(', ');
+
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${CONFIG.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: CONFIG.model,
+                        messages: [{
+                            role: 'system',
+                            content: `Eres Aria, la Mentora de Almas. Genera contenido literario de alta calidad.
+                            CAPÍTULO: ${storyTitle}. 
+                            PERSONAJES ACTUALES: ${soulsContext || 'No especificados'}.
+                            CONTEXTO INMEDIATO (Último párrafo): "${lastPara}"
+                            REGLA CRÍTICA: Responde ÚNICAMENTE con el texto literario (diálogo, acción o descripción). No incluyas etiquetas como "Giro Sugerido" o "Respuesta:". Devuelve solo contenido que pueda pegarse directamente al libro.`
+                        }, { role: 'user', content: promptText }],
+                        temperature: 0.9
+                    })
+                });
+                const data = await response.json();
+                const reply = data.choices[0].message.content;
+                speak(reply); // FIX: Oracle also speaks
+                return reply;
+            } catch (e) {
+                return "Las páginas del destino están borrosas. Inténtalo de nuevo.";
+            } finally {
+                setAriaThinking(false);
+            }
+        }
+
+        async function speak(text) {
+            if (ARIA_STATE.speaking || CONFIG.mute) return;
+            ARIA_STATE.speaking = true;
+            try {
+                await fetch(`${CONFIG.ttsHost}/speak`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+            } catch (e) { console.warn("TTS Connection failed"); }
+            finally { ARIA_STATE.speaking = false; }
+        }
+
+        function addAriaMsg(role, text) {
+            const box = document.getElementById('ariaMessages');
+            const div = document.createElement('div');
+            div.className = `aria-msg ${role}`;
+
+            const textSpan = document.createElement('span');
+            textSpan.textContent = text;
+            div.appendChild(textSpan);
+
+            // If it's AI and looks like narrative/dialogue, add a push button
+            if (role === 'ai' && (text.length > 40 || text.includes('"') || text.includes(':'))) {
+                const btn = document.createElement('button');
+                btn.className = 'push-btn';
+                btn.innerHTML = '🖋️ Plasmar en Libro';
+                btn.onclick = () => insertInEditor(text);
+                div.appendChild(btn);
+            }
+
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function setAriaThinking(val) {
+            ARIA_STATE.thinking = val;
+            const statusText = document.getElementById('aiStatus');
+            if (val) {
+                statusText.textContent = "Aria está pensando...";
+                statusText.style.color = "var(--gold)";
+            } else {
+                statusText.textContent = "Sistema en Línea";
+                statusText.style.color = "var(--text-dim)";
+            }
+        }
+
+        function getLastParagraph() {
+            const editor = document.getElementById('editor');
+            // Use innerText to get text content, split by double newlines or just take the last chunk
+            const text = editor.innerText.trim();
+            if (!text) return "";
+            const paragraphs = text.split(/\n\s*\n/);
+            return paragraphs[paragraphs.length - 1].substring(0, 500);
         }
 
         function insertInEditor(text) {
             const editor = document.getElementById('editor');
+            // Remove ghost suggestion if present
+            removeGhostSuggestion();
+
             const p = document.createElement('p');
-            p.innerHTML = `<em style="color:#5d4037">${text}</em>`;
-            editor.appendChild(p);
+            p.innerText = text;
+            editor.appendChild(p); // Append to end of editor
+
+            // Normalize HTML structure if needed to ensure paragraphs
+            if (editor.innerHTML.trim() === "") editor.innerHTML = `<p>${text}</p>`;
+
             p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // === NEW FEATURES IMPLEMENTATION ===
+
+        function toggleGhostMode() {
+            ARIA_STATE.ghostMode = document.getElementById('ghostModeToggle').checked;
+        }
+
+        function checkIdle() {
+            const idleTime = Date.now() - ARIA_STATE.lastTypingTime;
+
+            // Ghost Writer (5s idle)
+            if (ARIA_STATE.ghostMode && idleTime > 5000 && idleTime < 6000 && !ARIA_STATE.thinking) {
+                triggerGhostWriter();
+            }
+
+            // Character Interjection (30s idle)
+            if (idleTime > 30000 && idleTime < 31000 && loadedSouls.length > 0) {
+                triggerCharacterInterjection();
+            }
+        }
+
+        // Tension / Impact Logic
+        function analyzeTension() {
+            const text = document.getElementById('editor').innerText;
+            if (text.length < 50) return;
+
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+            const lastSentences = sentences.slice(-5);
+            if (lastSentences.length === 0) return;
+
+            let tension = 0;
+
+            if (ARIA_STATE.writingMode === 'NON_FICTION') {
+                // IMPACT MODE logic
+                // High Impact = Questions (?), Direct Address (tú/usted), Short lists
+                let questions = 0;
+                let directAddress = 0;
+
+                lastSentences.forEach(s => {
+                    if (s.includes('?')) questions++;
+                    if (/\b(tú|usted|ti|tu|su)\b/i.test(s)) directAddress++;
+                });
+
+                // 20 points per question, 10 per direct address
+                tension = Math.min(100, (questions * 25) + (directAddress * 15));
+                // Also boost if sentences are reasonably short (punchy)
+                const avgLen = lastSentences.join(' ').split(' ').length / 5;
+                if (avgLen < 15) tension += 20;
+                if (tension > 100) tension = 100;
+
+                updateTensionUI(Math.round(tension), 'IMPACTO');
+
+            } else {
+                // FICTION MODE logic (Tension)
+                let totalWords = 0;
+                let totalExclamations = 0;
+
+                lastSentences.forEach(s => {
+                    totalWords += s.split(' ').length;
+                    if (s.includes('!')) totalExclamations++;
+                });
+
+                const avgLength = totalWords / lastSentences.length;
+                tension = Math.max(0, Math.min(100, (20 - avgLength) * 5 + (totalExclamations * 10)));
+                updateTensionUI(Math.round(tension), 'TENSIÓN');
+            }
+        }
+
+        function updateTensionUI(val, type = 'TENSIÓN') {
+            const fill = document.getElementById('tensionMeter');
+            const label = document.getElementById('tensionLabel');
+            const num = document.getElementById('tensionValue');
+
+            fill.style.width = val + '%';
+            num.textContent = val + '%';
+
+            if (type === 'IMPACTO') {
+                // Blue/Gold gradient for impact/value
+                if (val < 30) {
+                    fill.style.background = '#90caf9'; // Pale blue
+                    label.textContent = 'PLANO'; // Flat
+                } else if (val < 70) {
+                    fill.style.background = '#42a5f5'; // Blue
+                    label.textContent = 'VALOR';
+                } else {
+                    fill.style.background = 'linear-gradient(90deg, #42a5f5, #ffd700)'; // Blue to Gold
+                    label.textContent = 'CLARIDAD';
+                }
+            } else {
+                // Red/Green for Tension
+                if (val < 30) {
+                    fill.style.background = '#81c784'; // Green
+                    label.textContent = 'CALMA';
+                } else if (val < 70) {
+                    fill.style.background = '#ffd54f'; // Yellow
+                    label.textContent = 'TENSIÓN';
+                } else {
+                    fill.style.background = '#e57373'; // Red
+                    label.textContent = 'CLÍMAX';
+                }
+            }
+        }
+
+
+        // Ghost Writer Logic
+        async function triggerGhostWriter() {
+            const lastPara = getLastParagraph();
+            if (!lastPara || lastPara.length < 20) return;
+
+            // Don't use main Aria context to avoid spamming chat, verify key first
+            if (!CONFIG.apiKey) return;
+
+            // Create a temporary "ghost" span in editor
+            const editor = document.getElementById('editor');
+            let ghostSpan = document.getElementById('ghostSpan');
+            if (ghostSpan) return; // Already exists
+
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: CONFIG.model,
+                        messages: [{
+                            role: 'system',
+                            content: `Completa la frase del usuario. SOLO el texto de continuación. Máximo 10 palabras. Estilo literario.`
+                        }, { role: 'user', content: lastPara }],
+                        max_tokens: 20
+                    })
+                });
+                const data = await response.json();
+                let suggestion = data.choices[0].message.content;
+
+                // Append as ghost text
+                ghostSpan = document.createElement('span');
+                ghostSpan.id = 'ghostSpan';
+                ghostSpan.className = 'ghost-text';
+                ghostSpan.innerText = " " + suggestion + " (Tab)";
+                ghostSpan.contentEditable = "false";
+
+                // Append to last paragraph if possible
+                const paragraphs = editor.querySelectorAll('p');
+                if (paragraphs.length > 0) {
+                    paragraphs[paragraphs.length - 1].appendChild(ghostSpan);
+                } else {
+                    editor.appendChild(ghostSpan);
+                }
+
+                // Add Tab listener
+                editor.addEventListener('keydown', handleGhostTab);
+
+            } catch (e) { console.log("Ghost failed"); }
+        }
+
+        function handleGhostTab(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const ghost = document.getElementById('ghostSpan');
+                if (ghost) {
+                    const text = ghost.innerText.replace(" (Tab)", "");
+                    ghost.remove();
+                    document.execCommand('insertText', false, text);
+                    removeGhostSuggestion();
+                }
+            }
+        }
+
+        function removeGhostSuggestion() {
+            const ghost = document.getElementById('ghostSpan');
+            if (ghost) {
+                ghost.remove();
+                document.getElementById('editor').removeEventListener('keydown', handleGhostTab);
+            }
+        }
+
+        // Character Interjection Logic
+        async function triggerCharacterInterjection() {
+            const soul = loadedSouls[Math.floor(Math.random() * loadedSouls.length)];
+            const lastPara = getLastParagraph();
+
+            if (!CONFIG.apiKey) return;
+
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: CONFIG.model,
+                        messages: [{
+                            role: 'system',
+                            content: `Eres ${soul.name}. ${soul.archetype}. Contexto: "${lastPara}".
+                            REACCIÓN CORTA (máx 15 palabras) a lo que está pasando o al silencio del autor.
+                            Habla en primera persona, como si estuvieras vivo.`
+                        }],
+                        max_tokens: 40
+                    })
+                });
+                const data = await response.json();
+                const comment = data.choices[0].message.content;
+
+                showSoulToast(soul.name, comment);
+                speak(comment);
+
+            } catch (e) { }
+        }
+
+        function showSoulToast(name, text) {
+            const toast = document.getElementById('soulToast');
+            toast.innerHTML = `<strong>${name}</strong>: "${text}"`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 6000);
         }
 
         function romanize(num) {
@@ -1264,25 +2232,217 @@
                 if (file.name.endsWith('.html')) {
                     const reader = new FileReader();
                     reader.onload = e => {
-                        const nameMatch = e.target.result.match(/<h1[^>]*>([^<]+)<\/h1>/) || ["", file.name];
-                        addSoulToList(nameMatch[1].trim(), "Personaje");
+                        const content = e.target.result;
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(content, 'text/html');
+
+                        // 1. Get Name (H1)
+                        const name = (doc.querySelector('h1')?.textContent || file.name).trim();
+
+                        // 2. Get Archetype (look for .archetype or first distinctive text)
+                        const archetype = (doc.querySelector('.archetype')?.textContent ||
+                            doc.querySelector('.hero, .tag, span')?.textContent ||
+                            "Personalizado").trim().toUpperCase();
+
+                        // 3. Extract Bio Body (Greedy but smart)
+                        let bio = "";
+                        const bioContainer = doc.querySelector('.bio, .biography, .content, body');
+
+                        if (bioContainer) {
+                            // If it's the body, let's filter out the H1 and navigation
+                            const clone = bioContainer.cloneNode(true);
+                            clone.querySelectorAll('h1, script, style, nav').forEach(el => el.remove());
+                            bio = clone.innerText.trim();
+                        }
+
+                        // 4. Extract Stats/Details
+                        const stats = [];
+                        doc.querySelectorAll('span, li, p').forEach(el => {
+                            const txt = el.textContent.trim();
+                            if (txt.includes(':') && txt.length < 100) stats.push(txt);
+                            else if (el.classList.contains('stat')) stats.push(txt);
+                        });
+
+                        addSoulToList({ name, archetype, bio: bio || "Biografía extraída del archivo.", stats: stats.slice(0, 8) });
                     };
                     reader.readAsText(file);
                 }
             }
         }
 
-        function addSoulToList(name, archetype) {
+        function addSoulToList(soul) {
             const container = document.getElementById('soulList');
             const card = document.createElement('div');
             card.className = 'soul-card';
+
+            // Random ID for removing
+            const soulId = Date.now() + Math.random();
+            soul.id = soulId;
+
             card.innerHTML = `
-                <div class="soul-name">${name}</div>
-                <div class="soul-archetype">${archetype}</div>
+                <div class="soul-info" onclick="showSoulModalById('${soulId}')">
+                    <div class="soul-name">${soul.name}</div>
+                    <div class="soul-archetype">${soul.archetype}</div>
+                </div>
+                <div class="soul-remove" onclick="removeSoul('${soulId}', this)">&times;</div>
             `;
+
             container.appendChild(card);
-            loadedSouls.push({ name, archetype });
+            loadedSouls.push(soul);
+            updateSoulCount();
+        }
+
+        function removeSoul(id, btn) {
+            loadedSouls = loadedSouls.filter(s => s.id != id);
+            btn.closest('.soul-card').remove();
+            updateSoulCount();
+        }
+
+        function updateSoulCount() {
             document.getElementById('soulCount').textContent = `${loadedSouls.length} de 5 personajes`;
+        }
+
+        function showSoulModalById(id) {
+            const soul = loadedSouls.find(s => s.id == id);
+            if (soul) showSoulModal(soul);
+        }
+
+        function showSoulModal(soul) {
+            const modal = document.getElementById('soulModal');
+            const details = document.getElementById('soulDetails');
+            details.innerHTML = `
+                <h2>${soul.name}</h2>
+                <div style="color:var(--gold-dim); margin-bottom:10px; font-size: 0.8rem;">ARCHIVO: ${soul.archetype}</div>
+                <p>${soul.bio}</p>
+                <div class="stat-grid">
+                    ${soul.stats.map(s => `<div>• ${s}</div>`).join('')}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function closeSoulModal() {
+            document.getElementById('soulModal').style.display = 'none';
+        }
+        // === AUDIO & ATMOSPHERE (Refactored) ===
+        const AUDIO_STATE = {
+            current: null
+        };
+
+        const FIRE_SOURCES = [
+            "https://actions.google.com/sounds/v1/ambiences/fire.ogg",
+            "https://upload.wikimedia.org/wikipedia/commons/d/d7/Fire_burning.ogg",
+            "https://freesound.org/data/previews/173/173874_2181711-lq.mp3"
+        ];
+        let currentFireIndex = 0;
+
+        function handleFireError(audioEl) {
+            currentFireIndex++;
+            if (currentFireIndex < FIRE_SOURCES.length) {
+                console.warn(`Fire source failed, trying source ${currentFireIndex}: ${FIRE_SOURCES[currentFireIndex]}`);
+                audioEl.src = FIRE_SOURCES[currentFireIndex];
+                audioEl.load();
+            } else {
+                console.error("All fire audio sources failed.");
+                addAriaMsg('system', '⚠️ Fuego: Todas las fuentes fallaron.');
+            }
+        }
+
+        function playAmbience(type) {
+            const id = `sfx-${type}-new`;
+            const el = document.getElementById(id);
+            const btn = document.querySelector(`button[onclick="playAmbience('${type}')"]`);
+
+            if (!el) return console.error("Audio element not found:", id);
+
+            // Stop others
+            ['rain', 'fire', 'tavern'].forEach(t => {
+                if (t !== type) {
+                    const other = document.getElementById(`sfx-${t}-new`);
+                    const otherBtn = document.querySelector(`button[onclick="playAmbience('${t}')"]`);
+                    if (other) {
+                        other.pause();
+                        if (otherBtn) otherBtn.classList.remove('active');
+                    }
+                }
+            });
+
+            // Toggle Current
+            if (el.paused) {
+                const playPromise = el.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        el.volume = 0.5;
+                        if (btn) btn.classList.add('active');
+                        AUDIO_STATE.current = type;
+                        addAriaMsg('user', `🎵 Ambiente activado: ${type.toUpperCase()}`);
+                    }).catch(error => {
+                        console.error("Auto-play prevented:", error);
+                        addAriaMsg('system', "⚠️ Error: Interactúa con la página para activar audio.");
+                    });
+                }
+            } else {
+                el.pause();
+                if (btn) btn.classList.remove('active');
+                AUDIO_STATE.current = null;
+            }
+        }
+
+        function setGlobalVolume(val) {
+            ['rain', 'fire', 'tavern'].forEach(t => {
+                const el = document.getElementById(`sfx-${t}-new`);
+                if (el) el.volume = val;
+            });
+        }
+
+        function setGlobalVolume(val) {
+            ['rain', 'night', 'tavern'].forEach(t => {
+                const el = document.getElementById(`sfx-${t}`);
+                if (el) el.volume = val;
+            });
+        }
+
+        function updateGlow(tensionVal) {
+            const glowBase = document.getElementById('fire-glow-base');
+            const glowFlicker = document.getElementById('fire-glow-flicker');
+
+            // Fallback for safety if elements missing
+            if (!glowBase || !glowFlicker) return;
+
+            // Base opacity 0.3 + up to 0.5 based on tension
+            const opacity = 0.3 + (tensionVal / 200);
+
+            // Color shift: from Orange (Low Tension) to Red (High Tension)
+            const red = 255;
+            const green = Math.max(0, 100 - tensionVal); // Green drops as tension rises
+
+            glowBase.style.background = `radial-gradient(ellipse at center bottom, rgba(${red}, ${green}, 0, 0.4) 0%, transparent 70%)`;
+            glowBase.style.opacity = opacity;
+
+            glowFlicker.style.opacity = opacity + 0.1;
+        }
+
+        // Hook into SuggestChaos to flare the light
+        // Note: We need to redefine it or wrap it carefully since it's defined above
+        // We will just wrap it here as we are at the end of the script
+        const _originalSuggestChaos = suggestChaos;
+        suggestChaos = async function () {
+            // Visual Flare
+            const glowFlicker = document.getElementById('fire-glow-flicker');
+            if (glowFlicker) {
+                glowFlicker.classList.remove('glow-chaos');
+                void glowFlicker.offsetWidth; // trigger reflow
+                glowFlicker.classList.add('glow-chaos');
+            }
+            // Call original
+            await _originalSuggestChaos();
+        }
+
+        // Hook into updateTensionUI
+        const _originalUpdateTension = updateTensionUI;
+        updateTensionUI = function (val, type) {
+            _originalUpdateTension(val, type);
+            updateGlow(val);
         }
     </script>
 
