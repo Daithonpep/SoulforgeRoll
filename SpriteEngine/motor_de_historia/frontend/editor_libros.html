@@ -1741,12 +1741,21 @@
 
     <!-- JavaScript -->
     <script>
+        // === ENVIRONMENT DETECTION ===
+        const IS_LOCAL = window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.hostname === '';
+
+        const CLOUD_API = 'https://soulforge.up.railway.app';
+        const LOCAL_API = 'http://localhost:8080';
+        const LOCAL_TTS = 'http://localhost:3456';
+
         // === ARIA CORE CONFIG ===
         const CONFIG = {
             name: 'Aria',
             model: 'llama-3.1-8b-instant',
-            apiEndpoint: 'https://soulforge.up.railway.app/api/chat',
-            ttsHost: 'https://soulforge.up.railway.app/speak',
+            apiEndpoint: (IS_LOCAL ? LOCAL_API : CLOUD_API) + '/api/chat',
+            ttsHost: (IS_LOCAL ? LOCAL_TTS : CLOUD_API),
             mute: false,
             usageLimit: 5 // Daily limit for Novatos
         };
@@ -2151,13 +2160,31 @@
             if (ARIA_STATE.speaking || CONFIG.mute) return;
             ARIA_STATE.speaking = true;
             try {
-                await fetch(`${CONFIG.ttsHost}/speak`, {
+                const response = await fetch(`${CONFIG.ttsHost}/speak`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: text })
                 });
-            } catch (e) { console.warn("TTS Connection failed"); }
-            finally { ARIA_STATE.speaking = false; }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.url) {
+                        const audio = new Audio(data.url);
+                        audio.onended = () => { ARIA_STATE.speaking = false; };
+                        audio.onerror = () => { ARIA_STATE.speaking = false; };
+                        await audio.play();
+                        return;
+                    }
+                }
+                throw new Error("TTS Server response invalid");
+            } catch (e) {
+                console.warn("TTS failed, using native fallback:", e);
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.onend = () => { ARIA_STATE.speaking = false; };
+                utterance.onerror = () => { ARIA_STATE.speaking = false; };
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
         function addAriaMsg(role, text) {

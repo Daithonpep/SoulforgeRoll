@@ -36,7 +36,7 @@ struct ConstellationQuery {
 
 #[derive(Debug, Deserialize)]
 struct AriaRequest {
-    messages: Vec<Value>,
+    messages: Vec<serde_json::Value>,
     system_prompt: Option<String>,
 }
 
