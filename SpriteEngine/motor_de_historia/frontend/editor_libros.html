@@ -1745,8 +1745,8 @@
         const CONFIG = {
             name: 'Aria',
             model: 'llama-3.1-8b-instant',
-            apiEndpoint: '/api/v1/aria/chat',
-            ttsHost: 'http://localhost:3456',
+            apiEndpoint: 'https://soulforge.up.railway.app/api/v1/aria/chat',
+            ttsHost: 'https://soulforge.up.railway.app/speak',
             mute: false,
             usageLimit: 5 // Daily limit for Novatos
         };
@@ -1912,6 +1912,14 @@
         function formatText(command) {
             document.execCommand(command, false, null);
             document.getElementById('editor').focus();
+        }
+
+        function getLastParagraph() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText.trim();
+            if (!text) return "";
+            const lines = text.split('\n').filter(l => l.trim() !== "");
+            return lines[lines.length - 1] || "";
         }
 
         function getDailyUsage() {
@@ -2180,14 +2188,7 @@
             }
         }
 
-        function getLastParagraph() {
-            const editor = document.getElementById('editor');
-            // Use innerText to get text content, split by double newlines or just take the last chunk
-            const text = editor.innerText.trim();
-            if (!text) return "";
-            const paragraphs = text.split(/\n\s*\n/);
-            return paragraphs[paragraphs.length - 1].substring(0, 500);
-        }
+
 
         function insertInEditor(text) {
             const editor = document.getElementById('editor');
@@ -2312,29 +2313,24 @@
             const lastPara = getLastParagraph();
             if (!lastPara || lastPara.length < 20) return;
 
-            // Don't use main Aria context to avoid spamming chat, verify key first
-            if (!CONFIG.apiKey) return;
-
             // Create a temporary "ghost" span in editor
             const editor = document.getElementById('editor');
             let ghostSpan = document.getElementById('ghostSpan');
             if (ghostSpan) return; // Already exists
 
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const response = await fetch(CONFIG.apiEndpoint, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}`, 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        model: CONFIG.model,
-                        messages: [{
-                            role: 'system',
-                            content: `Completa la frase del usuario. SOLO el texto de continuación. Máximo 10 palabras. Estilo literario.`
-                        }, { role: 'user', content: lastPara }],
-                        max_tokens: 20
+                        system_prompt: "Completa la frase del usuario. SOLO el texto de continuación literaria. Máximo 10 palabras.",
+                        messages: [{ role: 'user', content: lastPara }]
                     })
                 });
                 const data = await response.json();
-                let suggestion = data.choices[0].message.content;
+                let suggestion = data.reply;
+
+                if (!suggestion) return;
 
                 // Append as ghost text
                 ghostSpan = document.createElement('span');
@@ -2383,28 +2379,22 @@
             const soul = loadedSouls[Math.floor(Math.random() * loadedSouls.length)];
             const lastPara = getLastParagraph();
 
-            if (!CONFIG.apiKey) return;
-
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const response = await fetch(CONFIG.apiEndpoint, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}`, 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        model: CONFIG.model,
-                        messages: [{
-                            role: 'system',
-                            content: `Eres ${soul.name}. ${soul.archetype}. Contexto: "${lastPara}".
-                            REACCIÓN CORTA (máx 15 palabras) a lo que está pasando o al silencio del autor.
-                            Habla en primera persona, como si estuvieras vivo.`
-                        }],
-                        max_tokens: 40
+                        system_prompt: `Eres ${soul.name}. ${soul.archetype}. REACCIÓN CORTA (clásica de personaje, máx 15 palabras) a lo que está pasando: "${lastPara}". Habla en primera persona.`,
+                        messages: []
                     })
                 });
                 const data = await response.json();
-                const comment = data.choices[0].message.content;
+                const comment = data.reply;
 
-                showSoulToast(soul.name, comment);
-                speak(comment);
+                if (comment) {
+                    showSoulToast(soul.name, comment);
+                    speak(comment);
+                }
 
             } catch (e) { }
         }
