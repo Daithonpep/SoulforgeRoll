@@ -1742,9 +1742,7 @@
     <!-- JavaScript -->
     <script>
         // === ENVIRONMENT DETECTION ===
-        const IS_LOCAL = window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1' ||
-            window.location.hostname === '';
+        const USE_LOCAL_BACKEND = false; // Set to true only if running Rust backend on localhost
 
         const CLOUD_API = 'https://soulforge.up.railway.app';
         const LOCAL_API = 'http://localhost:8080';
@@ -1754,8 +1752,8 @@
         const CONFIG = {
             name: 'Aria',
             model: 'llama-3.1-8b-instant',
-            apiEndpoint: (IS_LOCAL ? LOCAL_API : CLOUD_API) + '/api/chat',
-            ttsHost: (IS_LOCAL ? LOCAL_TTS : CLOUD_API),
+            apiEndpoint: (USE_LOCAL_BACKEND ? LOCAL_API : CLOUD_API) + '/api/chat', // Default to Cloud
+            ttsHost: (USE_LOCAL_BACKEND ? LOCAL_TTS : CLOUD_API),
             mute: false,
             usageLimit: 5 // Daily limit for Novatos
         };
