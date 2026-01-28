@@ -80,8 +80,14 @@
         /* ========== HEADER ========== */
         .forge-header {
             height: 56px;
-            background: linear-gradient(180deg, var(--panel-mid) 0%, var(--panel-dark) 100%);
-            border-bottom: 1px solid var(--border-subtle);
+            /* Wood Texture */
+            background-color: #1a110a;
+            background-image:
+                linear-gradient(180deg, rgba(30, 20, 10, 0.9) 0%, rgba(10, 5, 0, 0.95) 100%),
+                repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(0, 0, 0, 0.3) 4px, transparent 5px),
+                repeating-linear-gradient(45deg, rgba(40, 25, 15, 0.3) 0px, rgba(40, 25, 15, 0.3) 30px, rgba(20, 12, 5, 0.4) 60px);
+            border-bottom: 3px solid #2a1a10;
+            box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -90,14 +96,33 @@
             z-index: 100;
         }
 
+        /* Leather Stitching Effect on Header Bottom */
         .forge-header::after {
             content: '';
             position: absolute;
-            bottom: -1px;
+            bottom: -3px;
             left: 0;
             right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+            height: 3px;
+            background:
+                repeating-linear-gradient(90deg,
+                    transparent 0px, transparent 8px,
+                    var(--gold-dim) 9px, var(--gold-dim) 11px,
+                    transparent 12px, transparent 20px),
+                linear-gradient(90deg, #3d2817, #2a1a10, #3d2817);
+        }
+
+        /* Gold Metal Studs */
+        .forge-header::before {
+            content: '◉';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 0.6rem;
+            text-shadow: 0 0 4px var(--gold-dim), 0 1px 2px rgba(0, 0, 0, 0.8);
+            opacity: 0.7;
         }
 
         .brand {
@@ -376,11 +401,45 @@
 
         /* ========== LEFT PANEL: SOULS ========== */
         .panel-souls {
-            background: var(--panel-dark);
-            border-right: 1px solid var(--border-subtle);
+            /* Leather Texture Base */
+            background-color: #1a1210;
+            background-image:
+                radial-gradient(ellipse at 30% 30%, rgba(60, 40, 25, 0.3) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+            border-right: 4px solid #3d2817;
+            box-shadow: inset -3px 0 8px rgba(0, 0, 0, 0.5), 2px 0 4px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Leather Stitching on Right Edge */
+        .panel-souls::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background:
+                repeating-linear-gradient(180deg,
+                    transparent 0px, transparent 6px,
+                    var(--gold-dim) 7px, var(--gold-dim) 9px,
+                    transparent 10px, transparent 16px);
+            pointer-events: none;
+        }
+
+        /* Gold Corner Stud */
+        .panel-souls::before {
+            content: '◉';
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            color: var(--gold);
+            font-size: 0.5rem;
+            text-shadow: 0 0 3px var(--gold-dim);
+            z-index: 10;
         }
 
         .panel-header {
@@ -884,12 +943,46 @@
 
         /* ========== RIGHT PANEL: ORACLE ========== */
         .panel-oracle {
-            background: var(--panel-dark);
-            border-left: 1px solid var(--border-subtle);
+            /* Leather Texture Base - Matching Left Panel */
+            background-color: #1a1210;
+            background-image:
+                radial-gradient(ellipse at 70% 30%, rgba(60, 40, 25, 0.3) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+            border-left: 4px solid #3d2817;
+            box-shadow: inset 3px 0 8px rgba(0, 0, 0, 0.5), -2px 0 4px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Leather Stitching on Left Edge */
+        .panel-oracle::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background:
+                repeating-linear-gradient(180deg,
+                    transparent 0px, transparent 6px,
+                    var(--gold-dim) 7px, var(--gold-dim) 9px,
+                    transparent 10px, transparent 16px);
+            pointer-events: none;
+        }
+
+        /* Gold Corner Stud */
+        .panel-oracle::before {
+            content: '◉';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            color: var(--gold);
+            font-size: 0.5rem;
+            text-shadow: 0 0 3px var(--gold-dim);
+            z-index: 10;
         }
 
         .oracle-header {
