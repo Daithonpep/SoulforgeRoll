@@ -1990,10 +1990,8 @@
                 : "No hay perfiles cargados todavía.";
 
             const systemInstruction = isNonFic
-                ? `Eres Daithon, Editor Senior de No-Ficción y Coach Literario. OBJETIVO: Libro de alto impacto. AUDIENCIA: ${soulsContext}.
-                   INSTRUCCIÓN: Genera el contenido solicitado. OBLIGATORIO: Al terminar el texto, añade una nueva línea con este formato exacto: 'Voz: [tu opinión o consejo en menos de 10 palabras]'.`
-                : `Eres Daithon, el Gran Bibliotecario de SoulForge. CONTEXTO: Ficha de personajes: ${soulsContext}.
-                   INSTRUCCIÓN: Genera el texto literario solicitado. OBLIGATORIO: Al terminar el texto, añade una nueva línea con este formato exacto: 'Voz: [tu reacción como espectador sabio en menos de 10 palabras]'.`;
+                ? `Eres Daithon, Coach de No-Ficción. OBJETIVO: Libro de impacto. AUDIENCIA: ${soulsContext}. INSTRUCCIÓN: Sé conciso y directo (máx 120 palabras).`
+                : `Eres Daithon, el Bibliotecario. CONTEXTO: Personajes: ${soulsContext}. INSTRUCCIÓN: Sé sugerente y breve (máx 100 palabras).`;
 
             try {
                 const reply = await fetchFromGroq(
@@ -2002,16 +2000,11 @@
                 );
 
                 if (reply) {
-                    const parts = reply.split('Voz:');
-                    const cleanText = parts[0].trim();
-                    const voiceText = parts[1] ? parts[1].trim() : "He registrado tus palabras en los anales del tiempo.";
-
                     incrementUsage();
-                    addAriaMsg('ai', cleanText);
-                    speak(voiceText);
+                    addAriaMsg('ai', reply);
 
                     ARIA_STATE.context.push({ role: 'user', content: text });
-                    ARIA_STATE.context.push({ role: 'assistant', content: cleanText });
+                    ARIA_STATE.context.push({ role: 'assistant', content: reply });
                     if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
             } catch (err) {
@@ -2141,7 +2134,7 @@
                     model: CONFIG.model,
                     messages: allMessages,
                     temperature: 0.7,
-                    max_tokens: 300
+                    max_tokens: 180
                 })
             });
 
@@ -2162,24 +2155,17 @@
             const lastPara = getLastParagraph();
             const soulsContext = loadedSouls.map(s => `${s.name} (${s.archetype})`).join(', ');
 
-            const systemPrompt = `Eres Daithon, el Mentor de Almas. Genera la sugerencia literaria solicitada.
-                                   OBLIGATORIO: Al final del texto, añade: 'Voz: [reacción corta y sabia sobre esto]'.
-                                   CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
+            const systemPrompt = `Eres Daithon, el Mentor. Sé breve y literario. CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
 
             try {
                 const reply = await fetchFromGroq([{ role: 'user', content: promptText }], systemPrompt);
 
                 if (reply) {
-                    const parts = reply.split('Voz:');
-                    const cleanText = parts[0].trim();
-                    const voiceText = parts[1] ? parts[1].trim() : "Tus líneas cobran vida bajo mi atenta mirada.";
-
                     incrementUsage();
-                    addAriaMsg('ai', cleanText);
-                    speak(voiceText);
+                    addAriaMsg('ai', reply);
 
                     ARIA_STATE.context.push({ role: 'user', content: promptText });
-                    ARIA_STATE.context.push({ role: 'assistant', content: cleanText });
+                    ARIA_STATE.context.push({ role: 'assistant', content: reply });
                     if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
             } catch (err) {
