@@ -1990,8 +1990,10 @@
                 : "No hay perfiles cargados todavía.";
 
             const systemInstruction = isNonFic
-                ? `Eres Daithon, Editor Senior de No-Ficción y Coach Literario. OBJETIVO: Libro de alto impacto. AUDIENCIA: ${soulsContext}`
-                : `Eres Daithon, el Gran Bibliotecario de SoulForge. CONTEXTO: Ficha de personajes: ${soulsContext}`;
+                ? `Eres Daithon, Editor Senior de No-Ficción y Coach Literario. OBJETIVO: Libro de alto impacto. AUDIENCIA: ${soulsContext}.
+                   INSTRUCCIÓN: Responde detalladamente. Al final, añade una línea 'Voz: [comentario breve]' de máximo 12 palabras sobre el punto clave.`
+                : `Eres Daithon, el Gran Bibliotecario de SoulForge. CONTEXTO: Ficha de personajes: ${soulsContext}.
+                   INSTRUCCIÓN: Responde con el texto literario solicitado. Al final, añade una línea 'Voz: [reacción corta]' de máximo 12 palabras como un espectador sabio.`;
 
             try {
                 const reply = await fetchFromGroq(
@@ -2000,11 +2002,16 @@
                 );
 
                 if (reply) {
-                    incrementUsage(); // Record usage for chat too
-                    addAriaMsg('ai', reply);
-                    speak(reply);
+                    const parts = reply.split('Voz:');
+                    const cleanText = parts[0].trim();
+                    const voiceText = parts[1] ? parts[1].trim() : cleanText.substring(0, 100);
+
+                    incrementUsage();
+                    addAriaMsg('ai', cleanText);
+                    speak(voiceText);
+
                     ARIA_STATE.context.push({ role: 'user', content: text });
-                    ARIA_STATE.context.push({ role: 'assistant', content: reply });
+                    ARIA_STATE.context.push({ role: 'assistant', content: cleanText });
                     if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
             } catch (err) {
@@ -2155,17 +2162,24 @@
             const lastPara = getLastParagraph();
             const soulsContext = loadedSouls.map(s => `${s.name} (${s.archetype})`).join(', ');
 
-            const systemPrompt = `Eres Daithon, el Mentor de Almas. Responde ÚNICAMENTE con el texto literario solicitado. CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
+            const systemPrompt = `Eres Daithon, el Mentor de Almas. Responde ÚNICAMENTE con el texto literario solicitado.
+                                   Al final añade: Voz: [comentario de 10 palabras sobre esta sugerencia].
+                                   CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
 
             try {
                 const reply = await fetchFromGroq([{ role: 'user', content: promptText }], systemPrompt);
 
                 if (reply) {
+                    const parts = reply.split('Voz:');
+                    const cleanText = parts[0].trim();
+                    const voiceText = parts[1] ? parts[1].trim() : cleanText.substring(0, 100);
+
                     incrementUsage();
-                    addAriaMsg('ai', reply);
-                    speak(reply);
+                    addAriaMsg('ai', cleanText);
+                    speak(voiceText);
+
                     ARIA_STATE.context.push({ role: 'user', content: promptText });
-                    ARIA_STATE.context.push({ role: 'assistant', content: reply });
+                    ARIA_STATE.context.push({ role: 'assistant', content: cleanText });
                     if (ARIA_STATE.context.length > 10) ARIA_STATE.context.shift();
                 }
             } catch (err) {
@@ -2233,7 +2247,7 @@
             ARIA_STATE.thinking = val;
             const statusText = document.getElementById('aiStatus');
             if (val) {
-                statusText.textContent = "Aria está pensando...";
+                statusText.textContent = "Daithon está pensando...";
                 statusText.style.color = "var(--gold)";
             } else {
                 statusText.textContent = "Sistema en Línea";
