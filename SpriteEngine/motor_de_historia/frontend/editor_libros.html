@@ -1965,12 +1965,43 @@
             }
         }
 
+        // === AUTH HANDLERS ===
+        function showLogin() {
+            const m = document.getElementById('login-modal');
+            if (m) m.style.display = 'flex';
+        }
+
+        async function loginWithGoogle() {
+            if (window.location.protocol === 'file:') {
+                alert("⚠️ Google Login requiere un servidor (ej: Live Server).");
+                return;
+            }
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                await auth.signInWithPopup(provider);
+                const m = document.getElementById('login-modal');
+                if (m) m.style.display = 'none';
+                addAriaMsg('system', '✨ Bienhallado. Tu alma ha sido identificada.');
+            } catch (err) {
+                console.error(err);
+                const errEl = document.getElementById('login-error');
+                if (errEl) {
+                    errEl.textContent = err.message;
+                    errEl.style.display = 'block';
+                }
+            }
+        }
+
         async function initEngine() {
             await new Promise(r => setTimeout(r, 800));
             engineReady = true;
-            document.getElementById('statusDot').classList.add('active');
-            document.getElementById('statusText').textContent = 'En Línea';
-            document.getElementById('statusText').style.color = '#2d8a5a';
+            const dot = document.getElementById('statusDot');
+            if (dot) dot.classList.add('active');
+
+            const userLabel = document.getElementById('user-name-label');
+            if (userLabel && !auth.currentUser) {
+                userLabel.textContent = 'En Línea';
+            }
         }
 
         function updateUI() {
@@ -2437,9 +2468,6 @@
                 statusText.textContent = "SISTEMA EN LÍNEA";
                 statusText.style.color = "var(--text-dim)";
             }
-            statusText.textContent = "Sistema en Línea";
-            statusText.style.color = "var(--text-dim)";
-        }
         }
 
 
