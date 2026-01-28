@@ -1277,7 +1277,8 @@
             try {
                 const result = await auth.signInWithPopup(provider);
                 console.log("Login exitoso:", result.user.displayName);
-                window.location.href = 'editor_libros.html';
+                document.getElementById('login-modal').style.display = 'none';
+                alert("¡Bienvenido Iniciado! " + result.user.displayName);
             } catch (error) {
                 console.error("Error en Google Login:", error);
                 const errorEl = document.getElementById('login-error');
@@ -1345,9 +1346,31 @@
 
                 localStorage.setItem('soulforge_tier', currentPlan);
                 localStorage.setItem('soulforge_uid', user.uid);
+
+                // Actualizar botón de login
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    loginBtn.innerHTML = `🛡️ Mi Perfil / Cerrar Sesión <span style="font-size: 0.7rem; display: block; color: var(--accent);">${user.email}</span>`;
+                    loginBtn.onclick = logout;
+                }
             } else {
                 localStorage.setItem('soulforge_tier', 'gratis');
                 localStorage.removeItem('soulforge_uid');
+
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    loginBtn.innerHTML = `👤 Iniciar Sesión <span style="font-size: 0.7rem; display: block; color: var(--accent);">Acceder a Santuario</span>`;
+                    loginBtn.onclick = showLogin;
+                }
+            }
+        });
+
+        async function logout() {
+            if (confirm("¿Deseas cerrar tu sesión en la Fragua?")) {
+                await auth.signOut();
+                window.location.reload();
+            }
+        }
             }
         });
 

@@ -1469,10 +1469,12 @@
 
     <!-- Header -->
     <header class="forge-header">
-        <div class="brand">
-            <div class="brand-icon">⚔️</div>
-            <span class="brand-text">SOULFORGE</span>
-        </div>
+        <a href="index.html" class="brand" style="text-decoration: none; cursor: pointer;" title="Regresar al Inicio">
+            <div class="brand-icon" style="filter: drop-shadow(0 0 5px var(--gold));">⚔️</div>
+            <span class="brand-text" style="color: var(--gold); border-bottom: 2px solid transparent; transition: 0.3s;"
+                onmouseover="this.style.borderColor='var(--gold-dim)'"
+                onmouseout="this.style.borderColor='transparent'">SOULFORGE</span>
+        </a>
 
         <!-- NEW CENTER TOOLS -->
         <div class="header-mid-group">
@@ -1510,11 +1512,16 @@
             </button>
             <input type="file" id="fileInput" style="display:none" onchange="loadBookFile(this)" accept=".json">
 
-            <button class="btn-header primary" onclick="saveBook()">
+            <button class="btn-header primary" onclick="saveBook()" style="background: var(--gold); color: black;">
                 💾 Guardar Libro
             </button>
 
-            <div class="status-badge" id="user-display" style="cursor:pointer;" onclick="showLogin()">
+            <a href="index.html" class="btn-header"
+                style="text-decoration:none; border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);">
+                🏠 Inicio
+            </a>
+
+            <div class="status-badge" id="user-display" style="cursor:pointer;" onclick="toggleProfileModal()">
                 <div id="statusDot" class="status-dot"></div>
                 <span id="user-name-label">Invitado</span>
             </div>
@@ -1701,6 +1708,38 @@
 
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" onclick="toggleProfileModal()">&times;</span>
+            <div id="profile-pic-container" style="margin-bottom: 20px;">
+                <div style="font-size: 4rem; margin-bottom: 10px;">👤</div>
+            </div>
+            <h2 id="profile-name" style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 5px;">Nombre
+                de Guerrero</h2>
+            <p id="profile-email" style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px;">
+                email@ejemplo.com</p>
+
+            <div
+                style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border-subtle);">
+                <div
+                    style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">
+                    Rango Actual</div>
+                <div id="profile-tier"
+                    style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; filter: drop-shadow(0 0 5px var(--gold-dim)); text-transform: uppercase;">
+                    Novato</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-header" style="justify-content: center;"
+                    onclick="window.location.href='planes.html'">Subir de Nivel (Planes)</button>
+                <button class="btn-header"
+                    style="justify-content: center; border-color: rgba(255,0,0,0.3); color: #ff4d4d;"
+                    onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Guide Modal -->
     <div id="guideModal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
@@ -1877,14 +1916,26 @@
                 const dot = document.getElementById('statusDot');
 
                 if (user) {
-                    userDisplay.textContent = user.displayName || user.email.split('@')[0];
+                    const name = user.displayName || user.email.split('@')[0];
+                    userDisplay.textContent = name;
                     dot.style.background = '#4ade80';
+
+                    // Populate Profile Modal
+                    if (document.getElementById('profile-name')) {
+                        document.getElementById('profile-name').textContent = name.toUpperCase();
+                        document.getElementById('profile-email').textContent = user.email;
+                    }
 
                     const userRef = db.collection('usuarios').doc(user.uid);
                     const doc = await userRef.get();
                     if (doc.exists) {
                         const data = doc.data();
-                        localStorage.setItem('soulforge_tier', data.plan_activo || 'gratis');
+                        const tier = data.plan_activo || 'gratis';
+                        localStorage.setItem('soulforge_tier', tier);
+
+                        if (document.getElementById('profile-tier')) {
+                            document.getElementById('profile-tier').textContent = tier.toUpperCase();
+                        }
 
                         if (data.usage && data.usage.date === new Date().toDateString()) {
                             localStorage.setItem('aria_usage', JSON.stringify(data.usage));
@@ -1897,6 +1948,22 @@
                 }
             });
         });
+
+        function toggleProfileModal() {
+            if (!auth.currentUser) {
+                showLogin();
+                return;
+            }
+            const m = document.getElementById('profileModal');
+            if (m) m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        async function logout() {
+            if (confirm("¿Deseas cerrar tu sesión en la Fragua?")) {
+                await auth.signOut();
+                window.location.reload();
+            }
+        }
 
         async function initEngine() {
             await new Promise(r => setTimeout(r, 800));
