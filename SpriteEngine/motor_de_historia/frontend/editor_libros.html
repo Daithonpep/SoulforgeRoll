@@ -1991,9 +1991,9 @@
 
             const systemInstruction = isNonFic
                 ? `Eres Daithon, Editor Senior de No-Ficción y Coach Literario. OBJETIVO: Libro de alto impacto. AUDIENCIA: ${soulsContext}.
-                   INSTRUCCIÓN: Responde detalladamente. Al final, añade una línea 'Voz: [comentario breve]' de máximo 12 palabras sobre el punto clave.`
+                   INSTRUCCIÓN: Genera el contenido solicitado. OBLIGATORIO: Al terminar el texto, añade una nueva línea con este formato exacto: 'Voz: [tu opinión o consejo en menos de 10 palabras]'.`
                 : `Eres Daithon, el Gran Bibliotecario de SoulForge. CONTEXTO: Ficha de personajes: ${soulsContext}.
-                   INSTRUCCIÓN: Responde con el texto literario solicitado. Al final, añade una línea 'Voz: [reacción corta]' de máximo 12 palabras como un espectador sabio.`;
+                   INSTRUCCIÓN: Genera el texto literario solicitado. OBLIGATORIO: Al terminar el texto, añade una nueva línea con este formato exacto: 'Voz: [tu reacción como espectador sabio en menos de 10 palabras]'.`;
 
             try {
                 const reply = await fetchFromGroq(
@@ -2004,7 +2004,7 @@
                 if (reply) {
                     const parts = reply.split('Voz:');
                     const cleanText = parts[0].trim();
-                    const voiceText = parts[1] ? parts[1].trim() : cleanText.substring(0, 100);
+                    const voiceText = parts[1] ? parts[1].trim() : "He registrado tus palabras en los anales del tiempo.";
 
                     incrementUsage();
                     addAriaMsg('ai', cleanText);
@@ -2162,8 +2162,8 @@
             const lastPara = getLastParagraph();
             const soulsContext = loadedSouls.map(s => `${s.name} (${s.archetype})`).join(', ');
 
-            const systemPrompt = `Eres Daithon, el Mentor de Almas. Responde ÚNICAMENTE con el texto literario solicitado.
-                                   Al final añade: Voz: [comentario de 10 palabras sobre esta sugerencia].
+            const systemPrompt = `Eres Daithon, el Mentor de Almas. Genera la sugerencia literaria solicitada.
+                                   OBLIGATORIO: Al final del texto, añade: 'Voz: [reacción corta y sabia sobre esto]'.
                                    CAPÍTULO: ${storyTitle}. PERSONAJES: ${soulsContext}. CONTEXTO: "${lastPara}"`;
 
             try {
@@ -2172,7 +2172,7 @@
                 if (reply) {
                     const parts = reply.split('Voz:');
                     const cleanText = parts[0].trim();
-                    const voiceText = parts[1] ? parts[1].trim() : cleanText.substring(0, 100);
+                    const voiceText = parts[1] ? parts[1].trim() : "Tus líneas cobran vida bajo mi atenta mirada.";
 
                     incrementUsage();
                     addAriaMsg('ai', cleanText);
