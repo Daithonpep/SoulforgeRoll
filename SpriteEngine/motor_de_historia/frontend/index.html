@@ -1206,14 +1206,51 @@
 
     <!-- Firebase Login Container -->
     <div id="login-modal"
-        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
-        <div class="card" style="max-width:450px; width:90%; position:relative;">
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(15px);">
+        <div class="card"
+            style="max-width:400px; width:90%; position:relative; border: 2px solid var(--accent); box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); background: radial-gradient(circle at top, #161920, #080a0e);">
             <button onclick="document.getElementById('login-modal').style.display='none'"
-                style="position:absolute; top:15px; right:15px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1.5rem;">&times;</button>
-            <h2 class="card-title" style="text-align:center;">Iniciación de Alma</h2>
-            <p class="card-desc" style="text-align:center;">Identifícate para guardar tus almas y acceder a la sabiduría
-                de Aria.</p>
-            <div id="firebaseui-auth-container"></div>
+                style="position:absolute; top:20px; right:20px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1.8rem; transition: 0.3s;"
+                onmouseover="this.style.color='var(--accent)'"
+                onmouseout="this.style.color='var(--text-dim)'">&times;</button>
+
+            <div style="text-align:center; margin-bottom: 30px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+                <h2 class="card-title"
+                    style="text-align:center; border:none; padding:0; margin:0; font-size: 1.5rem; letter-spacing: 2px;">
+                    IDENTIFICACIÓN DE ALMA</h2>
+                <div style="height: 1px; width: 60px; background: var(--accent); margin: 15px auto; opacity: 0.5;">
+                </div>
+                <p class="card-desc" style="text-align:center; font-size: 0.9rem; margin: 0; color: var(--text-main);">
+                    Accede a la sabiduría del Bibliotecario Daithon para salvaguardar tu progreso.</p>
+            </div>
+
+            <div id="auth-buttons" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Custom Premium Google Button -->
+                <button onclick="loginWithGoogle()"
+                    style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 14px; background: #fff; color: #000; border: none; border-radius: 12px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: 0.3s; transform: perspective(1px) translateZ(0);">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"
+                        height="20">
+                    Continuar con Google
+                </button>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
+                    <div style="flex:1; height:1px; background: rgba(255,255,255,0.1);"></div>
+                    <span
+                        style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">o
+                        mediante sello</span>
+                    <div style="flex:1; height:1px; background: rgba(255,255,255,0.1);"></div>
+                </div>
+
+                <button onclick="loginWithEmail()"
+                    style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-size: 0.85rem; cursor: pointer; transition: 0.3s;">
+                    Identificación por Email
+                </button>
+            </div>
+
+            <p id="login-error"
+                style="display:none; color: #ff4d4d; font-size: 0.8rem; text-align: center; margin-top: 20px; background: rgba(255, 77, 77, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 77, 77, 0.2);">
+            </p>
         </div>
     </div>
 
@@ -1225,22 +1262,41 @@
         // === LOGIN LOGIC ===
         function showLogin() {
             document.getElementById('login-modal').style.display = 'flex';
+        }
 
-            const uiConfig = {
-                signInOptions: [
-                    firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                    firebase.auth.GoogleAuthProvider.PROVIDER_ID
-                ],
-                signInSuccessUrl: 'editor_libros.html', // Redirect to editor after login
-                callbacks: {
-                    signInSuccessWithAuthResult: function (authResult, redirectUrl) {
-                        return true; // Use default redirect
-                    }
+        async function loginWithGoogle() {
+            if (window.location.protocol === 'file:') {
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = "⚠️ El inicio de sesión con Google no funciona desde archivos locales (file://). Por favor, abre esta página desde un servidor local (ej: Live Server) o desde la URL de despliegue.";
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await auth.signInWithPopup(provider);
+                console.log("Login exitoso:", result.user.displayName);
+                window.location.href = 'editor_libros.html';
+            } catch (error) {
+                console.error("Error en Google Login:", error);
+                const errorEl = document.getElementById('login-error');
+
+                if (error.code === 'auth/api-key-not-valid') {
+                    errorEl.textContent = "❌ Error técnico: La API Key de Firebase no es válida. Por favor, verifica la configuración en la consola de Firebase.";
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorEl.textContent = "❌ El navegador bloqueó la ventana emergente. Por favor, permite las ventanas emergentes para este sitio.";
+                } else {
+                    errorEl.textContent = "❌ Error: " + (error.message || "No se pudo iniciar sesión con Google.");
                 }
-            };
+                errorEl.style.display = 'block';
+            }
+        }
 
-            let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
-            ui.start('#firebaseui-auth-container', uiConfig);
+        async function loginWithEmail() {
+            const email = prompt("Ingresa tu email:");
+            if (email) {
+                alert("La identificación por email está desactivada temporalmente por mantenimiento. Por favor usa Google.");
+            }
         }
 
         auth.onAuthStateChanged(async (user) => {
