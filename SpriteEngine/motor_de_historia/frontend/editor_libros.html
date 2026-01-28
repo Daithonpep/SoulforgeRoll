@@ -1514,9 +1514,9 @@
                 💾 Guardar Libro
             </button>
 
-            <div class="status-badge">
+            <div class="status-badge" id="user-display" style="cursor:pointer;" onclick="showLogin()">
                 <div id="statusDot" class="status-dot"></div>
-                <span id="statusText">Iniciando...</span>
+                <span id="user-name-label">Invitado</span>
             </div>
             <div style="margin-left: 15px; display: flex; align-items: center; gap: 10px;">
                 <!-- Mode Switcher -->
@@ -1540,6 +1540,70 @@
             </div>
         </div>
     </header>
+
+    <!-- Modal para Guardar Libro (Multi-formato) -->
+    <div id="saveModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <span class="close-modal" onclick="document.getElementById('saveModal').style.display='none'">&times;</span>
+            <div style="font-size: 3rem; margin-bottom: 10px;">💾</div>
+            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 15px;">PRESERVAR MANUSCRITO</h2>
+            <p style="color: var(--text-dim); margin-bottom: 25px;">Elige el formato en el que Daithon debe sellar tu
+                historia.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-header primary" style="justify-content: center; width: 100%;"
+                    onclick="exportFormat('json')">
+                    📦 Formato SoulForge (.json)
+                </button>
+                <div style="font-size: 0.7rem; color: #888; margin-bottom: 5px;">Recomendado para seguir escribiendo
+                    después.</div>
+
+                <button class="btn-header" style="justify-content: center; width: 100%;" onclick="exportFormat('html')">
+                    🎨 Impresión Premium (.html)
+                </button>
+
+                <button class="btn-header" style="justify-content: center; width: 100%;" onclick="exportFormat('txt')">
+                    📝 Archivo de Texto (.txt)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Identificación (Login) -->
+    <div id="login-modal" class="modal"
+        style="display:none; align-items:center; justify-content:center; backdrop-filter:blur(15px);">
+        <div class="card"
+            style="max-width:400px; width:90%; position:relative; border: 2px solid var(--accent); box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); background: radial-gradient(circle at top, #161920, #080a0e); padding: 40px; border-radius: 20px;">
+            <button onclick="document.getElementById('login-modal').style.display='none'"
+                style="position:absolute; top:20px; right:20px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1.8rem; transition: 0.3s;"
+                onmouseover="this.style.color='var(--accent)'"
+                onmouseout="this.style.color='var(--text-dim)'">&times;</button>
+
+            <div style="text-align:center; margin-bottom: 30px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+                <h2
+                    style="text-align:center; border:none; padding:0; margin:0; font-family: 'Cinzel', serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--accent);">
+                    IDENTIFICACIÓN DE ALMA</h2>
+                <div style="height: 1px; width: 60px; background: var(--accent); margin: 15px auto; opacity: 0.5;">
+                </div>
+                <p style="text-align:center; font-size: 0.9rem; margin: 0; color: var(--text-primary);">Accede a la
+                    sabiduría del Bibliotecario Daithon para salvaguardar tu progreso.</p>
+            </div>
+
+            <div id="auth-buttons" style="display: flex; flex-direction: column; gap: 15px;">
+                <button onclick="loginWithGoogle()"
+                    style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 14px; background: #fff; color: #000; border: none; border-radius: 12px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"
+                        height="20">
+                    Continuar con Google
+                </button>
+            </div>
+
+            <p id="login-error"
+                style="display:none; color: #ff4d4d; font-size: 0.8rem; text-align: center; margin-top: 20px; background: rgba(255, 77, 77, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 77, 77, 0.2);">
+            </p>
+        </div>
+    </div>
 
     <!-- Workspace -->
     <div class="workspace">
@@ -1797,26 +1861,39 @@
             updateUI();
             setupDragDrop();
 
-            // Editor listeners for tension and ghost
             const editor = document.getElementById('editor');
             editor.addEventListener('input', () => {
+                saveCurrentChapter(); // Draft saving
                 ARIA_STATE.lastTypingTime = Date.now();
                 analyzeTension();
                 removeGhostSuggestion();
             });
 
-            // Check for idle (Ghost Writer & Character Interjections)
             setInterval(checkIdle, 1000);
 
-            // Sync Plan with Firebase
-            auth.onAuthStateChanged(async (user) => {
+            // Sync User State
+            auth.onAuthStateChanged(async user => {
+                const userDisplay = document.getElementById('user-name-label');
+                const dot = document.getElementById('statusDot');
+
                 if (user) {
-                    const doc = await db.collection('usuarios').doc(user.uid).get();
+                    userDisplay.textContent = user.displayName || user.email.split('@')[0];
+                    dot.style.background = '#4ade80';
+
+                    const userRef = db.collection('usuarios').doc(user.uid);
+                    const doc = await userRef.get();
                     if (doc.exists) {
                         const data = doc.data();
-                        localStorage.setItem('soulforge_tier', data.plan_activo);
-                        console.log("Plan sincronizado:", data.plan_activo);
+                        localStorage.setItem('soulforge_tier', data.plan_activo || 'gratis');
+
+                        if (data.usage && data.usage.date === new Date().toDateString()) {
+                            localStorage.setItem('aria_usage', JSON.stringify(data.usage));
+                        }
                     }
+                } else {
+                    userDisplay.textContent = 'Invitado';
+                    dot.style.background = 'var(--gold-dim)';
+                    localStorage.setItem('soulforge_tier', 'gratis');
                 }
             });
         });
@@ -1882,11 +1959,51 @@
 
         function saveBook() {
             saveCurrentChapter();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bookData, null, 2));
+            document.getElementById('saveModal').style.display = 'flex';
+        }
+
+        function exportFormat(target) {
+            saveCurrentChapter();
+            const title = bookData.title.replace(/\s+/g, '_');
+            let blob, filename;
+
+            if (target === 'json') {
+                const dataStr = JSON.stringify(bookData, null, 2);
+                blob = new Blob([dataStr], { type: "application/json" });
+                filename = `${title}.json`;
+            } else if (target === 'txt') {
+                let txt = `S O U L F O R G E   -   ${bookData.title.toUpperCase()}\n`;
+                txt += `====================================================\n\n`;
+                bookData.chapters.forEach((c, i) => {
+                    txt += `CAPÍTULO ${i + 1}: ${c.title.toUpperCase()}\n`;
+                    txt += `----------------------------------------------------\n`;
+                    // Convert HTML paragraphs to plain text with newlines
+                    const temp = document.createElement('div');
+                    temp.innerHTML = c.content;
+                    txt += temp.innerText + "\n\n";
+                });
+                blob = new Blob([txt], { type: "text/plain" });
+                filename = `${title}.txt`;
+            } else if (target === 'html') {
+                let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${bookData.title}</title>`;
+                html += `<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">`;
+                html += `<style>body{background:#fdfcf0; color:#222; font-family:'Crimson Text', serif; padding: 5% 15%; line-height:1.6;} h1{font-family:'Cinzel'; text-align:center; color:#8a7040; margin-bottom:50px;} .chapter{margin-bottom:80px; page-break-after:always;} .chap-title{font-family:'Cinzel'; font-size:1.5rem; text-align:center; border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:30px;}</style></head><body>`;
+                html += `<h1>${bookData.title}</h1>`;
+                bookData.chapters.forEach((c) => {
+                    html += `<div class="chapter"><div class="chap-title">${c.title}</div>${c.content}</div>`;
+                });
+                html += `</body></html>`;
+                blob = new Blob([html], { type: "text/html" });
+                filename = `${title}_Lectura.html`;
+            }
+
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.href = dataStr;
-            link.download = "Mi_Historia_SoulForge.json";
+            link.href = url;
+            link.download = filename;
             link.click();
+            URL.revokeObjectURL(url);
+            document.getElementById('saveModal').style.display = 'none';
         }
 
         function loadBookFile(input) {
@@ -1949,10 +2066,23 @@
             const usage = getDailyUsage();
             usage.count++;
             localStorage.setItem('aria_usage', JSON.stringify(usage));
+
+            // Sync to Firebase if identified
+            if (auth.currentUser) {
+                db.collection('usuarios').doc(auth.currentUser.uid).update({
+                    usage: usage
+                }).catch(e => console.error("Error syncing usage:", e));
+            }
         }
 
         function checkAriaUsage() {
-            // If user is premium or pro (trial), we can bypass this
+            // EXIGIR REGISTRO
+            if (!auth.currentUser) {
+                addAriaMsg('system', '⚠️ Daithon solo responde a almas identificadas. Por favor, identifícate haciendo clic en el círculo de arriba.');
+                showLogin();
+                return false;
+            }
+
             const tier = localStorage.getItem('soulforge_tier');
             if (tier === 'pro' || tier === 'premium') return true;
 
@@ -2237,26 +2367,29 @@
                 statusText.textContent = "Daithon está pensando...";
                 statusText.style.color = "var(--gold)";
             } else {
-                statusText.textContent = "Sistema en Línea";
+                statusText.textContent = "SISTEMA EN LÍNEA";
                 statusText.style.color = "var(--text-dim)";
             }
+            statusText.textContent = "Sistema en Línea";
+            statusText.style.color = "var(--text-dim)";
+        }
         }
 
 
 
         function insertInEditor(text) {
             const editor = document.getElementById('editor');
-            // Remove ghost suggestion if present
             removeGhostSuggestion();
 
             const p = document.createElement('p');
             p.innerText = text;
-            editor.appendChild(p); // Append to end of editor
+            editor.appendChild(p);
 
-            // Normalize HTML structure if needed to ensure paragraphs
             if (editor.innerHTML.trim() === "") editor.innerHTML = `<p>${text}</p>`;
 
+            saveCurrentChapter(); // Guardar al instante
             p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            updateImpactGauge();
         }
 
         // === NEW FEATURES IMPLEMENTATION ===
