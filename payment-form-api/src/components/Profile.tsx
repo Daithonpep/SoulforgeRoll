@@ -211,6 +211,57 @@ export function Profile() {
                     </div>
                 </div>
 
+                {/* Subscription Status Card */}
+                <div className={cn(
+                    "md:col-span-2 rounded-xl p-6 shadow-sm border mt-6",
+                    darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-slate-100"
+                )}>
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <span className="text-2xl">⏳</span>
+                        </div>
+                        <div>
+                            <h3 className={cn("text-lg font-semibold", darkMode ? "text-white" : "text-slate-800")}>
+                                Estado de Suscripción
+                            </h3>
+                            <p className={cn("text-sm", darkMode ? "text-slate-400" : "text-slate-500")}>
+                                Gestiona tu plan y renovación automática
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Countdown Timer */}
+                        <div className={cn("p-4 rounded-lg flex flex-col items-center justify-center space-y-2", darkMode ? "bg-slate-900" : "bg-slate-50")}>
+                            <span className={cn("text-sm font-medium", darkMode ? "text-slate-400" : "text-slate-500")}>Tiempo Restante del Plan</span>
+                            <div className="text-3xl font-bold font-mono text-indigo-500">
+                                14 días : 05 hrs
+                            </div>
+                            <span className="text-xs text-slate-500">Expira el 12 de Febrero, 2026</span>
+                        </div>
+
+                        {/* Auto-Renewal Toggle */}
+                        <div className="flex flex-col justify-center space-y-4">
+                            <div className="flex items-center justify-between p-4 rounded-lg border border-indigo-100 bg-indigo-50/50 dark:bg-slate-900/50 dark:border-slate-700">
+                                <div>
+                                    <h4 className={cn("font-medium", darkMode ? "text-white" : "text-slate-800")}>Renovación Automática</h4>
+                                    <p className="text-xs text-slate-500">Cobrar automáticamente al finalizar</p>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+
+                            <button className={cn("w-full py-2 px-4 rounded-lg border text-sm font-medium transition-colors",
+                                darkMode ? "border-slate-600 hover:bg-slate-700 text-slate-300" : "border-slate-200 hover:bg-slate-50 text-slate-600")}>
+                                <RefreshCw size={14} className="inline mr-2" />
+                                Cambiar Método de Pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Backup Actions */}
                 <div className="space-y-6">
                     <div className={cn(

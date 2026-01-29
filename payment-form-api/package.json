@@ -9,9 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/react-paypal-js": "^8.9.2",
     "@types/uuid": "^10.0.0",
+    "body-parser": "^2.2.2",
     "clsx": "2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "lucide-react": "^0.563.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
