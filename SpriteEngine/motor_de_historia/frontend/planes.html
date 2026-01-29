@@ -420,92 +420,77 @@
         </section>
 
         <section class="pricing-section">
-            <div class="pricing-grid">
-                <!-- NOVATO -->
-                <div class="plan-card">
-                    <span class="plan-badge">El Gancho</span>
-                    <h2 class="plan-title">Novato</h2>
-                    <div class="plan-price">$0 <span>/ siempre</span></div>
-                    <p class="plan-copy">¿Tienes una idea rondando en la cabeza? Empieza a plasmarla sin presiones.
-                        Prueba la potencia de Daithon y descubre cómo un solo personaje puede cambiar el rumbo de tu
-                        historia.</p>
-                    <ul class="plan-features">
-                        <li>Editor de texto básico</li>
-                        <li>5 consultas/día a Daithon</li>
-                        <li>1 Slot de "Alma" (Personaje)</li>
-                        <li>Sonido de Lluvia incluido</li>
-                    </ul>
-                    <a href="editor_libros.html" class="btn-buy secondary">Empieza a escribir gratis</a>
-                </div>
-
-                <!-- ESCRITOR DE ALMAS -->
-                <div class="plan-card popular">
-                    <span class="plan-badge">Santuario Personal</span>
-                    <h2 class="plan-title">Escritor de Almas</h2>
-                    <div class="plan-price">$9.99 <span>/ mes</span></div>
-                    <p class="plan-copy">Olvídate para siempre de la hoja en blanco. Con este plan, Daithon se convierte
-                        en
-                        tu editor de cabecera y el Dado de Caos en tu motor de aventuras.</p>
-                    <ul class="plan-features">
-                        <li>Daithon Ilimitado: Siempre activo</li>
-                        <li>Slots de Almas Ilimitados</li>
-                        <li>Dado de Caos: Motor de Aventuras</li>
-                        <li>Atmósferas Pro: Madera y Fuego</li>
-                        <li>1 Personaje Premium gratis/mes</li>
-                    </ul>
-                    <div class="paypal-button-container">
-                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                            <input type="hidden" name="cmd" value="_s-xclick" />
-                            <input type="hidden" name="hosted_button_id" value="TQ2FDMBQ23H82" />
-                            <input type="hidden" name="currency_code" value="USD" />
-                            <button type="submit" name="submit" title="PayPal - The safer, easier way to pay online!">
-                                Activar mi Santuario
-                            </button>
-                        </form>
-                    </div>
-                    <div class="payment-icons">
-                        <span>💳 Visa / Mastercard / PayPal</span>
-                    </div>
-                </div>
-
-                <!-- ARQUITECTO DE MUNDOS -->
-                <div class="plan-card">
-                    <span class="plan-badge">Legado del Autor</span>
-                    <h2 class="plan-title">Arquitecto de Mundos</h2>
-                    <div class="plan-price">$99.99 <span>/ año</span></div>
-                    <p class="plan-copy">La escritura de un libro es un maratón, no un sprint. Asegura tu espacio de
-                        trabajo por todo un año y despreocúpate de los pagos mensuales.</p>
-                    <ul class="plan-features">
-                        <li>Todo lo del plan Mensual</li>
-                        <li>2 meses GRATIS (Ahorro 20%)</li>
-                        <li>Acceso Anticipado a funciones</li>
-                        <li>Modo "Shadow" prioritario</li>
-                        <li>Exportación Pro (PDF/Epub)</li>
-                    </ul>
-                    <div class="paypal-button-container">
-                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                            <input type="hidden" name="cmd" value="_s-xclick" />
-                            <input type="hidden" name="hosted_button_id" value="ZTHYACKDKXCJS" />
-                            <input type="hidden" name="currency_code" value="USD" />
-                            <button type="submit" name="submit" title="PayPal - The safer, easier way to pay online!">
-                                Suscríbete y ahorra 20%
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SINGLE CHARACTER -->
-            <div class="single-character-promo">
-                <div class="brand-icon" style="font-size: 3rem; opacity: 0.5;">👤</div>
-                <div class="character-info">
-                    <h3>¿Buscas a alguien específico para tu historia?</h3>
-                    <p>No necesitas la suscripción completa para traer un alma a la vida. Compra el perfil detallado de
-                        un guerrero, un mentor o un villano y cárgalo directamente en tu editor por solo <strong>$4.99
-                            pago único</strong>.</p>
-                </div>
-                <button class="btn-single">Cargar un Alma Individual</button>
-            </div>
+            <!-- PayForm Pro - Formulario de Pago -->
+            <div id="payform-container" style="max-width: 600px; margin: 0 auto;"></div>
+            <script>
+              window.PayFormConfig = {
+              "embedId": "payform_kbw8vg1xc",
+              "products": [
+                "9d17b4dd-e458-4676-bc9e-113a33e2a3f5",
+                "b174006a-b28a-4bef-99af-103cde83129b",
+                "06abcfd0-f0f8-49d9-91ea-cab354947ff5"
+              ],
+              "style": {
+                "primaryColor": "#6366f1",
+                "backgroundColor": "#1f2937",
+                "textColor": "#ffffff",
+                "borderRadius": "full",
+                "buttonStyle": "solid",
+                "fontFamily": "Montserrat",
+                "companyName": "SoulForge",
+                "logoUrl": ""
+              },
+              "fields": [
+                {
+                  "id": "name",
+                  "label": "Nombre completo",
+                  "required": true,
+                  "width": "full"
+                },
+                {
+                  "id": "email",
+                  "label": "Email",
+                  "required": true,
+                  "width": "full"
+                },
+                {
+                  "id": "phone",
+                  "label": "Teléfono(opcional)",
+                  "required": false,
+                  "width": "half"
+                },
+                {
+                  "id": "company",
+                  "label": "Empresa(opcional)",
+                  "required": false,
+                  "width": "half"
+                },
+                {
+                  "id": "address",
+                  "label": "Dirección",
+                  "required": false,
+                  "width": "full"
+                }
+              ],
+              "paymentMethods": {
+                "card": true,
+                "stripe": false,
+                "paypal": true
+              },
+              "buttons": {
+                "card": "Pagar con Tarjeta",
+                "stripe": "Pagar con Stripe",
+                "paypal": "Pagar ahora"
+              },
+              "invoice": {
+                "enabled": true,
+                "fromName": "SoulForge",
+                "fromEmail": "pagos@Soulforge.com"
+              }
+            };
+            </script>
+            <script src="https://soulforge-roll.vercel.app/payform.js" async></script>
+            <!-- Fin PayForm Pro -->
         </section>
     </main>
 

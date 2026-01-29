@@ -15,3 +15,6 @@ target/
 
 # Temporal
 frontend-clean/
+
+**/node_modules/
+**/dist/
