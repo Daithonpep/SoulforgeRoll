@@ -10,7 +10,9 @@ import {
   Moon,
   Sun,
   Code,
-  User
+  User,
+  Building2,
+  Users
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { TabType } from '../types';
@@ -24,6 +26,8 @@ const menuItems: { id: TabType; label: string; icon: React.ReactNode }[] = [
   { id: 'form-builder', label: 'Personalizar Formulario', icon: <PaintBucket size={20} /> },
   { id: 'preview', label: 'Vista Previa', icon: <Eye size={20} /> },
   { id: 'integration', label: 'Integración / Código', icon: <Code size={20} /> },
+  { id: 'vendor-settings', label: 'Cuentas de Pago', icon: <Building2 size={20} /> },
+  { id: 'collaborators', label: 'Colaboradores', icon: <Users size={20} /> },
   { id: 'settings', label: 'Configuración APIs', icon: <Settings size={20} /> },
   { id: 'profile', label: 'Perfil y Respaldo', icon: <User size={20} /> },
 ];

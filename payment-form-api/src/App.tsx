@@ -9,6 +9,8 @@ import { Preview } from './components/Preview';
 import { Transactions } from './components/Transactions';
 import { Integration } from './components/Integration';
 import { Profile } from './components/Profile';
+import { VendorSettings } from './components/VendorSettings';
+import { Collaborators } from './components/Collaborators';
 import { cn } from './utils/cn';
 
 function MainContent() {
@@ -34,6 +36,10 @@ function MainContent() {
         return <Integration />;
       case 'profile':
         return <Profile />;
+      case 'vendor-settings':
+        return <VendorSettings />;
+      case 'collaborators':
+        return <Collaborators />;
       default:
         return <Dashboard />;
     }
